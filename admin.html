@@ -1,173 +1,324 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Panel de Control | Pool & Beach</title>
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: Arial, sans-serif;
-      background: #eef7fa;
-      color: #123;
-    }
-    header {
-      background: #002b40;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    header h1 {
-      color: #55d8f2;
-      margin-bottom: 6px;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      padding: 30px 20px;
-    }
-    .welcome {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      margin-bottom: 25px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-    .welcome h2 {
-      color: #063c55;
-      margin-bottom: 10px;
-    }
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 20px;
-    }
-    .card {
-      background: white;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
-    }
-    .card h3 {
-      color: #087c9e;
-      margin-bottom: 12px;
-    }
-    .card p {
-      color: #60717a;
-      line-height: 1.5;
-      margin-bottom: 18px;
-    }
-    button {
-      border: none;
-      background: #08a6c8;
-      color: white;
-      padding: 12px 18px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    button:hover {
-      background: #087c9e;
-    }
-    .status {
-      display: inline-block;
-      background: #dff7e8;
-      color: #17733d;
-      padding: 8px 12px;
-      border-radius: 20px;
-      font-weight: bold;
-      margin-top: 10px;
-    }
-    .back {
-      display: inline-block;
-      margin-top: 30px;
-      color: #087c9e;
-      text-decoration: none;
-      font-weight: bold;
-    }
-    footer {
-      margin-top: 30px;
-      background: #002b40;
-      color: white;
-      text-align: center;
-      padding: 25px;
-    }
-    @media (max-width: 700px) {
-      .grid {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de Control | Pool & Beach</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:Arial,sans-serif;
+  background:#eef7fa;
+  color:#123;
+}
+header{
+  background:#002b40;
+  color:white;
+  padding:20px;
+  text-align:center;
+}
+header h1{color:#55d8f2;margin-bottom:6px}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:25px 16px;
+}
+.welcome,.reservas{
+  background:white;
+  padding:25px;
+  border-radius:18px;
+  margin-bottom:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+h2{color:#063c55;margin-bottom:15px}
+.form{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+input,select,textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid #ccdce1;
+  border-radius:10px;
+  font-size:16px;
+}
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+.full{grid-column:1/-1}
+button{
+  border:0;
+  background:#08a6c8;
+  color:white;
+  padding:13px 18px;
+  border-radius:10px;
+  font-weight:bold;
+  cursor:pointer;
+}
+button:hover{background:#087c9e}
+.lista{
+  margin-top:25px;
+  display:grid;
+  gap:12px;
+}
+.reserva{
+  border:1px solid #d9e7eb;
+  border-radius:14px;
+  padding:18px;
+  background:#f8fcfd;
+}
+.reserva strong{
+  color:#087c9e;
+}
+.estado{
+  display:inline-block;
+  margin-top:8px;
+  padding:6px 10px;
+  border-radius:15px;
+  background:#dff7e8;
+  color:#17733d;
+  font-weight:bold;
+}
+.eliminar{
+  background:#d64545;
+  margin-top:12px;
+}
+.mensaje{
+  margin-top:15px;
+  font-weight:bold;
+}
+.back{
+  display:inline-block;
+  margin:20px 0;
+  color:#087c9e;
+  text-decoration:none;
+  font-weight:bold;
+}
+footer{
+  background:#002b40;
+  color:white;
+  text-align:center;
+  padding:25px;
+}
+@media(max-width:700px){
+  .form{grid-template-columns:1fr}
+  .full{grid-column:auto}
+}
+</style>
 </head>
 <body>
-  <header>
-    <h1>Pool & Beach</h1>
-    <p>Panel de Control</p>
-  </header>
-  <main class="container">
-    <div class="welcome">
-      <h2>👋 Bienvenido al panel</h2>
-      <p>
-        Desde este lugar vamos a poder administrar
-        las reservas, promociones, menú y juegos de Pool & Beach.
-      </p>
-      <div class="status">
-        🟢 Sistema activo
-      </div>
-    </div>
-    <div class="grid">
-      <div class="card">
-        <h3>📅 Reservas</h3>
-        <p>
-          Administrá las reservas de clientes y
-          consultá los lugares disponibles.
-        </p>
-        <button onclick="alert('Módulo de reservas próximamente')">
-          Administrar reservas
+<header>
+  <h1>Pool & Beach</h1>
+  <p>Panel de Control</p>
+</header>
+<main class="container">
+<section class="welcome">
+  <h2>👋 Administración</h2>
+  <p>
+    Desde acá vas a poder administrar las reservas
+    de Pool & Beach.
+  </p>
+</section>
+<section class="reservas">
+  <h2>📅 Nueva reserva</h2>
+  <form id="formReserva" class="form">
+    <input
+      id="nombre"
+      type="text"
+      placeholder="Nombre del cliente"
+      required
+    >
+    <input
+      id="telefono"
+      type="tel"
+      placeholder="Teléfono"
+      required
+    >
+    <input
+      id="fecha"
+      type="date"
+      required
+    >
+    <input
+      id="hora"
+      type="time"
+      required
+    >
+    <select id="servicio" required>
+      <option value="">Elegir servicio</option>
+      <option value="Pool">🎱 Pool</option>
+      <option value="PlayStation">🎮 PlayStation</option>
+      <option value="Simulador">🏎️ Simulador</option>
+      <option value="Juegos">🎲 Juegos</option>
+      <option value="Mesa">🍽️ Mesa</option>
+    </select>
+    <input
+      id="personas"
+      type="number"
+      min="1"
+      placeholder="Cantidad de personas"
+      required
+    >
+    <textarea
+      id="notas"
+      class="full"
+      placeholder="Notas de la reserva"
+    ></textarea>
+    <button class="full" type="submit">
+      ➕ Guardar reserva
+    </button>
+  </form>
+  <div id="mensaje" class="mensaje"></div>
+  <h2 style="margin-top:30px;">📋 Reservas</h2>
+  <div id="lista" class="lista">
+    Cargando reservas...
+  </div>
+</section>
+<a class="back" href="index.html">
+  ← Volver a Pool & Beach
+</a>
+</main>
+<footer>
+  <p><strong>Pool & Beach</strong> · Puerto Pirámides</p>
+  <p>© 2026</p>
+</footer>
+<script>
+/*
+  CONEXIÓN CON SUPABASE
+  En el siguiente paso vamos a colocar
+  la URL y la clave pública de tu proyecto.
+  NO coloques acá ninguna service_role key.
+*/
+const SUPABASE_URL = "PEGAR_URL_SUPABASE";
+const SUPABASE_KEY = "PEGAR_CLAVE_PUBLICA_SUPABASE";
+const form = document.getElementById("formReserva");
+const lista = document.getElementById("lista");
+const mensaje = document.getElementById("mensaje");
+async function cargarReservas(){
+  if(
+    SUPABASE_URL === "PEGAR_URL_SUPABASE" ||
+    SUPABASE_KEY === "PEGAR_CLAVE_PUBLICA_SUPABASE"
+  ){
+    lista.innerHTML =
+      "<p>⚠️ Falta conectar Supabase.</p>";
+    return;
+  }
+  try{
+    const respuesta = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/reservas?select=*&order=fecha.asc,hora.asc",
+      {
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + SUPABASE_KEY
+        }
+      }
+    );
+    const reservas = await respuesta.json();
+    if(!Array.isArray(reservas) || reservas.length === 0){
+      lista.innerHTML =
+        "<p>No hay reservas todavía.</p>";
+      return;
+    }
+    lista.innerHTML = "";
+    reservas.forEach(r => {
+      const div = document.createElement("div");
+      div.className = "reserva";
+      div.innerHTML = `
+        <p><strong>👤 Cliente:</strong> ${r.nombre}</p>
+        <p><strong>📞 Teléfono:</strong> ${r.telefono}</p>
+        <p><strong>📅 Fecha:</strong> ${r.fecha}</p>
+        <p><strong>🕐 Hora:</strong> ${r.hora}</p>
+        <p><strong>🎮 Servicio:</strong> ${r.servicio}</p>
+        <p><strong>👥 Personas:</strong> ${r.cantidad_personas}</p>
+        <p><strong>📝 Notas:</strong> ${r.notas || "Sin notas"}</p>
+        <span class="estado">${r.estado}</span>
+        <br>
+        <button class="eliminar" onclick="eliminarReserva(${r.id})">
+          🗑️ Eliminar
         </button>
-      </div>
-      <div class="card">
-        <h3>🍔 Menú</h3>
-        <p>
-          Modificá comidas, precios y productos
-          disponibles.
-        </p>
-        <button onclick="alert('Módulo de menú próximamente')">
-          Administrar menú
-        </button>
-      </div>
-      <div class="card">
-        <h3>🔥 Promociones</h3>
-        <p>
-          Creá y modificá promociones especiales
-          para Pool & Beach.
-        </p>
-        <button onclick="alert('Módulo de promociones próximamente')">
-          Administrar promociones
-        </button>
-      </div>
-      <div class="card">
-        <h3>🎮 Juegos</h3>
-        <p>
-          Administrá los juegos, pool, PlayStation,
-          dados y simuladores.
-        </p>
-        <button onclick="alert('Módulo de juegos próximamente')">
-          Administrar juegos
-        </button>
-      </div>
-    </div>
-    <a class="back" href="index.html">
-      ← Volver a Pool & Beach
-    </a>
-  </main>
-  <footer>
-    <p>Pool & Beach · Puerto Pirámides</p>
-    <p>© 2026</p>
-  </footer>
+      `;
+      lista.appendChild(div);
+    });
+  }catch(error){
+    lista.innerHTML =
+      "<p>❌ No se pudieron cargar las reservas.</p>";
+  }
+}
+form.addEventListener("submit", async function(e){
+  e.preventDefault();
+  if(
+    SUPABASE_URL === "PEGAR_URL_SUPABASE" ||
+    SUPABASE_KEY === "PEGAR_CLAVE_PUBLICA_SUPABASE"
+  ){
+    mensaje.textContent =
+      "⚠️ Primero tenemos que conectar Supabase.";
+    return;
+  }
+  const reserva = {
+    nombre:document.getElementById("nombre").value,
+    telefono:document.getElementById("telefono").value,
+    fecha:document.getElementById("fecha").value,
+    hora:document.getElementById("hora").value,
+    servicio:document.getElementById("servicio").value,
+    cantidad_personas:
+      Number(document.getElementById("personas").value),
+    estado:"Pendiente",
+    notas:document.getElementById("notas").value
+  };
+  try{
+    const respuesta = await fetch(
+      SUPABASE_URL + "/rest/v1/reservas",
+      {
+        method:"POST",
+        headers:{
+          "Content-Type":"application/json",
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + SUPABASE_KEY,
+          "Prefer":"return=minimal"
+        },
+        body:JSON.stringify(reserva)
+      }
+    );
+    if(!respuesta.ok){
+      throw new Error("Error");
+    }
+    mensaje.textContent =
+      "✅ Reserva guardada correctamente.";
+    form.reset();
+    cargarReservas();
+  }catch(error){
+    mensaje.textContent =
+      "❌ No se pudo guardar la reserva.";
+  }
+});
+async function eliminarReserva(id){
+  if(!confirm("¿Querés eliminar esta reserva?")){
+    return;
+  }
+  try{
+    const respuesta = await fetch(
+      SUPABASE_URL +
+      "/rest/v1/reservas?id=eq." + id,
+      {
+        method:"DELETE",
+        headers:{
+          "apikey":SUPABASE_KEY,
+          "Authorization":"Bearer " + SUPABASE_KEY
+        }
+      }
+    );
+    if(!respuesta.ok){
+      throw new Error("Error");
+    }
+    cargarReservas();
+  }catch(error){
+    alert("No se pudo eliminar la reserva.");
+  }
+}
+cargarReservas();
+</script>
 </body>
 </html>
