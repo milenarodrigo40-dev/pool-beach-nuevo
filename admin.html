@@ -173,8 +173,7 @@ async function cargarReservas(){
       .order("hora", { ascending:true });
 
   if(error){
-    console.error(error);
-    lista.innerHTML = "❌ Error al cargar las reservas.";
+    lista.innerHTML = "❌ Error al cargar reservas.";
     return;
   }
 
@@ -199,12 +198,47 @@ async function cargarReservas(){
       <p><strong>🎮 Servicio:</strong> ${r.servicio}</p>
       <p><strong>👥 Personas:</strong> ${r.cantidad_personas}</p>
       <p><strong>📝 Notas:</strong> ${r.notas || "Sin notas"}</p>
-      <span class="estado">${r.estado}</span>
+
+      <label><strong>Estado:</strong></label>
+
+      <select onchange="cambiarEstado(${r.id}, this.value)">
+        <option value="pendiente" ${r.estado === "pendiente" ? "selected" : ""}>
+          Pendiente
+        </option>
+        <option value="confirmada" ${r.estado === "confirmada" ? "selected" : ""}>
+          Confirmada
+        </option>
+        <option value="cancelada" ${r.estado === "cancelada" ? "selected" : ""}>
+          Cancelada
+        </option>
+      </select>
     `;
 
     lista.appendChild(div);
 
   });
+
+}
+
+
+async function cambiarEstado(id, estado){
+
+  const { error } =
+    await supabaseClient
+      .from("reservas")
+      .update({ estado: estado })
+      .eq("id", id);
+
+  if(error){
+
+    alert("No se pudo cambiar el estado.");
+
+    console.error(error);
+
+    return;
+  }
+
+  cargarReservas();
 
 }
 
@@ -217,20 +251,15 @@ form.addEventListener("submit", async function(e){
 
   const reserva = {
 
-    nombre:
-      document.getElementById("nombre").value.trim(),
+    nombre: document.getElementById("nombre").value.trim(),
 
-    telefono:
-      document.getElementById("telefono").value.trim(),
+    telefono: document.getElementById("telefono").value.trim(),
 
-    fecha:
-      document.getElementById("fecha").value,
+    fecha: document.getElementById("fecha").value,
 
-    hora:
-      document.getElementById("hora").value,
+    hora: document.getElementById("hora").value,
 
-    servicio:
-      document.getElementById("servicio").value,
+    servicio: document.getElementById("servicio").value,
 
     cantidad_personas:
       Number(document.getElementById("personas").value),
@@ -248,8 +277,6 @@ form.addEventListener("submit", async function(e){
 
 
   if(error){
-
-    console.error(error);
 
     mensaje.textContent =
       "❌ Error: " + error.message;
