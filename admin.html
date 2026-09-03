@@ -89,6 +89,11 @@ button{
   float:right;
   background:#d9534f;
 }
+.eliminar{
+  background:#d9534f;
+  margin-top:8px;
+  width:100%;
+}
 @media(max-width:700px){
   .form{
     grid-template-columns:1fr;
@@ -325,21 +330,25 @@ async function cargarReservas(){
       <p><strong>👥 Personas:</strong> ${r.cantidad_personas}</p>
       <p><strong>📝 Notas:</strong> ${r.notas || "Sin notas"}</p>
 
-      <label><strong>Estado:</strong></label>
+    <label><strong>Estado:</strong></label>
 
-      <select onchange="cambiarEstado(${r.id}, this.value)">
-        <option value="pendiente" ${r.estado === "pendiente" ? "selected" : ""}>
-          Pendiente
-        </option>
+<select onchange="cambiarEstado(${r.id}, this.value)">
+  <option value="pendiente" ${r.estado === "pendiente" ? "selected" : ""}>
+    Pendiente
+  </option>
 
-        <option value="confirmada" ${r.estado === "confirmada" ? "selected" : ""}>
-          Confirmada
-        </option>
+  <option value="confirmada" ${r.estado === "confirmada" ? "selected" : ""}>
+    Confirmada
+  </option>
 
-        <option value="cancelada" ${r.estado === "cancelada" ? "selected" : ""}>
-          Cancelada
-        </option>
-      </select>
+  <option value="cancelada" ${r.estado === "cancelada" ? "selected" : ""}>
+    Cancelada
+  </option>
+</select>
+
+<button class="eliminar" onclick="eliminarReserva(${r.id})">
+  🗑️ Eliminar reserva
+</button>
     `;
 
     lista.appendChild(div);
@@ -368,7 +377,22 @@ async function cambiarEstado(id, estado){
 
   cargarReservas();
 }
+async function eliminarReserva(id){
+  if(!confirm("¿Seguro que querés eliminar esta reserva?")) return;
 
+  const { error } = await supabaseClient
+    .from("reservas")
+    .delete()
+    .eq("id", id);
+
+  if(error){
+    alert("No se pudo eliminar la reserva.");
+    console.error(error);
+    return;
+  }
+
+  cargarReservas();
+}
 
 form.addEventListener("submit", async function(e){
 
