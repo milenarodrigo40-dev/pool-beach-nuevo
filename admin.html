@@ -30,11 +30,6 @@ section{
   border-radius:18px;
   margin-bottom:25px;
 }
-.form{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
-}
 input,select,textarea{
   width:100%;
   padding:13px;
@@ -42,12 +37,10 @@ input,select,textarea{
   border-radius:10px;
   font-size:16px;
   box-sizing:border-box;
+  margin-bottom:12px;
 }
 textarea{
   min-height:90px;
-}
-.full{
-  grid-column:1/-1;
 }
 button{
   border:0;
@@ -57,6 +50,15 @@ button{
   border-radius:10px;
   font-weight:bold;
   font-size:16px;
+  cursor:pointer;
+}
+.form{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+.full{
+  grid-column:1/-1;
 }
 .lista{
   margin-top:20px;
@@ -69,18 +71,23 @@ button{
   padding:18px;
   background:#f8fcfd;
 }
-.estado{
-  display:inline-block;
-  margin-top:8px;
-  padding:6px 10px;
-  border-radius:15px;
-  background:#dff7e8;
-  color:#17733d;
-  font-weight:bold;
-}
 .mensaje{
   margin-top:15px;
   font-weight:bold;
+}
+#panel{
+  display:none;
+}
+#login{
+  max-width:450px;
+  margin:40px auto;
+}
+#login button{
+  width:100%;
+}
+#logout{
+  float:right;
+  background:#d9534f;
 }
 @media(max-width:700px){
   .form{
@@ -89,6 +96,10 @@ button{
   .full{
     grid-column:auto;
   }
+  #logout{
+    float:none;
+    margin-top:10px;
+  }
 }
 </style>
 </head>
@@ -96,18 +107,30 @@ button{
 <body>
 
 <header>
+<button id="logout">Cerrar sesión</button>
 <h1>Pool & Beach</h1>
 <p>Panel de Control</p>
 </header>
 
 <main class="container">
 
-<section>
-<h2>👋 Administración</h2>
-<p>Administración de reservas de Pool & Beach.</p>
+<section id="login">
+<h2>🔐 Acceso administrador</h2>
+
+<input id="email" type="email" placeholder="Correo electrónico">
+
+<input id="password" type="password" placeholder="Contraseña">
+
+<button id="loginButton">Ingresar</button>
+
+<div id="loginMensaje" class="mensaje"></div>
 </section>
 
-<section>
+
+<section id="panel">
+
+<h2>👋 Administración</h2>
+<p>Administración de reservas de Pool & Beach.</p>
 
 <h2>📅 Nueva reserva</h2>
 
@@ -157,9 +180,104 @@ Cargando reservas...
 
 <script>
 
+const login = document.getElementById("login");
+const panel = document.getElementById("panel");
+const loginButton = document.getElementById("loginButton");
+const loginMensaje = document.getElementById("loginMensaje");
+const logout = document.getElementById("logout");
+
+logout.style.display = "none";
+
+
+async function iniciarSesion(){
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
+  if(!email || !password){
+
+    loginMensaje.textContent =
+      "❌ Completá correo y contraseña.";
+
+    return;
+  }
+
+  loginMensaje.textContent = "Ingresando...";
+
+  const { error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: email,
+      password: password
+    });
+
+  if(error){
+
+    loginMensaje.textContent =
+      "❌ Correo o contraseña incorrectos.";
+
+    console.error(error);
+
+    return;
+  }
+
+  mostrarPanel();
+}
+
+
+async function verificarSesion(){
+
+  const { data } =
+    await supabaseClient.auth.getSession();
+
+  if(data.session){
+
+    mostrarPanel();
+
+  }else{
+
+    mostrarLogin();
+
+  }
+}
+
+
+function mostrarPanel(){
+
+  login.style.display = "none";
+  panel.style.display = "block";
+  logout.style.display = "block";
+
+  cargarReservas();
+}
+
+
+function mostrarLogin(){
+
+  login.style.display = "block";
+  panel.style.display = "none";
+  logout.style.display = "none";
+}
+
+
+loginButton.addEventListener("click", iniciarSesion);
+
+
+logout.addEventListener("click", async function(){
+
+  await supabaseClient.auth.signOut();
+
+  mostrarLogin();
+
+});
+
+
 const form = document.getElementById("formReserva");
 const lista = document.getElementById("lista");
 const mensaje = document.getElementById("mensaje");
+
 
 async function cargarReservas(){
 
@@ -173,12 +291,20 @@ async function cargarReservas(){
       .order("hora", { ascending:true });
 
   if(error){
-    lista.innerHTML = "❌ Error al cargar reservas.";
+
+    lista.innerHTML =
+      "❌ Error al cargar reservas.";
+
+    console.error(error);
+
     return;
   }
 
   if(!data || data.length === 0){
-    lista.innerHTML = "No hay reservas todavía.";
+
+    lista.innerHTML =
+      "No hay reservas todavía.";
+
     return;
   }
 
@@ -205,9 +331,11 @@ async function cargarReservas(){
         <option value="pendiente" ${r.estado === "pendiente" ? "selected" : ""}>
           Pendiente
         </option>
+
         <option value="confirmada" ${r.estado === "confirmada" ? "selected" : ""}>
           Confirmada
         </option>
+
         <option value="cancelada" ${r.estado === "cancelada" ? "selected" : ""}>
           Cancelada
         </option>
@@ -239,7 +367,6 @@ async function cambiarEstado(id, estado){
   }
 
   cargarReservas();
-
 }
 
 
@@ -247,19 +374,25 @@ form.addEventListener("submit", async function(e){
 
   e.preventDefault();
 
-  mensaje.textContent = "Guardando reserva...";
+  mensaje.textContent =
+    "Guardando reserva...";
 
   const reserva = {
 
-    nombre: document.getElementById("nombre").value.trim(),
+    nombre:
+      document.getElementById("nombre").value.trim(),
 
-    telefono: document.getElementById("telefono").value.trim(),
+    telefono:
+      document.getElementById("telefono").value.trim(),
 
-    fecha: document.getElementById("fecha").value,
+    fecha:
+      document.getElementById("fecha").value,
 
-    hora: document.getElementById("hora").value,
+    hora:
+      document.getElementById("hora").value,
 
-    servicio: document.getElementById("servicio").value,
+    servicio:
+      document.getElementById("servicio").value,
 
     cantidad_personas:
       Number(document.getElementById("personas").value),
@@ -295,7 +428,7 @@ form.addEventListener("submit", async function(e){
 });
 
 
-cargarReservas();
+verificarSesion();
 
 </script>
 
