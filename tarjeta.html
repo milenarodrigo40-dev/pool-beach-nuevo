@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Mi tarjeta | Pool & Beach</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(180deg, #071d2b, #0b3448);
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .contenedor {
+      width: 100%;
+      max-width: 430px;
+    }
+
+    .tarjeta {
+      background: linear-gradient(145deg, #123f55, #071d2b);
+      border: 2px solid rgba(255,255,255,0.25);
+      border-radius: 28px;
+      padding: 28px 22px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.45);
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 900;
+      margin-bottom: 5px;
+    }
+
+    .subtitulo {
+      text-align: center;
+      color: #9de8ff;
+      margin-bottom: 25px;
+    }
+
+    .nombre {
+      text-align: center;
+      font-size: 27px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .numero {
+      text-align: center;
+      color: #b9d9e5;
+      margin-bottom: 20px;
+    }
+
+    .estado {
+      text-align: center;
+      padding: 10px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-bottom: 22px;
+    }
+
+    .activo {
+      background: rgba(46, 204, 113, 0.18);
+      color: #65f29b;
+      border: 1px solid rgba(46,204,113,0.4);
+    }
+
+    .inactivo {
+      background: rgba(231, 76, 60, 0.18);
+      color: #ff8c80;
+      border: 1px solid rgba(231,76,60,0.4);
+    }
+
+    .datos {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .dato {
+      background: rgba(255,255,255,0.08);
+      border-radius: 18px;
+      padding: 20px 10px;
+      text-align: center;
+    }
+
+    .dato-titulo {
+      font-size: 14px;
+      color: #a9cfdd;
+      margin-bottom: 8px;
+    }
+
+    .dato-valor {
+      font-size: 28px;
+      font-weight: bold;
+    }
+
+    .historial {
+      margin-top: 22px;
+    }
+
+    .historial h2 {
+      font-size: 19px;
+      margin-bottom: 12px;
+    }
+
+    .movimiento {
+      background: rgba(255,255,255,0.07);
+      border-radius: 13px;
+      padding: 12px;
+      margin-bottom: 8px;
+    }
+
+    .movimiento-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      font-weight: bold;
+    }
+
+    .movimiento-fecha {
+      font-size: 12px;
+      color: #9db9c4;
+      margin-top: 5px;
+    }
+
+    .vacio {
+      color: #9db9c4;
+      text-align: center;
+      padding: 15px;
+    }
+
+    .mensaje {
+      text-align: center;
+      padding: 30px 15px;
+      font-size: 18px;
+    }
+
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #9de8ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .cargando {
+      text-align: center;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="contenedor">
+
+    <div id="cargando" class="cargando">
+      Cargando tu tarjeta...
+    </div>
+
+    <div id="contenido" class="tarjeta" style="display:none;">
+
+      <div class="logo">POOL & BEACH</div>
+      <div class="subtitulo">Tu tarjeta digital</div>
+
+      <div id="nombre" class="nombre"></div>
+      <div id="numero" class="numero"></div>
+
+      <div id="estado" class="estado"></div>
+
+      <div class="datos">
+
+        <div class="dato">
+          <div class="dato-titulo">PUNTOS</div>
+          <div id="puntos" class="dato-valor">0</div>
+        </div>
+
+        <div class="dato">
+          <div class="dato-titulo">SALDO</div>
+          <div id="saldo" class="dato-valor">$0</div>
+        </div>
+
+      </div>
+
+      <div class="historial">
+        <h2>Últimos movimientos</h2>
+        <div id="historial">
+          <div class="vacio">Cargando movimientos...</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div id="error" class="mensaje" style="display:none;">
+      No encontramos esta tarjeta.
+    </div>
+
+    <a href="/" class="volver">← Volver a Pool & Beach</a>
+
+  </div>
+
+<script>
+
+const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+const parametros = new URLSearchParams(window.location.search);
+const numeroTarjeta = parametros.get("numero");
+
+function escapar(texto) {
+  return String(texto ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function formatearSaldo(valor) {
+  return "$" + Number(valor || 0).toLocaleString("es-AR");
+}
+
+function formatearFecha(fecha) {
+  if (!fecha) return "";
+
+  const d = new Date(fecha);
+
+  if (isNaN(d.getTime())) return fecha;
+
+  return d.toLocaleString("es-AR", {
+    dateStyle: "short",
+    timeStyle: "short"
+  });
+}
+
+async function cargarTarjeta() {
+
+  if (!numeroTarjeta) {
+    mostrarError();
+    return;
+  }
+
+  try {
+
+    const { data, error } = await supabaseClient
+      .rpc("obtener_tarjeta_cliente", {
+        p_numero: numeroTarjeta
+      });
+
+    if (error) {
+      console.error(error);
+      mostrarError();
+      return;
+    }
+
+    let cliente = data;
+
+    if (Array.isArray(cliente)) {
+      cliente = cliente[0];
+    }
+
+    if (!cliente) {
+      mostrarError();
+      return;
+    }
+
+    document.getElementById("nombre").textContent =
+      cliente.nombre || "Cliente";
+
+    document.getElementById("numero").textContent =
+      "Tarjeta: " + (cliente.numero_tarjeta || numeroTarjeta);
+
+    document.getElementById("puntos").textContent =
+      Number(cliente.puntos || 0).toLocaleString("es-AR");
+
+    document.getElementById("saldo").textContent =
+      formatearSaldo(cliente.saldo);
+
+    const estado = document.getElementById("estado");
+
+    if (cliente.activo) {
+      estado.textContent = "● TARJETA ACTIVA";
+      estado.className = "estado activo";
+    } else {
+      estado.textContent = "● TARJETA INACTIVA";
+      estado.className = "estado inactivo";
+    }
+
+    document.getElementById("cargando").style.display = "none";
+    document.getElementById("contenido").style.display = "block";
+
+    cargarHistorial();
+
+  } catch (error) {
+
+    console.error(error);
+    mostrarError();
+
+  }
+}
+
+async function cargarHistorial() {
+
+  const historial = document.getElementById("historial");
+
+  try {
+
+    const { data, error } = await supabaseClient
+      .rpc("obtener_historial_tarjeta", {
+        p_numero: numeroTarjeta
+      });
+
+    if (error) {
+      console.error(error);
+
+      historial.innerHTML =
+        '<div class="vacio">No hay movimientos registrados.</div>';
+
+      return;
+    }
+
+    if (!data || data.length === 0) {
+
+      historial.innerHTML =
+        '<div class="vacio">Todavía no hay movimientos.</div>';
+
+      return;
+    }
+
+    historial.innerHTML = data
+      .slice(0, 10)
+      .map(mov => {
+
+        const cantidad =
+          Number(mov.cantidad || 0);
+
+        const puntos =
+          Number(mov.puntos || 0);
+
+        let detalle = "";
+
+        if (cantidad !== 0) {
+          detalle +=
+            " $" + cantidad.toLocaleString("es-AR");
+        }
+
+        if (puntos !== 0) {
+          detalle +=
+            " · " + (puntos > 0 ? "+" : "") +
+            puntos + " puntos";
+        }
+
+        return `
+          <div class="movimiento">
+
+            <div class="movimiento-top">
+
+              <span>
+                ${escapar(mov.concepto || mov.tipo || "Movimiento")}
+              </span>
+
+              <span>
+                ${escapar(detalle)}
+              </span>
+
+            </div>
+
+            <div class="movimiento-fecha">
+              ${formatearFecha(mov.creado_en)}
+            </div>
+
+          </div>
+        `;
+
+      })
+      .join("");
+
+  } catch (error) {
+
+    console.error(error);
+
+    historial.innerHTML =
+      '<div class="vacio">No hay movimientos registrados.</div>';
+
+  }
+}
+
+function mostrarError() {
+
+  document.getElementById("cargando").style.display = "none";
+  document.getElementById("contenido").style.display = "none";
+  document.getElementById("error").style.display = "block";
+
+}
+
+cargarTarjeta();
+
+</script>
+
+</body>
+</html>
