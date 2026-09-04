@@ -428,8 +428,20 @@ footer .logo{
   </p>
 </div>
 <div id="galeriaFotos" class="gallery">
-  <div class="gallery-loading">
-    Cargando galería...
+  <div class="gallery-item">
+<img
+  src="https://nmpakeovqkdajtswjpgm.supabase.co/storage/v1/object/public/Galeria/mapa/1788504177994-mrcgp3.jpeg"
+  alt="Mapa de guía Pool & Beach"
+  loading="lazy"
+>
+<div class="gallery-caption">
+  <strong>
+    Mapa de guía Pool & Beach
+  </strong>
+  <small>
+    mapa
+  </small>
+</div>
   </div>
 </div>
   </div>
@@ -706,76 +718,22 @@ document.addEventListener("DOMContentLoaded", async function(){
     .toISOString()
     .split("T")[0];
   /* GALERÍA */
-  const galeria =
-    document.getElementById("galeriaFotos");
-  try{
-    if(!window.supabaseClient){
-      throw new Error("Supabase no está conectado.");
-    }
-    const { data, error } =
-      await window.supabaseClient
-      .from("galeria_fotos")
-      .select("id,titulo,categoria,url,creado_en")
-      .order("creado_en",{ascending:false});
-    if(error){
-      console.error("Error de Supabase:",error);
-      throw error;
-    }
-    if(!data || data.length === 0){
-      galeria.innerHTML = `
-        <div class="empty">
-          Todavía no hay fotos en la galería.
-        </div>
-      `;
-      return;
-    }
-    galeria.innerHTML = "";
-    data.forEach(function(foto){
-      const item =
-        document.createElement("div");
-      item.className = "gallery-item";
-      const imagen =
-        document.createElement("img");
-      /*
-        Si la URL almacenada es relativa,
-        se carga desde el mismo sitio de Vercel.
-      */
-      imagen.src = foto.url;
-      imagen.alt =
-        foto.titulo || "Foto de Pool & Beach";
-      imagen.loading = "lazy";
-      imagen.onerror = function(){
-        console.error(
-          "No se pudo cargar la imagen:",
-          foto.url
-        );
-        item.innerHTML = `
-          <div class="gallery-error">
-            ❌ No se pudo cargar esta imagen.
-          </div>
-        `;
-      };
-      const caption =
-        document.createElement("div");
-      caption.className =
-        "gallery-caption";
-      const titulo =
-        document.createElement("strong");
-      titulo.textContent =
-        foto.titulo || "Pool & Beach";
-      caption.appendChild(titulo);
-      if(foto.categoria){
-        const categoria =
-          document.createElement("small");
-        categoria.textContent =
-          foto.categoria;
-        caption.appendChild(categoria);
-      }
-      item.appendChild(imagen);
-      item.appendChild(caption);
-      galeria.appendChild(item);
-    });
-  }catch(error){
+  const galeria = document.getElementById("galeriaFotos");
+
+  galeria.innerHTML = `
+    <div class="gallery-item">
+      <img
+        src="https://nmpakeovqkdajtswjpgm.supabase.co/storage/v1/object/public/Galeria/mapa/1788504177994-mrcgp3.jpeg"
+        alt="Mapa de guía Pool & Beach"
+        loading="lazy"
+      >
+
+      <div class="gallery-caption">
+        <strong>Mapa de guía Pool & Beach</strong>
+        <small>mapa</small>
+      </div>
+    </div>
+  `;
     console.error(
       "No se pudo cargar la galería:",
       error
