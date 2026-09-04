@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Pool & Beach | Juegos</title>
+
+<style>
+:root{
+  --bg:#06131e;
+  --card:#0c2333;
+  --card2:#123149;
+  --line:#24536a;
+  --sky:#62dcff;
+  --gold:#ffd166;
+  --green:#67e7a2;
+  --red:#ff7182;
+  --txt:#f5fbff;
+  --muted:#9ab5c5;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 20% 0%,#16415a 0%,#06131e 45%,#03080d 100%);
+  color:var(--txt);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+}
+
+.app{
+  max-width:920px;
+  margin:auto;
+  padding:15px 14px 70px;
+}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  margin-bottom:14px;
+}
+
+.brand{
+  font-size:21px;
+  font-weight:950;
+}
+
+.brand span{
+  color:var(--sky);
+}
+
+.badge{
+  font-size:10px;
+  border:1px solid var(--line);
+  padding:7px 10px;
+  border-radius:99px;
+  color:var(--sky);
+}
+
+.hero{
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:23px;
+  background:linear-gradient(145deg,#103a54,#0a1c2b);
+  box-shadow:0 18px 45px #0006;
+}
+
+.hero h1{
+  margin:0 0 6px;
+  font-size:28px;
+}
+
+.hero p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.45;
+}
+
+.mesa{
+  display:inline-block;
+  margin-top:13px;
+  padding:8px 12px;
+  border-radius:99px;
+  background:#15364b;
+  color:var(--gold);
+  font-weight:900;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:9px;
+  margin-top:15px;
+}
+
+.stat{
+  background:#061722aa;
+  border:1px solid #1d4357;
+  border-radius:14px;
+  padding:10px;
+}
+
+.stat small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.stat b{
+  font-size:20px;
+  color:var(--gold);
+}
+
+h2{
+  margin:25px 0 13px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
+}
+
+.game{
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:linear-gradient(145deg,var(--card),#091b28);
+  padding:20px;
+  cursor:pointer;
+  box-shadow:0 10px 25px #0004;
+  transition:.15s;
+}
+
+.game:hover{
+  transform:translateY(-3px);
+}
+
+.game:active{
+  transform:scale(.98);
+}
+
+.icon{
+  font-size:43px;
+  margin-bottom:8px;
+}
+
+.game h3{
+  margin:0 0 7px;
+  font-size:20px;
+}
+
+.game p{
+  margin:0;
+  color:var(--muted);
+  line-height:1.4;
+}
+
+.play{
+  margin-top:14px;
+  display:inline-block;
+  background:var(--sky);
+  color:#052031;
+  padding:9px 12px;
+  border-radius:10px;
+  font-weight:950;
+}
+
+.panel{
+  margin-top:12px;
+  padding:20px;
+  border:1px solid var(--line);
+  border-radius:19px;
+  background:var(--card);
+  display:none;
+}
+
+.panel.show{
+  display:block;
+}
+
+.panel h3{
+  margin:0 0 5px;
+}
+
+.sub{
+  color:var(--muted);
+  margin-bottom:14px;
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 14px;
+  background:var(--sky);
+  color:#052031;
+  font-weight:900;
+  cursor:pointer;
+}
+
+.btn.dark{
+  background:#15364b;
+  color:var(--txt);
+  border:1px solid var(--line);
+}
+
+.answer{
+  display:block;
+  width:100%;
+  text-align:left;
+  margin:8px 0;
+  padding:12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#102d40;
+  color:var(--txt);
+  cursor:pointer;
+}
+
+.answer:hover{
+  border-color:var(--sky);
+}
+
+.notice{
+  padding:12px;
+  border:1px dashed #3e829d;
+  background:#0c2a3b;
+  border-radius:13px;
+  color:#d8f4ff;
+  margin-top:12px;
+}
+
+.footer{
+  text-align:center;
+  color:#718c9c;
+  font-size:12px;
+  margin-top:25px;
+}
+
+@media(max-width:600px){
+
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    grid-template-columns:repeat(3,1fr);
+  }
+
+  .hero h1{
+    font-size:24px;
+  }
+
+  .app{
+    padding-left:10px;
+    padding-right:10px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <div class="top">
+
+    <div class="brand">
+      POOL <span>&</span> BEACH
+    </div>
+
+    <div class="badge">
+      JUGÁ SIN APP
+    </div>
+
+  </div>
+
+
+  <section class="hero">
+
+    <h1>
+      🎱 La zona de desafíos
+    </h1>
+
+    <p>
+      Escaneaste el QR de tu mesa. Elegí una tarjeta, jugá y sumá puntos.
+    </p>
+
+    <div id="mesa" class="mesa">
+      🎱 Mesa —
+    </div>
+
+    <div class="stats">
+
+      <div class="stat">
+        <small>Puntos</small>
+        <b id="points">0</b>
+      </div>
+
+      <div class="stat">
+        <small>Fichas</small>
+        <b id="tokens">0</b>
+      </div>
+
+      <div class="stat">
+        <small>Nivel</small>
+        <b id="level">1</b>
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <h2>
+    🎮 Elegí una tarjeta
+  </h2>
+
+
+  <div class="grid">
+
+    <div class="game" onclick="openGame('reto')">
+
+      <div class="icon">
+        🔥
+      </div>
+
+      <h3>
+        Reto Pool & Beach
+      </h3>
+
+      <p>
+        Desafíos rápidos para jugar solo o con amigos.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+
+    <div class="game" onclick="openGame('pool')">
+
+      <div class="icon">
+        🎱
+      </div>
+
+      <h3>
+        Desafío de Pool
+      </h3>
+
+      <p>
+        Objetivos y tiros especiales para sumar puntos.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+
+    <div class="game" onclick="openGame('dados')">
+
+      <div class="icon">
+        🎲
+      </div>
+
+      <h3>
+        Dados Beach
+      </h3>
+
+      <p>
+        Tirá los dados y superá el objetivo.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+
+    <div class="game" onclick="openGame('trivia')">
+
+      <div class="icon">
+        🧠
+      </div>
+
+      <h3>
+        Trivia Express
+      </h3>
+
+      <p>
+        Preguntas de música, fútbol, pool y cultura general.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+
+    <div class="game" onclick="openGame('duelo')">
+
+      <div class="icon">
+        👥
+      </div>
+
+      <h3>
+        Duelo 1 vs 1
+      </h3>
+
+      <p>
+        Dos jugadores compiten por puntos.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+
+    <div class="game" onclick="openGame('mision')">
+
+      <div class="icon">
+        ⭐
+      </div>
+
+      <h3>
+        Misión del día
+      </h3>
+
+      <p>
+        Completá una misión especial y aumentá tu racha.
+      </p>
+
+      <div class="play">
+        JUGAR →
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <section id="panel" class="panel">
+
+    <h3 id="ptitle"></h3>
+
+    <div id="psub" class="sub"></div>
+
+    <div id="gamebody"></div>
+
+    <button
+      class="btn dark"
+      onclick="closeGame()"
+      style="margin-top:14px"
+    >
+      ← Volver a tarjetas
+    </button>
+
+  </section>
+
+
+  <div class="notice">
+
+    🏆 Tus puntos quedan guardados en este dispositivo.
+    El ranking y los premios se pueden conectar al sistema de administración.
+
+  </div>
+
+
+  <div class="footer">
+    Pool & Beach · Puerto Pirámides · Juegos sin aplicación
+  </div>
+
+</div>
+
+
+<script>
+
+const params = new URLSearchParams(location.search);
+
+const mesa = params.get("mesa") || "—";
+
+document.getElementById("mesa").textContent =
+  "🎱 Mesa " + mesa;
+
+
+let points =
+  Number(localStorage.getItem("pb_points") || 0);
+
+let tokens =
+  Number(localStorage.getItem("pb_tokens") || 0);
+
+let level =
+  Math.max(1, Math.floor(points / 100) + 1);
+
+
+function render(){
+
+  document.getElementById("points").textContent =
+    points;
+
+  document.getElementById("tokens").textContent =
+    tokens;
+
+  document.getElementById("level").textContent =
+    level;
+
+}
+
+
+function addReward(puntos, fichas){
+
+  points += puntos;
+
+  tokens += fichas;
+
+  level =
+    Math.max(1, Math.floor(points / 100) + 1);
+
+  localStorage.setItem(
+    "pb_points",
+    points
+  );
+
+  localStorage.setItem(
+    "pb_tokens",
+    tokens
+  );
+
+  render();
+
+}
+
+
+function openGame(type){
+
+  const panel =
+    document.getElementById("panel");
+
+  const title =
+    document.getElementById("ptitle");
+
+  const sub =
+    document.getElementById("psub");
+
+  const body =
+    document.getElementById("gamebody");
+
+
+  const games = {
+
+    reto:{
+      title:"🔥 Reto Pool & Beach",
+      sub:"Completá el reto para ganar 20 puntos.",
+      body:`
+        <button
+          class="btn"
+          onclick="completeGame(20,5)"
+        >
+          ACEPTO EL RETO
+        </button>
+      `
+    },
+
+
+    pool:{
+      title:"🎱 Desafío de Pool",
+      sub:"Elegí tu objetivo.",
+      body:`
+        <button
+          class="answer"
+          onclick="completeGame(25,8)"
+        >
+          🎯 Embocar la bola 8
+        </button>
+
+        <button
+          class="answer"
+          onclick="completeGame(15,4)"
+        >
+          🎯 Hacer una banda
+        </button>
+      `
+    },
+
+
+    dados:{
+      title:"🎲 Dados Beach",
+      sub:"Tirá los dados y buscá superar 7.",
+      body:`
+        <button
+          class="btn"
+          onclick="rollDice()"
+        >
+          TIRAR DADOS 🎲
+        </button>
+
+        <div
+          id="diceResult"
+          class="notice"
+        >
+        </div>
+      `
+    },
+
+
+    trivia:{
+      title:"🧠 Trivia Express",
+      sub:"¿Cuántas bolas tiene un juego estándar de pool de 8 bolas contando la blanca?",
+      body:`
+        <button
+          class="answer"
+          onclick="answerTrivia(false)"
+        >
+          🎱 8
+        </button>
+
+        <button
+          class="answer"
+          onclick="answerTrivia(true)"
+        >
+          🎱 16
+        </button>
+
+        <button
+          class="answer"
+          onclick="answerTrivia(false)"
+        >
+          🎱 20
+        </button>
+      `
+    },
+
+
+    duelo:{
+      title:"👥 Duelo 1 vs 1",
+      sub:"Desafío rápido para competir contra otra persona.",
+      body:`
+        <button
+          class="btn"
+          onclick="completeGame(30,10)"
+        >
+          JUGAR DUELO
+        </button>
+      `
+    },
+
+
+    mision:{
+      title:"⭐ Misión del día",
+      sub:"Completá una misión especial.",
+      body:`
+        <button
+          class="btn"
+          onclick="completeGame(35,12)"
+        >
+          COMPLETAR MISIÓN
+        </button>
+      `
+    }
+
+  };
+
+
+  const game =
+    games[type];
+
+  title.textContent =
+    game.title;
+
+  sub.textContent =
+    game.sub;
+
+  body.innerHTML =
+    game.body;
+
+  panel.classList.add("show");
+
+  panel.scrollIntoView({
+    behavior:"smooth",
+    block:"start"
+  });
+
+}
+
+
+function completeGame(puntos, fichas){
+
+  addReward(
+    puntos,
+    fichas
+  );
+
+  document.getElementById(
+    "gamebody"
+  ).innerHTML = `
+    <div class="notice">
+      🎉 ¡Excelente! Ganaste
+      ${puntos} puntos y
+      ${fichas} fichas.
+    </div>
+  `;
+
+}
+
+
+function rollDice(){
+
+  const a =
+    1 + Math.floor(Math.random() * 6);
+
+  const b =
+    1 + Math.floor(Math.random() * 6);
+
+  const suma =
+    a + b;
+
+
+  const resultado =
+    document.getElementById(
+      "diceResult"
+    );
+
+
+  resultado.innerHTML =
+    "🎲 Salió " +
+    a +
+    " + " +
+    b +
+    " = <b>" +
+    suma +
+    "</b>" +
+    (
+      suma > 7
+      ?
+      "<br>🎉 ¡Superaste 7! +25 puntos."
+      :
+      "<br>Seguí intentando."
+    );
+
+
+  if(suma > 7){
+
+    addReward(
+      25,
+      7
+    );
+
+  }
+
+}
+
+
+function answerTrivia(correcto){
+
+  const body =
+    document.getElementById(
+      "gamebody"
+    );
+
+
+  if(correcto){
+
+    addReward(
+      20,
+      5
+    );
+
+    body.innerHTML = `
+      <div class="notice">
+        ✅ ¡Correcto!
+        +20 puntos y +5 fichas.
+      </div>
+    `;
+
+  }else{
+
+    body.innerHTML = `
+      <div class="notice">
+        ❌ No era esa.
+        Probá otra vez.
+      </div>
+    `;
+
+  }
+
+}
+
+
+function closeGame(){
+
+  document
+    .getElementById("panel")
+    .classList.remove("show");
+
+  document
+    .querySelector("h2")
+    .scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+
+}
+
+
+render();
+
+</script>
+
+</body>
+</html>
