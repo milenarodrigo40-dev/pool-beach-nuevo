@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pool & Beach - Administración</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
       box-sizing: border-box;
@@ -29,12 +30,12 @@
     h1 {
       text-align: center;
       color: #0284c7;
-      margin-bottom: 8px;
+      margin: 0 0 8px;
     }
-    p {
+    .subtitle {
       text-align: center;
       color: #64748b;
-      margin-bottom: 25px;
+      margin: 0 0 25px;
     }
     label {
       display: block;
@@ -49,6 +50,11 @@
       border: 1px solid #cbd5e1;
       border-radius: 10px;
       font-size: 16px;
+      outline: none;
+    }
+    input:focus {
+      border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2,132,199,.15);
     }
     button {
       display: block;
@@ -65,17 +71,115 @@
     button:hover {
       background: #0369a1;
     }
+    button:disabled {
+      opacity: .7;
+      cursor: wait;
+    }
     #mensaje {
       margin-top: 15px;
+      padding: 10px;
+      border-radius: 8px;
       text-align: center;
-      color: #dc2626;
+      font-size: 14px;
+      min-height: 18px;
+    }
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+    .success {
+      background: #dcfce7;
+      color: #166534;
+    }
+    /* PANEL */
+    #adminPanel {
+      width: 100%;
+      min-height: 100vh;
+      background: #f1f5f9;
+      align-self: flex-start;
+    }
+    .topbar {
+      background: #0284c7;
+      color: white;
+      padding: 18px 20px;
+    }
+    .topbar-inner {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+    .topbar h1 {
+      color: white;
+      text-align: left;
+      font-size: 24px;
+    }
+    .logout {
+      width: auto;
+      background: #dc2626;
+      padding: 10px 16px;
+      font-size: 14px;
+    }
+    .contenido {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px 20px;
+    }
+    .bienvenida {
+      background: white;
+      padding: 25px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+    .bienvenida h2 {
+      margin-top: 0;
+      color: #0284c7;
+    }
+    .tarjetas {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+      margin-top: 20px;
+    }
+    .tarjeta {
+      background: white;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    }
+    .tarjeta strong {
+      display: block;
+      font-size: 30px;
+      color: #0284c7;
+      margin-top: 8px;
+    }
+    .oculto {
+      display: none !important;
+    }
+    @media (max-width: 600px) {
+      .tarjetas {
+        grid-template-columns: 1fr;
+      }
+      .topbar-inner {
+        align-items: flex-start;
+      }
+      .topbar h1 {
+        font-size: 20px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="login">
+  <!-- ========================= -->
+  <!-- LOGIN -->
+  <!-- ========================= -->
+  <div id="loginScreen" class="login">
     <h1>🏖️ Pool & Beach</h1>
-    <p>Panel de administración</p>
+    <p class="subtitle">
+      Panel de administración
+    </p>
     <form id="loginForm">
       <label for="email">
         Correo electrónico
@@ -84,6 +188,7 @@
         type="email"
         id="email"
         placeholder="Ingresá tu correo"
+        autocomplete="email"
         required
       >
       <label for="password">
@@ -93,13 +198,264 @@
         type="password"
         id="password"
         placeholder="Ingresá tu contraseña"
+        autocomplete="current-password"
         required
       >
-      <button type="submit">
+      <button
+        type="submit"
+        id="loginButton"
+      >
         Iniciar sesión
       </button>
       <div id="mensaje"></div>
     </form>
   </div>
+  <!-- ========================= -->
+  <!-- PANEL ADMINISTRACIÓN -->
+  <!-- ========================= -->
+  <div id="adminPanel" class="oculto">
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div>
+          <h1>🏖️ Pool & Beach</h1>
+          <div>Panel de administración</div>
+        </div>
+        <button
+          id="logoutButton"
+          class="logout"
+          type="button"
+        >
+          Cerrar sesión
+        </button>
+      </div>
+    </div>
+    <div class="contenido">
+      <div class="bienvenida">
+        <h2>¡Bienvenida al panel! 👋</h2>
+        <p>
+          El inicio de sesión funciona correctamente.
+        </p>
+        <div class="tarjetas">
+          <div class="tarjeta">
+            Reservas
+            <strong id="reservas">0</strong>
+          </div>
+          <div class="tarjeta">
+            Mesas
+            <strong id="mesas">0</strong>
+          </div>
+          <div class="tarjeta">
+            Fotos
+            <strong id="fotos">0</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    /* =====================================
+       DATOS DE SUPABASE
+       ===================================== */
+    const SUPABASE_URL =
+      "https://nmpakeovqkdajtswjpgm.supabase.co";
+    const SUPABASE_ANON_KEY =
+      "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+    /* =====================================
+       CONEXIÓN
+       ===================================== */
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+    /* =====================================
+       ELEMENTOS
+       ===================================== */
+    const loginScreen =
+      document.getElementById("loginScreen");
+    const adminPanel =
+      document.getElementById("adminPanel");
+    const loginForm =
+      document.getElementById("loginForm");
+    const loginButton =
+      document.getElementById("loginButton");
+    const logoutButton =
+      document.getElementById("logoutButton");
+    const mensaje =
+      document.getElementById("mensaje");
+    /* =====================================
+       MENSAJE
+       ===================================== */
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = tipo || "";
+    }
+    /* =====================================
+       MOSTRAR PANEL
+       ===================================== */
+    function mostrarPanel() {
+      loginScreen.classList.add("oculto");
+      adminPanel.classList.remove("oculto");
+      cargarDatos();
+    }
+    /* =====================================
+       MOSTRAR LOGIN
+       ===================================== */
+    function mostrarLogin() {
+      adminPanel.classList.add("oculto");
+      loginScreen.classList.remove("oculto");
+      document.getElementById("password").value = "";
+    }
+    /* =====================================
+       INICIAR SESIÓN
+       ===================================== */
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+        event.preventDefault();
+        const email =
+          document.getElementById("email")
+            .value
+            .trim();
+        const password =
+          document.getElementById("password")
+            .value;
+        if (!email || !password) {
+          mostrarMensaje(
+            "Ingresá tu correo y contraseña.",
+            "error"
+          );
+          return;
+        }
+        loginButton.disabled = true;
+        loginButton.textContent =
+          "Ingresando...";
+        mostrarMensaje("", "");
+        try {
+          const {
+            data,
+            error
+          } =
+            await supabaseClient.auth
+              .signInWithPassword({
+                email: email,
+                password: password
+              });
+          if (error) {
+            mostrarMensaje(
+              "Correo o contraseña incorrectos.",
+              "error"
+            );
+            console.error(error);
+            return;
+          }
+          if (data.session) {
+            mostrarMensaje(
+              "Inicio de sesión correcto.",
+              "success"
+            );
+            setTimeout(
+              function() {
+                mostrarPanel();
+              },
+              300
+            );
+          }
+        } catch (error) {
+          console.error(error);
+          mostrarMensaje(
+            "No se pudo conectar con Supabase.",
+            "error"
+          );
+        } finally {
+          loginButton.disabled = false;
+          loginButton.textContent =
+            "Iniciar sesión";
+        }
+      }
+    );
+    /* =====================================
+       CERRAR SESIÓN
+       ===================================== */
+    logoutButton.addEventListener(
+      "click",
+      async function() {
+        await supabaseClient.auth.signOut();
+        mostrarLogin();
+      }
+    );
+    /* =====================================
+       COMPROBAR SESIÓN EXISTENTE
+       ===================================== */
+    async function comprobarSesion() {
+      const {
+        data
+      } =
+        await supabaseClient.auth.getSession();
+      if (data.session) {
+        mostrarPanel();
+      } else {
+        mostrarLogin();
+      }
+    }
+    /* =====================================
+       CAMBIO DE SESIÓN
+       ===================================== */
+    supabaseClient.auth.onAuthStateChange(
+      function(event, session) {
+        if (session) {
+          mostrarPanel();
+        } else {
+          mostrarLogin();
+        }
+      }
+    );
+    /* =====================================
+       CARGAR DATOS BÁSICOS
+       ===================================== */
+    async function cargarDatos() {
+      try {
+        const reservas =
+          await supabaseClient
+            .from("reservas")
+            .select("id", {
+              count: "exact",
+              head: true
+            });
+        const mesas =
+          await supabaseClient
+            .from("mesas")
+            .select("id", {
+              count: "exact",
+              head: true
+            });
+        const fotos =
+          await supabaseClient
+            .from("galeria_fotos")
+            .select("id", {
+              count: "exact",
+              head: true
+            });
+        document.getElementById("reservas")
+          .textContent =
+          reservas.count || 0;
+        document.getElementById("mesas")
+          .textContent =
+          mesas.count || 0;
+        document.getElementById("fotos")
+          .textContent =
+          fotos.count || 0;
+      } catch (error) {
+        console.error(
+          "Error cargando datos:",
+          error
+        );
+      }
+    }
+    /* =====================================
+       ARRANQUE
+       ===================================== */
+    comprobarSesion();
+  </script>
 </body>
 </html>
