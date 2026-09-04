@@ -3,1901 +3,2596 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Panel de Control | Pool & Beach</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
+*{
+  box-sizing:border-box;
+}
+
+html{
+  scroll-behavior:smooth;
+}
 
 body{
-font-family:Arial,Helvetica,sans-serif;
-background:#071923;
-color:#fff;
-min-height:100vh;
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7f9;
+  color:#17202a;
 }
 
-button,input,select,textarea{font:inherit}
+button,
+input,
+select,
+textarea{
+  font:inherit;
+}
 
 button{
-cursor:pointer;
-}
-
-.header{
-background:linear-gradient(135deg,#062f43,#0b718d);
-padding:22px 18px;
-text-align:center;
-border-bottom:2px solid rgba(255,255,255,.15);
-}
-
-.header h1{
-font-size:28px;
-margin-bottom:6px;
-}
-
-.header p{
-opacity:.85;
-}
-
-.container{
-width:min(1150px,94%);
-margin:25px auto 50px;
-}
-
-.login-box,.panel{
-background:#0d2530;
-border:1px solid rgba(255,255,255,.1);
-border-radius:18px;
-padding:22px;
-box-shadow:0 12px 35px rgba(0,0,0,.25);
-}
-
-.login-box{
-max-width:430px;
-margin:50px auto;
-}
-
-h2{
-margin-bottom:18px;
-color:#72ddf7;
-}
-
-h3{
-margin-bottom:12px;
-}
-
-.field{
-margin-bottom:14px;
-}
-
-.field label{
-display:block;
-margin-bottom:6px;
-font-weight:bold;
-font-size:14px;
-}
-
-input,select,textarea{
-width:100%;
-border:1px solid #31515d;
-background:#071923;
-color:#fff;
-border-radius:10px;
-padding:12px;
-outline:none;
-}
-
-textarea{
-min-height:100px;
-resize:vertical;
-}
-
-input:focus,select:focus,textarea:focus{
-border-color:#72ddf7;
-}
-
-.btn{
-border:0;
-border-radius:10px;
-padding:12px 17px;
-font-weight:bold;
-transition:.2s;
-}
-
-.btn:hover{
-transform:translateY(-1px);
-opacity:.92;
-}
-
-.btn:disabled{
-opacity:.5;
-cursor:not-allowed;
-transform:none;
-}
-
-.btn-primary{
-background:#19a7ce;
-color:#fff;
-}
-
-.btn-success{
-background:#1da56d;
-color:#fff;
-}
-
-.btn-danger{
-background:#c94444;
-color:#fff;
-}
-
-.btn-secondary{
-background:#31515d;
-color:#fff;
+  cursor:pointer;
 }
 
 .hidden{
-display:none!important;
+  display:none !important;
 }
 
-.topbar{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:12px;
-margin-bottom:20px;
-flex-wrap:wrap;
+/* LOGIN */
+
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:
+    linear-gradient(rgba(0,0,0,.48),rgba(0,0,0,.48)),
+    linear-gradient(135deg,#0b6075,#0fa3b1,#f4d35e);
 }
 
-.status{
-padding:8px 12px;
-border-radius:999px;
-background:#123743;
-font-size:13px;
+.login-box{
+  width:100%;
+  max-width:430px;
+  background:#fff;
+  border-radius:22px;
+  padding:30px 24px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
 }
 
-.status.ok{
-background:#155d43;
+.login-logo{
+  text-align:center;
+  margin-bottom:25px;
 }
 
-.status.error{
-background:#713535;
+.login-logo h1{
+  margin:0;
+  color:#087f8c;
+  font-size:32px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:18px;
+.login-logo p{
+  margin:7px 0 0;
+  color:#667085;
 }
 
-.card{
-background:#102d39;
-border-radius:15px;
-padding:18px;
-border:1px solid rgba(255,255,255,.08);
+.form-group{
+  margin-bottom:16px;
 }
 
-.card .number{
-font-size:34px;
-font-weight:bold;
-color:#72ddf7;
+.form-group label{
+  display:block;
+  font-weight:bold;
+  margin-bottom:7px;
 }
 
-.card .label{
-opacity:.8;
-margin-top:5px;
+input,
+select,
+textarea{
+  width:100%;
+  border:1px solid #d0d5dd;
+  border-radius:10px;
+  padding:12px;
+  background:#fff;
+  color:#17202a;
+  outline:none;
 }
 
-.section{
-margin-top:22px;
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:#0798a8;
+  box-shadow:0 0 0 3px rgba(7,152,168,.12);
 }
 
-.section-title{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-flex-wrap:wrap;
-margin-bottom:14px;
+textarea{
+  min-height:90px;
+  resize:vertical;
 }
 
-.table-wrap{
-overflow-x:auto;
+.btn{
+  border:0;
+  border-radius:10px;
+  padding:11px 16px;
+  font-weight:bold;
+  transition:.2s;
 }
 
-table{
-width:100%;
-border-collapse:collapse;
-min-width:760px;
+.btn:hover{
+  transform:translateY(-1px);
 }
 
-th,td{
-padding:11px 9px;
-text-align:left;
-border-bottom:1px solid rgba(255,255,255,.08);
+.btn-primary{
+  background:#087f8c;
+  color:white;
 }
 
-th{
-color:#72ddf7;
-background:#102d39;
+.btn-success{
+  background:#198754;
+  color:white;
 }
 
-.badge{
-display:inline-block;
-padding:5px 9px;
-border-radius:999px;
-font-size:12px;
-font-weight:bold;
+.btn-warning{
+  background:#f59e0b;
+  color:white;
 }
 
-.badge-pendiente{
-background:#d99a28;
-color:#111;
+.btn-danger{
+  background:#dc3545;
+  color:white;
 }
 
-.badge-confirmada{
-background:#1da56d;
+.btn-secondary{
+  background:#667085;
+  color:white;
 }
 
-.badge-cancelada{
-background:#c94444;
+.btn-light{
+  background:#eef2f6;
+  color:#344054;
 }
 
-.actions{
-display:flex;
-flex-wrap:wrap;
-gap:7px;
-}
-
-.photo-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:15px;
-}
-
-.photo-card{
-background:#102d39;
-border-radius:14px;
-overflow:hidden;
-border:1px solid rgba(255,255,255,.08);
-}
-
-.photo-card img{
-width:100%;
-height:160px;
-object-fit:cover;
-display:block;
-background:#06131a;
-}
-
-.photo-info{
-padding:12px;
-}
-
-.photo-url{
-font-size:11px;
-opacity:.7;
-word-break:break-all;
-margin:8px 0;
+.btn-block{
+  width:100%;
 }
 
 .message{
-margin:12px 0;
-padding:11px 13px;
-border-radius:10px;
-display:none;
-}
-
-.message.show{
-display:block;
-}
-
-.message.success{
-background:#155d43;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:16px;
+  display:none;
+  font-size:14px;
 }
 
 .message.error{
-background:#713535;
+  display:block;
+  background:#fff0f1;
+  color:#b42318;
+  border:1px solid #fecdca;
 }
 
-.message.info{
-background:#17485a;
+.message.success{
+  display:block;
+  background:#ecfdf3;
+  color:#067647;
+  border:1px solid #abefc6;
 }
 
-.empty{
-text-align:center;
-padding:25px;
-opacity:.7;
+/* ADMIN */
+
+#adminScreen{
+  min-height:100vh;
 }
+
+.topbar{
+  background:#082f3a;
+  color:white;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:sticky;
+  top:0;
+  z-index:100;
+  box-shadow:0 3px 15px rgba(0,0,0,.18);
+}
+
+.topbar h1{
+  margin:0;
+  font-size:22px;
+}
+
+.topbar small{
+  display:block;
+  opacity:.75;
+  margin-top:3px;
+}
+
+.topbar-right{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.status{
+  background:rgba(255,255,255,.1);
+  border-radius:20px;
+  padding:7px 11px;
+  font-size:13px;
+}
+
+.container{
+  width:100%;
+  max-width:1400px;
+  margin:auto;
+  padding:22px;
+}
+
+.section{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:22px;
+  box-shadow:0 3px 15px rgba(16,24,40,.06);
+}
+
+.section-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:15px;
+  margin-bottom:18px;
+}
+
+.section-header h2{
+  margin:0;
+  font-size:21px;
+}
+
+.section-header p{
+  margin:5px 0 0;
+  color:#667085;
+  font-size:14px;
+}
+
+/* CARDS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:16px;
+  margin-bottom:22px;
+}
+
+.stat-card{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  box-shadow:0 3px 15px rgba(16,24,40,.06);
+  border-left:5px solid #087f8c;
+}
+
+.stat-card:nth-child(2){
+  border-left-color:#f59e0b;
+}
+
+.stat-card:nth-child(3){
+  border-left-color:#198754;
+}
+
+.stat-card:nth-child(4){
+  border-left-color:#7c3aed;
+}
+
+.stat-label{
+  color:#667085;
+  font-size:14px;
+}
+
+.stat-number{
+  font-size:32px;
+  font-weight:800;
+  margin-top:6px;
+}
+
+.stat-extra{
+  font-size:12px;
+  color:#667085;
+  margin-top:4px;
+}
+
+/* TABLE */
+
+.table-wrapper{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  min-width:900px;
+}
+
+th,
+td{
+  text-align:left;
+  padding:12px 10px;
+  border-bottom:1px solid #eaecf0;
+  vertical-align:middle;
+}
+
+th{
+  background:#f8fafc;
+  font-size:13px;
+  color:#475467;
+}
+
+td{
+  font-size:14px;
+}
+
+tr:hover td{
+  background:#fafafa;
+}
+
+.badge{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.badge-pendiente{
+  background:#fff7ed;
+  color:#c2410c;
+}
+
+.badge-confirmada{
+  background:#ecfdf3;
+  color:#067647;
+}
+
+.badge-cancelada{
+  background:#fef3f2;
+  color:#b42318;
+}
+
+.badge-activa{
+  background:#ecfdf3;
+  color:#067647;
+}
+
+.badge-inactiva{
+  background:#f2f4f7;
+  color:#667085;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px;
+}
+
+.actions .btn{
+  padding:7px 9px;
+  font-size:12px;
+}
+
+/* FORMS */
 
 .form-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:14px;
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
 }
 
-.form-grid .full{
-grid-column:1/-1;
+.form-grid-2{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
 }
 
-.divider{
-height:1px;
-background:rgba(255,255,255,.1);
-margin:22px 0;
+.form-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:15px;
 }
 
-.footer{
-text-align:center;
-opacity:.6;
-padding:25px 0;
-font-size:13px;
+/* MESAS */
+
+.mesas-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-top:18px;
+}
+
+.mesa-card{
+  border:1px solid #eaecf0;
+  border-radius:14px;
+  padding:16px;
+  background:#fff;
+}
+
+.mesa-card h3{
+  margin:0 0 5px;
+}
+
+.mesa-card p{
+  margin:4px 0;
+  color:#667085;
+  font-size:13px;
+}
+
+.mesa-number{
+  font-size:28px;
+  font-weight:800;
+  color:#087f8c;
+}
+
+/* PHOTOS */
+
+.upload-box{
+  border:2px dashed #b8c5cc;
+  border-radius:14px;
+  padding:20px;
+  background:#f8fafc;
+}
+
+.photo-preview{
+  max-width:220px;
+  max-height:150px;
+  object-fit:cover;
+  border-radius:10px;
+  margin-top:10px;
+  display:none;
+}
+
+.photos-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-top:20px;
+}
+
+.photo-card{
+  border:1px solid #eaecf0;
+  border-radius:14px;
+  overflow:hidden;
+  background:white;
+}
+
+.photo-card img{
+  width:100%;
+  height:180px;
+  object-fit:cover;
+  display:block;
+  background:#eef2f6;
+}
+
+.photo-info{
+  padding:12px;
+}
+
+.photo-info h3{
+  margin:0 0 5px;
+  font-size:15px;
+}
+
+.photo-info p{
+  margin:3px 0 10px;
+  color:#667085;
+  font-size:12px;
+  word-break:break-word;
+}
+
+/* NOTIFICATION */
+
+.notification{
+  background:#fff8e7;
+  border:1px solid #f5d58a;
+  color:#7a4b00;
+  border-radius:12px;
+  padding:13px 15px;
+  margin-bottom:18px;
+  display:none;
+}
+
+.notification.show{
+  display:block;
+}
+
+/* EMPTY */
+
+.empty{
+  padding:30px;
+  text-align:center;
+  color:#667085;
+}
+
+/* LOADING */
+
+.loading{
+  opacity:.65;
+  pointer-events:none;
+}
+
+/* MOBILE */
+
+@media(max-width:1000px){
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .mesas-grid,
+  .photos-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
 }
 
 @media(max-width:650px){
+  .topbar{
+    padding:12px 14px;
+  }
 
-.form-grid{
-grid-template-columns:1fr;
-}
+  .topbar h1{
+    font-size:17px;
+  }
 
-.form-grid .full{
-grid-column:auto;
-}
+  .topbar-right{
+    gap:5px;
+  }
 
-.header h1{
-font-size:23px;
-}
+  .status{
+    display:none;
+  }
 
-.login-box,.panel{
-padding:17px;
-}
+  .container{
+    padding:12px;
+  }
+
+  .section{
+    padding:15px;
+    border-radius:13px;
+  }
+
+  .stats{
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .stat-card{
+    padding:14px;
+  }
+
+  .stat-number{
+    font-size:25px;
+  }
+
+  .form-grid,
+  .form-grid-2{
+    grid-template-columns:1fr;
+  }
+
+  .mesas-grid,
+  .photos-grid{
+    grid-template-columns:1fr;
+  }
+
+  .section-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .section-header .btn{
+    width:100%;
+  }
 }
 </style>
 </head>
 
 <body>
 
-<header class="header">
-<h1>🏖️ Pool & Beach</h1>
-<p>Panel de Administración</p>
-</header>
-
-<main class="container">
-
 <!-- LOGIN -->
 
-<section id="loginSection" class="login-box">
+<div id="loginScreen">
 
-<h2>🔐 Iniciar sesión</h2>
+  <div class="login-box">
 
-<div id="loginMessage" class="message"></div>
+    <div class="login-logo">
+      <h1>Pool & Beach</h1>
+      <p>Panel de administración</p>
+    </div>
 
-<div class="field">
-<label for="email">Correo electrónico</label>
+    <div id="loginMessage" class="message"></div>
 
-<input
-id="email"
-type="email"
-placeholder="Tu correo"
-autocomplete="email"
->
-</div>
+    <form id="loginForm">
 
-<div class="field">
-<label for="password">Contraseña</label>
+      <div class="form-group">
+        <label for="loginEmail">Correo electrónico</label>
+        <input
+          id="loginEmail"
+          type="email"
+          autocomplete="username"
+          placeholder="Tu correo"
+          required
+        >
+      </div>
 
-<input
-id="password"
-type="password"
-placeholder="Tu contraseña"
-autocomplete="current-password"
->
-</div>
+      <div class="form-group">
+        <label for="loginPassword">Contraseña</label>
+        <input
+          id="loginPassword"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Tu contraseña"
+          required
+        >
+      </div>
 
-<!-- BOTÓN SIEMPRE VISIBLE -->
+      <button
+        id="loginButton"
+        type="submit"
+        class="btn btn-primary btn-block"
+      >
+        Iniciar sesión
+      </button>
 
-<button
-id="loginBtn"
-type="button"
-class="btn btn-primary"
-style="display:block!important;width:100%!important;min-height:48px!important;visibility:visible!important;opacity:1!important;"
->
-Iniciar sesión
-</button>
+    </form>
 
-</section>
-
-
-<!-- PANEL -->
-
-<section id="adminPanel" class="hidden">
-
-<div class="topbar">
-
-<div>
-<h2 style="margin-bottom:4px;">
-Panel de control
-</h2>
-
-<div
-id="userEmail"
-style="opacity:.7;font-size:13px;"
-></div>
-</div>
-
-<div
-style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;"
->
-
-<span
-id="connectionStatus"
-class="status"
->
-Conectando...
-</span>
-
-<button
-id="logoutBtn"
-type="button"
-class="btn btn-danger"
->
-Cerrar sesión
-</button>
-
-</div>
+  </div>
 
 </div>
 
 
-<div id="globalMessage" class="message"></div>
+<!-- ADMIN -->
+
+<div id="adminScreen" class="hidden">
+
+  <header class="topbar">
+
+    <div>
+      <h1>Pool & Beach</h1>
+      <small>Panel de administración</small>
+    </div>
+
+    <div class="topbar-right">
+
+      <div class="status" id="userStatus">
+        Sesión activa
+      </div>
+
+      <button
+        id="logoutButton"
+        class="btn btn-danger"
+        type="button"
+      >
+        Cerrar sesión
+      </button>
+
+    </div>
+
+  </header>
 
 
-<!-- ESTADÍSTICAS -->
+  <main class="container">
 
-<div class="grid">
+    <div id="adminMessage" class="message"></div>
 
-<div class="card">
-<div id="totalReservas" class="number">0</div>
-<div class="label">Reservas totales</div>
+    <div id="notificationBox" class="notification"></div>
+
+
+    <!-- ESTADÍSTICAS -->
+
+    <div class="stats">
+
+      <div class="stat-card">
+        <div class="stat-label">Total reservas</div>
+        <div class="stat-number" id="statTotal">0</div>
+        <div class="stat-extra">Todas las reservas</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Pendientes</div>
+        <div class="stat-number" id="statPending">0</div>
+        <div class="stat-extra">Esperando confirmación</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Confirmadas</div>
+        <div class="stat-number" id="statConfirmed">0</div>
+        <div class="stat-extra">Reservas confirmadas</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-label">Mesas</div>
+        <div class="stat-number" id="statTables">0</div>
+        <div class="stat-extra">Mesas activas</div>
+      </div>
+
+    </div>
+
+
+    <!-- RESERVAS -->
+
+    <section class="section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>📅 Reservas</h2>
+          <p>Administrá las reservas recibidas desde la página.</p>
+        </div>
+
+        <button
+          class="btn btn-primary"
+          type="button"
+          onclick="loadAll()"
+        >
+          Actualizar
+        </button>
+
+      </div>
+
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Nombre</th>
+              <th>Teléfono</th>
+              <th>Servicio</th>
+              <th>Personas</th>
+              <th>Estado</th>
+              <th>Notas</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+
+          <tbody id="reservasBody">
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </section>
+
+
+    <!-- MESAS -->
+
+    <section class="section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>🎱 Mesas</h2>
+          <p>Agregá, modificá o desactivá las mesas de Pool & Beach.</p>
+        </div>
+
+      </div>
+
+
+      <form id="mesaForm">
+
+        <input
+          id="mesaId"
+          type="hidden"
+        >
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label>Número</label>
+            <input
+              id="mesaNumero"
+              type="number"
+              min="1"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Nombre</label>
+            <input
+              id="mesaNombre"
+              type="text"
+              placeholder="Ej: Mesa 1"
+              required
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Servicio</label>
+            <input
+              id="mesaServicio"
+              type="text"
+              placeholder="Ej: Pool"
+            >
+          </div>
+
+          <div class="form-group">
+            <label>Estado</label>
+            <select id="mesaActiva">
+              <option value="true">Activa</option>
+              <option value="false">Inactiva</option>
+            </select>
+          </div>
+
+        </div>
+
+        <div class="form-actions">
+
+          <button
+            id="mesaSaveButton"
+            type="submit"
+            class="btn btn-primary"
+          >
+            Guardar mesa
+          </button>
+
+          <button
+            id="mesaCancelButton"
+            type="button"
+            class="btn btn-light hidden"
+            onclick="cancelMesaEdit()"
+          >
+            Cancelar edición
+          </button>
+
+        </div>
+
+      </form>
+
+
+      <div
+        id="mesasGrid"
+        class="mesas-grid"
+      ></div>
+
+    </section>
+
+
+    <!-- GALERÍA -->
+
+    <section class="section">
+
+      <div class="section-header">
+
+        <div>
+          <h2>📷 Galería de fotos</h2>
+          <p>
+            Ahora podés cargar fotos directamente desde tu celular.
+          </p>
+        </div>
+
+      </div>
+
+
+      <div class="upload-box">
+
+        <form id="photoForm">
+
+          <div class="form-grid-2">
+
+            <div class="form-group">
+
+              <label>Título</label>
+
+              <input
+                id="photoTitle"
+                type="text"
+                placeholder="Ej: Pool & Beach"
+                required
+              >
+
+            </div>
+
+
+            <div class="form-group">
+
+              <label>Categoría</label>
+
+              <select id="photoCategory">
+
+                <option value="general">General</option>
+                <option value="local">Local</option>
+                <option value="pool">Pool</option>
+                <option value="playstation">PlayStation</option>
+                <option value="comida">Comida</option>
+                <option value="bebidas">Bebidas</option>
+                <option value="promociones">Promociones</option>
+                <option value="mapa">Mapa</option>
+                <option value="otros">Otros</option>
+
+              </select>
+
+            </div>
+
+          </div>
+
+
+          <div class="form-group">
+
+            <label>
+              Seleccionar foto desde el celular
+            </label>
+
+            <input
+              id="photoFile"
+              type="file"
+              accept="image/*"
+            >
+
+            <img
+              id="photoPreview"
+              class="photo-preview"
+              alt="Vista previa"
+            >
+
+          </div>
+
+
+          <div style="text-align:center;margin:10px 0;color:#667085;">
+            — o —
+          </div>
+
+
+          <div class="form-group">
+
+            <label>URL de la foto</label>
+
+            <input
+              id="photoUrl"
+              type="url"
+              placeholder="https://..."
+            >
+
+          </div>
+
+
+          <button
+            id="photoSaveButton"
+            type="submit"
+            class="btn btn-primary"
+          >
+            Agregar foto
+          </button>
+
+        </form>
+
+      </div>
+
+
+      <div
+        id="photosGrid"
+        class="photos-grid"
+      ></div>
+
+    </section>
+
+  </main>
+
 </div>
-
-<div class="card">
-<div id="pendientes" class="number">0</div>
-<div class="label">Reservas pendientes</div>
-</div>
-
-<div class="card">
-<div id="confirmadas" class="number">0</div>
-<div class="label">Reservas confirmadas</div>
-</div>
-
-<div class="card">
-<div id="totalMesas" class="number">0</div>
-<div class="label">Mesas configuradas</div>
-</div>
-
-</div>
-
-
-<!-- RESERVAS -->
-
-<section class="panel section">
-
-<div class="section-title">
-
-<h2>📅 Reservas</h2>
-
-<button
-id="refreshReservations"
-type="button"
-class="btn btn-secondary"
->
-🔄 Actualizar
-</button>
-
-</div>
-
-<div class="table-wrap">
-
-<table>
-
-<thead>
-
-<tr>
-<th>Nombre</th>
-<th>Teléfono</th>
-<th>Fecha</th>
-<th>Hora</th>
-<th>Servicio</th>
-<th>Personas</th>
-<th>Estado</th>
-<th>Acciones</th>
-</tr>
-
-</thead>
-
-<tbody id="reservationsBody">
-
-<tr>
-<td colspan="8" class="empty">
-Cargando reservas...
-</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<!-- MESAS -->
-
-<section class="panel section">
-
-<div class="section-title">
-
-<h2>🎱 Mesas</h2>
-
-<button
-id="newTableBtn"
-type="button"
-class="btn btn-primary"
->
-+ Nueva mesa
-</button>
-
-</div>
-
-
-<div id="tableForm" class="hidden">
-
-<div class="divider"></div>
-
-<h3 id="tableFormTitle">
-Nueva mesa
-</h3>
-
-<div class="form-grid">
-
-<div class="field">
-
-<label for="tableNumber">
-Número
-</label>
-
-<input
-id="tableNumber"
-type="number"
-min="1"
-placeholder="Ej: 1"
->
-
-</div>
-
-
-<div class="field">
-
-<label for="tableName">
-Nombre
-</label>
-
-<input
-id="tableName"
-type="text"
-placeholder="Ej: Mesa de Pool 1"
->
-
-</div>
-
-
-<div class="field">
-
-<label for="tableService">
-Servicio
-</label>
-
-<input
-id="tableService"
-type="text"
-placeholder="Pool, PlayStation, Dados..."
->
-
-</div>
-
-
-<div class="field">
-
-<label for="tableActive">
-Estado
-</label>
-
-<select id="tableActive">
-
-<option value="true">
-Activa
-</option>
-
-<option value="false">
-Inactiva
-</option>
-
-</select>
-
-</div>
-
-</div>
-
-
-<div class="actions">
-
-<button
-id="saveTableBtn"
-type="button"
-class="btn btn-success"
->
-Guardar mesa
-</button>
-
-<button
-id="cancelTableBtn"
-type="button"
-class="btn btn-secondary"
->
-Cancelar
-</button>
-
-</div>
-
-
-<input
-id="editingTableId"
-type="hidden"
->
-
-<div class="divider"></div>
-
-</div>
-
-
-<div
-id="tablesGrid"
-class="grid"
->
-
-<div class="empty">
-Cargando mesas...
-</div>
-
-</div>
-
-</section>
-
-
-<!-- FOTOS -->
-
-<section class="panel section">
-
-<div class="section-title">
-
-<h2>📸 Fotos del sitio</h2>
-
-</div>
-
-<p
-style="opacity:.75;margin-bottom:15px;"
->
-Administrá las fotos de la galería desde Supabase.
-</p>
-
-
-<div class="form-grid">
-
-<div class="field">
-
-<label for="photoTitle">
-Título
-</label>
-
-<input
-id="photoTitle"
-type="text"
-placeholder="Ej: Interior Pool & Beach"
->
-
-</div>
-
-
-<div class="field">
-
-<label for="photoCategory">
-Categoría
-</label>
-
-<input
-id="photoCategory"
-type="text"
-placeholder="Ej: interior, exterior, juegos"
->
-
-</div>
-
-
-<div class="field">
-
-<label for="photoUrl">
-URL de la imagen
-</label>
-
-<input
-id="photoUrl"
-type="url"
-placeholder="https://..."
->
-
-</div>
-
-
-<div class="field">
-
-<label for="photoPath">
-Ruta / identificador
-</label>
-
-<input
-id="photoPath"
-type="text"
-placeholder="Ej: galeria/interior-1.jpg"
->
-
-</div>
-
-
-<div class="field full">
-
-<button
-id="addPhotoBtn"
-type="button"
-class="btn btn-success"
->
-+ Agregar foto
-</button>
-
-</div>
-
-</div>
-
-
-<div class="divider"></div>
-
-
-<div
-id="photosGrid"
-class="photo-grid"
->
-
-<div class="empty">
-Cargando fotos...
-</div>
-
-</div>
-
-</section>
-
-</section>
-
-
-<div class="footer">
-Pool & Beach · Puerto Pirámides
-</div>
-
-</main>
 
 
 <script>
 
-/* =====================================================
-   SUPABASE
-   ===================================================== */
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+========================================================= */
 
 const SUPABASE_URL =
-"https://nmpakeovqkdajtswjpgm.supabase.co";
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
 
 const SUPABASE_ANON_KEY =
-"sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const client =
-window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_ANON_KEY
-);
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
 
-/* =====================================================
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let currentUser = null;
+
+
+/* =========================================================
+   ELEMENTOS
+========================================================= */
+
+const loginScreen =
+  document.getElementById("loginScreen");
+
+const adminScreen =
+  document.getElementById("adminScreen");
+
+const loginForm =
+  document.getElementById("loginForm");
+
+const loginButton =
+  document.getElementById("loginButton");
+
+const loginMessage =
+  document.getElementById("loginMessage");
+
+const adminMessage =
+  document.getElementById("adminMessage");
+
+const notificationBox =
+  document.getElementById("notificationBox");
+
+
+/* =========================================================
    UTILIDADES
-   ===================================================== */
-
-function $(id){
-return document.getElementById(id);
-}
+========================================================= */
 
 function escapeHTML(value){
 
-return String(value ?? "")
-.replace(/[&<>'"]/g,function(c){
+  if(value === null || value === undefined){
+    return "";
+  }
 
-return {
-"&":"&amp;",
-"<":"&lt;",
-">":"&gt;",
-"'":"&#39;",
-'"':"&quot;"
+  return String(value)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 
-}[c];
 
-});
+function showLoginMessage(message,type="error"){
+
+  loginMessage.textContent = message;
+
+  loginMessage.className =
+    "message " + type;
 
 }
 
 
-function showMessage(id,text,type){
+function clearLoginMessage(){
 
-const el=$(id);
+  loginMessage.textContent = "";
 
-el.textContent=text;
-
-el.className=
-"message show "+
-(type || "info");
+  loginMessage.className =
+    "message";
 
 }
 
 
-function hideMessage(id){
+function showAdminMessage(message,type="error"){
 
-$(id).className="message";
+  adminMessage.textContent = message;
 
-}
+  adminMessage.className =
+    "message " + type;
 
+  setTimeout(() => {
 
-function setConnection(text,ok,error){
+    adminMessage.textContent = "";
 
-const el=$("connectionStatus");
+    adminMessage.className =
+      "message";
 
-el.textContent=text;
-
-el.className="status";
-
-if(ok){
-el.classList.add("ok");
-}
-
-if(error){
-el.classList.add("error");
-}
+  },5000);
 
 }
 
 
-/* =====================================================
+function formatDate(date){
+
+  if(!date){
+    return "";
+  }
+
+  const parts =
+    String(date).split("-");
+
+  if(parts.length !== 3){
+    return date;
+  }
+
+  return `${parts[2]}/${parts[1]}/${parts[0]}`;
+
+}
+
+
+function formatTime(time){
+
+  if(!time){
+    return "";
+  }
+
+  return String(time).substring(0,5);
+
+}
+
+
+function statusBadge(status){
+
+  const s =
+    String(status || "")
+      .toLowerCase();
+
+  let cls =
+    "badge-pendiente";
+
+  if(s === "confirmada"){
+    cls = "badge-confirmada";
+  }
+
+  if(s === "cancelada"){
+    cls = "badge-cancelada";
+  }
+
+  return `
+    <span class="badge ${cls}">
+      ${escapeHTML(status || "")}
+    </span>
+  `;
+
+}
+
+
+function generateToken(){
+
+  if(
+    window.crypto &&
+    typeof window.crypto.randomUUID === "function"
+  ){
+
+    return window.crypto.randomUUID();
+
+  }
+
+  return (
+    Date.now().toString(36) +
+    Math.random().toString(36).substring(2)
+  );
+
+}
+
+
+/* =========================================================
    LOGIN
-   ===================================================== */
+========================================================= */
 
-function showLogin(){
+loginForm.addEventListener(
+  "submit",
+  async function(event){
 
-$("loginSection").classList.remove("hidden");
+    event.preventDefault();
 
-$("adminPanel").classList.add("hidden");
+    clearLoginMessage();
 
-setConnection(
-"Sin iniciar sesión",
-false,
-false
+    loginButton.disabled = true;
+
+    loginButton.textContent =
+      "Ingresando...";
+
+    const email =
+      document
+        .getElementById("loginEmail")
+        .value
+        .trim();
+
+    const password =
+      document
+        .getElementById("loginPassword")
+        .value;
+
+    try{
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient.auth
+          .signInWithPassword({
+            email,
+            password
+          });
+
+      if(error){
+        throw error;
+      }
+
+      currentUser =
+        data.user;
+
+      await showAdmin(currentUser);
+
+    }catch(error){
+
+      console.error(error);
+
+      showLoginMessage(
+        "No se pudo iniciar sesión. Revisá el correo y la contraseña."
+      );
+
+    }finally{
+
+      loginButton.disabled = false;
+
+      loginButton.textContent =
+        "Iniciar sesión";
+
+    }
+
+  }
 );
 
-}
 
-
-function showAdmin(user){
-
-$("loginSection").classList.add("hidden");
-
-$("adminPanel").classList.remove("hidden");
-
-$("userEmail").textContent=
-user?.email || "Usuario autenticado";
-
-}
-
-
-async function login(){
-
-hideMessage("loginMessage");
-
-const email=
-$("email").value.trim();
-
-const password=
-$("password").value;
-
-if(!email || !password){
-
-showMessage(
-"loginMessage",
-"Ingresá correo y contraseña.",
-"error"
-);
-
-return;
-
-}
-
-const button=$("loginBtn");
-
-button.disabled=true;
-
-button.textContent="Ingresando...";
-
-
-const result=
-await client.auth.signInWithPassword({
-
-email:email,
-password:password
-
-});
-
-
-button.disabled=false;
-
-button.textContent=
-"Iniciar sesión";
-
-
-if(result.error){
-
-showMessage(
-"loginMessage",
-result.error.message ||
-"No se pudo iniciar sesión.",
-"error"
-);
-
-return;
-
-}
-
-
-showAdmin(result.data.user);
-
-await loadAll();
-
-}
-
-
-/* =====================================================
+/* =========================================================
    SESIÓN
-   ===================================================== */
+========================================================= */
 
-async function logout(){
+supabaseClient.auth.onAuthStateChange(
+  async function(event,session){
 
-await client.auth.signOut();
+    if(session && session.user){
 
-showLogin();
+      currentUser =
+        session.user;
 
-}
+      setTimeout(() => {
+        showAdmin(session.user);
+      },0);
+
+    }else{
+
+      currentUser = null;
+
+      showLogin();
+
+    }
+
+  }
+);
 
 
 async function checkSession(){
 
-const result=
-await client.auth.getSession();
+  try{
 
-if(result.data.session){
+    const {
+      data,
+      error
+    } =
+      await supabaseClient.auth.getSession();
 
-showAdmin(
-result.data.session.user
-);
+    if(error){
+      throw error;
+    }
 
-await loadAll();
+    if(
+      data &&
+      data.session &&
+      data.session.user
+    ){
 
-}else{
+      currentUser =
+        data.session.user;
 
-showLogin();
+      await showAdmin(currentUser);
 
-}
+    }else{
 
-}
+      showLogin();
 
+    }
 
-/* =====================================================
-   RESERVAS
-   ===================================================== */
+  }catch(error){
 
-async function loadReservations(){
+    console.error(error);
 
-const body=$("reservationsBody");
+    showLogin();
 
-body.innerHTML=
-'<tr><td colspan="8" class="empty">Cargando reservas...</td></tr>';
-
-
-const result=
-await client
-.from("reservas")
-.select(
-"id,nombre,telefono,fecha,hora,servicio,cantidad_personas,estado,notas,creado_en"
-)
-.order(
-"fecha",
-{ascending:false}
-)
-.order(
-"hora",
-{ascending:false}
-);
-
-
-if(result.error){
-
-body.innerHTML=
-'<tr><td colspan="8" class="empty">Error: '+
-escapeHTML(result.error.message)+
-'</td></tr>';
-
-showMessage(
-"globalMessage",
-"No se pudieron cargar las reservas: "+
-result.error.message,
-"error"
-);
-
-return;
+  }
 
 }
 
 
-const rows=
-result.data || [];
+function showLogin(){
 
+  loginScreen.classList.remove("hidden");
 
-$("totalReservas").textContent=
-rows.length;
-
-
-$("pendientes").textContent=
-rows.filter(function(r){
-
-return String(r.estado).toLowerCase()==="pendiente";
-
-}).length;
-
-
-$("confirmadas").textContent=
-rows.filter(function(r){
-
-return String(r.estado).toLowerCase()==="confirmada";
-
-}).length;
-
-
-if(!rows.length){
-
-body.innerHTML=
-'<tr><td colspan="8" class="empty">No hay reservas.</td></tr>';
-
-return;
+  adminScreen.classList.add("hidden");
 
 }
 
 
-body.innerHTML=
-rows.map(function(r){
+async function showAdmin(user){
 
-const estado=
-String(r.estado || "pendiente");
+  loginScreen.classList.add("hidden");
 
-const estadoNormal=
-estado.toLowerCase();
+  adminScreen.classList.remove("hidden");
 
+  const userStatus =
+    document.getElementById("userStatus");
 
-let actions="";
+  userStatus.textContent =
+    user.email || "Sesión activa";
 
-
-if(estadoNormal!=="confirmada"){
-
-actions+=
-'<button type="button" class="btn btn-success" '+
-'onclick="changeReservationStatus('+Number(r.id)+',\'confirmada\')">'+
-'Confirmar</button>';
+  await loadAll();
 
 }
 
 
-if(estadoNormal!=="cancelada"){
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
 
-actions+=
-'<button type="button" class="btn btn-danger" '+
-'onclick="changeReservationStatus('+Number(r.id)+',\'cancelada\')">'+
-'Cancelar</button>';
+document
+  .getElementById("logoutButton")
+  .addEventListener(
+    "click",
+    async function(){
 
-}
+      const {
+        error
+      } =
+        await supabaseClient.auth.signOut();
 
+      if(error){
 
-return `
-<tr>
+        showAdminMessage(
+          "No se pudo cerrar la sesión."
+        );
 
-<td>${escapeHTML(r.nombre)}</td>
+        return;
 
-<td>${escapeHTML(r.telefono)}</td>
+      }
 
-<td>${escapeHTML(r.fecha)}</td>
+      showLogin();
 
-<td>${escapeHTML(r.hora)}</td>
+    }
+  );
 
-<td>${escapeHTML(r.servicio)}</td>
 
-<td>${escapeHTML(r.cantidad_personas)}</td>
-
-<td>
-<span class="badge badge-${escapeHTML(estadoNormal)}">
-${escapeHTML(estado)}
-</span>
-</td>
-
-<td>
-<div class="actions">
-${actions}
-</div>
-</td>
-
-</tr>
-`;
-
-}).join("");
-
-}
-
-
-async function changeReservationStatus(
-id,
-status
-){
-
-const result=
-await client
-.from("reservas")
-.update({
-estado:status
-})
-.eq("id",id);
-
-
-if(result.error){
-
-showMessage(
-"globalMessage",
-"No se pudo actualizar la reserva: "+
-result.error.message,
-"error"
-);
-
-return;
-
-}
-
-
-showMessage(
-"globalMessage",
-"Reserva actualizada correctamente.",
-"success"
-);
-
-await loadReservations();
-
-}
-
-
-window.changeReservationStatus=
-changeReservationStatus;
-
-
-/* =====================================================
-   MESAS
-   ===================================================== */
-
-async function loadTables(){
-
-const grid=$("tablesGrid");
-
-grid.innerHTML=
-'<div class="empty">Cargando mesas...</div>';
-
-
-const result=
-await client
-.from("mesas")
-.select(
-"id,numero,nombre,servicio,activa,qr_token,created_at"
-)
-.order(
-"numero",
-{ascending:true}
-);
-
-
-if(result.error){
-
-grid.innerHTML=
-'<div class="empty">Error: '+
-escapeHTML(result.error.message)+
-'</div>';
-
-return;
-
-}
-
-
-const rows=
-result.data || [];
-
-
-window.poolTables=rows;
-
-
-$("totalMesas").textContent=
-rows.length;
-
-
-if(!rows.length){
-
-grid.innerHTML=
-'<div class="empty">Todavía no hay mesas configuradas.</div>';
-
-return;
-
-}
-
-
-grid.innerHTML=
-rows.map(function(r){
-
-return `
-
-<div class="card">
-
-<div class="number">
-${escapeHTML(r.numero)}
-</div>
-
-<h3>
-${escapeHTML(
-r.nombre ||
-("Mesa "+r.numero)
-)}
-</h3>
-
-<p style="opacity:.75;margin-bottom:8px;">
-${escapeHTML(
-r.servicio ||
-"Sin servicio"
-)}
-</p>
-
-<p style="margin-bottom:12px;">
-${r.activa ? "🟢 Activa" : "🔴 Inactiva"}
-</p>
-
-<p style="font-size:11px;opacity:.65;word-break:break-all;margin-bottom:12px;">
-QR: ${escapeHTML(r.qr_token || "Sin token")}
-</p>
-
-<div class="actions">
-
-<button
-type="button"
-class="btn btn-primary"
-onclick="editTable(${Number(r.id)})"
->
-Editar
-</button>
-
-<button
-type="button"
-class="btn btn-danger"
-onclick="deleteTable(${Number(r.id)})"
->
-Eliminar
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-function openTableForm(row){
-
-$("tableForm").classList.remove(
-"hidden"
-);
-
-$("tableFormTitle").textContent=
-row ?
-"Editar mesa" :
-"Nueva mesa";
-
-
-$("editingTableId").value=
-row?.id || "";
-
-
-$("tableNumber").value=
-row?.numero ?? "";
-
-
-$("tableName").value=
-row?.nombre ?? "";
-
-
-$("tableService").value=
-row?.servicio ?? "";
-
-
-$("tableActive").value=
-String(row?.activa !== false);
-
-}
-
-
-function closeTableForm(){
-
-$("tableForm").classList.add(
-"hidden"
-);
-
-$("editingTableId").value="";
-
-$("tableNumber").value="";
-
-$("tableName").value="";
-
-$("tableService").value="";
-
-$("tableActive").value="true";
-
-}
-
-
-window.editTable=function(id){
-
-const row=
-(window.poolTables || [])
-.find(function(x){
-
-return Number(x.id)===
-Number(id);
-
-});
-
-
-openTableForm(row || null);
-
-};
-
-
-async function saveTable(){
-
-const numero=
-Number(
-$("tableNumber").value
-);
-
-let nombre=
-$("tableName").value.trim();
-
-const servicio=
-$("tableService").value.trim();
-
-const activa=
-$("tableActive").value==="true";
-
-const editing=
-$("editingTableId").value;
-
-
-if(!Number.isInteger(numero) || numero<1){
-
-showMessage(
-"globalMessage",
-"Ingresá un número de mesa válido.",
-"error"
-);
-
-return;
-
-}
-
-
-if(!nombre){
-
-nombre=
-"Mesa "+numero;
-
-}
-
-
-const data={
-numero:numero,
-nombre:nombre,
-servicio:servicio || null,
-activa:activa
-};
-
-
-if(!editing){
-
-data.qr_token=
-crypto.randomUUID();
-
-}
-
-
-let result;
-
-
-if(editing){
-
-result=
-await client
-.from("mesas")
-.update(data)
-.eq("id",editing);
-
-}else{
-
-result=
-await client
-.from("mesas")
-.insert(data);
-
-}
-
-
-if(result.error){
-
-showMessage(
-"globalMessage",
-"No se pudo guardar la mesa: "+
-result.error.message,
-"error"
-);
-
-return;
-
-}
-
-
-showMessage(
-"globalMessage",
-"Mesa guardada correctamente.",
-"success"
-);
-
-closeTableForm();
-
-await loadTables();
-
-}
-
-
-window.deleteTable=
-async function(id){
-
-if(!confirm(
-"¿Eliminar esta mesa?"
-)){
-
-return;
-
-}
-
-
-const result=
-await client
-.from("mesas")
-.delete()
-.eq("id",id);
-
-
-if(result.error){
-
-showMessage(
-"globalMessage",
-"No se pudo eliminar: "+
-result.error.message,
-"error"
-);
-
-return;
-
-}
-
-
-showMessage(
-"globalMessage",
-"Mesa eliminada.",
-"success"
-);
-
-await loadTables();
-
-};
-
-
-/* =====================================================
-   GALERÍA DE FOTOS
-   ===================================================== */
-
-async function loadPhotos(){
-
-const grid=$("photosGrid");
-
-grid.innerHTML=
-'<div class="empty">Cargando fotos...</div>';
-
-
-const result=
-await client
-.from("galeria_fotos")
-.select(
-"id,titulo,categoria,ruta,url,creado_en"
-)
-.order(
-"creado_en",
-{ascending:false}
-);
-
-
-if(result.error){
-
-grid.innerHTML=
-'<div class="empty">Error al cargar fotos: '+
-escapeHTML(result.error.message)+
-'</div>';
-
-return;
-
-}
-
-
-const rows=
-result.data || [];
-
-
-if(!rows.length){
-
-grid.innerHTML=
-'<div class="empty">No hay fotos cargadas.</div>';
-
-return;
-
-}
-
-
-grid.innerHTML=
-rows.map(function(r){
-
-return `
-
-<div class="photo-card">
-
-<img
-src="${escapeHTML(r.url)}"
-alt="${escapeHTML(r.titulo)}"
-onerror="this.style.opacity='.25'"
->
-
-<div class="photo-info">
-
-<strong>
-${escapeHTML(r.titulo)}
-</strong>
-
-<div
-style="opacity:.7;font-size:12px;margin-top:4px;"
->
-${escapeHTML(
-r.categoria || ""
-)}
-</div>
-
-<div class="photo-url">
-${escapeHTML(r.url)}
-</div>
-
-<button
-type="button"
-class="btn btn-danger"
-onclick="deletePhoto('${escapeHTML(r.id)}')"
->
-Eliminar
-</button>
-
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
-
-
-window.deletePhoto=
-async function(id){
-
-if(!confirm(
-"¿Eliminar esta foto de la galería?"
-)){
-
-return;
-
-}
-
-
-const result=
-await client
-.from("galeria_fotos")
-.delete()
-.eq("id",id);
-
-
-if(result.error){
-
-showMessage(
-"globalMessage",
-"No se pudo eliminar la foto: "+
-result.error.message,
-"error"
-);
-
-return;
-
-}
-
-
-showMessage(
-"globalMessage",
-"Foto eliminada.",
-"success"
-);
-
-await loadPhotos();
-
-};
-
-
-async function addPhoto(){
-
-const titulo=
-$("photoTitle").value.trim();
-
-const categoria=
-$("photoCategory").value.trim();
-
-const url=
-$("photoUrl").value.trim();
-
-const ruta=
-$("photoPath").value.trim() ||
-url;
-
-
-if(!titulo || !url){
-
-showMessage(
-"globalMessage",
-"Completá título y URL de la imagen.",
-"error"
-);
-
-return;
-
-}
-
-
-const result=
-await client
-.from("galeria_fotos")
-.insert({
-
-titulo:titulo,
-
-categoria:
-categoria || "general",
-
-ruta:ruta,
-
-url:url
-
-});
-
-
-if(result.error){
-
-showMessage(
-"globalMessage",
-"No se pudo agregar la foto: "+
-result.error.message,
-"error"
-);
-
-return;
-
-}
-
-
-$("photoTitle").value="";
-
-$("photoCategory").value="";
-
-$("photoUrl").value="";
-
-$("photoPath").value="";
-
-
-showMessage(
-"globalMessage",
-"Foto agregada correctamente.",
-"success"
-);
-
-await loadPhotos();
-
-}
-
-
-/* =====================================================
-   CARGAR TODO
-   ===================================================== */
+/* =========================================================
+   CARGA GENERAL
+========================================================= */
 
 async function loadAll(){
 
-setConnection(
-"Cargando...",
-false,
-false
-);
+  try{
 
-await Promise.all([
+    await Promise.all([
+      loadStats(),
+      loadReservas(),
+      loadMesas(),
+      loadPhotos()
+    ]);
 
-loadReservations(),
+  }catch(error){
 
-loadTables(),
+    console.error(error);
 
-loadPhotos()
+    showAdminMessage(
+      "Ocurrió un error al actualizar el panel."
+    );
 
-]);
-
-setConnection(
-"Conectado",
-true,
-false
-);
+  }
 
 }
 
 
-/* =====================================================
-   EVENTOS
-   ===================================================== */
+/* =========================================================
+   ESTADÍSTICAS
+========================================================= */
 
-$("loginBtn")
-.addEventListener(
-"click",
-login
-);
+async function loadStats(){
+
+  const {
+    data: reservas,
+    error: reservasError
+  } =
+    await supabaseClient
+      .from("reservas")
+      .select(
+        "id,estado,notificacion_vista"
+      );
+
+  if(reservasError){
+    throw reservasError;
+  }
+
+  const {
+    data: mesas,
+    error: mesasError
+  } =
+    await supabaseClient
+      .from("mesas")
+      .select("id,activa");
+
+  if(mesasError){
+    throw mesasError;
+  }
+
+  const total =
+    reservas ? reservas.length : 0;
+
+  const pending =
+    reservas
+      ? reservas.filter(
+          r => r.estado === "pendiente"
+        ).length
+      : 0;
+
+  const confirmed =
+    reservas
+      ? reservas.filter(
+          r => r.estado === "confirmada"
+        ).length
+      : 0;
+
+  const activeTables =
+    mesas
+      ? mesas.filter(
+          m => m.activa === true
+        ).length
+      : 0;
+
+  const unread =
+    reservas
+      ? reservas.filter(
+          r => r.notificacion_vista === false
+        ).length
+      : 0;
+
+  document.getElementById("statTotal")
+    .textContent = total;
+
+  document.getElementById("statPending")
+    .textContent = pending;
+
+  document.getElementById("statConfirmed")
+    .textContent = confirmed;
+
+  document.getElementById("statTables")
+    .textContent = activeTables;
 
 
-$("password")
-.addEventListener(
-"keydown",
-function(e){
+  if(unread > 0){
 
-if(e.key==="Enter"){
+    notificationBox.classList.add("show");
 
-login();
+    notificationBox.innerHTML =
+      `🔔 Tenés <strong>${unread}</strong> reserva(s) nueva(s) sin revisar.`;
+
+  }else{
+
+    notificationBox.classList.remove("show");
+
+    notificationBox.textContent = "";
+
+  }
+
+}
+
+
+/* =========================================================
+   RESERVAS
+========================================================= */
+
+async function loadReservas(){
+
+  const body =
+    document.getElementById("reservasBody");
+
+  body.innerHTML =
+    `<tr><td colspan="9" class="empty">Cargando reservas...</td></tr>`;
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .select("*")
+      .order("fecha",{ascending:false})
+      .order("hora",{ascending:false});
+
+  if(error){
+    console.error(error);
+
+    body.innerHTML =
+      `<tr><td colspan="9" class="empty">
+        No se pudieron cargar las reservas.
+      </td></tr>`;
+
+    return;
+  }
+
+  if(!data || data.length === 0){
+
+    body.innerHTML =
+      `<tr><td colspan="9" class="empty">
+        No hay reservas registradas.
+      </td></tr>`;
+
+    return;
+
+  }
+
+
+  body.innerHTML =
+    data.map(reserva => {
+
+      const unread =
+        reserva.notificacion_vista === false;
+
+      return `
+        <tr
+          style="${
+            unread
+              ? "background:#fffdf5;"
+              : ""
+          }"
+        >
+
+          <td>
+            ${escapeHTML(
+              formatDate(reserva.fecha)
+            )}
+          </td>
+
+          <td>
+            ${escapeHTML(
+              formatTime(reserva.hora)
+            )}
+          </td>
+
+          <td>
+            <strong>
+              ${escapeHTML(reserva.nombre)}
+            </strong>
+          </td>
+
+          <td>
+            ${escapeHTML(reserva.telefono || "-")}
+          </td>
+
+          <td>
+            ${escapeHTML(reserva.servicio || "-")}
+          </td>
+
+          <td>
+            ${escapeHTML(reserva.cantidad_personas)}
+          </td>
+
+          <td>
+            ${statusBadge(reserva.estado)}
+          </td>
+
+          <td>
+            ${escapeHTML(reserva.notas || "-")}
+          </td>
+
+          <td>
+
+            <div class="actions">
+
+              ${
+                reserva.estado !== "confirmada"
+                ? `
+                  <button
+                    class="btn btn-success"
+                    onclick="changeReservaStatus(${reserva.id},'confirmada')"
+                  >
+                    Confirmar
+                  </button>
+                `
+                : ""
+              }
+
+              ${
+                reserva.estado !== "cancelada"
+                ? `
+                  <button
+                    class="btn btn-warning"
+                    onclick="changeReservaStatus(${reserva.id},'cancelada')"
+                  >
+                    Cancelar
+                  </button>
+                `
+                : ""
+              }
+
+              ${
+                reserva.estado !== "pendiente"
+                ? `
+                  <button
+                    class="btn btn-light"
+                    onclick="changeReservaStatus(${reserva.id},'pendiente')"
+                  >
+                    Pendiente
+                  </button>
+                `
+                : ""
+              }
+
+              ${
+                unread
+                ? `
+                  <button
+                    class="btn btn-secondary"
+                    onclick="markNotificationViewed(${reserva.id})"
+                  >
+                    ✓ Vista
+                  </button>
+                `
+                : ""
+              }
+
+              <button
+                class="btn btn-danger"
+                onclick="deleteReserva(${reserva.id})"
+              >
+                Eliminar
+              </button>
+
+            </div>
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join("");
 
 }
 
-});
 
+/* =========================================================
+   CAMBIAR ESTADO RESERVA
+========================================================= */
 
-$("logoutBtn")
-.addEventListener(
-"click",
-logout
-);
+async function changeReservaStatus(
+  id,
+  status
+){
 
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .update({
+        estado:status
+      })
+      .eq("id",id);
 
-$("refreshReservations")
-.addEventListener(
-"click",
-loadReservations
-);
+  if(error){
 
+    console.error(error);
 
-$("newTableBtn")
-.addEventListener(
-"click",
-function(){
+    showAdminMessage(
+      "No se pudo actualizar la reserva."
+    );
 
-openTableForm(null);
+    return;
 
-}
-);
+  }
 
+  showAdminMessage(
+    "Reserva actualizada correctamente.",
+    "success"
+  );
 
-$("saveTableBtn")
-.addEventListener(
-"click",
-saveTable
-);
-
-
-$("cancelTableBtn")
-.addEventListener(
-"click",
-closeTableForm
-);
-
-
-$("addPhotoBtn")
-.addEventListener(
-"click",
-addPhoto
-);
-
-
-/* CAMBIO DE SESIÓN */
-
-client.auth.onAuthStateChange(
-function(_event,session){
-
-if(session){
-
-showAdmin(
-session.user
-);
-
-setTimeout(
-loadAll,
-0
-);
-
-}else{
-
-showLogin();
+  await loadAll();
 
 }
 
+
+/* =========================================================
+   MARCAR NOTIFICACIÓN COMO VISTA
+========================================================= */
+
+async function markNotificationViewed(id){
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .update({
+        notificacion_vista:true,
+        notificacion_vista_en:
+          new Date().toISOString()
+      })
+      .eq("id",id);
+
+  if(error){
+
+    console.error(error);
+
+    showAdminMessage(
+      "No se pudo marcar la notificación."
+    );
+
+    return;
+
+  }
+
+  await loadAll();
+
 }
-);
 
 
-/* INICIO */
+/* =========================================================
+   ELIMINAR RESERVA
+========================================================= */
 
-window.addEventListener(
-"DOMContentLoaded",
-checkSession
-);
+async function deleteReserva(id){
+
+  const ok =
+    confirm(
+      "¿Seguro que querés eliminar esta reserva?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    console.error(error);
+
+    showAdminMessage(
+      "No se pudo eliminar la reserva."
+    );
+
+    return;
+
+  }
+
+  showAdminMessage(
+    "Reserva eliminada.",
+    "success"
+  );
+
+  await loadAll();
+
+}
+
+
+/* =========================================================
+   MESAS
+========================================================= */
+
+async function loadMesas(){
+
+  const grid =
+    document.getElementById("mesasGrid");
+
+  grid.innerHTML =
+    `<div class="empty">Cargando mesas...</div>`;
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("mesas")
+      .select("*")
+      .order("numero",{ascending:true});
+
+  if(error){
+
+    console.error(error);
+
+    grid.innerHTML =
+      `<div class="empty">
+        No se pudieron cargar las mesas.
+      </div>`;
+
+    return;
+
+  }
+
+  if(!data || data.length === 0){
+
+    grid.innerHTML =
+      `<div class="empty">
+        No hay mesas cargadas todavía.
+      </div>`;
+
+    return;
+
+  }
+
+
+  grid.innerHTML =
+    data.map(mesa => {
+
+      const active =
+        mesa.activa === true;
+
+      return `
+        <div class="mesa-card">
+
+          <div class="mesa-number">
+            ${escapeHTML(mesa.numero)}
+          </div>
+
+          <h3>
+            ${escapeHTML(mesa.nombre)}
+          </h3>
+
+          <p>
+            Servicio:
+            ${escapeHTML(mesa.servicio || "-")}
+          </p>
+
+          <p>
+            ${
+              active
+              ? `<span class="badge badge-activa">Activa</span>`
+              : `<span class="badge badge-inactiva">Inactiva</span>`
+            }
+          </p>
+
+          <p style="font-size:11px;word-break:break-all;">
+            QR: ${escapeHTML(mesa.qr_token)}
+          </p>
+
+          <div class="actions">
+
+            <button
+              class="btn btn-primary"
+              onclick='editMesa(${JSON.stringify(mesa)})'
+            >
+              Editar
+            </button>
+
+            <button
+              class="btn btn-danger"
+              onclick="deleteMesa(${mesa.id})"
+            >
+              Eliminar
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   GUARDAR MESA
+========================================================= */
+
+document
+  .getElementById("mesaForm")
+  .addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+      const id =
+        document
+          .getElementById("mesaId")
+          .value;
+
+      const numero =
+        Number(
+          document
+            .getElementById("mesaNumero")
+            .value
+        );
+
+      const nombre =
+        document
+          .getElementById("mesaNombre")
+          .value
+          .trim();
+
+      const servicio =
+        document
+          .getElementById("mesaServicio")
+          .value
+          .trim();
+
+      const activa =
+        document
+          .getElementById("mesaActiva")
+          .value === "true";
+
+
+      if(!numero || !nombre){
+
+        showAdminMessage(
+          "Completá el número y el nombre de la mesa."
+        );
+
+        return;
+
+      }
+
+
+      let error;
+
+
+      if(id){
+
+        const result =
+          await supabaseClient
+            .from("mesas")
+            .update({
+              numero,
+              nombre,
+              servicio:
+                servicio || null,
+              activa
+            })
+            .eq("id",id);
+
+        error =
+          result.error;
+
+      }else{
+
+        const result =
+          await supabaseClient
+            .from("mesas")
+            .insert({
+              numero,
+              nombre,
+              servicio:
+                servicio || null,
+              activa,
+              qr_token:
+                generateToken()
+            });
+
+        error =
+          result.error;
+
+      }
+
+
+      if(error){
+
+        console.error(error);
+
+        showAdminMessage(
+          "No se pudo guardar la mesa: " +
+          error.message
+        );
+
+        return;
+
+      }
+
+
+      showAdminMessage(
+        id
+          ? "Mesa modificada correctamente."
+          : "Mesa creada correctamente.",
+        "success"
+      );
+
+
+      cancelMesaEdit();
+
+      await loadAll();
+
+    }
+  );
+
+
+/* =========================================================
+   EDITAR MESA
+========================================================= */
+
+function editMesa(mesa){
+
+  document
+    .getElementById("mesaId")
+    .value =
+      mesa.id;
+
+  document
+    .getElementById("mesaNumero")
+    .value =
+      mesa.numero;
+
+  document
+    .getElementById("mesaNombre")
+    .value =
+      mesa.nombre;
+
+  document
+    .getElementById("mesaServicio")
+    .value =
+      mesa.servicio || "";
+
+  document
+    .getElementById("mesaActiva")
+    .value =
+      mesa.activa
+        ? "true"
+        : "false";
+
+  document
+    .getElementById("mesaSaveButton")
+    .textContent =
+      "Guardar cambios";
+
+  document
+    .getElementById("mesaCancelButton")
+    .classList
+    .remove("hidden");
+
+  window.scrollTo({
+    top:
+      document
+        .getElementById("mesaForm")
+        .getBoundingClientRect()
+        .top +
+      window.scrollY -
+      100,
+    behavior:"smooth"
+  });
+
+}
+
+
+/* =========================================================
+   CANCELAR EDICIÓN
+========================================================= */
+
+function cancelMesaEdit(){
+
+  document
+    .getElementById("mesaForm")
+    .reset();
+
+  document
+    .getElementById("mesaId")
+    .value = "";
+
+  document
+    .getElementById("mesaActiva")
+    .value = "true";
+
+  document
+    .getElementById("mesaSaveButton")
+    .textContent =
+      "Guardar mesa";
+
+  document
+    .getElementById("mesaCancelButton")
+    .classList
+    .add("hidden");
+
+}
+
+
+/* =========================================================
+   ELIMINAR MESA
+========================================================= */
+
+async function deleteMesa(id){
+
+  const ok =
+    confirm(
+      "¿Seguro que querés eliminar esta mesa?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("mesas")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    console.error(error);
+
+    showAdminMessage(
+      "No se pudo eliminar la mesa. Si está relacionada con partidas, puede ser necesario desactivarla en lugar de eliminarla."
+    );
+
+    return;
+
+  }
+
+  showAdminMessage(
+    "Mesa eliminada.",
+    "success"
+  );
+
+  await loadAll();
+
+}
+
+
+/* =========================================================
+   PREVISUALIZACIÓN FOTO
+========================================================= */
+
+document
+  .getElementById("photoFile")
+  .addEventListener(
+    "change",
+    function(){
+
+      const file =
+        this.files &&
+        this.files[0];
+
+      const preview =
+        document
+          .getElementById("photoPreview");
+
+      if(!file){
+
+        preview.style.display =
+          "none";
+
+        preview.src = "";
+
+        return;
+
+      }
+
+      if(!file.type.startsWith("image/")){
+
+        showAdminMessage(
+          "El archivo seleccionado no es una imagen."
+        );
+
+        this.value = "";
+
+        return;
+
+      }
+
+      const url =
+        URL.createObjectURL(file);
+
+      preview.src = url;
+
+      preview.style.display =
+        "block";
+
+    }
+  );
+
+
+/* =========================================================
+   SUBIR FOTO
+========================================================= */
+
+document
+  .getElementById("photoForm")
+  .addEventListener(
+    "submit",
+    async function(event){
+
+      event.preventDefault();
+
+      const button =
+        document
+          .getElementById("photoSaveButton");
+
+      const title =
+        document
+          .getElementById("photoTitle")
+          .value
+          .trim();
+
+      const category =
+        document
+          .getElementById("photoCategory")
+          .value;
+
+      const file =
+        document
+          .getElementById("photoFile")
+          .files[0];
+
+      const manualUrl =
+        document
+          .getElementById("photoUrl")
+          .value
+          .trim();
+
+
+      if(!title){
+
+        showAdminMessage(
+          "Escribí un título para la foto."
+        );
+
+        return;
+
+      }
+
+
+      if(!file && !manualUrl){
+
+        showAdminMessage(
+          "Seleccioná una foto o pegá una URL."
+        );
+
+        return;
+
+      }
+
+
+      button.disabled = true;
+
+      button.textContent =
+        "Guardando foto...";
+
+
+      try{
+
+        let finalUrl =
+          manualUrl;
+
+        let finalPath =
+          "";
+
+
+        /* -----------------------------------------
+           SUBIR ARCHIVO A STORAGE
+        ----------------------------------------- */
+
+        if(file){
+
+          if(!file.type.startsWith("image/")){
+
+            throw new Error(
+              "El archivo debe ser una imagen."
+            );
+
+          }
+
+
+          if(file.size > 10 * 1024 * 1024){
+
+            throw new Error(
+              "La imagen no puede superar los 10 MB."
+            );
+
+          }
+
+
+          const extension =
+            (
+              file.name
+                .split(".")
+                .pop() ||
+              "jpg"
+            )
+            .toLowerCase()
+            .replace(/[^a-z0-9]/g,"");
+
+
+          const safeTitle =
+            title
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[\u0300-\u036f]/g,"")
+              .replace(/[^a-z0-9]+/g,"-")
+              .replace(/^-+|-+$/g,"")
+              .substring(0,50)
+              || "foto";
+
+
+          finalPath =
+            `galeria/${Date.now()}-${safeTitle}.${extension}`;
+
+
+          const {
+            error: uploadError
+          } =
+            await supabaseClient
+              .storage
+              .from("Galeria")
+              .upload(
+                finalPath,
+                file,
+                {
+                  cacheControl:"3600",
+                  upsert:false,
+                  contentType:file.type
+                }
+              );
+
+
+          if(uploadError){
+
+            throw uploadError;
+
+          }
+
+
+          const {
+            data: publicData
+          } =
+            supabaseClient
+              .storage
+              .from("Galeria")
+              .getPublicUrl(finalPath);
+
+
+          finalUrl =
+            publicData.publicUrl;
+
+        }
+
+
+        /* -----------------------------------------
+           GUARDAR EN TABLA GALERIA_FOTOS
+        ----------------------------------------- */
+
+        const {
+          error: dbError
+        } =
+          await supabaseClient
+            .from("galeria_fotos")
+            .insert({
+
+              titulo:title,
+
+              categoria:category,
+
+              ruta:
+                finalPath ||
+                finalUrl,
+
+              url:finalUrl
+
+            });
+
+
+        if(dbError){
+
+          console.error(dbError);
+
+          throw dbError;
+
+        }
+
+
+        showAdminMessage(
+          "Foto agregada correctamente.",
+          "success"
+        );
+
+
+        document
+          .getElementById("photoForm")
+          .reset();
+
+        document
+          .getElementById("photoPreview")
+          .style.display =
+            "none";
+
+        document
+          .getElementById("photoPreview")
+          .src = "";
+
+
+        await loadPhotos();
+
+
+      }catch(error){
+
+        console.error(error);
+
+        showAdminMessage(
+          "No se pudo guardar la foto: " +
+          error.message
+        );
+
+      }finally{
+
+        button.disabled = false;
+
+        button.textContent =
+          "Agregar foto";
+
+      }
+
+    }
+  );
+
+
+/* =========================================================
+   CARGAR GALERÍA
+========================================================= */
+
+async function loadPhotos(){
+
+  const grid =
+    document.getElementById("photosGrid");
+
+  grid.innerHTML =
+    `<div class="empty">Cargando fotos...</div>`;
+
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("galeria_fotos")
+      .select("*")
+      .order("creado_en",{ascending:false});
+
+
+  if(error){
+
+    console.error(error);
+
+    grid.innerHTML =
+      `<div class="empty">
+        No se pudieron cargar las fotos.
+      </div>`;
+
+    return;
+
+  }
+
+
+  if(!data || data.length === 0){
+
+    grid.innerHTML =
+      `<div class="empty">
+        Todavía no hay fotos en la galería.
+      </div>`;
+
+    return;
+
+  }
+
+
+  grid.innerHTML =
+    data.map(photo => {
+
+      return `
+        <div class="photo-card">
+
+          <img
+            src="${escapeHTML(photo.url)}"
+            alt="${escapeHTML(photo.titulo)}"
+            loading="lazy"
+            onerror="this.style.opacity='.35'"
+          >
+
+          <div class="photo-info">
+
+            <h3>
+              ${escapeHTML(photo.titulo)}
+            </h3>
+
+            <p>
+              Categoría:
+              ${escapeHTML(photo.categoria)}
+            </p>
+
+            <div class="actions">
+
+              <button
+                class="btn btn-danger"
+                onclick="deletePhoto('${escapeHTML(photo.id)}')"
+              >
+                Eliminar
+              </button>
+
+            </div>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+/* =========================================================
+   ELIMINAR FOTO
+========================================================= */
+
+async function deletePhoto(id){
+
+  const ok =
+    confirm(
+      "¿Seguro que querés eliminar esta foto de la galería?"
+    );
+
+  if(!ok){
+    return;
+  }
+
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("galeria_fotos")
+      .delete()
+      .eq("id",id);
+
+
+  if(error){
+
+    console.error(error);
+
+    showAdminMessage(
+      "No se pudo eliminar la foto."
+    );
+
+    return;
+
+  }
+
+
+  showAdminMessage(
+    "Foto eliminada de la galería.",
+    "success"
+  );
+
+
+  await loadPhotos();
+
+}
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+checkSession();
 
 </script>
 
