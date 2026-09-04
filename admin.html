@@ -4,8 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Panel de Control | Pool & Beach</title>
-
 <style>
+*{
+  box-sizing:border-box;
+}
 body{
   font-family:Arial,sans-serif;
   background:#eef7fa;
@@ -18,7 +20,10 @@ header{
   padding:20px;
   text-align:center;
 }
-header h1{color:#55d8f2}
+header h1{
+  color:#55d8f2;
+  margin:0 0 5px;
+}
 .container{
   max-width:1100px;
   margin:auto;
@@ -29,8 +34,11 @@ section{
   padding:25px;
   border-radius:18px;
   margin-bottom:25px;
+  box-shadow:0 5px 20px rgba(0,0,0,.05);
 }
-input,select,textarea{
+input,
+select,
+textarea{
   width:100%;
   padding:13px;
   border:1px solid #ccdce1;
@@ -46,11 +54,14 @@ button{
   border:0;
   background:#08a6c8;
   color:white;
-  padding:13px;
+  padding:13px 18px;
   border-radius:10px;
   font-weight:bold;
   font-size:16px;
   cursor:pointer;
+}
+button:hover{
+  opacity:.9;
 }
 .form{
   display:grid;
@@ -94,6 +105,62 @@ button{
   margin-top:8px;
   width:100%;
 }
+/* GALERÍA */
+.galeria-form{
+  display:grid;
+  gap:12px;
+}
+.galeria-info{
+  background:#eef9fc;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:20px;
+}
+.fotos{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:18px;
+  margin-top:25px;
+}
+.foto-card{
+  border:1px solid #d9e7eb;
+  border-radius:15px;
+  overflow:hidden;
+  background:#fff;
+}
+.foto-card img{
+  width:100%;
+  height:210px;
+  object-fit:cover;
+  background:#e8f2f5;
+}
+.foto-info{
+  padding:15px;
+}
+.foto-info h3{
+  margin:0 0 7px;
+}
+.foto-info p{
+  margin:5px 0 12px;
+  color:#5b7079;
+}
+.btn-eliminar{
+  width:100%;
+  background:#d9534f;
+}
+.estado{
+  margin-top:12px;
+  font-weight:bold;
+}
+.categoria{
+  display:inline-block;
+  background:#dff6fb;
+  color:#087ea4;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:12px;
+  font-weight:bold;
+}
 @media(max-width:700px){
   .form{
     grid-template-columns:1fr;
@@ -105,360 +172,753 @@ button{
     float:none;
     margin-top:10px;
   }
+  .fotos{
+    grid-template-columns:1fr;
+  }
 }
 </style>
 </head>
-
 <body>
-
 <header>
-<button id="logout">Cerrar sesión</button>
+<button id="logout">
+Cerrar sesión
+</button>
 <h1>Pool & Beach</h1>
 <p>Panel de Control</p>
 </header>
-
 <main class="container">
-
+<!-- LOGIN -->
 <section id="login">
 <h2>🔐 Acceso administrador</h2>
-
-<input id="email" type="email" placeholder="Correo electrónico">
-
-<input id="password" type="password" placeholder="Contraseña">
-
-<button id="loginButton">Ingresar</button>
-
-<div id="loginMensaje" class="mensaje"></div>
+<input
+  id="email"
+  type="email"
+  placeholder="Correo electrónico"
+>
+<input
+  id="password"
+  type="password"
+  placeholder="Contraseña"
+>
+<button id="loginButton">
+Ingresar
+</button>
+<div
+  id="loginMensaje"
+  class="mensaje"
+></div>
 </section>
-
-
+<!-- PANEL -->
 <section id="panel">
-
 <h2>👋 Administración</h2>
-<p>Administración de reservas de Pool & Beach.</p>
-
-<a href="admin-juegos.html" style="display:block;background:#087ea4;color:white;text-decoration:none;text-align:center;padding:13px;border-radius:10px;margin:15px 0;font-weight:bold;">
+<p>
+Panel de administración de Pool & Beach.
+</p>
+<a
+  href="admin-juegos.html"
+  style="
+  display:block;
+  background:#087ea4;
+  color:white;
+  text-decoration:none;
+  text-align:center;
+  padding:13px;
+  border-radius:10px;
+  margin:15px 0;
+  font-weight:bold;
+  "
+>
 🎮 Juegos, Torneos y Ranking
 </a>
-
-<h2>📅 Nueva reserva</h2>
-
-<form id="formReserva" class="form">
-
-<input id="nombre" type="text" placeholder="Nombre del cliente" required>
-
-<input id="telefono" type="tel" placeholder="Teléfono" required>
-
-<input id="fecha" type="date" required>
-
-<input id="hora" type="time" required>
-
-<select id="servicio" required>
-<option value="">Elegir servicio</option>
-<option value="Pool">🎱 Pool</option>
-<option value="PlayStation">🎮 PlayStation</option>
-<option value="Simulador">🏎️ Simulador</option>
-<option value="Juegos">🎲 Juegos</option>
-<option value="Mesa">🍽️ Mesa</option>
+<!-- GALERÍA -->
+<section>
+<h2>📸 Galería de fotos</h2>
+<div class="galeria-info">
+<strong>
+Desde acá vas a poder administrar las fotos de Pool & Beach.
+</strong>
+<p>
+Podés subir fotos de mesas, mapa, fútbol,
+comidas, torneos, eventos y del local.
+</p>
+</div>
+<form
+  id="formGaleria"
+  class="galeria-form"
+>
+<label>
+Título de la foto
+</label>
+<input
+  id="fotoTitulo"
+  type="text"
+  placeholder="Ejemplo: Mesa RASSON"
+  required
+>
+<label>
+Categoría
+</label>
+<select
+  id="fotoCategoria"
+  required
+>
+<option value="">
+Seleccionar categoría
+</option>
+<option value="mesas">
+🎱 Mesas
+</option>
+<option value="mapa">
+🗺️ Mapa
+</option>
+<option value="futbol">
+⚽ Fútbol
+</option>
+<option value="comidas">
+🍔 Comidas
+</option>
+<option value="torneos">
+🏆 Torneos
+</option>
+<option value="local">
+🏠 Local
+</option>
+<option value="eventos">
+🎉 Eventos
+</option>
 </select>
-
-<input id="personas" type="number" min="1" placeholder="Cantidad de personas" required>
-
-<textarea id="notas" class="full" placeholder="Notas de la reserva"></textarea>
-
-<button class="full" type="submit">
+<label>
+Seleccionar foto
+</label>
+<input
+  id="fotoArchivo"
+  type="file"
+  accept="image/*"
+  required
+>
+<button
+  type="submit"
+>
+📸 Subir foto
+</button>
+</form>
+<div
+  id="galeriaMensaje"
+  class="estado"
+></div>
+<div
+  id="fotos"
+  class="fotos"
+>
+Cargando fotos...
+</div>
+</section>
+<!-- RESERVAS -->
+<section>
+<h2>📅 Nueva reserva</h2>
+<form
+  id="formReserva"
+  class="form"
+>
+<input
+  id="nombre"
+  type="text"
+  placeholder="Nombre del cliente"
+  required
+>
+<input
+  id="telefono"
+  type="tel"
+  placeholder="Teléfono"
+  required
+>
+<input
+  id="fecha"
+  type="date"
+  required
+>
+<input
+  id="hora"
+  type="time"
+  required
+>
+<select
+  id="servicio"
+  required
+>
+<option value="">
+Elegir servicio
+</option>
+<option value="Pool">
+🎱 Pool
+</option>
+<option value="Mesa RASSON">
+🎱 Mesa RASSON
+</option>
+<option value="PlayStation">
+🎮 PlayStation
+</option>
+<option value="Simulador">
+🏎️ Simulador
+</option>
+<option value="Juegos">
+🎲 Juegos
+</option>
+<option value="Futbol por TV">
+⚽ Fútbol por TV
+</option>
+<option value="Mesa">
+🍽️ Mesa
+</option>
+</select>
+<input
+  id="personas"
+  type="number"
+  min="1"
+  placeholder="Cantidad de personas"
+  required
+>
+<textarea
+  id="notas"
+  class="full"
+  placeholder="Notas de la reserva"
+></textarea>
+<button
+  class="full"
+  type="submit"
+>
 ➕ Guardar reserva
 </button>
-
 </form>
-
-<div id="mensaje" class="mensaje"></div>
-
-<h2 style="margin-top:30px;">📋 Reservas</h2>
-
-<div id="lista" class="lista">
+<div
+  id="mensaje"
+  class="mensaje"
+></div>
+<h2 style="margin-top:30px;">
+📋 Reservas
+</h2>
+<div
+  id="lista"
+  class="lista"
+>
 Cargando reservas...
 </div>
-
 </section>
-
+</section>
 </main>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
-
 <script>
-
-const login = document.getElementById("login");
-const panel = document.getElementById("panel");
-const loginButton = document.getElementById("loginButton");
-const loginMensaje = document.getElementById("loginMensaje");
-const logout = document.getElementById("logout");
-
+/* =========================
+   LOGIN
+========================= */
+const login =
+  document.getElementById("login");
+const panel =
+  document.getElementById("panel");
+const loginButton =
+  document.getElementById("loginButton");
+const loginMensaje =
+  document.getElementById("loginMensaje");
+const logout =
+  document.getElementById("logout");
 logout.style.display = "none";
-
-
 async function iniciarSesion(){
-
   const email =
     document.getElementById("email").value.trim();
-
   const password =
     document.getElementById("password").value;
-
   if(!email || !password){
-
     loginMensaje.textContent =
       "❌ Completá correo y contraseña.";
-
     return;
   }
-
-  loginMensaje.textContent = "Ingresando...";
-
+  loginMensaje.textContent =
+    "Ingresando...";
   const { error } =
     await supabaseClient.auth.signInWithPassword({
       email: email,
       password: password
     });
-
   if(error){
-
     loginMensaje.textContent =
       "❌ Correo o contraseña incorrectos.";
-
     console.error(error);
-
     return;
   }
-
   mostrarPanel();
 }
-
-
 async function verificarSesion(){
-
   const { data } =
     await supabaseClient.auth.getSession();
-
   if(data.session){
-
     mostrarPanel();
-
   }else{
-
     mostrarLogin();
-
   }
 }
-
-
 function mostrarPanel(){
-
-  login.style.display = "none";
-  panel.style.display = "block";
-  logout.style.display = "block";
-
+  login.style.display =
+    "none";
+  panel.style.display =
+    "block";
+  logout.style.display =
+    "block";
   cargarReservas();
+  cargarFotos();
 }
-
-
 function mostrarLogin(){
-
-  login.style.display = "block";
-  panel.style.display = "none";
-  logout.style.display = "none";
+  login.style.display =
+    "block";
+  panel.style.display =
+    "none";
+  logout.style.display =
+    "none";
 }
-
-
-loginButton.addEventListener("click", iniciarSesion);
-
-
-logout.addEventListener("click", async function(){
-
-  await supabaseClient.auth.signOut();
-
-  mostrarLogin();
-
-});
-
-
-const form = document.getElementById("formReserva");
-const lista = document.getElementById("lista");
-const mensaje = document.getElementById("mensaje");
-
-
+loginButton.addEventListener(
+  "click",
+  iniciarSesion
+);
+logout.addEventListener(
+  "click",
+  async function(){
+    await supabaseClient.auth.signOut();
+    mostrarLogin();
+  }
+);
+/* =========================
+   GALERÍA
+========================= */
+const formGaleria =
+  document.getElementById("formGaleria");
+const galeriaMensaje =
+  document.getElementById("galeriaMensaje");
+const fotos =
+  document.getElementById("fotos");
+async function cargarFotos(){
+  fotos.innerHTML =
+    "Cargando fotos...";
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("galeria_fotos")
+      .select("*")
+      .order(
+        "creado_en",
+        {
+          ascending:false
+        }
+      );
+  if(error){
+    fotos.innerHTML =
+      "Todavía no hay fotos cargadas.";
+    console.error(error);
+    return;
+  }
+  if(!data || data.length === 0){
+    fotos.innerHTML =
+      "No hay fotos todavía.";
+    return;
+  }
+  fotos.innerHTML = "";
+  data.forEach(foto => {
+    const card =
+      document.createElement("div");
+    card.className =
+      "foto-card";
+    card.innerHTML = `
+      <img
+        src="${foto.url}"
+        alt="${escaparHTML(foto.titulo)}"
+      >
+      <div class="foto-info">
+        <span class="categoria">
+          ${escaparHTML(foto.categoria)}
+        </span>
+        <h3>
+          ${escaparHTML(foto.titulo)}
+        </h3>
+        <p>
+          Foto de Pool & Beach
+        </p>
+        <button
+          class="btn-eliminar"
+          onclick="eliminarFoto('${foto.id}','${escaparHTML(foto.ruta)}')"
+        >
+          🗑️ Eliminar foto
+        </button>
+      </div>
+    `;
+    fotos.appendChild(card);
+  });
+}
+function escaparHTML(valor){
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+formGaleria.addEventListener(
+  "submit",
+  async function(event){
+    event.preventDefault();
+    const titulo =
+      document
+        .getElementById("fotoTitulo")
+        .value
+        .trim();
+    const categoria =
+      document
+        .getElementById("fotoCategoria")
+        .value;
+    const archivo =
+      document
+        .getElementById("fotoArchivo")
+        .files[0];
+    if(!archivo){
+      galeriaMensaje.textContent =
+        "❌ Seleccioná una foto.";
+      return;
+    }
+    galeriaMensaje.textContent =
+      "📤 Subiendo foto...";
+    try{
+      const extension =
+        archivo.name
+          .split(".")
+          .pop()
+          .toLowerCase();
+      const nombreSeguro =
+        Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .substring(2,8) +
+        "." +
+        extension;
+      const ruta =
+        categoria +
+        "/" +
+        nombreSeguro;
+      const {
+        error: uploadError
+      } =
+        await supabaseClient
+          .storage
+          .from("Galeria")
+          .upload(
+            ruta,
+            archivo,
+            {
+              cacheControl:"3600",
+              upsert:false
+            }
+          );
+      if(uploadError){
+        throw uploadError;
+      }
+      const {
+        data: publicData
+      } =
+        supabaseClient
+          .storage
+          .from("Galeria")
+          .getPublicUrl(ruta);
+      const url =
+        publicData.publicUrl;
+      const {
+        error: insertError
+      } =
+        await supabaseClient
+          .from("galeria_fotos")
+          .insert({
+            titulo:titulo,
+            categoria:categoria,
+            ruta:ruta,
+            url:url
+          });
+      if(insertError){
+        throw insertError;
+      }
+      galeriaMensaje.textContent =
+        "✅ Foto subida correctamente.";
+      formGaleria.reset();
+      cargarFotos();
+    }catch(error){
+      console.error(error);
+      galeriaMensaje.textContent =
+        "❌ No se pudo subir la foto. Revisaremos los permisos de Storage.";
+    }
+  }
+);
+/* =========================
+   ELIMINAR FOTO
+========================= */
+async function eliminarFoto(
+  id,
+  ruta
+){
+  const confirmar =
+    confirm(
+      "¿Seguro que querés eliminar esta foto?"
+    );
+  if(!confirmar){
+    return;
+  }
+  try{
+    const {
+      error: storageError
+    } =
+      await supabaseClient
+        .storage
+        .from("Galeria")
+        .remove([ruta]);
+    if(storageError){
+      throw storageError;
+    }
+    const {
+      error: databaseError
+    } =
+      await supabaseClient
+        .from("galeria_fotos")
+        .delete()
+        .eq("id",id);
+    if(databaseError){
+      throw databaseError;
+    }
+    cargarFotos();
+  }catch(error){
+    console.error(error);
+    alert(
+      "No se pudo eliminar la foto."
+    );
+  }
+}
+/* =========================
+   RESERVAS
+========================= */
+const form =
+  document.getElementById("formReserva");
+const lista =
+  document.getElementById("lista");
+const mensaje =
+  document.getElementById("mensaje");
 async function cargarReservas(){
-
-  lista.innerHTML = "Cargando reservas...";
-
-  const { data, error } =
+  lista.innerHTML =
+    "Cargando reservas...";
+  const {
+    data,
+    error
+  } =
     await supabaseClient
       .from("reservas")
       .select("*")
-      .order("fecha", { ascending:true })
-      .order("hora", { ascending:true });
-
+      .order(
+        "fecha",
+        {
+          ascending:true
+        }
+      )
+      .order(
+        "hora",
+        {
+          ascending:true
+        }
+      );
   if(error){
-
     lista.innerHTML =
       "❌ Error al cargar reservas.";
-
     console.error(error);
-
     return;
   }
-
   if(!data || data.length === 0){
-
     lista.innerHTML =
       "No hay reservas todavía.";
-
     return;
   }
-
   lista.innerHTML = "";
-
   data.forEach(r => {
-
-    const div = document.createElement("div");
-
-    div.className = "reserva";
-
+    const div =
+      document.createElement("div");
+    div.className =
+      "reserva";
     div.innerHTML = `
-      <p><strong>👤 Cliente:</strong> ${r.nombre}</p>
-      <p><strong>📞 Teléfono:</strong> ${r.telefono || ""}</p>
-      <p><strong>📅 Fecha:</strong> ${r.fecha}</p>
-      <p><strong>🕐 Hora:</strong> ${r.hora}</p>
-      <p><strong>🎮 Servicio:</strong> ${r.servicio}</p>
-      <p><strong>👥 Personas:</strong> ${r.cantidad_personas}</p>
-      <p><strong>📝 Notas:</strong> ${r.notas || "Sin notas"}</p>
-
-    <label><strong>Estado:</strong></label>
-
-<select onchange="cambiarEstado(${r.id}, this.value)">
-  <option value="pendiente" ${r.estado === "pendiente" ? "selected" : ""}>
-    Pendiente
-  </option>
-
-  <option value="confirmada" ${r.estado === "confirmada" ? "selected" : ""}>
-    Confirmada
-  </option>
-
-  <option value="cancelada" ${r.estado === "cancelada" ? "selected" : ""}>
-    Cancelada
-  </option>
-</select>
-
-<button class="eliminar" onclick="eliminarReserva(${r.id})">
-  🗑️ Eliminar reserva
-</button>
+      <p>
+        <strong>👤 Cliente:</strong>
+        ${escaparHTML(r.nombre)}
+      </p>
+      <p>
+        <strong>📞 Teléfono:</strong>
+        ${escaparHTML(r.telefono || "")}
+      </p>
+      <p>
+        <strong>📅 Fecha:</strong>
+        ${escaparHTML(r.fecha)}
+      </p>
+      <p>
+        <strong>🕐 Hora:</strong>
+        ${escaparHTML(r.hora)}
+      </p>
+      <p>
+        <strong>🎮 Servicio:</strong>
+        ${escaparHTML(r.servicio)}
+      </p>
+      <p>
+        <strong>👥 Personas:</strong>
+        ${escaparHTML(r.cantidad_personas)}
+      </p>
+      <p>
+        <strong>📝 Notas:</strong>
+        ${escaparHTML(r.notas || "Sin notas")}
+      </p>
+      <label>
+        <strong>Estado:</strong>
+      </label>
+      <select
+        onchange="cambiarEstado(${r.id}, this.value)"
+      >
+        <option
+          value="pendiente"
+          ${r.estado === "pendiente" ? "selected" : ""}
+        >
+          Pendiente
+        </option>
+        <option
+          value="confirmada"
+          ${r.estado === "confirmada" ? "selected" : ""}
+        >
+          Confirmada
+        </option>
+        <option
+          value="cancelada"
+          ${r.estado === "cancelada" ? "selected" : ""}
+        >
+          Cancelada
+        </option>
+      </select>
+      <button
+        class="eliminar"
+        onclick="eliminarReserva(${r.id})"
+      >
+        🗑️ Eliminar reserva
+      </button>
     `;
-
     lista.appendChild(div);
-
   });
-
 }
-
-
-async function cambiarEstado(id, estado){
-
-  const { error } =
+async function cambiarEstado(
+  id,
+  estado
+){
+  const {
+    error
+  } =
     await supabaseClient
       .from("reservas")
-      .update({ estado: estado })
-      .eq("id", id);
-
+      .update({
+        estado:estado
+      })
+      .eq("id",id);
   if(error){
-
-    alert("No se pudo cambiar el estado.");
-
+    alert(
+      "No se pudo cambiar el estado."
+    );
     console.error(error);
-
     return;
   }
-
   cargarReservas();
 }
 async function eliminarReserva(id){
-  if(!confirm("¿Seguro que querés eliminar esta reserva?")) return;
-
-  const { error } = await supabaseClient
-    .from("reservas")
-    .delete()
-    .eq("id", id);
-
+  if(
+    !confirm(
+      "¿Seguro que querés eliminar esta reserva?"
+    )
+  ){
+    return;
+  }
+  const {
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .delete()
+      .eq("id",id);
   if(error){
-    alert("No se pudo eliminar la reserva.");
+    alert(
+      "No se pudo eliminar la reserva."
+    );
     console.error(error);
     return;
   }
-
   cargarReservas();
 }
-
-form.addEventListener("submit", async function(e){
-
-  e.preventDefault();
-
-  mensaje.textContent =
-    "Guardando reserva...";
-
-  const reserva = {
-
-    nombre:
-      document.getElementById("nombre").value.trim(),
-
-    telefono:
-      document.getElementById("telefono").value.trim(),
-
-    fecha:
-      document.getElementById("fecha").value,
-
-    hora:
-      document.getElementById("hora").value,
-
-    servicio:
-      document.getElementById("servicio").value,
-
-    cantidad_personas:
-      Number(document.getElementById("personas").value),
-
-    notas:
-      document.getElementById("notas").value.trim()
-
-  };
-
-
-  const { error } =
-    await supabaseClient
-      .from("reservas")
-      .insert([reserva]);
-
-
-  if(error){
-
+form.addEventListener(
+  "submit",
+  async function(e){
+    e.preventDefault();
     mensaje.textContent =
-      "❌ Error: " + error.message;
-
-    return;
+      "Guardando reserva...";
+    const reserva = {
+      nombre:
+        document
+          .getElementById("nombre")
+          .value
+          .trim(),
+      telefono:
+        document
+          .getElementById("telefono")
+          .value
+          .trim(),
+      fecha:
+        document
+          .getElementById("fecha")
+          .value,
+      hora:
+        document
+          .getElementById("hora")
+          .value,
+      servicio:
+        document
+          .getElementById("servicio")
+          .value,
+      cantidad_personas:
+        Number(
+          document
+            .getElementById("personas")
+            .value
+        ),
+      notas:
+        document
+          .getElementById("notas")
+          .value
+          .trim()
+    };
+    const {
+      error
+    } =
+      await supabaseClient
+        .from("reservas")
+        .insert([reserva]);
+    if(error){
+      mensaje.textContent =
+        "❌ Error: " +
+        error.message;
+      return;
+    }
+    mensaje.textContent =
+      "✅ Reserva guardada correctamente.";
+    form.reset();
+    cargarReservas();
   }
-
-
-  mensaje.textContent =
-    "✅ Reserva guardada correctamente.";
-
-  form.reset();
-
-  cargarReservas();
-
-});
-
-
+);
+/* =========================
+   INICIO
+========================= */
 verificarSesion();
-
 </script>
-
 </body>
 </html>
