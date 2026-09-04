@@ -3,966 +3,1387 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pool & Beach | Administración</title>
+
+<title>Panel de Administración | Pool & Beach</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-*{box-sizing:border-box}
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
-  font-family:Arial,Helvetica,sans-serif;
-  background:#f1f5f9;
-  color:#0f172a;
+* {
+  box-sizing: border-box;
 }
-body{min-height:100vh}
-.oculto{display:none!important}
-button,input,select,textarea{
-  font-family:inherit;
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f4f7f9;
+  color: #17212b;
 }
-button{cursor:pointer}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.hidden {
+  display: none !important;
+}
+
 /* LOGIN */
-#loginScreen{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
-  background:linear-gradient(135deg,#e0f2fe,#bae6fd);
+
+#loginScreen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #0b6b88, #0e9ac1);
 }
-.login-box{
-  width:100%;
-  max-width:420px;
-  padding:30px;
-  background:white;
-  border-radius:22px;
-  box-shadow:0 15px 45px rgba(0,0,0,.15);
+
+.login-box {
+  width: 100%;
+  max-width: 420px;
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.18);
 }
-.logo{
-  text-align:center;
-  margin-bottom:25px;
+
+.login-box h1 {
+  margin: 0 0 8px;
+  text-align: center;
+  color: #075d78;
 }
-.logo h1{
-  margin:0;
-  color:#0284c7;
-  font-size:30px;
+
+.login-box p {
+  text-align: center;
+  color: #667781;
+  margin-bottom: 25px;
 }
-.logo p{
-  margin:8px 0 0;
-  color:#64748b;
+
+.login-box input {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 12px;
+  border: 1px solid #d5dde2;
+  border-radius: 10px;
+  outline: none;
 }
-.campo{
-  margin-bottom:16px;
+
+.login-box input:focus {
+  border-color: #0b8caf;
 }
-.campo label{
-  display:block;
-  margin-bottom:7px;
-  font-weight:bold;
-  color:#334155;
+
+.login-button {
+  width: 100%;
+  border: 0;
+  padding: 14px;
+  border-radius: 10px;
+  background: #087ea1;
+  color: white;
+  font-weight: bold;
 }
-.campo input,
-.campo select,
-.campo textarea{
-  width:100%;
-  padding:13px;
-  border:1px solid #cbd5e1;
-  border-radius:10px;
-  background:white;
-  color:#0f172a;
-  font-size:16px;
-  outline:none;
+
+.login-button:hover {
+  background: #066b88;
 }
-.campo input:focus,
-.campo select:focus,
-.campo textarea:focus{
-  border-color:#0284c7;
-  box-shadow:0 0 0 3px rgba(2,132,199,.12);
+
+#loginMessage {
+  margin-top: 15px;
+  text-align: center;
+  color: #c62828;
+  font-size: 14px;
 }
-#loginButton{
-  width:100%;
-  padding:15px;
-  border:0;
-  border-radius:10px;
-  background:#0284c7;
-  color:white;
-  font-size:17px;
-  font-weight:bold;
+
+/* ADMIN */
+
+#adminPanel {
+  min-height: 100vh;
 }
-#loginButton:disabled{
-  opacity:.6;
+
+header {
+  background: #075d78;
+  color: white;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
-#mensajeLogin{
-  margin-top:15px;
-  min-height:20px;
-  padding:10px;
-  border-radius:8px;
-  text-align:center;
-  font-size:14px;
+
+header h1 {
+  margin: 0;
+  font-size: 20px;
 }
-.error{
-  background:#fee2e2;
-  color:#991b1b;
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
-.ok{
-  background:#dcfce7;
-  color:#166534;
+
+.user-email {
+  font-size: 13px;
+  opacity: .9;
 }
-/* PANEL */
-#adminScreen{
-  min-height:100vh;
+
+.logout-button {
+  border: 0;
+  background: white;
+  color: #075d78;
+  padding: 9px 13px;
+  border-radius: 8px;
+  font-weight: bold;
 }
-.barra{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:#0284c7;
-  color:white;
-  padding:15px 20px;
-  box-shadow:0 3px 15px rgba(0,0,0,.15);
+
+.layout {
+  display: flex;
+  min-height: calc(100vh - 60px);
 }
-.barra-contenido{
-  max-width:1250px;
-  margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:15px;
+
+.sidebar {
+  width: 230px;
+  background: #102d39;
+  padding: 15px 10px;
+  flex-shrink: 0;
 }
-.barra h1{
-  margin:0;
-  font-size:23px;
+
+.sidebar button {
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: white;
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 8px;
 }
-.barra p{
-  margin:4px 0 0;
-  font-size:13px;
+
+.sidebar button:hover,
+.sidebar button.active {
+  background: #087ea1;
 }
-#logoutButton{
-  padding:10px 15px;
-  border:0;
-  border-radius:9px;
-  background:#dc2626;
-  color:white;
-  font-weight:bold;
+
+.main {
+  flex: 1;
+  padding: 25px;
+  overflow-x: hidden;
 }
-.contenido{
-  max-width:1250px;
-  margin:auto;
-  padding:22px 18px 50px;
+
+.section {
+  display: none;
 }
-.bienvenida{
-  background:white;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 3px 12px rgba(15,23,42,.07);
-  margin-bottom:20px;
+
+.section.active {
+  display: block;
 }
-.bienvenida h2{
-  margin:0 0 7px;
-  color:#0284c7;
+
+.section h2 {
+  margin-top: 0;
+  color: #075d78;
 }
-.bienvenida p{
-  margin:0;
-  color:#64748b;
+
+/* CARDS */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 15px;
+  margin-bottom: 25px;
 }
-/* TARJETAS */
-.tarjetas{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:14px;
-  margin-top:20px;
-  margin-bottom:22px;
+
+.card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.07);
 }
-.tarjeta{
-  background:white;
-  border-radius:15px;
-  padding:18px;
-  box-shadow:0 3px 12px rgba(15,23,42,.07);
+
+.card-title {
+  color: #6c7a83;
+  font-size: 14px;
 }
-.tarjeta-titulo{
-  color:#64748b;
-  font-size:14px;
+
+.card-number {
+  font-size: 32px;
+  font-weight: bold;
+  color: #075d78;
+  margin-top: 8px;
 }
-.tarjeta-numero{
-  margin-top:8px;
-  color:#0284c7;
-  font-size:30px;
-  font-weight:bold;
+
+.card-small {
+  margin-top: 7px;
+  color: #687781;
+  font-size: 13px;
 }
-/* MENU */
-.menu{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  margin-bottom:20px;
+
+/* TABLES */
+
+.table-container {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  overflow-x: auto;
+  box-shadow: 0 4px 15px rgba(0,0,0,.06);
 }
-.menu button{
-  border:0;
-  padding:11px 15px;
-  border-radius:10px;
-  background:white;
-  color:#334155;
-  font-weight:bold;
-  box-shadow:0 2px 7px rgba(0,0,0,.06);
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 750px;
 }
-.menu button.activo{
-  background:#0284c7;
-  color:white;
+
+th {
+  text-align: left;
+  background: #edf4f7;
+  color: #075d78;
+  padding: 12px;
+  font-size: 13px;
 }
-/* SECCIONES */
-.seccion{
-  display:none;
+
+td {
+  padding: 12px;
+  border-bottom: 1px solid #edf0f2;
+  font-size: 13px;
+  vertical-align: top;
 }
-.seccion.activa{
-  display:block;
+
+tr:hover td {
+  background: #fafcfd;
 }
-.panel{
-  background:white;
-  border-radius:17px;
-  padding:20px;
-  box-shadow:0 3px 12px rgba(15,23,42,.07);
-  margin-bottom:18px;
+
+/* FORMS */
+
+.form-box {
+  background: white;
+  padding: 20px;
+  border-radius: 15px;
+  margin-bottom: 20px;
+  box-shadow: 0 4px 15px rgba(0,0,0,.06);
 }
-.panel h2{
-  margin:0 0 15px;
-  color:#0284c7;
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
 }
-/* TABLAS */
-.tabla-contenedor{
-  overflow-x:auto;
+
+.form-grid .full {
+  grid-column: 1 / -1;
 }
-table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:700px;
+
+.form-box label {
+  display: block;
+  font-size: 13px;
+  color: #53636d;
+  margin-bottom: 5px;
 }
-th{
-  background:#e0f2fe;
-  color:#075985;
-  text-align:left;
-  padding:11px;
-  font-size:13px;
+
+.form-box input,
+.form-box select,
+.form-box textarea {
+  width: 100%;
+  padding: 11px;
+  border: 1px solid #d5dde2;
+  border-radius: 8px;
 }
-td{
-  padding:11px;
-  border-bottom:1px solid #e2e8f0;
-  font-size:14px;
+
+.form-box textarea {
+  min-height: 90px;
+  resize: vertical;
 }
-tr:hover td{
-  background:#f8fafc;
+
+.primary-button {
+  border: 0;
+  background: #087ea1;
+  color: white;
+  padding: 11px 16px;
+  border-radius: 8px;
+  font-weight: bold;
 }
-/* BOTONES */
-.btn{
-  border:0;
-  border-radius:9px;
-  padding:9px 12px;
-  font-weight:bold;
-  margin:2px;
+
+.primary-button:hover {
+  background: #066b88;
 }
-.btn-azul{
-  background:#0284c7;
-  color:white;
+
+.secondary-button {
+  border: 0;
+  background: #e7eef1;
+  color: #075d78;
+  padding: 9px 13px;
+  border-radius: 8px;
+  font-weight: bold;
 }
-.btn-verde{
-  background:#16a34a;
-  color:white;
+
+.danger-button {
+  border: 0;
+  background: #c62828;
+  color: white;
+  padding: 8px 11px;
+  border-radius: 7px;
 }
-.btn-rojo{
-  background:#dc2626;
-  color:white;
+
+.success-button {
+  border: 0;
+  background: #2e7d32;
+  color: white;
+  padding: 8px 11px;
+  border-radius: 7px;
 }
-.btn-amarillo{
-  background:#f59e0b;
-  color:white;
+
+.action-group {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
-.btn-gris{
-  background:#e2e8f0;
-  color:#334155;
+
+.status-select {
+  padding: 7px;
+  border: 1px solid #ccd6db;
+  border-radius: 7px;
 }
-/* ESTADOS */
-.estado{
-  display:inline-block;
-  padding:5px 9px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:bold;
+
+.badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 20px;
+  background: #e5f4f8;
+  color: #075d78;
+  font-size: 12px;
+  font-weight: bold;
 }
-.estado-pendiente{
-  background:#fef3c7;
-  color:#92400e;
+
+.badge-danger {
+  background: #ffebee;
+  color: #c62828;
 }
-.estado-confirmada{
-  background:#dcfce7;
-  color:#166534;
+
+.badge-success {
+  background: #e8f5e9;
+  color: #2e7d32;
 }
-.estado-cancelada{
-  background:#fee2e2;
-  color:#991b1b;
+
+/* PHOTOS */
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
 }
-/* FORM */
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
+
+.photo-card {
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,.07);
 }
-.completo{
-  grid-column:1/-1;
+
+.photo-card img {
+  width: 100%;
+  height: 190px;
+  object-fit: cover;
+  display: block;
 }
-/* FOTOS */
-.fotos-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:15px;
+
+.photo-info {
+  padding: 13px;
 }
-.foto-card{
-  background:#f8fafc;
-  border-radius:14px;
-  overflow:hidden;
-  border:1px solid #e2e8f0;
+
+.photo-info h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
 }
-.foto-card img{
-  width:100%;
-  height:180px;
-  object-fit:cover;
-  display:block;
+
+.photo-info p {
+  margin: 4px 0;
+  color: #667781;
+  font-size: 13px;
+  word-break: break-word;
 }
-.foto-info{
-  padding:12px;
-}
-.foto-info h3{
-  margin:0 0 5px;
-  font-size:15px;
-}
-.foto-info p{
-  margin:0 0 10px;
-  color:#64748b;
-  font-size:12px;
-}
+
 /* MENSAJES */
-.aviso{
-  padding:12px 15px;
-  border-radius:10px;
-  margin:10px 0;
-  font-size:14px;
+
+.message {
+  padding: 12px 15px;
+  border-radius: 9px;
+  margin-bottom: 15px;
+  background: #edf7fa;
+  color: #075d78;
 }
-.aviso-info{
-  background:#e0f2fe;
-  color:#075985;
+
+.error-message {
+  background: #ffebee;
+  color: #b71c1c;
 }
-.aviso-error{
-  background:#fee2e2;
-  color:#991b1b;
+
+.empty {
+  padding: 30px;
+  text-align: center;
+  color: #77858d;
 }
-.aviso-ok{
-  background:#dcfce7;
-  color:#166534;
+
+.loading {
+  padding: 25px;
+  text-align: center;
+  color: #687781;
 }
-.vacio{
-  text-align:center;
-  padding:30px;
-  color:#64748b;
-}
-.cargando{
-  text-align:center;
-  padding:25px;
-  color:#64748b;
-}
-/* RESPONSIVE */
-@media(max-width:950px){
-  .tarjetas{
-    grid-template-columns:repeat(2,1fr);
+
+/* MOBILE */
+
+@media (max-width: 900px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
   }
-  .fotos-grid{
-    grid-template-columns:repeat(2,1fr);
+
+  .photo-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
-@media(max-width:650px){
-  .contenido{
-    padding:15px 12px 40px;
+
+@media (max-width: 700px) {
+
+  header {
+    flex-direction: column;
+    align-items: flex-start;
   }
-  .barra{
-    padding:13px 12px;
+
+  .header-right {
+    width: 100%;
+    justify-content: space-between;
   }
-  .barra h1{
-    font-size:18px;
+
+  .layout {
+    display: block;
   }
-  .barra p{
-    font-size:11px;
+
+  .sidebar {
+    width: 100%;
+    display: flex;
+    overflow-x: auto;
+    gap: 5px;
+    padding: 8px;
   }
-  #logoutButton{
-    padding:8px 10px;
-    font-size:12px;
+
+  .sidebar button {
+    width: auto;
+    white-space: nowrap;
+    margin: 0;
   }
-  .bienvenida{
-    padding:18px;
+
+  .main {
+    padding: 15px;
   }
-  .tarjetas{
-    grid-template-columns:repeat(2,1fr);
-    gap:9px;
+
+  .cards {
+    grid-template-columns: 1fr 1fr;
   }
-  .tarjeta{
-    padding:14px;
+
+  .form-grid {
+    grid-template-columns: 1fr;
   }
-  .tarjeta-numero{
-    font-size:24px;
+
+  .form-grid .full {
+    grid-column: auto;
   }
-  .menu{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
+
+  .photo-grid {
+    grid-template-columns: 1fr;
   }
-  .menu button{
-    width:100%;
-    font-size:12px;
-    padding:10px 5px;
-  }
-  .panel{
-    padding:15px;
-  }
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-  .completo{
-    grid-column:auto;
-  }
-  .fotos-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-  .foto-card img{
-    height:130px;
+
+  .user-email {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 </style>
 </head>
+
 <body>
-<!-- =========================================================
-     LOGIN
-========================================================= -->
+
+<!-- ================= LOGIN ================= -->
+
 <div id="loginScreen">
+
   <div class="login-box">
-    <div class="logo">
-      <h1>🏖️ Pool & Beach</h1>
-      <p>Panel de administración</p>
-    </div>
+
+    <h1>Pool & Beach</h1>
+
+    <p>Panel de Administración</p>
+
     <form id="loginForm">
-      <div class="campo">
-        <label for="email">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          placeholder="Ingresá tu correo"
-          autocomplete="username"
-          required
-        >
-      </div>
-      <div class="campo">
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          placeholder="Ingresá tu contraseña"
-          autocomplete="current-password"
-          required
-        >
-      </div>
-      <button id="loginButton" type="submit">
+
+      <input
+        type="email"
+        id="email"
+        placeholder="Correo electrónico"
+        required
+        autocomplete="email"
+      >
+
+      <input
+        type="password"
+        id="password"
+        placeholder="Contraseña"
+        required
+        autocomplete="current-password"
+      >
+
+      <button class="login-button" type="submit">
         Iniciar sesión
       </button>
-      <div id="mensajeLogin"></div>
+
     </form>
+
+    <div id="loginMessage"></div>
+
   </div>
+
 </div>
-<!-- =========================================================
-     PANEL
-========================================================= -->
-<div id="adminScreen" class="oculto">
-  <header class="barra">
-    <div class="barra-contenido">
-      <div>
-        <h1>🏖️ Pool & Beach</h1>
-        <p>Panel de administración</p>
-      </div>
-      <button id="logoutButton">
+
+
+<!-- ================= ADMIN ================= -->
+
+<div id="adminPanel" class="hidden">
+
+  <header>
+
+    <h1>Pool & Beach — Administración</h1>
+
+    <div class="header-right">
+
+      <span class="user-email" id="userEmail"></span>
+
+      <button class="logout-button" id="logoutButton">
         Cerrar sesión
       </button>
+
     </div>
+
   </header>
-  <main class="contenido">
-    <section class="bienvenida">
-      <h2>Panel de control</h2>
-      <p>
-        Desde acá podés controlar reservas, mesas, promociones,
-        fotos y la información del negocio.
-      </p>
-    </section>
-    <!-- TARJETAS -->
-    <section class="tarjetas">
-      <div class="tarjeta">
-        <div class="tarjeta-titulo">Reservas</div>
-        <div id="cardReservas" class="tarjeta-numero">0</div>
-      </div>
-      <div class="tarjeta">
-        <div class="tarjeta-titulo">Mesas</div>
-        <div id="cardMesas" class="tarjeta-numero">0</div>
-      </div>
-      <div class="tarjeta">
-        <div class="tarjeta-titulo">Promociones</div>
-        <div id="cardPromociones" class="tarjeta-numero">0</div>
-      </div>
-      <div class="tarjeta">
-        <div class="tarjeta-titulo">Fotos</div>
-        <div id="cardFotos" class="tarjeta-numero">0</div>
-      </div>
-    </section>
-    <div id="mensajePanel"></div>
+
+
+  <div class="layout">
+
     <!-- MENU -->
-    <nav class="menu">
-      <button class="activo" data-seccion="inicio">
+
+    <aside class="sidebar">
+
+      <button class="nav-button active" data-section="inicio">
         🏠 Inicio
       </button>
-      <button data-seccion="reservas">
+
+      <button class="nav-button" data-section="reservas">
         📅 Reservas
       </button>
-      <button data-seccion="mesas">
-        🪑 Mesas
+
+      <button class="nav-button" data-section="mesas">
+        🎱 Mesas
       </button>
-      <button data-seccion="promociones">
+
+      <button class="nav-button" data-section="promociones">
         🔥 Promociones
       </button>
-      <button data-seccion="fotos">
-        📸 Fotos
+
+      <button class="nav-button" data-section="fotos">
+        📷 Fotos
       </button>
-      <button data-seccion="productos">
+
+      <button class="nav-button" data-section="productos">
         🍔 Productos
       </button>
-      <button data-seccion="pedidos">
+
+      <button class="nav-button" data-section="pedidos">
         🛒 Pedidos
       </button>
-      <button data-seccion="juegos">
-        🎱 Juegos
+
+      <button class="nav-button" data-section="juegos">
+        🎮 Juegos
       </button>
-      <button data-seccion="ranking">
+
+      <button class="nav-button" data-section="ranking">
         🏆 Ranking
       </button>
-      <button data-seccion="torneos">
-        🏅 Torneos
+
+      <button class="nav-button" data-section="torneos">
+        🥇 Torneos
       </button>
-    </nav>
-    <!-- =====================================================
-         INICIO
-    ====================================================== -->
-    <section id="seccion-inicio" class="seccion activa">
-      <div class="panel">
-        <h2>Bienvenida 👋</h2>
-        <p>
-          El panel está conectado a tu proyecto de Supabase.
-        </p>
-        <div class="aviso aviso-info">
-          Los datos que aparecen arriba se leen directamente
-          desde las tablas de Pool & Beach.
+
+    </aside>
+
+
+    <!-- CONTENIDO -->
+
+    <main class="main">
+
+      <div id="globalMessage"></div>
+
+
+      <!-- ================= INICIO ================= -->
+
+      <section id="inicio" class="section active">
+
+        <h2>Panel de control</h2>
+
+        <div class="cards">
+
+          <div class="card">
+
+            <div class="card-title">
+              Reservas
+            </div>
+
+            <div class="card-number" id="cardReservas">
+              —
+            </div>
+
+            <div class="card-small" id="cardReservasAvisos">
+              Cargando...
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Mesas
+            </div>
+
+            <div class="card-number" id="cardMesas">
+              —
+            </div>
+
+            <div class="card-small">
+              Mesas registradas
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Promociones
+            </div>
+
+            <div class="card-number" id="cardPromociones">
+              —
+            </div>
+
+            <div class="card-small">
+              Promociones activas
+            </div>
+
+          </div>
+
+
+          <div class="card">
+
+            <div class="card-title">
+              Fotos
+            </div>
+
+            <div class="card-number" id="cardFotos">
+              —
+            </div>
+
+            <div class="card-small">
+              Fotos registradas
+            </div>
+
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         RESERVAS
-    ====================================================== -->
-    <section id="seccion-reservas" class="seccion">
-      <div class="panel">
-        <h2>📅 Reservas</h2>
-        <div id="reservasContenido" class="cargando">
-          Cargando reservas...
+
+
+        <div class="form-box">
+
+          <h3>Acciones rápidas</h3>
+
+          <div class="action-group">
+
+            <button
+              class="primary-button"
+              onclick="showSection('reservas')"
+            >
+              Ver reservas
+            </button>
+
+            <button
+              class="secondary-button"
+              onclick="showSection('promociones')"
+            >
+              Ver promociones
+            </button>
+
+            <button
+              class="secondary-button"
+              onclick="showSection('fotos')"
+            >
+              Administrar fotos
+            </button>
+
+            <button
+              class="secondary-button"
+              onclick="loadDashboard()"
+            >
+              🔄 Actualizar
+            </button>
+
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         MESAS
-    ====================================================== -->
-    <section id="seccion-mesas" class="seccion">
-      <div class="panel">
-        <h2>🪑 Mesas</h2>
-        <div id="mesasContenido" class="cargando">
-          Cargando mesas...
+
+      </section>
+
+
+      <!-- ================= RESERVAS ================= -->
+
+      <section id="reservas" class="section">
+
+        <h2>Reservas</h2>
+
+        <div id="reservasContent" class="table-container">
+
+          <div class="loading">
+            Cargando reservas...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         PROMOCIONES
-    ====================================================== -->
-    <section id="seccion-promociones" class="seccion">
-      <div class="panel">
-        <h2>🔥 Promociones</h2>
-        <div id="promocionesContenido" class="cargando">
-          Cargando promociones...
+
+      </section>
+
+
+      <!-- ================= MESAS ================= -->
+
+      <section id="mesas" class="section">
+
+        <h2>Mesas</h2>
+
+        <div id="mesasContent" class="table-container">
+
+          <div class="loading">
+            Cargando mesas...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         FOTOS
-    ====================================================== -->
-    <section id="seccion-fotos" class="seccion">
-      <div class="panel">
-        <h2>📸 Galería de fotos</h2>
-        <div id="fotosContenido" class="fotos-grid">
-          <div class="cargando">
+
+      </section>
+
+
+      <!-- ================= PROMOCIONES ================= -->
+
+      <section id="promociones" class="section">
+
+        <h2>Promociones</h2>
+
+        <div class="form-box">
+
+          <h3>Nueva promoción</h3>
+
+          <form id="promoForm">
+
+            <div class="form-grid">
+
+              <div>
+                <label>Título</label>
+                <input id="promoTitulo" required>
+              </div>
+
+              <div>
+                <label>Precio</label>
+                <input
+                  id="promoPrecio"
+                  type="number"
+                  min="0"
+                  step="0.01"
+                >
+              </div>
+
+              <div class="full">
+
+                <label>Descripción</label>
+
+                <textarea id="promoDescripcion"></textarea>
+
+              </div>
+
+            </div>
+
+            <br>
+
+            <button class="primary-button" type="submit">
+              Agregar promoción
+            </button>
+
+          </form>
+
+        </div>
+
+
+        <div id="promocionesContent" class="table-container">
+
+          <div class="loading">
+            Cargando promociones...
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ================= FOTOS ================= -->
+
+      <section id="fotos" class="section">
+
+        <h2>Galería de fotos</h2>
+
+        <div class="form-box">
+
+          <h3>Agregar una foto</h3>
+
+          <p style="color:#667781;font-size:13px;">
+            Pegá la URL pública de la imagen. La foto quedará registrada
+            en la galería de Pool & Beach.
+          </p>
+
+          <form id="photoForm">
+
+            <div class="form-grid">
+
+              <div>
+
+                <label>Título</label>
+
+                <input
+                  id="photoTitulo"
+                  placeholder="Ej: Pool & Beach"
+                  required
+                >
+
+              </div>
+
+
+              <div>
+
+                <label>Categoría</label>
+
+                <input
+                  id="photoCategoria"
+                  placeholder="Ej: Local"
+                >
+
+              </div>
+
+
+              <div class="full">
+
+                <label>URL de la imagen</label>
+
+                <input
+                  id="photoUrl"
+                  type="url"
+                  placeholder="https://..."
+                  required
+                >
+
+              </div>
+
+            </div>
+
+            <br>
+
+            <button class="primary-button" type="submit">
+              Agregar foto
+            </button>
+
+          </form>
+
+        </div>
+
+
+        <div id="fotosContent">
+
+          <div class="loading">
             Cargando fotos...
           </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         PRODUCTOS
-    ====================================================== -->
-    <section id="seccion-productos" class="seccion">
-      <div class="panel">
-        <h2>🍔 Productos</h2>
-        <div id="productosContenido" class="cargando">
-          Cargando productos...
+
+      </section>
+
+
+      <!-- ================= PRODUCTOS ================= -->
+
+      <section id="productos" class="section">
+
+        <h2>Productos</h2>
+
+        <div id="productosContent" class="table-container">
+
+          <div class="loading">
+            Cargando productos...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         PEDIDOS
-    ====================================================== -->
-    <section id="seccion-pedidos" class="seccion">
-      <div class="panel">
-        <h2>🛒 Pedidos</h2>
-        <div id="pedidosContenido" class="cargando">
-          Cargando pedidos...
+
+      </section>
+
+
+      <!-- ================= PEDIDOS ================= -->
+
+      <section id="pedidos" class="section">
+
+        <h2>Pedidos</h2>
+
+        <div id="pedidosContent" class="table-container">
+
+          <div class="loading">
+            Cargando pedidos...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         JUEGOS
-    ====================================================== -->
-    <section id="seccion-juegos" class="seccion">
-      <div class="panel">
-        <h2>🎱 Juegos</h2>
-        <div id="juegosContenido" class="cargando">
-          Cargando juegos...
+
+      </section>
+
+
+      <!-- ================= JUEGOS ================= -->
+
+      <section id="juegos" class="section">
+
+        <h2>Juegos</h2>
+
+        <div id="juegosContent" class="table-container">
+
+          <div class="loading">
+            Cargando juegos...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         RANKING
-    ====================================================== -->
-    <section id="seccion-ranking" class="seccion">
-      <div class="panel">
-        <h2>🏆 Ranking</h2>
-        <div id="rankingContenido" class="cargando">
-          Cargando ranking...
+
+      </section>
+
+
+      <!-- ================= RANKING ================= -->
+
+      <section id="ranking" class="section">
+
+        <h2>Ranking de jugadores</h2>
+
+        <div id="rankingContent" class="table-container">
+
+          <div class="loading">
+            Cargando ranking...
+          </div>
+
         </div>
-      </div>
-    </section>
-    <!-- =====================================================
-         TORNEOS
-    ====================================================== -->
-    <section id="seccion-torneos" class="seccion">
-      <div class="panel">
-        <h2>🏅 Torneos</h2>
-        <div id="torneosContenido" class="cargando">
-          Cargando torneos...
+
+      </section>
+
+
+      <!-- ================= TORNEOS ================= -->
+
+      <section id="torneos" class="section">
+
+        <h2>Torneos</h2>
+
+        <div id="torneosContent" class="table-container">
+
+          <div class="loading">
+            Cargando torneos...
+          </div>
+
         </div>
-      </div>
-    </section>
-  </main>
+
+      </section>
+
+    </main>
+
+  </div>
+
 </div>
+
+
 <script>
+
 /* =========================================================
    SUPABASE
 ========================================================= */
+
 const SUPABASE_URL =
   "https://nmpakeovqkdajtswjpgm.supabase.co";
+
 const SUPABASE_KEY =
   "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const { createClient } = window.supabase;
+
 const supabaseClient =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+  createClient(SUPABASE_URL, SUPABASE_KEY);
+
+
 /* =========================================================
-   ELEMENTOS
+   UTILIDADES
 ========================================================= */
-const loginScreen =
-  document.getElementById("loginScreen");
-const adminScreen =
-  document.getElementById("adminScreen");
-const loginForm =
-  document.getElementById("loginForm");
-const loginButton =
-  document.getElementById("loginButton");
-const mensajeLogin =
-  document.getElementById("mensajeLogin");
-const mensajePanel =
-  document.getElementById("mensajePanel");
-const logoutButton =
-  document.getElementById("logoutButton");
-/* =========================================================
-   MENSAJES
-========================================================= */
-function mostrarLoginError(texto){
-  mensajeLogin.className = "error";
-  mensajeLogin.textContent = texto;
-}
-function mostrarLoginOK(texto){
-  mensajeLogin.className = "ok";
-  mensajeLogin.textContent = texto;
-}
-function mostrarPanelError(texto){
-  mensajePanel.className =
-    "aviso aviso-error";
-  mensajePanel.textContent = texto;
-}
-function limpiarPanelMensaje(){
-  mensajePanel.className = "";
-  mensajePanel.textContent = "";
-}
-/* =========================================================
-   LOGIN
-========================================================= */
-loginForm.addEventListener(
-  "submit",
-  async function(event){
-    event.preventDefault();
-    limpiarPanelMensaje();
-    const email =
-      document.getElementById("email").value.trim();
-    const password =
-      document.getElementById("password").value;
-    loginButton.disabled = true;
-    loginButton.textContent = "Ingresando...";
-    mostrarLoginOK("Verificando acceso...");
-    try{
-      const {
-        data,
-        error
-      } =
-        await supabaseClient.auth.signInWithPassword({
-          email,
-          password
-        });
-      if(error){
-        throw error;
-      }
-      if(!data.user){
-        throw new Error(
-          "No se pudo obtener el usuario."
-        );
-      }
-      loginScreen.classList.add("oculto");
-      adminScreen.classList.remove("oculto");
-      mostrarLoginOK("");
-      await cargarPanel();
-    }catch(error){
-      console.error(error);
-      mostrarLoginError(
-        error.message ||
-        "No se pudo iniciar sesión."
-      );
-    }finally{
-      loginButton.disabled = false;
-      loginButton.textContent =
-        "Iniciar sesión";
-    }
+
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
   }
-);
-/* =========================================================
-   SESIÓN EXISTENTE
-========================================================= */
-async function revisarSesion(){
-  try{
-    const {
-      data
-    } =
-      await supabaseClient.auth.getSession();
-    if(
-      data &&
-      data.session &&
-      data.session.user
-    ){
-      loginScreen.classList.add("oculto");
-      adminScreen.classList.remove("oculto");
-      await cargarPanel();
-    }
-  }catch(error){
-    console.error(
-      "Error revisando sesión:",
-      error
-    );
-  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 }
-/* =========================================================
-   LOGOUT
-========================================================= */
-logoutButton.addEventListener(
-  "click",
-  async function(){
-    await supabaseClient.auth.signOut();
-    adminScreen.classList.add("oculto");
-    loginScreen.classList.remove("oculto");
-    document.getElementById("password").value = "";
+
+
+function formatMoney(value) {
+
+  if (value === null || value === undefined || value === "") {
+    return "—";
   }
-);
+
+  const number = Number(value);
+
+  if (Number.isNaN(number)) {
+    return escapeHtml(value);
+  }
+
+  return "$ " + number.toLocaleString("es-AR");
+}
+
+
+function formatDate(value) {
+
+  if (!value) {
+    return "—";
+  }
+
+  const parts = String(value).split("-");
+
+  if (parts.length === 3) {
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  }
+
+  return escapeHtml(value);
+}
+
+
+function formatTime(value) {
+
+  if (!value) {
+    return "—";
+  }
+
+  return String(value).substring(0, 5);
+}
+
+
+function showGlobalMessage(message, error = false) {
+
+  const box = document.getElementById("globalMessage");
+
+  box.innerHTML = `
+    <div class="message ${error ? "error-message" : ""}">
+      ${escapeHtml(message)}
+    </div>
+  `;
+
+  setTimeout(() => {
+    box.innerHTML = "";
+  }, 5000);
+}
+
+
 /* =========================================================
    NAVEGACIÓN
 ========================================================= */
-document
-  .querySelectorAll(".menu button")
-  .forEach(function(button){
-    button.addEventListener(
-      "click",
-      async function(){
-        document
-          .querySelectorAll(".menu button")
-          .forEach(function(b){
-            b.classList.remove("activo");
-          });
-        button.classList.add("activo");
-        const nombre =
-          button.dataset.seccion;
-        document
-          .querySelectorAll(".seccion")
-          .forEach(function(seccion){
-            seccion.classList.remove("activa");
-          });
-        const seccion =
-          document.getElementById(
-            "seccion-" + nombre
-          );
-        if(seccion){
-          seccion.classList.add("activa");
-        }
-        if(nombre === "reservas"){
-          await cargarReservas();
-        }
-        if(nombre === "mesas"){
-          await cargarMesas();
-        }
-        if(nombre === "promociones"){
-          await cargarPromociones();
-        }
-        if(nombre === "fotos"){
-          await cargarFotos();
-        }
-        if(nombre === "productos"){
-          await cargarProductos();
-        }
-        if(nombre === "pedidos"){
-          await cargarPedidos();
-        }
-        if(nombre === "juegos"){
-          await cargarJuegos();
-        }
-        if(nombre === "ranking"){
-          await cargarRanking();
-        }
-        if(nombre === "torneos"){
-          await cargarTorneos();
-        }
-      }
+
+function showSection(sectionId) {
+
+  document.querySelectorAll(".section")
+    .forEach(section => {
+      section.classList.remove("active");
+    });
+
+  document.querySelectorAll(".nav-button")
+    .forEach(button => {
+      button.classList.remove("active");
+    });
+
+  const section =
+    document.getElementById(sectionId);
+
+  if (section) {
+    section.classList.add("active");
+  }
+
+  const button =
+    document.querySelector(
+      `.nav-button[data-section="${sectionId}"]`
     );
-  });
-/* =========================================================
-   CARGAR PANEL
-========================================================= */
-async function cargarPanel(){
-  limpiarPanelMensaje();
-  await Promise.all([
-    cargarTarjetas(),
-    cargarReservas(),
-    cargarMesas(),
-    cargarPromociones(),
-    cargarFotos(),
-    cargarProductos(),
-    cargarPedidos(),
-    cargarJuegos(),
-    cargarRanking(),
-    cargarTorneos()
-  ]);
-}
-/* =========================================================
-   TARJETAS
-========================================================= */
-async function cargarTarjetas(){
-  try{
-    const [
-      reservas,
-      mesas,
-      promociones,
-      fotos
-    ] = await Promise.all([
-      supabaseClient
-        .from("reservas")
-        .select("id",{count:"exact",head:true}),
-      /*
-       * IMPORTANTE:
-       * usamos mesas en minúscula.
-       * La tabla Mesas está vacía y NO se usa.
-       */
-      supabaseClient
-        .from("mesas")
-        .select("id",{count:"exact",head:true}),
-      supabaseClient
-        .from("promociones")
-        .select("id",{count:"exact",head:true}),
-      supabaseClient
-        .from("galeria_fotos")
-        .select("id",{count:"exact",head:true})
-    ]);
-    if(reservas.error){
-      console.error(
-        "Error reservas:",
-        reservas.error
-      );
-    }
-    if(mesas.error){
-      console.error(
-        "Error mesas:",
-        mesas.error
-      );
-    }
-    if(promociones.error){
-      console.error(
-        "Error promociones:",
-        promociones.error
-      );
-    }
-    if(fotos.error){
-      console.error(
-        "Error fotos:",
-        fotos.error
-      );
-    }
-    document.getElementById(
-      "cardReservas"
-    ).textContent =
-      reservas.count ?? 0;
-    document.getElementById(
-      "cardMesas"
-    ).textContent =
-      mesas.count ?? 0;
-    document.getElementById(
-      "cardPromociones"
-    ).textContent =
-      promociones.count ?? 0;
-    document.getElementById(
-      "cardFotos"
-    ).textContent =
-      fotos.count ?? 0;
-  }catch(error){
-    console.error(error);
-    mostrarPanelError(
-      "No se pudieron cargar las tarjetas."
-    );
+
+  if (button) {
+    button.classList.add("active");
+  }
+
+  if (sectionId === "reservas") {
+    loadReservas();
+  }
+
+  if (sectionId === "mesas") {
+    loadMesas();
+  }
+
+  if (sectionId === "promociones") {
+    loadPromociones();
+  }
+
+  if (sectionId === "fotos") {
+    loadFotos();
+  }
+
+  if (sectionId === "productos") {
+    loadProductos();
+  }
+
+  if (sectionId === "pedidos") {
+    loadPedidos();
+  }
+
+  if (sectionId === "juegos") {
+    loadJuegos();
+  }
+
+  if (sectionId === "ranking") {
+    loadRanking();
+  }
+
+  if (sectionId === "torneos") {
+    loadTorneos();
   }
 }
+
+
+document.querySelectorAll(".nav-button")
+  .forEach(button => {
+
+    button.addEventListener("click", () => {
+
+      showSection(
+        button.dataset.section
+      );
+
+    });
+
+  });
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+document
+  .getElementById("loginForm")
+  .addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    const email =
+      document.getElementById("email").value.trim();
+
+    const password =
+      document.getElementById("password").value;
+
+    const message =
+      document.getElementById("loginMessage");
+
+    message.textContent = "Iniciando sesión...";
+
+    const { error } =
+      await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if (error) {
+
+      message.textContent =
+        "No se pudo iniciar sesión: " +
+        error.message;
+
+      return;
+    }
+
+    message.textContent = "";
+
+    await showAdmin();
+
+  });
+
+
+/* =========================================================
+   MOSTRAR ADMIN
+========================================================= */
+
+async function showAdmin() {
+
+  const {
+    data: { session }
+  } = await supabaseClient.auth.getSession();
+
+  if (!session) {
+    return;
+  }
+
+  document
+    .getElementById("loginScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("adminPanel")
+    .classList.remove("hidden");
+
+  document
+    .getElementById("userEmail")
+    .textContent =
+      session.user.email || "";
+
+  await loadDashboard();
+
+}
+
+
+/* =========================================================
+   CERRAR SESIÓN
+========================================================= */
+
+document
+  .getElementById("logoutButton")
+  .addEventListener("click", async () => {
+
+    await supabaseClient.auth.signOut();
+
+    location.reload();
+
+  });
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+async function loadDashboard() {
+
+  try {
+
+    const reservas =
+      await supabaseClient
+        .from("reservas")
+        .select("id,notificacion_vista");
+
+    if (!reservas.error) {
+
+      const total =
+        reservas.data?.length || 0;
+
+      const pendientes =
+        reservas.data?.filter(
+          r => r.notificacion_vista === false
+        ).length || 0;
+
+      document.getElementById("cardReservas")
+        .textContent = total;
+
+      document.getElementById("cardReservasAvisos")
+        .textContent =
+          `${pendientes} notificación(es) sin ver`;
+
+    }
+
+
+    const mesas =
+      await supabaseClient
+        .from("mesas")
+        .select("id");
+
+    if (!mesas.error) {
+
+      document.getElementById("cardMesas")
+        .textContent =
+          mesas.data?.length || 0;
+
+    }
+
+
+    const promociones =
+      await supabaseClient
+        .from("promociones")
+        .select("id")
+        .eq("activa", true);
+
+    if (!promociones.error) {
+
+      document.getElementById("cardPromociones")
+        .textContent =
+          promociones.data?.length || 0;
+
+    }
+
+
+    const fotos =
+      await supabaseClient
+        .from("galeria_fotos")
+        .select("id");
+
+    if (!fotos.error) {
+
+      document.getElementById("cardFotos")
+        .textContent =
+          fotos.data?.length || 0;
+
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showGlobalMessage(
+      "No se pudieron actualizar todas las tarjetas.",
+      true
+    );
+
+  }
+
+}
+
+
 /* =========================================================
    RESERVAS
 ========================================================= */
-async function cargarReservas(){
-  const contenedor =
-    document.getElementById(
-      "reservasContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando reservas...</div>';
+
+async function loadReservas() {
+
+  const container =
+    document.getElementById("reservasContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando reservas...</div>`;
+
   const {
     data,
     error
@@ -970,141 +1391,289 @@ async function cargarReservas(){
     await supabaseClient
       .from("reservas")
       .select("*")
-      .order("fecha",{ascending:true})
-      .order("hora",{ascending:true});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar las reservas: " +
-      escapar(error.message) +
-      "</div>";
+      .order("fecha", { ascending: true })
+      .order("hora", { ascending: true });
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar reservas:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay reservas.</div>';
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay reservas registradas.</div>`;
+
     return;
   }
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
         <tr>
-          <th>Nombre</th>
+          <th>ID</th>
+          <th>Cliente</th>
           <th>Teléfono</th>
           <th>Fecha</th>
           <th>Hora</th>
           <th>Servicio</th>
           <th>Personas</th>
           <th>Estado</th>
+          <th>Notificación</th>
           <th>Acciones</th>
         </tr>
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(reserva){
+
+  data.forEach(reserva => {
+
     html += `
       <tr>
-        <td>${escapar(reserva.nombre)}</td>
-        <td>${escapar(reserva.telefono || "-")}</td>
-        <td>${escapar(reserva.fecha || "-")}</td>
-        <td>${escapar(reserva.hora || "-")}</td>
-        <td>${escapar(reserva.servicio || "-")}</td>
-        <td>${escapar(reserva.cantidad_personas || "-")}</td>
+
+        <td>${escapeHtml(reserva.id)}</td>
+
         <td>
-          ${estadoReserva(reserva.estado)}
+          <strong>${escapeHtml(reserva.nombre)}</strong>
+
+          ${
+            reserva.notas
+              ? `<br><small>${escapeHtml(reserva.notas)}</small>`
+              : ""
+          }
         </td>
+
         <td>
-          <button
-            class="btn btn-verde"
-            onclick="cambiarEstadoReserva(${reserva.id},'confirmada')"
-          >
-            Confirmar
-          </button>
-          <button
-            class="btn btn-rojo"
-            onclick="cambiarEstadoReserva(${reserva.id},'cancelada')"
-          >
-            Cancelar
-          </button>
-          <button
-            class="btn btn-amarillo"
-            onclick="cambiarEstadoReserva(${reserva.id},'pendiente')"
-          >
-            Pendiente
-          </button>
+          ${escapeHtml(reserva.telefono || "—")}
         </td>
+
+        <td>
+          ${formatDate(reserva.fecha)}
+        </td>
+
+        <td>
+          ${formatTime(reserva.hora)}
+        </td>
+
+        <td>
+          ${escapeHtml(reserva.servicio || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(reserva.cantidad_personas)}
+        </td>
+
+        <td>
+
+          <select
+            class="status-select"
+            data-reserva-status="${reserva.id}"
+          >
+
+            <option
+              value="pendiente"
+              ${reserva.estado === "pendiente" ? "selected" : ""}
+            >
+              Pendiente
+            </option>
+
+            <option
+              value="confirmada"
+              ${reserva.estado === "confirmada" ? "selected" : ""}
+            >
+              Confirmada
+            </option>
+
+            <option
+              value="cancelada"
+              ${reserva.estado === "cancelada" ? "selected" : ""}
+            >
+              Cancelada
+            </option>
+
+          </select>
+
+        </td>
+
+        <td>
+
+          ${
+            reserva.notificacion_vista
+              ? `<span class="badge badge-success">Vista</span>`
+              : `<span class="badge badge-danger">Sin ver</span>`
+          }
+
+        </td>
+
+        <td>
+
+          <div class="action-group">
+
+            ${
+              !reserva.notificacion_vista
+                ? `
+                  <button
+                    class="success-button"
+                    data-mark-reserva="${reserva.id}"
+                  >
+                    Marcar vista
+                  </button>
+                `
+                : ""
+            }
+
+            <button
+              class="secondary-button"
+              data-save-reserva="${reserva.id}"
+            >
+              Guardar estado
+            </button>
+
+          </div>
+
+        </td>
+
       </tr>
     `;
+
   });
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-save-reserva]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.saveReserva;
+
+        const select =
+          container.querySelector(
+            `[data-reserva-status="${id}"]`
+          );
+
+        await updateReservaEstado(
+          id,
+          select.value
+        );
+
+      });
+
+    });
+
+
+  container
+    .querySelectorAll("[data-mark-reserva]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        await markReservaViewed(
+          button.dataset.markReserva
+        );
+
+      });
+
+    });
+
 }
-/* =========================================================
-   CAMBIAR ESTADO RESERVA
-========================================================= */
-async function cambiarEstadoReserva(
-  id,
-  estado
-){
-  const {error} =
+
+
+/* ACTUALIZAR ESTADO RESERVA */
+
+async function updateReservaEstado(id, estado) {
+
+  const { error } =
+    await supabaseClient
+      .from("reservas")
+      .update({ estado })
+      .eq("id", id);
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo actualizar la reserva: " +
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  showGlobalMessage(
+    "Estado de la reserva actualizado."
+  );
+
+  await loadReservas();
+  await loadDashboard();
+
+}
+
+
+/* MARCAR NOTIFICACIÓN VISTA */
+
+async function markReservaViewed(id) {
+
+  const { error } =
     await supabaseClient
       .from("reservas")
       .update({
-        estado:estado
+        notificacion_vista: true,
+        notificacion_vista_en:
+          new Date().toISOString()
       })
-      .eq("id",id);
-  if(error){
-    alert(
-      "No se pudo actualizar la reserva:\n" +
-      error.message
+      .eq("id", id);
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo marcar la notificación: " +
+      error.message,
+      true
     );
+
     return;
   }
-  await cargarReservas();
-  await cargarTarjetas();
+
+  showGlobalMessage(
+    "Notificación marcada como vista."
+  );
+
+  await loadReservas();
+  await loadDashboard();
+
 }
-/* =========================================================
-   ESTADO RESERVA
-========================================================= */
-function estadoReserva(estado){
-  const valor =
-    estado || "pendiente";
-  let clase =
-    "estado-pendiente";
-  if(valor === "confirmada"){
-    clase = "estado-confirmada";
-  }
-  if(valor === "cancelada"){
-    clase = "estado-cancelada";
-  }
-  return `
-    <span class="estado ${clase}">
-      ${escapar(valor)}
-    </span>
-  `;
-}
+
+
 /* =========================================================
    MESAS
 ========================================================= */
-async function cargarMesas(){
-  const contenedor =
-    document.getElementById(
-      "mesasContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando mesas...</div>';
-  /*
-   * TABLA CORRECTA:
-   * public.mesas
-   *
-   * NO public.Mesas
-   */
+
+async function loadMesas() {
+
+  const container =
+    document.getElementById("mesasContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando mesas...</div>`;
+
   const {
     data,
     error
@@ -1112,71 +1681,104 @@ async function cargarMesas(){
     await supabaseClient
       .from("mesas")
       .select("*")
-      .order("numero",{ascending:true});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar las mesas: " +
-      escapar(error.message) +
-      "</div>";
+      .order("numero", { ascending: true });
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar mesas:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay mesas cargadas.</div>';
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay mesas registradas.</div>`;
+
     return;
   }
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
         <tr>
           <th>Número</th>
           <th>Nombre</th>
           <th>Servicio</th>
           <th>Activa</th>
-          <th>QR</th>
+          <th>QR Token</th>
         </tr>
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(mesa){
+
+  data.forEach(mesa => {
+
     html += `
       <tr>
-        <td>${escapar(mesa.numero)}</td>
-        <td>${escapar(mesa.nombre || "-")}</td>
-        <td>${escapar(mesa.servicio || "-")}</td>
+
+        <td>
+          <strong>
+            ${escapeHtml(mesa.numero)}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(mesa.nombre || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(mesa.servicio || "—")}
+        </td>
+
         <td>
           ${
             mesa.activa
-            ? '<span class="estado estado-confirmada">Activa</span>'
-            : '<span class="estado estado-cancelada">Inactiva</span>'
+              ? `<span class="badge badge-success">Activa</span>`
+              : `<span class="badge badge-danger">Inactiva</span>`
           }
         </td>
+
         <td>
-          ${escapar(mesa.qr_token || "-")}
+          <small>
+            ${escapeHtml(mesa.qr_token || "—")}
+          </small>
         </td>
+
       </tr>
     `;
+
   });
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+  container.innerHTML = html;
+
 }
+
+
 /* =========================================================
    PROMOCIONES
 ========================================================= */
-async function cargarPromociones(){
-  const contenedor =
-    document.getElementById(
-      "promocionesContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando promociones...</div>';
+
+async function loadPromociones() {
+
+  const container =
+    document.getElementById("promocionesContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando promociones...</div>`;
+
   const {
     data,
     error
@@ -1184,77 +1786,242 @@ async function cargarPromociones(){
     await supabaseClient
       .from("promociones")
       .select("*")
-      .order("created_at",{ascending:false});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar las promociones: " +
-      escapar(error.message) +
-      "</div>";
+      .order("created_at", {
+        ascending: false
+      });
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar promociones:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay promociones.</div>';
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay promociones.</div>`;
+
     return;
   }
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
+
         <tr>
           <th>Título</th>
           <th>Descripción</th>
           <th>Precio</th>
-          <th>Activa</th>
+          <th>Estado</th>
+          <th>Acción</th>
         </tr>
+
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(promo){
+
+  data.forEach(promo => {
+
     html += `
       <tr>
-        <td>${escapar(promo.titulo)}</td>
-        <td>${escapar(promo.descripcion || "-")}</td>
+
         <td>
-          ${
-            promo.precio !== null &&
-            promo.precio !== undefined
-            ? "$ " + escapar(
-                Number(promo.precio)
-                  .toLocaleString("es-AR")
-              )
-            : "-"
-          }
+          <strong>
+            ${escapeHtml(promo.titulo)}
+          </strong>
         </td>
+
         <td>
+          ${escapeHtml(promo.descripcion || "—")}
+        </td>
+
+        <td>
+          ${formatMoney(promo.precio)}
+        </td>
+
+        <td>
+
           ${
             promo.activa
-            ? '<span class="estado estado-confirmada">Activa</span>'
-            : '<span class="estado estado-cancelada">Inactiva</span>'
+              ? `<span class="badge badge-success">Activa</span>`
+              : `<span class="badge badge-danger">Inactiva</span>`
           }
+
         </td>
+
+        <td>
+
+          <button
+            class="secondary-button"
+            data-toggle-promo="${promo.id}"
+            data-active="${promo.activa}"
+          >
+            ${
+              promo.activa
+                ? "Desactivar"
+                : "Activar"
+            }
+          </button>
+
+        </td>
+
       </tr>
     `;
+
   });
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-toggle-promo]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.togglePromo;
+
+        const active =
+          button.dataset.active === "true";
+
+        await togglePromocion(
+          id,
+          !active
+        );
+
+      });
+
+    });
+
 }
+
+
+/* TOGGLE PROMOCIÓN */
+
+async function togglePromocion(id, activa) {
+
+  const { error } =
+    await supabaseClient
+      .from("promociones")
+      .update({ activa })
+      .eq("id", id);
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo actualizar la promoción: " +
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  showGlobalMessage(
+    "Promoción actualizada."
+  );
+
+  await loadPromociones();
+  await loadDashboard();
+
+}
+
+
+/* NUEVA PROMOCIÓN */
+
+document
+  .getElementById("promoForm")
+  .addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    const titulo =
+      document
+        .getElementById("promoTitulo")
+        .value
+        .trim();
+
+    const descripcion =
+      document
+        .getElementById("promoDescripcion")
+        .value
+        .trim();
+
+    const precioValue =
+      document
+        .getElementById("promoPrecio")
+        .value;
+
+    const precio =
+      precioValue === ""
+        ? null
+        : Number(precioValue);
+
+
+    const { error } =
+      await supabaseClient
+        .from("promociones")
+        .insert({
+          titulo,
+          descripcion:
+            descripcion || null,
+          precio,
+          activa: true
+        });
+
+
+    if (error) {
+
+      showGlobalMessage(
+        "No se pudo crear la promoción: " +
+        error.message,
+        true
+      );
+
+      return;
+    }
+
+
+    document
+      .getElementById("promoForm")
+      .reset();
+
+    showGlobalMessage(
+      "Promoción creada correctamente."
+    );
+
+    await loadPromociones();
+    await loadDashboard();
+
+  });
+
+
 /* =========================================================
    FOTOS
 ========================================================= */
-async function cargarFotos(){
-  const contenedor =
-    document.getElementById(
-      "fotosContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando fotos...</div>';
+
+async function loadFotos() {
+
+  const container =
+    document.getElementById("fotosContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando fotos...</div>`;
+
   const {
     data,
     error
@@ -1262,95 +2029,225 @@ async function cargarFotos(){
     await supabaseClient
       .from("galeria_fotos")
       .select("*")
-      .order("creado_en",{ascending:false});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar las fotos: " +
-      escapar(error.message) +
-      "</div>";
-    return;
-  }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay fotos cargadas.</div>';
-    return;
-  }
-  let html = "";
-  data.forEach(function(foto){
-    const imagen =
-      foto.url ||
-      foto.ruta ||
-      "";
-    html += `
-      <div class="foto-card">
-        ${
-          imagen
-          ? `
-            <img
-              src="${escapar(imagen)}"
-              alt="${escapar(foto.titulo || "Foto")}"
-              onerror="this.style.display='none'"
-            >
-          `
-          : ""
-        }
-        <div class="foto-info">
-          <h3>
-            ${escapar(foto.titulo || "Sin título")}
-          </h3>
-          <p>
-            ${escapar(foto.categoria || "Sin categoría")}
-          </p>
-          <button
-            class="btn btn-rojo"
-            onclick="eliminarFoto('${foto.id}')"
-          >
-            Eliminar
-          </button>
-        </div>
+      .order("creado_en", {
+        ascending: false
+      });
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar fotos:
+        ${escapeHtml(error.message)}
       </div>
     `;
-  });
-  contenedor.innerHTML = html;
-}
-/* =========================================================
-   ELIMINAR FOTO
-========================================================= */
-async function eliminarFoto(id){
-  if(
-    !confirm(
-      "¿Querés eliminar esta foto de la galería?"
-    )
-  ){
+
     return;
   }
-  const {error} =
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay fotos registradas.</div>`;
+
+    return;
+  }
+
+
+  let html = `
+    <div class="photo-grid">
+  `;
+
+
+  data.forEach(photo => {
+
+    html += `
+      <div class="photo-card">
+
+        <img
+          src="${escapeHtml(photo.url)}"
+          alt="${escapeHtml(photo.titulo || "Foto")}"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="photo-info">
+
+          <h3>
+            ${escapeHtml(photo.titulo || "Sin título")}
+          </h3>
+
+          <p>
+            Categoría:
+            ${escapeHtml(photo.categoria || "—")}
+          </p>
+
+          <p>
+            URL:
+            ${escapeHtml(photo.url || "—")}
+          </p>
+
+          <br>
+
+          <button
+            class="danger-button"
+            data-delete-photo="${photo.id}"
+          >
+            Quitar foto
+          </button>
+
+        </div>
+
+      </div>
+    `;
+
+  });
+
+
+  html += `
+    </div>
+  `;
+
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-delete-photo]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.deletePhoto;
+
+        const confirmed =
+          confirm(
+            "¿Querés quitar esta foto de la galería?"
+          );
+
+        if (!confirmed) {
+          return;
+        }
+
+        await deleteFoto(id);
+
+      });
+
+    });
+
+}
+
+
+/* NUEVA FOTO */
+
+document
+  .getElementById("photoForm")
+  .addEventListener("submit", async event => {
+
+    event.preventDefault();
+
+    const titulo =
+      document
+        .getElementById("photoTitulo")
+        .value
+        .trim();
+
+    const categoria =
+      document
+        .getElementById("photoCategoria")
+        .value
+        .trim();
+
+    const url =
+      document
+        .getElementById("photoUrl")
+        .value
+        .trim();
+
+
+    const { error } =
+      await supabaseClient
+        .from("galeria_fotos")
+        .insert({
+          titulo,
+          categoria:
+            categoria || null,
+          ruta: url,
+          url
+        });
+
+
+    if (error) {
+
+      showGlobalMessage(
+        "No se pudo agregar la foto: " +
+        error.message,
+        true
+      );
+
+      return;
+    }
+
+
+    document
+      .getElementById("photoForm")
+      .reset();
+
+    showGlobalMessage(
+      "Foto agregada correctamente."
+    );
+
+    await loadFotos();
+    await loadDashboard();
+
+  });
+
+
+/* BORRAR FOTO */
+
+async function deleteFoto(id) {
+
+  const { error } =
     await supabaseClient
       .from("galeria_fotos")
       .delete()
-      .eq("id",id);
-  if(error){
-    alert(
-      "No se pudo eliminar la foto:\n" +
-      error.message
+      .eq("id", id);
+
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo quitar la foto: " +
+      error.message,
+      true
     );
+
     return;
   }
-  await cargarFotos();
-  await cargarTarjetas();
+
+
+  showGlobalMessage(
+    "Foto quitada de la galería."
+  );
+
+  await loadFotos();
+  await loadDashboard();
+
 }
+
+
 /* =========================================================
    PRODUCTOS
 ========================================================= */
-async function cargarProductos(){
-  const contenedor =
-    document.getElementById(
-      "productosContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando productos...</div>';
+
+async function loadProductos() {
+
+  const container =
+    document.getElementById("productosContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando productos...</div>`;
+
   const {
     data,
     error
@@ -1358,75 +2255,187 @@ async function cargarProductos(){
     await supabaseClient
       .from("productos")
       .select("*")
-      .order("categoria",{ascending:true})
-      .order("nombre",{ascending:true});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar los productos: " +
-      escapar(error.message) +
-      "</div>";
+      .order("categoria", {
+        ascending: true
+      })
+      .order("nombre", {
+        ascending: true
+      });
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar productos:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">' +
-      "Todavía no hay productos cargados en Supabase." +
-      "</div>";
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay productos registrados.</div>`;
+
     return;
   }
+
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
+
         <tr>
           <th>Nombre</th>
           <th>Categoría</th>
           <th>Descripción</th>
           <th>Precio</th>
           <th>Disponible</th>
+          <th>Acción</th>
         </tr>
+
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(producto){
+
+
+  data.forEach(producto => {
+
     html += `
       <tr>
-        <td>${escapar(producto.nombre)}</td>
-        <td>${escapar(producto.categoria)}</td>
-        <td>${escapar(producto.descripcion || "-")}</td>
+
         <td>
-          $ ${Number(producto.precio || 0)
-            .toLocaleString("es-AR")}
+          <strong>
+            ${escapeHtml(producto.nombre)}
+          </strong>
         </td>
+
         <td>
+          ${escapeHtml(producto.categoria || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(producto.descripcion || "—")}
+        </td>
+
+        <td>
+          ${formatMoney(producto.precio)}
+        </td>
+
+        <td>
+
           ${
             producto.disponible
-            ? "Sí"
-            : "No"
+              ? `<span class="badge badge-success">Disponible</span>`
+              : `<span class="badge badge-danger">No disponible</span>`
           }
+
         </td>
+
+        <td>
+
+          <button
+            class="secondary-button"
+            data-toggle-producto="${producto.id}"
+            data-active="${producto.disponible}"
+          >
+            ${
+              producto.disponible
+                ? "Ocultar"
+                : "Mostrar"
+            }
+          </button>
+
+        </td>
+
       </tr>
     `;
+
   });
+
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-toggle-producto]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.toggleProducto;
+
+        const active =
+          button.dataset.active === "true";
+
+        await toggleProducto(
+          id,
+          !active
+        );
+
+      });
+
+    });
+
 }
+
+
+/* TOGGLE PRODUCTO */
+
+async function toggleProducto(id, disponible) {
+
+  const { error } =
+    await supabaseClient
+      .from("productos")
+      .update({ disponible })
+      .eq("id", id);
+
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo actualizar el producto: " +
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+
+  showGlobalMessage(
+    "Producto actualizado."
+  );
+
+  await loadProductos();
+
+}
+
+
 /* =========================================================
    PEDIDOS
 ========================================================= */
-async function cargarPedidos(){
-  const contenedor =
-    document.getElementById(
-      "pedidosContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando pedidos...</div>';
+
+async function loadPedidos() {
+
+  const container =
+    document.getElementById("pedidosContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando pedidos...</div>`;
+
+
   const {
     data,
     error
@@ -1434,89 +2443,237 @@ async function cargarPedidos(){
     await supabaseClient
       .from("pedidos")
       .select("*")
-      .order("created_at",{ascending:false});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar los pedidos: " +
-      escapar(error.message) +
-      "</div>";
+      .order("created_at", {
+        ascending: false
+      });
+
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar pedidos:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay pedidos.</div>';
+
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay pedidos registrados.</div>`;
+
     return;
   }
+
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
+
         <tr>
           <th>Cliente</th>
           <th>Teléfono</th>
           <th>Tipo</th>
-          <th>Estado</th>
+          <th>Entrega</th>
           <th>Total</th>
+          <th>Estado</th>
           <th>Notas</th>
+          <th>Fecha</th>
         </tr>
+
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(pedido){
+
+
+  data.forEach(pedido => {
+
     html += `
       <tr>
+
         <td>
-          ${escapar(
-            pedido.nombre_cliente || "-"
+          ${escapeHtml(pedido.nombre_cliente || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(pedido.telefono || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(pedido.tipo || "—")}
+        </td>
+
+        <td>
+
+          ${escapeHtml(pedido.tipo_entrega || "—")}
+
+          ${
+            pedido.direccion
+              ? `<br>${escapeHtml(pedido.direccion)}`
+              : ""
+          }
+
+        </td>
+
+        <td>
+          ${formatMoney(pedido.total)}
+        </td>
+
+        <td>
+
+          <select
+            class="status-select"
+            data-pedido-status="${pedido.id}"
+          >
+
+            <option value="pendiente"
+              ${pedido.estado === "pendiente" ? "selected" : ""}>
+              Pendiente
+            </option>
+
+            <option value="confirmado"
+              ${pedido.estado === "confirmado" ? "selected" : ""}>
+              Confirmado
+            </option>
+
+            <option value="preparando"
+              ${pedido.estado === "preparando" ? "selected" : ""}>
+              Preparando
+            </option>
+
+            <option value="listo"
+              ${pedido.estado === "listo" ? "selected" : ""}>
+              Listo
+            </option>
+
+            <option value="entregado"
+              ${pedido.estado === "entregado" ? "selected" : ""}>
+              Entregado
+            </option>
+
+            <option value="cancelado"
+              ${pedido.estado === "cancelado" ? "selected" : ""}>
+              Cancelado
+            </option>
+
+          </select>
+
+          <br><br>
+
+          <button
+            class="secondary-button"
+            data-save-pedido="${pedido.id}"
+          >
+            Guardar
+          </button>
+
+        </td>
+
+        <td>
+          ${escapeHtml(pedido.notas || "—")}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            pedido.created_at
+              ? new Date(pedido.created_at)
+                  .toLocaleString("es-AR")
+              : "—"
           )}
         </td>
-        <td>
-          ${escapar(
-            pedido.telefono || "-"
-          )}
-        </td>
-        <td>
-          ${escapar(
-            pedido.tipo || "-"
-          )}
-        </td>
-        <td>
-          ${escapar(
-            pedido.estado || "-"
-          )}
-        </td>
-        <td>
-          $ ${Number(
-            pedido.total || 0
-          ).toLocaleString("es-AR")}
-        </td>
-        <td>
-          ${escapar(
-            pedido.notas || "-"
-          )}
-        </td>
+
       </tr>
     `;
+
   });
+
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-save-pedido]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.savePedido;
+
+        const select =
+          container.querySelector(
+            `[data-pedido-status="${id}"]`
+          );
+
+        await updatePedidoEstado(
+          id,
+          select.value
+        );
+
+      });
+
+    });
+
 }
+
+
+/* ACTUALIZAR PEDIDO */
+
+async function updatePedidoEstado(id, estado) {
+
+  const { error } =
+    await supabaseClient
+      .from("pedidos")
+      .update({ estado })
+      .eq("id", id);
+
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo actualizar el pedido: " +
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+
+  showGlobalMessage(
+    "Pedido actualizado."
+  );
+
+  await loadPedidos();
+
+}
+
+
 /* =========================================================
    JUEGOS
 ========================================================= */
-async function cargarJuegos(){
-  const contenedor =
-    document.getElementById(
-      "juegosContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando juegos...</div>';
+
+async function loadJuegos() {
+
+  const container =
+    document.getElementById("juegosContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando juegos...</div>`;
+
+
   const {
     data,
     error
@@ -1524,83 +2681,191 @@ async function cargarJuegos(){
     await supabaseClient
       .from("games")
       .select("*")
-      .order("created_at",{ascending:true});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar los juegos: " +
-      escapar(error.message) +
-      "</div>";
+      .order("created_at", {
+        ascending: true
+      });
+
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar juegos:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay juegos.</div>';
+
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay juegos registrados.</div>`;
+
     return;
   }
+
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
+
         <tr>
           <th>Juego</th>
           <th>Descripción</th>
+          <th>Icono</th>
           <th>Puntos</th>
           <th>Tokens</th>
-          <th>Activo</th>
+          <th>Estado</th>
+          <th>Acción</th>
         </tr>
+
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(juego){
+
+
+  data.forEach(juego => {
+
     html += `
       <tr>
+
         <td>
-          ${escapar(
-            (juego.icon || "🎱") +
-            " " +
-            juego.name
-          )}
+          <strong>
+            ${escapeHtml(juego.name)}
+          </strong>
         </td>
+
         <td>
-          ${escapar(
-            juego.description || "-"
-          )}
+          ${escapeHtml(juego.description || "—")}
         </td>
+
         <td>
-          ${escapar(
-            juego.points_reward || 0
-          )}
+          ${escapeHtml(juego.icon || "—")}
         </td>
+
         <td>
-          ${escapar(
-            juego.tokens_reward || 0
-          )}
+          ${escapeHtml(juego.points_reward ?? 0)}
         </td>
+
         <td>
-          ${juego.active ? "Sí" : "No"}
+          ${escapeHtml(juego.tokens_reward ?? 0)}
         </td>
+
+        <td>
+
+          ${
+            juego.active
+              ? `<span class="badge badge-success">Activo</span>`
+              : `<span class="badge badge-danger">Inactivo</span>`
+          }
+
+        </td>
+
+        <td>
+
+          <button
+            class="secondary-button"
+            data-toggle-game="${juego.id}"
+            data-active="${juego.active}"
+          >
+            ${
+              juego.active
+                ? "Desactivar"
+                : "Activar"
+            }
+          </button>
+
+        </td>
+
       </tr>
     `;
+
   });
+
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+
+  container.innerHTML = html;
+
+
+  container
+    .querySelectorAll("[data-toggle-game]")
+    .forEach(button => {
+
+      button.addEventListener("click", async () => {
+
+        const id =
+          button.dataset.toggleGame;
+
+        const active =
+          button.dataset.active === "true";
+
+        await toggleJuego(
+          id,
+          !active
+        );
+
+      });
+
+    });
+
 }
+
+
+/* TOGGLE JUEGO */
+
+async function toggleJuego(id, active) {
+
+  const { error } =
+    await supabaseClient
+      .from("games")
+      .update({ active })
+      .eq("id", id);
+
+
+  if (error) {
+
+    showGlobalMessage(
+      "No se pudo actualizar el juego: " +
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+
+  showGlobalMessage(
+    "Juego actualizado."
+  );
+
+  await loadJuegos();
+
+}
+
+
 /* =========================================================
    RANKING
 ========================================================= */
-async function cargarRanking(){
-  const contenedor =
-    document.getElementById(
-      "rankingContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando ranking...</div>';
+
+async function loadRanking() {
+
+  const container =
+    document.getElementById("rankingContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando ranking...</div>`;
+
+
   const {
     data,
     error
@@ -1608,71 +2873,120 @@ async function cargarRanking(){
     await supabaseClient
       .from("profiles")
       .select(
-        "display_name,points,tokens,streak"
+        "id,display_name,role,points,tokens,streak"
       )
-      .order("points",{ascending:false});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudo cargar el ranking: " +
-      escapar(error.message) +
-      "</div>";
-    return;
-  }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay jugadores.</div>';
-    return;
-  }
-  let html = "";
-  data.forEach(function(jugador,index){
-    html += `
-      <div
-        style="
-          display:flex;
-          align-items:center;
-          gap:15px;
-          padding:14px;
-          border-bottom:1px solid #e2e8f0;
-        "
-      >
-        <strong>
-          #${index + 1}
-        </strong>
-        <div style="flex:1">
-          <strong>
-            ${escapar(
-              jugador.display_name ||
-              "Jugador"
-            )}
-          </strong>
-          <div style="color:#64748b;font-size:13px">
-            Racha: ${escapar(
-              jugador.streak || 0
-            )}
-          </div>
-        </div>
-        <strong style="color:#0284c7">
-          ${escapar(
-            jugador.points || 0
-          )} puntos
-        </strong>
+      .order("points", {
+        ascending: false
+      });
+
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar ranking:
+        ${escapeHtml(error.message)}
       </div>
     `;
+
+    return;
+  }
+
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay jugadores en el ranking.</div>`;
+
+    return;
+  }
+
+
+  let html = `
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Posición</th>
+          <th>Jugador</th>
+          <th>Rol</th>
+          <th>Puntos</th>
+          <th>Tokens</th>
+          <th>Racha</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+  `;
+
+
+  data.forEach((jugador, index) => {
+
+    html += `
+      <tr>
+
+        <td>
+          <strong>
+            #${index + 1}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(
+            jugador.display_name || "Jugador"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(jugador.role || "player")}
+        </td>
+
+        <td>
+          <strong>
+            ${escapeHtml(jugador.points ?? 0)}
+          </strong>
+        </td>
+
+        <td>
+          ${escapeHtml(jugador.tokens ?? 0)}
+        </td>
+
+        <td>
+          ${escapeHtml(jugador.streak ?? 0)}
+        </td>
+
+      </tr>
+    `;
+
   });
-  contenedor.innerHTML = html;
+
+
+  html += `
+      </tbody>
+    </table>
+  `;
+
+
+  container.innerHTML = html;
+
 }
+
+
 /* =========================================================
    TORNEOS
 ========================================================= */
-async function cargarTorneos(){
-  const contenedor =
-    document.getElementById(
-      "torneosContenido"
-    );
-  contenedor.innerHTML =
-    '<div class="cargando">Cargando torneos...</div>';
+
+async function loadTorneos() {
+
+  const container =
+    document.getElementById("torneosContent");
+
+  container.innerHTML =
+    `<div class="loading">Cargando torneos...</div>`;
+
+
   const {
     data,
     error
@@ -1680,100 +2994,164 @@ async function cargarTorneos(){
     await supabaseClient
       .from("torneos")
       .select("*")
-      .order("fecha",{ascending:false});
-  if(error){
-    console.error(error);
-    contenedor.innerHTML =
-      '<div class="aviso aviso-error">' +
-      "No se pudieron cargar los torneos: " +
-      escapar(error.message) +
-      "</div>";
+      .order("fecha", {
+        ascending: false
+      });
+
+
+  if (error) {
+
+    container.innerHTML = `
+      <div class="message error-message">
+        Error al cargar torneos:
+        ${escapeHtml(error.message)}
+      </div>
+    `;
+
     return;
   }
-  if(!data || data.length === 0){
-    contenedor.innerHTML =
-      '<div class="vacio">No hay torneos.</div>';
+
+
+  if (!data || data.length === 0) {
+
+    container.innerHTML =
+      `<div class="empty">No hay torneos registrados.</div>`;
+
     return;
   }
+
+
   let html = `
-    <div class="tabla-contenedor">
     <table>
+
       <thead>
+
         <tr>
           <th>Nombre</th>
           <th>Juego</th>
           <th>Fecha</th>
           <th>Inscripción</th>
-          <th>Premio 1°</th>
-          <th>Premio 2°</th>
+          <th>1° Premio</th>
+          <th>2° Premio</th>
+          <th>Máx. participantes</th>
           <th>Estado</th>
+          <th>Notas</th>
         </tr>
+
       </thead>
+
       <tbody>
   `;
-  data.forEach(function(torneo){
+
+
+  data.forEach(torneo => {
+
     html += `
       <tr>
+
         <td>
-          ${escapar(torneo.nombre)}
+          <strong>
+            ${escapeHtml(torneo.nombre)}
+          </strong>
         </td>
+
         <td>
-          ${escapar(torneo.juego)}
+          ${escapeHtml(torneo.juego || "—")}
         </td>
+
         <td>
-          ${escapar(torneo.fecha)}
+          ${formatDate(torneo.fecha)}
         </td>
+
         <td>
-          $ ${Number(
-            torneo.inscripcion || 0
-          ).toLocaleString("es-AR")}
+          ${formatMoney(torneo.inscripcion)}
         </td>
+
         <td>
-          $ ${Number(
-            torneo.premio_primero || 0
-          ).toLocaleString("es-AR")}
+          ${formatMoney(torneo.premio_primero)}
         </td>
+
         <td>
-          $ ${Number(
-            torneo.premio_segundo || 0
-          ).toLocaleString("es-AR")}
+          ${formatMoney(torneo.premio_segundo)}
         </td>
+
         <td>
-          ${escapar(
-            torneo.estado || "-"
+          ${escapeHtml(
+            torneo.max_participantes ?? "—"
           )}
         </td>
+
+        <td>
+          <span class="badge">
+            ${escapeHtml(torneo.estado || "—")}
+          </span>
+        </td>
+
+        <td>
+          ${escapeHtml(torneo.notas || "—")}
+        </td>
+
       </tr>
     `;
+
   });
+
+
   html += `
       </tbody>
     </table>
-    </div>
   `;
-  contenedor.innerHTML = html;
+
+
+  container.innerHTML = html;
+
 }
+
+
 /* =========================================================
-   ESCAPAR HTML
+   SESIÓN AL ABRIR LA PÁGINA
 ========================================================= */
-function escapar(valor){
-  if(
-    valor === null ||
-    valor === undefined
-  ){
-    return "";
-  }
-  return String(valor)
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
+
+supabaseClient.auth
+  .getSession()
+  .then(async ({ data }) => {
+
+    if (data.session) {
+
+      await showAdmin();
+
+    }
+
+  });
+
+
 /* =========================================================
-   INICIAR
+   CAMBIO DE SESIÓN
 ========================================================= */
-revisarSesion();
+
+supabaseClient.auth
+  .onAuthStateChange(async (event, session) => {
+
+    if (session) {
+
+      document
+        .getElementById("loginScreen")
+        .classList.add("hidden");
+
+      document
+        .getElementById("adminPanel")
+        .classList.remove("hidden");
+
+      document
+        .getElementById("userEmail")
+        .textContent =
+          session.user.email || "";
+
+    }
+
+  });
+
 </script>
+
 </body>
 </html>
