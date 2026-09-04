@@ -3,143 +3,104 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Pool & Beach - Juegos</title>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
 
 <style>
 body{
   font-family:Arial,sans-serif;
-  background:#f4fbff;
+  background:#eef8fb;
   margin:0;
   color:#123;
 }
-
-header{
-  background:#087ea4;
-  color:white;
-  padding:18px;
-  text-align:center;
-}
-
-main{
+.container{
   max-width:1000px;
   margin:auto;
-  padding:15px;
+  padding:20px;
 }
-
 .card{
   background:white;
-  border-radius:12px;
+  border-radius:14px;
   padding:18px;
   margin:15px 0;
   box-shadow:0 2px 10px #0001;
 }
-
-input,select,button{
+input,select,textarea,button{
   width:100%;
+  box-sizing:border-box;
   padding:12px;
   margin:6px 0;
-  box-sizing:border-box;
-  border-radius:8px;
+  border-radius:9px;
   border:1px solid #ccc;
   font-size:16px;
 }
-
 button{
   background:#087ea4;
   color:white;
   border:0;
   font-weight:bold;
 }
-
-button.danger{
+.danger{
   background:#d9534f;
 }
-
-button.green{
-  background:#198754;
-}
-
-nav{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-nav button{
-  width:auto;
-}
-
-.tab{
-  display:none;
-}
-
-.tab.active{
-  display:block;
-}
-
-table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-td,th{
-  padding:9px;
-  border-bottom:1px solid #ddd;
-  text-align:left;
-}
-
-h1,h2{
-  margin-top:0;
-}
-
 #panel{
   display:none;
 }
-
-.ranking-item{
+.tabs{
   display:flex;
-  justify-content:space-between;
-  padding:12px;
-  margin:6px 0;
-  background:#f4fbff;
-  border-radius:8px;
+  gap:7px;
+  overflow:auto;
+  margin-bottom:15px;
 }
-
-.small{
-  font-size:13px;
-  color:#60717a;
+.tabs button{
+  width:auto;
+  white-space:nowrap;
 }
-
+.tab{
+  display:none;
+}
+.tab.active{
+  display:block;
+}
+.msg{
+  font-weight:bold;
+  min-height:22px;
+}
+.error{
+  color:#c62828;
+}
+.ok{
+  color:#16803c;
+}
 </style>
 </head>
 
 <body>
 
-<header>
+<div class="container">
 
-<h1>🏖️ Pool & Beach</h1>
-
-<p>Juegos · Torneos · Ranking · Mesas</p>
-
-</header>
-
-<main>
+<h1>🎮 Pool & Beach</h1>
 
 <div id="login" class="card">
 
 <h2>🔐 Acceso administrador</h2>
 
-<input id="email" type="email" placeholder="Email">
+<input
+id="email"
+type="email"
+placeholder="Email"
+autocomplete="username">
 
-<input id="password" type="password" placeholder="Contraseña">
+<input
+id="password"
+type="password"
+placeholder="Contraseña"
+autocomplete="current-password">
 
-<button onclick="login()">Ingresar</button>
+<button id="loginBtn">
+Ingresar
+</button>
 
-<p id="loginMsg"></p>
+<p id="loginMsg" class="msg"></p>
 
 </div>
 
@@ -148,1148 +109,1384 @@ h1,h2{
 
 <div class="card">
 
-<button onclick="logout()">Cerrar sesión</button>
+<button id="logout" class="danger">
+Cerrar sesión
+</button>
+
+<h2>
+Panel de Juegos, Torneos y Ranking
+</h2>
+
+<p id="panelMsg" class="msg"></p>
 
 </div>
 
 
-<nav class="card">
+<div class="tabs">
 
-<button onclick="tab('torneos')">🏆 Torneos</button>
+<button data-tab="torneos">
+🏆 Torneos
+</button>
 
-<button onclick="tab('jugadores')">👤 Jugadores</button>
+<button data-tab="jugadores">
+👤 Jugadores
+</button>
 
-<button onclick="tab('participantes')">🎟️ Participantes</button>
+<button data-tab="participantes">
+👥 Participantes
+</button>
 
-<button onclick="tab('partidas')">🎮 Partidas</button>
+<button data-tab="partidas">
+🎮 Partidas
+</button>
 
-<button onclick="tab('ranking')">🥇 Ranking</button>
+<button data-tab="ranking">
+📊 Ranking
+</button>
 
-<button onclick="tab('mesas')">🎱 Mesas</button>
+<button data-tab="mesas">
+🪑 Mesas
+</button>
 
-<button onclick="tab('promos')">🔥 Promociones</button>
+<button data-tab="promos">
+🎁 Promociones
+</button>
 
-</nav>
+</div>
 
-
-<!-- TORNEOS -->
 
 <section id="torneos" class="tab active">
 
 <div class="card">
 
-<h2>🏆 Crear torneo</h2>
+<h3>Crear torneo</h3>
 
-<input id="torneoNombre" placeholder="Nombre del torneo">
+<input id="t_nombre" placeholder="Nombre">
 
-<input id="torneoJuego" placeholder="Juego">
+<input id="t_juego" placeholder="Juego">
 
-<input id="torneoFecha" type="date">
+<input id="t_fecha" type="date">
 
-<input id="torneoInscripcion" type="number" placeholder="Inscripción">
+<input
+id="t_inscripcion"
+type="number"
+placeholder="Inscripción">
 
-<input id="premio1" type="number" placeholder="Premio 1°">
+<input
+id="t_p1"
+type="number"
+placeholder="Premio 1°">
 
-<input id="premio2" type="number" placeholder="Premio 2°">
+<input
+id="t_p2"
+type="number"
+placeholder="Premio 2°">
 
-<input id="maxParticipantes" type="number" placeholder="Máximo participantes">
+<input
+id="t_max"
+type="number"
+placeholder="Máximo participantes">
 
-<select id="torneoEstado">
+<select id="t_estado">
 
-<option value="abierto">Abierto</option>
+<option value="abierto">
+Abierto
+</option>
 
-<option value="cerrado">Cerrado</option>
+<option value="cerrado">
+Cerrado
+</option>
 
 </select>
 
-<button onclick="crearTorneo()">
-➕ Crear torneo
+<textarea
+id="t_notas"
+placeholder="Notas">
+</textarea>
+
+<button id="crearTorneo">
+Crear torneo
 </button>
 
 </div>
 
-
 <div class="card">
 
-<h2>📋 Torneos</h2>
+<h3>Torneos</h3>
 
-<div id="listaTorneos">
-Cargando...
-</div>
+<div id="listaTorneos"></div>
 
 </div>
 
 </section>
 
-
-<!-- JUGADORES -->
 
 <section id="jugadores" class="tab">
 
 <div class="card">
 
-<h2>👤 Agregar jugador</h2>
+<h3>Crear jugador</h3>
 
-<input id="jugadorNombre" placeholder="Nombre">
+<input
+id="j_nombre"
+placeholder="Nombre">
 
-<input id="jugadorTelefono" placeholder="Teléfono">
+<input
+id="j_telefono"
+placeholder="Teléfono">
 
-<button onclick="crearJugador()">
-➕ Agregar jugador
+<button id="crearJugador">
+Crear jugador
 </button>
 
 </div>
 
-
 <div class="card">
 
-<h2>👥 Jugadores</h2>
+<h3>Jugadores</h3>
 
-<div id="listaJugadores">
-Cargando...
-</div>
+<div id="listaJugadores"></div>
 
 </div>
 
 </section>
 
-
-<!-- PARTICIPANTES -->
 
 <section id="participantes" class="tab">
 
 <div class="card">
 
-<h2>🎟️ Inscribir jugador en torneo</h2>
+<h3>Agregar participante</h3>
 
-<select id="participanteTorneo">
+<select id="p_torneo"></select>
 
-<option value="">Elegir torneo</option>
+<select id="p_jugador"></select>
 
-</select>
-
-<select id="participanteJugador">
-
-<option value="">Elegir jugador</option>
-
-</select>
-
-<button onclick="agregarParticipante()">
-➕ Inscribir participante
+<button id="agregarParticipante">
+Agregar
 </button>
 
-<p id="participanteMsg"></p>
-
 </div>
-
 
 <div class="card">
 
-<h2>📋 Participantes</h2>
-
-<div id="listaParticipantes">
-Cargando...
-</div>
+<div id="listaParticipantes"></div>
 
 </div>
 
 </section>
 
-
-<!-- PARTIDAS -->
 
 <section id="partidas" class="tab">
 
 <div class="card">
 
-<h2>🎮 Registrar partida</h2>
+<h3>Registrar partida</h3>
 
-<select id="partidaTorneo">
+<select id="m_mesa"></select>
 
-<option value="">Elegir torneo</option>
+<select id="m_torneo"></select>
 
-</select>
+<select id="m_a"></select>
 
-<select id="partidaMesa">
+<select id="m_b"></select>
 
-<option value="">Elegir mesa</option>
+<select id="m_ganador">
 
-</select>
-
-<select id="jugadorA">
-
-<option value="">Jugador A</option>
+<option value="">
+Sin ganador
+</option>
 
 </select>
 
-<select id="jugadorB">
+<input
+id="m_pa"
+type="number"
+value="0"
+placeholder="Puntos jugador A">
 
-<option value="">Jugador B</option>
+<input
+id="m_pb"
+type="number"
+value="0"
+placeholder="Puntos jugador B">
+
+<select id="m_estado">
+
+<option value="pendiente">
+Pendiente
+</option>
+
+<option value="finalizada">
+Finalizada
+</option>
 
 </select>
 
-<input id="puntosA" type="number" min="0" placeholder="Puntos Jugador A">
-
-<input id="puntosB" type="number" min="0" placeholder="Puntos Jugador B">
-
-<select id="ganador">
-
-<option value="">Elegir ganador</option>
-
-</select>
-
-<button class="green" onclick="crearPartida()">
-🏁 Guardar resultado
+<button id="crearPartida">
+Crear partida
 </button>
 
-<p id="partidaMsg"></p>
-
 </div>
-
 
 <div class="card">
 
-<h2>📋 Partidas registradas</h2>
-
-<div id="listaPartidas">
-Cargando...
-</div>
+<div id="listaPartidas"></div>
 
 </div>
 
 </section>
 
-
-<!-- RANKING -->
 
 <section id="ranking" class="tab">
 
 <div class="card">
 
-<h2>🥇 Ranking</h2>
+<h3>📊 Ranking</h3>
 
-<p class="small">
-Ranking general por puntos acumulados.
-</p>
-
-<div id="listaRanking">
-Cargando...
-</div>
+<div id="listaRanking"></div>
 
 </div>
 
 </section>
 
-
-<!-- MESAS -->
 
 <section id="mesas" class="tab">
 
 <div class="card">
 
-<h2>🎱 Mesas</h2>
+<h3>🪑 Mesas</h3>
 
-<div id="listaMesas">
-Cargando...
-</div>
+<div id="listaMesas"></div>
 
 </div>
 
 </section>
 
-
-<!-- PROMOCIONES -->
 
 <section id="promos" class="tab">
 
 <div class="card">
 
-<h2>🔥 Crear promoción</h2>
+<h3>🎁 Crear promoción</h3>
 
-<input id="promoTitulo" placeholder="Título">
+<input
+id="promo_titulo"
+placeholder="Título">
 
-<input id="promoDescripcion" placeholder="Descripción">
+<input
+id="promo_precio"
+type="number"
+placeholder="Precio">
 
-<input id="promoPrecio" type="number" placeholder="Precio">
+<textarea
+id="promo_desc"
+placeholder="Descripción">
+</textarea>
 
-<button onclick="crearPromo()">
-➕ Crear promoción
+<button id="crearPromo">
+Crear promoción
 </button>
 
 </div>
 
-
 <div class="card">
 
-<h2>📋 Promociones</h2>
-
-<div id="listaPromos">
-Cargando...
-</div>
+<div id="listaPromos"></div>
 
 </div>
 
 </section>
 
+</div>
 
 </div>
 
-</main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <script>
 
-async function login(){
+const SUPABASE_URL =
+"https://nmpakeovqkdajtswjpgm.supabase.co";
 
-const email =
-document.getElementById("email").value.trim();
+const SUPABASE_ANON_KEY =
+"sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const password =
-document.getElementById("password").value;
+let client = null;
 
-const {error} =
-await supabaseClient.auth.signInWithPassword({
-email,
-password
+const $ = id =>
+document.getElementById(id);
+
+
+function mostrarMensaje(id,texto,error=false){
+
+$(id).textContent = texto;
+
+$(id).className =
+"msg " + (error ? "error" : "ok");
+
+}
+
+
+function escapar(valor){
+
+return String(valor ?? "")
+.replace(/[&<>"']/g,function(c){
+
+return {
+
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+
+}[c];
+
 });
 
-if(error){
+}
 
-document.getElementById("loginMsg").textContent =
-"❌ " + error.message;
 
-}else{
+async function iniciar(){
+
+try{
+
+if(!window.supabase){
+
+throw new Error(
+"No se pudo cargar Supabase. Recargá la página."
+);
+
+}
+
+client =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
+
+const {data} =
+await client.auth.getSession();
+
+if(data.session){
 
 mostrarPanel();
 
 }
 
-}
+}catch(error){
 
-
-async function logout(){
-
-await supabaseClient.auth.signOut();
-
-location.reload();
-
-}
-
-
-async function mostrarPanel(){
-
-const {data} =
-await supabaseClient.auth.getSession();
-
-if(data.session){
-
-document.getElementById("login").style.display="none";
-
-document.getElementById("panel").style.display="block";
-
-cargarTodo();
+mostrarMensaje(
+"loginMsg",
+"❌ " + error.message,
+true
+);
 
 }
 
 }
 
 
-function tab(id){
+async function login(){
 
-document
-.querySelectorAll(".tab")
-.forEach(x=>x.classList.remove("active"));
+const email =
+$("email").value.trim();
 
-document
-.getElementById(id)
-.classList.add("active");
+const password =
+$("password").value;
 
-if(id==="ranking"){
-cargarRanking();
-}
+if(!email || !password){
 
-if(id==="participantes"){
-cargarParticipantes();
-}
-
-if(id==="partidas"){
-cargarPartidas();
-}
-
-}
-
-
-/* TORNEOS */
-
-async function crearTorneo(){
-
-const nombre =
-document.getElementById("torneoNombre").value.trim();
-
-const juego =
-document.getElementById("torneoJuego").value.trim();
-
-const fecha =
-document.getElementById("torneoFecha").value;
-
-if(!nombre || !juego || !fecha){
-
-alert("Completá nombre, juego y fecha.");
+mostrarMensaje(
+"loginMsg",
+"Completá email y contraseña.",
+true
+);
 
 return;
 
 }
 
+$("loginBtn").disabled=true;
+
+$("loginBtn").textContent="Ingresando...";
+
+
+try{
+
 const {error} =
-await supabaseClient
-.from("torneos")
-.insert({
+await client.auth.signInWithPassword({
 
-nombre:nombre,
+email:email,
 
-juego:juego,
-
-fecha:fecha,
-
-inscripcion:
-Number(document.getElementById("torneoInscripcion").value||0),
-
-premio_primero:
-Number(document.getElementById("premio1").value||0),
-
-premio_segundo:
-Number(document.getElementById("premio2").value||0),
-
-max_participantes:
-Number(document.getElementById("maxParticipantes").value||0),
-
-estado:
-document.getElementById("torneoEstado").value
+password:password
 
 });
 
 if(error){
 
-alert(error.message);
-
-return;
+throw error;
 
 }
 
-alert("✅ Torneo creado.");
+mostrarPanel();
 
-document.getElementById("torneoNombre").value="";
-document.getElementById("torneoJuego").value="";
-document.getElementById("torneoFecha").value="";
-document.getElementById("torneoInscripcion").value="";
-document.getElementById("premio1").value="";
-document.getElementById("premio2").value="";
-document.getElementById("maxParticipantes").value="";
+}catch(error){
 
-cargarTorneos();
+mostrarMensaje(
+"loginMsg",
+"❌ " + error.message,
+true
+);
+
+}finally{
+
+$("loginBtn").disabled=false;
+
+$("loginBtn").textContent="Ingresar";
+
+}
+
+}
+
+
+function mostrarPanel(){
+
+$("login").style.display="none";
+
+$("panel").style.display="block";
+
+cargarTodo();
+
+}
+
+
+$("loginBtn").addEventListener(
+"click",
+login
+);
+
+
+$("password").addEventListener(
+"keydown",
+function(e){
+
+if(e.key==="Enter"){
+
+login();
+
+}
+
+});
+
+
+$("logout").addEventListener(
+"click",
+async function(){
+
+await client.auth.signOut();
+
+location.reload();
+
+});
+
+
+document
+.querySelectorAll("[data-tab]")
+.forEach(function(boton){
+
+boton.addEventListener(
+"click",
+function(){
+
+document
+.querySelectorAll(".tab")
+.forEach(function(tab){
+
+tab.classList.remove("active");
+
+});
+
+$(boton.dataset.tab)
+.classList.add("active");
+
+});
+
+});
+
+
+async function cargarTodo(){
+
+await Promise.allSettled([
+
+cargarTorneos(),
+
+cargarJugadores(),
+
+cargarParticipantes(),
+
+cargarPartidas(),
+
+cargarRanking(),
+
+cargarMesas(),
+
+cargarPromos()
+
+]);
+
+await llenarSelects();
+
+}
+
+
+async function llenarSelects(){
+
+const torneos =
+await client
+.from("torneos")
+.select("id,nombre")
+.order("id",{ascending:false});
+
+
+const jugadores =
+await client
+.from("jugadores")
+.select("id,nombre")
+.eq("activo",true)
+.order("nombre");
+
+
+const mesas =
+await client
+.from("mesas")
+.select("id,numero,nombre")
+.eq("activa",true)
+.order("numero");
+
+
+$("p_torneo").innerHTML =
+(torneos.data || [])
+.map(function(x){
+
+return `<option value="${x.id}">
+${escapar(x.nombre)}
+</option>`;
+
+})
+.join("");
+
+
+$("m_torneo").innerHTML =
+'<option value="">Sin torneo</option>' +
+
+(torneos.data || [])
+.map(function(x){
+
+return `<option value="${x.id}">
+${escapar(x.nombre)}
+</option>`;
+
+})
+.join("");
+
+
+const opciones =
+(jugadores.data || [])
+.map(function(x){
+
+return `<option value="${x.id}">
+${escapar(x.nombre)}
+</option>`;
+
+})
+.join("");
+
+
+$("p_jugador").innerHTML=opciones;
+
+$("m_a").innerHTML=opciones;
+
+$("m_b").innerHTML=opciones;
+
+$("m_ganador").innerHTML =
+'<option value="">Sin ganador</option>' +
+opciones;
+
+
+$("m_mesa").innerHTML =
+'<option value="">Sin mesa</option>' +
+
+(mesas.data || [])
+.map(function(x){
+
+return `<option value="${x.id}">
+Mesa ${x.numero || ""} ${escapar(x.nombre)}
+</option>`;
+
+})
+.join("");
 
 }
 
 
 async function cargarTorneos(){
 
-const {data,error} =
-await supabaseClient
+const resultado =
+await client
 .from("torneos")
 .select("*")
-.order("fecha",{ascending:true});
+.order("fecha",{ascending:false});
 
-if(error){
 
-document.getElementById("listaTorneos").textContent =
-error.message;
+if(resultado.error){
 
-return;
-
-}
-
-if(!data || data.length===0){
-
-document.getElementById("listaTorneos").textContent =
-"No hay torneos.";
+$("listaTorneos").textContent =
+"Error: " + resultado.error.message;
 
 return;
 
 }
 
-document.getElementById("listaTorneos").innerHTML =
-data.map(t=>`
+
+$("listaTorneos").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
 
 <div class="card">
 
-<h3>🏆 ${escapeHtml(t.nombre)}</h3>
+<b>${escapar(x.nombre)}</b>
 
-<p>🎮 ${escapeHtml(t.juego)}</p>
+<br>
 
-<p>📅 ${t.fecha}</p>
+${escapar(x.juego)}
 
-<p>💰 Inscripción:
-$${Number(t.inscripcion||0).toLocaleString("es-AR")}
-</p>
+—
 
-<p>🥇 Primer premio:
-$${Number(t.premio_primero||0).toLocaleString("es-AR")}
-</p>
+${escapar(x.fecha)}
 
-<p>🥈 Segundo premio:
-$${Number(t.premio_segundo||0).toLocaleString("es-AR")}
-</p>
+—
 
-<p>👥 Máximo:
-${t.max_participantes||"Sin límite"}
-</p>
+${escapar(x.estado)}
 
-<p>
-<strong>Estado:</strong>
-${escapeHtml(t.estado||"abierto")}
-</p>
+<br>
 
-<button class="danger"
-onclick="eliminarTorneo(${t.id})">
-🗑️ Eliminar
+Inscripción:
+
+$${Number(
+x.inscripcion || 0
+).toLocaleString("es-AR")}
+
+<br>
+
+<button
+class="danger"
+onclick="eliminarTorneo(${x.id})">
+
+Eliminar
+
 </button>
 
 </div>
 
-`).join("");
+`;
 
-llenarSelectTorneos();
+})
+.join("") || "No hay torneos.";
 
 }
 
 
-async function eliminarTorneo(id){
+$("crearTorneo").onclick =
+async function(){
 
-if(!confirm("¿Eliminar este torneo?")) return;
+const datos={
+
+nombre:$("t_nombre").value.trim(),
+
+juego:$("t_juego").value.trim(),
+
+fecha:$("t_fecha").value,
+
+inscripcion:Number(
+$("t_inscripcion").value || 0
+),
+
+premio_primero:Number(
+$("t_p1").value || 0
+),
+
+premio_segundo:Number(
+$("t_p2").value || 0
+),
+
+max_participantes:
+$("t_max").value
+? Number($("t_max").value)
+: null,
+
+estado:$("t_estado").value,
+
+notas:$("t_notas").value.trim()
+
+};
+
 
 const {error} =
-await supabaseClient
+await client
 .from("torneos")
-.delete()
-.eq("id",id);
+.insert(datos);
+
 
 if(error){
 
 alert(error.message);
 
+}else{
+
+alert("Torneo creado");
+
+cargarTorneos();
+
+llenarSelects();
+
+}
+
+};
+
+
+window.eliminarTorneo =
+async function(id){
+
+if(!confirm("¿Eliminar torneo?"))
+return;
+
+const {error} =
+await client
+.from("torneos")
+.delete()
+.eq("id",id);
+
+
+if(error){
+
+alert(error.message);
+
+}else{
+
+cargarTorneos();
+
+llenarSelects();
+
+}
+
+};
+
+
+async function cargarJugadores(){
+
+const resultado =
+await client
+.from("jugadores")
+.select("*")
+.order("nombre");
+
+
+if(resultado.error){
+
+$("listaJugadores").textContent =
+"Error: " + resultado.error.message;
+
 return;
 
 }
 
-cargarTorneos();
-cargarParticipantes();
-cargarPartidas();
-cargarRanking();
+
+$("listaJugadores").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
+
+<div>
+
+${escapar(x.nombre)}
+
+${x.telefono
+? " — " + escapar(x.telefono)
+: ""}
+
+<button
+class="danger"
+onclick="eliminarJugador(${x.id})">
+
+Eliminar
+
+</button>
+
+</div>
+
+`;
+
+})
+.join("") || "No hay jugadores.";
 
 }
 
 
-/* JUGADORES */
-
-async function crearJugador(){
+$("crearJugador").onclick =
+async function(){
 
 const nombre =
-document.getElementById("jugadorNombre").value.trim();
+$("j_nombre").value.trim();
+
 
 if(!nombre){
 
-alert("Escribí el nombre del jugador.");
+alert("Escribí el nombre");
 
 return;
 
 }
 
+
 const {error} =
-await supabaseClient
+await client
 .from("jugadores")
 .insert({
 
 nombre:nombre,
 
 telefono:
-document.getElementById("jugadorTelefono").value.trim()
+$("j_telefono").value.trim()
 
 });
+
 
 if(error){
 
 alert(error.message);
 
-return;
-
-}
-
-alert("✅ Jugador agregado.");
-
-document.getElementById("jugadorNombre").value="";
-document.getElementById("jugadorTelefono").value="";
+}else{
 
 cargarJugadores();
 
+llenarSelects();
+
+$("j_nombre").value="";
+
+$("j_telefono").value="";
+
 }
 
+};
 
-async function cargarJugadores(){
 
-const {data,error} =
-await supabaseClient
-.from("jugadores")
-.select("*")
-.order("nombre");
+window.eliminarJugador =
+async function(id){
 
-if(error){
-
-document.getElementById("listaJugadores").textContent =
-error.message;
-
+if(!confirm("¿Eliminar jugador?"))
 return;
-
-}
-
-if(!data || data.length===0){
-
-document.getElementById("listaJugadores").textContent =
-"No hay jugadores.";
-
-llenarSelectJugadores([]);
-
-return;
-
-}
-
-document.getElementById("listaJugadores").innerHTML=`
-
-<table>
-
-<tr>
-<th>Nombre</th>
-<th>Teléfono</th>
-<th>Acción</th>
-</tr>
-
-${data.map(j=>`
-
-<tr>
-
-<td>${escapeHtml(j.nombre)}</td>
-
-<td>${escapeHtml(j.telefono||"")}</td>
-
-<td>
-
-<button class="danger"
-onclick="eliminarJugador(${j.id})">
-Eliminar
-</button>
-
-</td>
-
-</tr>
-
-`).join("")}
-
-</table>
-`;
-
-llenarSelectJugadores(data);
-
-}
-
-
-function llenarSelectJugadores(jugadores){
-
-const ids=[
-"participanteJugador",
-"jugadorA",
-"jugadorB"
-];
-
-ids.forEach(id=>{
-
-const select =
-document.getElementById(id);
-
-if(!select) return;
-
-const titulo =
-id==="jugadorA"
-?"Jugador A":
-id==="jugadorB"
-?"Jugador B":
-"Elegir jugador";
-
-select.innerHTML =
-`<option value="">${titulo}</option>`;
-
-jugadores.forEach(j=>{
-
-select.innerHTML += `
-<option value="${j.id}">
-${escapeHtml(j.nombre)}
-</option>
-`;
-
-});
-
-});
-
-}
-
-
-async function eliminarJugador(id){
-
-if(!confirm("¿Eliminar jugador?")) return;
 
 const {error} =
-await supabaseClient
+await client
 .from("jugadores")
 .delete()
 .eq("id",id);
 
+
 if(error){
 
 alert(error.message);
 
-return;
-
-}
+}else{
 
 cargarJugadores();
-cargarParticipantes();
-cargarRanking();
+
+llenarSelects();
 
 }
 
-
-/* PARTICIPANTES */
-
-async function agregarParticipante(){
-
-const torneo =
-document.getElementById("participanteTorneo").value;
-
-const jugador =
-document.getElementById("participanteJugador").value;
-
-if(!torneo || !jugador){
-
-alert("Elegí torneo y jugador.");
-
-return;
-
-}
-
-const {error} =
-await supabaseClient
-.from("participantes_torneo")
-.insert({
-
-torneo_id:Number(torneo),
-
-jugador_id:Number(jugador),
-
-puntos:0
-
-});
-
-if(error){
-
-alert(error.message);
-
-return;
-
-}
-
-document.getElementById("participanteMsg").textContent =
-"✅ Participante inscripto.";
-
-cargarParticipantes();
-cargarRanking();
-
-}
+};
 
 
 async function cargarParticipantes(){
 
-const {data,error} =
-await supabaseClient
+const resultado =
+await client
 .from("participantes_torneo")
-.select(`
-id,
-puntos,
-posicion,
-jugadores(nombre),
-torneos(nombre)
-`)
+.select(
+"id,puntos,posicion,torneo_id,jugador_id"
+)
 .order("puntos",{ascending:false});
 
-if(error){
 
-document.getElementById("listaParticipantes").textContent =
-error.message;
+if(resultado.error){
 
-return;
-
-}
-
-if(!data || data.length===0){
-
-document.getElementById("listaParticipantes").textContent =
-"No hay participantes.";
+$("listaParticipantes").textContent =
+"Error: " + resultado.error.message;
 
 return;
 
 }
 
-document.getElementById("listaParticipantes").innerHTML =
-data.map(p=>`
 
-<div class="card">
+const torneos =
+await client
+.from("torneos")
+.select("id,nombre");
 
-<strong>
-${escapeHtml(p.jugadores?.nombre||"Jugador")}
-</strong>
 
-<p>
-🏆 ${escapeHtml(p.torneos?.nombre||"Torneo")}
-</p>
+const jugadores =
+await client
+.from("jugadores")
+.select("id,nombre");
 
-<p>
-⭐ ${Number(p.puntos||0)} puntos
-</p>
 
-<button class="danger"
-onclick="eliminarParticipante(${p.id})">
-🗑️ Quitar participante
+const nombresTorneo =
+Object.fromEntries(
+(torneos.data || [])
+.map(x=>[x.id,x.nombre])
+);
+
+
+const nombresJugador =
+Object.fromEntries(
+(jugadores.data || [])
+.map(x=>[x.id,x.nombre])
+);
+
+
+$("listaParticipantes").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
+
+<div>
+
+${escapar(nombresTorneo[x.torneo_id])}
+
+—
+
+${escapar(nombresJugador[x.jugador_id])}
+
+—
+
+${x.puntos} puntos
+
+<button
+class="danger"
+onclick="eliminarParticipante(${x.id})">
+
+Eliminar
+
 </button>
 
 </div>
 
-`).join("");
+`;
+
+})
+.join("") || "No hay participantes.";
 
 }
 
 
-async function eliminarParticipante(id){
-
-if(!confirm("¿Quitar participante?")) return;
+$("agregarParticipante").onclick =
+async function(){
 
 const {error} =
-await supabaseClient
+await client
+.from("participantes_torneo")
+.insert({
+
+torneo_id:
+Number($("p_torneo").value),
+
+jugador_id:
+Number($("p_jugador").value)
+
+});
+
+
+if(error){
+
+alert(error.message);
+
+}else{
+
+cargarParticipantes();
+
+cargarRanking();
+
+}
+
+};
+
+
+window.eliminarParticipante =
+async function(id){
+
+if(!confirm("¿Eliminar participante?"))
+return;
+
+const {error} =
+await client
 .from("participantes_torneo")
 .delete()
 .eq("id",id);
 
-if(error){
-
-alert(error.message);
-
-return;
-
-}
-
-cargarParticipantes();
-cargarRanking();
-
-}
-
-
-/* PARTIDAS */
-
-async function crearPartida(){
-
-const torneo =
-document.getElementById("partidaTorneo").value;
-
-const mesa =
-document.getElementById("partidaMesa").value;
-
-const jugadorA =
-document.getElementById("jugadorA").value;
-
-const jugadorB =
-document.getElementById("jugadorB").value;
-
-const puntosA =
-Number(document.getElementById("puntosA").value||0);
-
-const puntosB =
-Number(document.getElementById("puntosB").value||0);
-
-const ganador =
-document.getElementById("ganador").value;
-
-if(!torneo || !jugadorA || !jugadorB || !ganador){
-
-alert("Completá torneo, jugadores y ganador.");
-
-return;
-
-}
-
-if(jugadorA===jugadorB){
-
-alert("Los jugadores deben ser diferentes.");
-
-return;
-
-}
-
-const {error} =
-await supabaseClient
-.from("partidas")
-.insert({
-
-torneo_id:Number(torneo),
-
-mesa_id:
-mesa ? Number(mesa) : null,
-
-jugador_a_id:Number(jugadorA),
-
-jugador_b_id:Number(jugadorB),
-
-ganador_id:Number(ganador),
-
-puntos_a:puntosA,
-
-puntos_b:puntosB,
-
-estado:"finalizada"
-
-});
 
 if(error){
 
 alert(error.message);
 
-return;
+}else{
 
-}
-
-await actualizarPuntos(
-Number(torneo),
-Number(jugadorA),
-puntosA,
-Number(jugadorB),
-puntosB
-);
-
-document.getElementById("partidaMsg").textContent =
-"✅ Resultado guardado.";
-
-document.getElementById("puntosA").value="";
-document.getElementById("puntosB").value="";
-
-cargarPartidas();
 cargarParticipantes();
+
 cargarRanking();
 
 }
 
-
-async function actualizarPuntos(
-torneoId,
-jugadorA,
-puntosA,
-jugadorB,
-puntosB
-){
-
-const jugadores=[
-[jugadorA,puntosA],
-[jugadorB,puntosB]
-];
-
-for(const item of jugadores){
-
-const jugadorId=item[0];
-const puntos=item[1];
-
-const {data,error} =
-await supabaseClient
-.from("participantes_torneo")
-.select("id,puntos")
-.eq("torneo_id",torneoId)
-.eq("jugador_id",jugadorId)
-.maybeSingle();
-
-if(error){
-
-console.error(error);
-
-continue;
-
-}
-
-if(!data) continue;
-
-await supabaseClient
-.from("participantes_torneo")
-.update({
-puntos:Number(data.puntos||0)+Number(puntos||0)
-})
-.eq("id",data.id);
-
-}
-
-}
+};
 
 
 async function cargarPartidas(){
 
-const {data,error} =
-await supabaseClient
+const resultado =
+await client
 .from("partidas")
-.select(`
-id,
-puntos_a,
-puntos_b,
-estado,
-created_at,
-torneos(nombre),
-jugador_a_id,
-jugador_b_id,
-ganador_id,
-jugadores_a:jugadores!partidas_jugador_a_id_fkey(nombre),
-jugadores_b:jugadores!partidas_jugador_b_id_fkey(nombre),
-ganador:jugadores!partidas_ganador_id_fkey(nombre),
-mesas(numero)
-`)
+.select(
+"id,mesa_id,torneo_id,jugador_a_id,jugador_b_id,ganador_id,puntos_a,puntos_b,estado,created_at"
+)
 .order("created_at",{ascending:false});
 
-if(error){
 
-document.getElementById("listaPartidas").textContent =
-error.message;
+if(resultado.error){
 
-return;
-
-}
-
-if(!data || data.length===0){
-
-document.getElementById("listaPartidas").textContent =
-"No hay partidas registradas.";
+$("listaPartidas").textContent =
+"Error: " + resultado.error.message;
 
 return;
 
 }
 
-document.getElementById("listaPartidas").innerHTML =
-data.map(p=>`
 
-<div class="card">
+const jugadores =
+await client
+.from("jugadores")
+.select("id,nombre");
 
-<h3>🎮 ${escapeHtml(p.torneos?.nombre||"Torneo")}</h3>
 
-<p>
-${escapeHtml(p.jugadores_a?.nombre||"Jugador A")}
-<strong>${p.puntos_a}</strong>
+const nombres =
+Object.fromEntries(
+(jugadores.data || [])
+.map(x=>[x.id,x.nombre])
+);
+
+
+$("listaPartidas").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
+
+<div>
+
+${escapar(nombres[x.jugador_a_id])}
+
+${x.puntos_a}
+
 vs
-<strong>${p.puntos_b}</strong>
-${escapeHtml(p.jugadores_b?.nombre||"Jugador B")}
-</p>
 
-<p>
-🏆 Ganador:
-${escapeHtml(p.ganador?.nombre||"")}
-</p>
+${x.puntos_b}
 
-<p>
-🎱 Mesa:
-${p.mesas?.numero||"Sin mesa"}
-</p>
+${escapar(nombres[x.jugador_b_id])}
 
-<p class="small">
-${p.estado||""}
-</p>
+—
+
+${escapar(x.estado)}
 
 </div>
 
-`).join("");
+`;
+
+})
+.join("") || "No hay partidas.";
 
 }
 
 
-/* GANADOR */
+$("crearPartida").onclick =
+async function(){
 
-document
-.getElementById("jugadorA")
-.addEventListener("change",actualizarGanador);
+const datos={
 
-document
-.getElementById("jugadorB")
-.addEventListener("change",actualizarGanador);
+mesa_id:
+$("m_mesa").value
+? Number($("m_mesa").value)
+: null,
 
+torneo_id:
+$("m_torneo").value
+? Number($("m_torneo").value)
+: null,
 
-function actualizarGanador(){
+jugador_a_id:
+Number($("m_a").value),
 
-const a =
-document.getElementById("jugadorA");
+jugador_b_id:
+Number($("m_b").value),
 
-const b =
-document.getElementById("jugadorB");
+ganador_id:
+$("m_ganador").value
+? Number($("m_ganador").value)
+: null,
 
-const ganador =
-document.getElementById("ganador");
+puntos_a:
+Number($("m_pa").value || 0),
 
-ganador.innerHTML =
-'<option value="">Elegir ganador</option>';
+puntos_b:
+Number($("m_pb").value || 0),
 
-if(a.value){
+estado:
+$("m_estado").value
 
-ganador.innerHTML +=
-`<option value="${a.value}">Jugador A</option>`;
-
-}
-
-if(b.value){
-
-ganador.innerHTML +=
-`<option value="${b.value}">Jugador B</option>`;
-
-}
-
-}
+};
 
 
-/* RANKING */
+const {error} =
+await client
+.from("partidas")
+.insert(datos);
 
-async function cargarRanking(){
-
-const {data,error} =
-await supabaseClient
-.from("participantes_torneo")
-.select(`
-puntos,
-jugadores(nombre),
-torneos(nombre)
-`)
-.order("puntos",{ascending:false})
-.limit(50);
 
 if(error){
 
-document.getElementById("listaRanking").textContent =
-error.message;
+alert(error.message);
+
+}else{
+
+alert("Partida guardada");
+
+cargarPartidas();
+
+}
+
+};
+
+
+async function cargarRanking(){
+
+const resultado =
+await client
+.from("participantes_torneo")
+.select("jugador_id,puntos")
+.order("puntos",{ascending:false});
+
+
+if(resultado.error){
+
+$("listaRanking").textContent =
+"Error: " + resultado.error.message;
 
 return;
 
 }
 
-if(!data || data.length===0){
 
-document.getElementById("listaRanking").textContent =
-"🏆 Todavía no hay jugadores en el ranking.";
+const jugadores =
+await client
+.from("jugadores")
+.select("id,nombre");
+
+
+const nombres =
+Object.fromEntries(
+(jugadores.data || [])
+.map(x=>[x.id,x.nombre])
+);
+
+
+$("listaRanking").innerHTML =
+(resultado.data || [])
+.map(function(x,i){
+
+return `
+
+<div>
+
+<b>${i+1}.</b>
+
+${escapar(nombres[x.jugador_id])}
+
+—
+
+${x.puntos} puntos
+
+</div>
+
+`;
+
+})
+.join("") || "No hay ranking.";
+
+}
+
+
+async function cargarMesas(){
+
+const resultado =
+await client
+.from("mesas")
+.select("*")
+.order("numero");
+
+
+if(resultado.error){
+
+$("listaMesas").textContent =
+"Error: " + resultado.error.message;
 
 return;
 
 }
 
-document.getElementById("listaRanking
+
+$("listaMesas").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
+
+<div>
+
+Mesa ${x.numero || ""}
+
+—
+
+${escapar(x.nombre || "")}
+
+—
+
+${x.activa ? "Activa" : "Inactiva"}
+
+</div>
+
+`;
+
+})
+.join("") || "No hay mesas.";
+
+}
+
+
+async function cargarPromos(){
+
+const resultado =
+await client
+.from("promociones")
+.select("*")
+.order("created_at",{ascending:false});
+
+
+if(resultado.error){
+
+$("listaPromos").textContent =
+"Error: " + resultado.error.message;
+
+return;
+
+}
+
+
+$("listaPromos").innerHTML =
+(resultado.data || [])
+.map(function(x){
+
+return `
+
+<div>
+
+<b>${escapar(x.titulo)}</b>
+
+—
+
+$${Number(
+x.precio || 0
+).toLocaleString("es-AR")}
+
+—
+
+${escapar(x.descripcion || "")}
+
+<button
+class="danger"
+onclick="eliminarPromo(${x.id})">
+
+Eliminar
+
+</button>
+
+</div>
+
+`;
+
+})
+.join("") || "No hay promociones.";
+
+}
+
+
+$("crearPromo").onclick =
+async function(){
+
+const titulo =
+$("promo_titulo").value.trim();
+
+
+if(!titulo){
+
+alert("Escribí un título");
+
+return;
+
+}
+
+
+const {error} =
+await client
+.from("promociones")
+.insert({
+
+titulo:titulo,
+
+precio:Number(
+$("promo_precio").value || 0
+),
+
+descripcion:
+$("promo_desc").value.trim()
+
+});
+
+
+if(error){
+
+alert(error.message);
+
+}else{
+
+cargarPromos();
+
+$("promo_titulo").value="";
+
+$("promo_precio").value="";
+
+$("promo_desc
