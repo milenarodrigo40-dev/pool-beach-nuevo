@@ -14,6 +14,14 @@
       min-height: 100vh;
       font-family: Arial, Helvetica, sans-serif;
       background: #e0f2fe;
+      color: #0f172a;
+    }
+    .hidden {
+      display: none !important;
+    }
+    /* LOGIN */
+    #loginScreen {
+      min-height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -22,7 +30,7 @@
     .login-box {
       width: 100%;
       max-width: 400px;
-      background: white;
+      background: #fff;
       padding: 30px;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0,0,0,.15);
@@ -52,9 +60,11 @@
       border-radius: 10px;
       font-size: 16px;
       outline: none;
+      background: #fff;
     }
     input:focus {
       border-color: #0284c7;
+      box-shadow: 0 0 0 3px rgba(2,132,199,.12);
     }
     #loginButton {
       display: block;
@@ -63,13 +73,14 @@
       border: 0;
       border-radius: 10px;
       background: #0284c7;
-      color: white;
+      color: #fff;
       font-size: 17px;
       font-weight: bold;
       cursor: pointer;
     }
     #loginButton:disabled {
-      opacity: .7;
+      opacity: .65;
+      cursor: wait;
     }
     #mensaje {
       margin-top: 15px;
@@ -88,18 +99,17 @@
       color: #166534;
     }
     /* PANEL */
-    #panel {
-      position: fixed;
-      inset: 0;
-      overflow-y: auto;
+    #adminPanel {
+      min-height: 100vh;
       background: #f1f5f9;
     }
-    .header {
+    .topbar {
       background: #0284c7;
-      color: white;
+      color: #fff;
       padding: 18px 20px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.12);
     }
-    .header-content {
+    .topbar-inner {
       max-width: 1200px;
       margin: auto;
       display: flex;
@@ -107,12 +117,12 @@
       align-items: center;
       gap: 15px;
     }
-    .header h1 {
-      color: white;
+    .topbar h1 {
+      color: #fff;
       text-align: left;
       font-size: 24px;
     }
-    .header p {
+    .topbar p {
       margin: 5px 0 0;
       font-size: 14px;
     }
@@ -122,7 +132,7 @@
       border: 0;
       border-radius: 9px;
       background: #dc2626;
-      color: white;
+      color: #fff;
       font-weight: bold;
       cursor: pointer;
     }
@@ -132,7 +142,7 @@
       padding: 25px 20px;
     }
     .welcome {
-      background: white;
+      background: #fff;
       border-radius: 15px;
       padding: 25px;
       box-shadow: 0 3px 12px rgba(0,0,0,.08);
@@ -148,7 +158,7 @@
       margin-top: 20px;
     }
     .card {
-      background: white;
+      background: #fff;
       border-radius: 15px;
       padding: 20px;
       box-shadow: 0 3px 12px rgba(0,0,0,.08);
@@ -163,9 +173,6 @@
       font-size: 30px;
       font-weight: bold;
     }
-    .hidden {
-      display: none !important;
-    }
     @media (max-width: 800px) {
       .cards {
         grid-template-columns: repeat(2, 1fr);
@@ -179,64 +186,63 @@
       .card {
         padding: 15px;
       }
-      .header-content {
-        align-items: flex-start;
+      .card-number {
+        font-size: 25px;
       }
     }
   </style>
 </head>
 <body>
-  <!-- =========================
-       LOGIN
-       ========================= -->
-  <div id="loginBox" class="login-box">
-    <h1>🏖️ Pool & Beach</h1>
-    <p class="subtitle">
-      Panel de administración
-    </p>
-    <form id="loginForm" onsubmit="iniciarSesion(event)">
-      <label for="email">
-        Correo electrónico
-      </label>
-      <input
-        id="email"
-        type="email"
-        autocomplete="username"
-        placeholder="Ingresá tu correo"
-        required
-      >
-      <label for="password">
-        Contraseña
-      </label>
-      <input
-        id="password"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Ingresá tu contraseña"
-        required
-      >
-      <button
-        id="loginButton"
-        type="submit"
-      >
-        Iniciar sesión
-      </button>
-      <div id="mensaje"></div>
-    </form>
-  </div>
-  <!-- =========================
-       PANEL
-       ========================= -->
-  <div id="panel" class="hidden">
-    <header class="header">
-      <div class="header-content">
+  <!-- LOGIN -->
+  <section id="loginScreen">
+    <div class="login-box">
+      <h1>🏖️ Pool & Beach</h1>
+      <p class="subtitle">
+        Panel de administración
+      </p>
+      <form id="loginForm">
+        <label for="email">
+          Correo electrónico
+        </label>
+        <input
+          id="email"
+          type="email"
+          autocomplete="username"
+          placeholder="Ingresá tu correo"
+          required
+        >
+        <label for="password">
+          Contraseña
+        </label>
+        <input
+          id="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Ingresá tu contraseña"
+          required
+        >
+        <button
+          id="loginButton"
+          type="submit"
+          disabled
+        >
+          Iniciar sesión
+        </button>
+        <div id="mensaje"></div>
+      </form>
+    </div>
+  </section>
+  <!-- PANEL -->
+  <section id="adminPanel" class="hidden">
+    <header class="topbar">
+      <div class="topbar-inner">
         <div>
           <h1>🏖️ Pool & Beach</h1>
           <p>Panel de administración</p>
         </div>
         <button
           id="logoutButton"
-          onclick="cerrarSesion()"
+          type="button"
         >
           Cerrar sesión
         </button>
@@ -296,7 +302,7 @@
         </div>
       </div>
     </main>
-  </div>
+  </section>
   <script>
     /* =====================================
        SUPABASE
@@ -318,135 +324,162 @@
         }
       );
     /* =====================================
-       MOSTRAR PANEL
+       ELEMENTOS
        ===================================== */
-    function mostrarPanel() {
-      document
-        .getElementById("loginBox")
-        .classList.add("hidden");
-      document
-        .getElementById("panel")
-        .classList.remove("hidden");
-      cargarContadores();
+    const loginScreen =
+      document.getElementById("loginScreen");
+    const adminPanel =
+      document.getElementById("adminPanel");
+    const loginForm =
+      document.getElementById("loginForm");
+    const loginButton =
+      document.getElementById("loginButton");
+    const logoutButton =
+      document.getElementById("logoutButton");
+    const mensajeElemento =
+      document.getElementById("mensaje");
+    /* =====================================
+       CONTROL DE INICIALIZACIÓN
+       ===================================== */
+    let sistemaListo = false;
+    /* =====================================
+       MENSAJE
+       ===================================== */
+    function mostrarMensaje(texto, tipo) {
+      mensajeElemento.textContent = texto;
+      mensajeElemento.className = tipo || "";
     }
     /* =====================================
        MOSTRAR LOGIN
        ===================================== */
     function mostrarLogin() {
-      document
-        .getElementById("panel")
-        .classList.add("hidden");
-      document
-        .getElementById("loginBox")
-        .classList.remove("hidden");
+      adminPanel.classList.add("hidden");
+      loginScreen.classList.remove("hidden");
     }
     /* =====================================
-       MENSAJE
+       MOSTRAR PANEL
        ===================================== */
-    function mensaje(texto, tipo) {
-      const elemento =
-        document.getElementById("mensaje");
-      elemento.textContent = texto;
-      elemento.className = tipo || "";
+    function mostrarPanel() {
+      loginScreen.classList.add("hidden");
+      adminPanel.classList.remove("hidden");
+      cargarContadores();
     }
     /* =====================================
        INICIAR SESIÓN
        ===================================== */
-    async function iniciarSesion(event) {
-      event.preventDefault();
-      const email =
-        document
-          .getElementById("email")
-          .value
-          .trim();
-      const password =
-        document
-          .getElementById("password")
-          .value;
-      const button =
-        document.getElementById("loginButton");
-      if (!email || !password) {
-        mensaje(
-          "Completá los dos campos.",
-          "error"
-        );
-        return false;
-      }
-      button.disabled = true;
-      button.textContent = "Ingresando...";
-      mensaje("", "");
-      try {
-        const respuesta =
-          await supabaseClient.auth.signInWithPassword({
-            email: email,
-            password: password
-          });
-        console.log(
-          "Resultado Supabase:",
-          respuesta
-        );
-        if (respuesta.error) {
-          mensaje(
-            respuesta.error.message,
+    loginForm.addEventListener(
+      "submit",
+      async function(event) {
+        event.preventDefault();
+        /*
+         * Esperamos a que termine la comprobación
+         * inicial. Esto evita que esa comprobación
+         * pueda devolvernos al login después de
+         * haber iniciado sesión.
+         */
+        if (!sistemaListo) {
+          mostrarMensaje(
+            "Esperá un momento e intentá nuevamente.",
             "error"
           );
-          button.disabled = false;
-          button.textContent =
+          return;
+        }
+        const email =
+          document
+            .getElementById("email")
+            .value
+            .trim();
+        const password =
+          document
+            .getElementById("password")
+            .value;
+        if (!email || !password) {
+          mostrarMensaje(
+            "Completá el correo y la contraseña.",
+            "error"
+          );
+          return;
+        }
+        loginButton.disabled = true;
+        loginButton.textContent =
+          "Ingresando...";
+        mostrarMensaje("", "");
+        try {
+          const respuesta =
+            await supabaseClient.auth.signInWithPassword({
+              email: email,
+              password: password
+            });
+          if (respuesta.error) {
+            console.error(
+              "Error Supabase:",
+              respuesta.error
+            );
+            mostrarMensaje(
+              respuesta.error.message,
+              "error"
+            );
+            return;
+          }
+          if (
+            respuesta.data &&
+            respuesta.data.session
+          ) {
+            /*
+             * La sesión existe.
+             * Mostramos el panel inmediatamente.
+             */
+            mostrarPanel();
+          } else {
+            mostrarMensaje(
+              "No se pudo crear la sesión.",
+              "error"
+            );
+          }
+        } catch (error) {
+          console.error(
+            "Error inesperado:",
+            error
+          );
+          mostrarMensaje(
+            "No se pudo conectar con Supabase.",
+            "error"
+          );
+        } finally {
+          loginButton.disabled = false;
+          loginButton.textContent =
             "Iniciar sesión";
-          return false;
         }
-        if (
-          respuesta.data &&
-          respuesta.data.session
-        ) {
-          mensaje(
-            "Inicio de sesión correcto.",
-            "success"
-          );
-          /*
-           * Guardamos la sesión explícitamente
-           * y mostramos el panel.
-           */
-          localStorage.setItem(
-            "pool_beach_admin",
-            "true"
-          );
-          mostrarPanel();
-        } else {
-          mensaje(
-            "No se recibió una sesión de Supabase.",
-            "error"
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        mensaje(
-          "Error de conexión con Supabase.",
-          "error"
-        );
       }
-      button.disabled = false;
-      button.textContent =
-        "Iniciar sesión";
-      return false;
-    }
+    );
     /* =====================================
        CERRAR SESIÓN
        ===================================== */
-    async function cerrarSesion() {
-      await supabaseClient.auth.signOut();
-      localStorage.removeItem(
-        "pool_beach_admin"
-      );
-      document.getElementById(
-        "password"
-      ).value = "";
-      mostrarLogin();
-    }
+    logoutButton.addEventListener(
+      "click",
+      async function() {
+        logoutButton.disabled = true;
+        const respuesta =
+          await supabaseClient.auth.signOut();
+        logoutButton.disabled = false;
+        if (respuesta.error) {
+          console.error(
+            "Error cerrando sesión:",
+            respuesta.error
+          );
+          return;
+        }
+        document.getElementById(
+          "password"
+        ).value = "";
+        mostrarMensaje("", "");
+        mostrarLogin();
+      }
+    );
     /* =====================================
-       SESIÓN AL ABRIR
+       COMPROBAR SESIÓN AL ABRIR
        ===================================== */
-    async function comprobarSesion() {
+    async function comprobarSesionInicial() {
       try {
         const respuesta =
           await supabaseClient.auth.getSession();
@@ -459,8 +492,17 @@
           mostrarLogin();
         }
       } catch (error) {
-        console.error(error);
+        console.error(
+          "Error comprobando sesión:",
+          error
+        );
         mostrarLogin();
+      } finally {
+        /*
+         * Recién acá permitimos iniciar sesión.
+         */
+        sistemaListo = true;
+        loginButton.disabled = false;
       }
     }
     /* =====================================
@@ -509,20 +551,15 @@
         }
       } catch (error) {
         console.error(
-          "Error cargando datos:",
+          "Error cargando contadores:",
           error
         );
       }
     }
     /* =====================================
-       INICIAR
+       INICIAR SISTEMA
        ===================================== */
-    document.addEventListener(
-      "DOMContentLoaded",
-      function() {
-        comprobarSesion();
-      }
-    );
+    comprobarSesionInicial();
   </script>
 </body>
 </html>
