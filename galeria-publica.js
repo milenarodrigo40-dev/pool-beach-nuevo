@@ -1,65 +1,122 @@
-(function () {
-  async function cargarGaleriaPublica() {
-    const contenedor = document.getElementById("galeriaFotos");
+const SUPABASE_URL =
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
 
-    if (!contenedor || typeof supabaseClient === "undefined") return;
+const SUPABASE_ANON_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-    const { data, error } = await supabaseClient
+const supabaseGaleria = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+async function cargarGaleriaPublica() {
+  const contenedor = document.getElementById("galeriaFotos");
+
+  if (!contenedor) return;
+
+  contenedor.innerHTML =
+    '<p style="text-align:center;">Cargando galería...</p>';
+
+  try {
+    const { data, error } = await supabaseGaleria
       .from("galeria_fotos")
-      .select("titulo, categoria, url, creado_en")
+      .select("titulo,categoria,url,creado_en")
       .order("creado_en", { ascending: false });
 
     if (error) {
-      console.error("Error cargando galería:", error);
-      contenedor.innerHTML =
-        '<div class="empty">La galería estará disponible próximamente.</div>';
-      return;
+      throw error;
     }
 
     if (!data || data.length === 0) {
-      contenedor.innerHTML =
-        '<div class="empty">Todavía no hay fotos publicadas.</div>';
+      contenedor.innerHTML = `
+        <div style="
+          text-align:center;
+          padding:30px;
+          color:#9fb4c2;
+        ">
+          Todavía no hay fotos publicadas.
+        </div>
+      `;
       return;
     }
 
     contenedor.innerHTML = "";
 
-    data.forEach(function (foto) {
-      const item = document.createElement("article");
-      item.className = "gallery-item";
+    data.forEach((foto) => {
+      const articulo = document.createElement("article");
+
+      articulo.className = "gallery-item";
 
       const imagen = document.createElement("img");
+
       imagen.src = foto.url;
-      imagen.alt = foto.titulo || "Foto de Pool & Beach";
+      imagen.alt = foto.titulo || "Pool & Beach";
       imagen.loading = "lazy";
 
-      const caption = document.createElement("div");
-      caption.className = "gallery-caption";
+      imagen.style.width = "100%";
+      imagen.style.height = "240px";
+      imagen.style.objectFit = "cover";
+      imagen.style.display = "block";
+      imagen.style.borderRadius = "16px";
 
-      const titulo = document.createElement("strong");
-      titulo.textContent = foto.titulo || "Pool & Beach";
+      imagen.onerror = function () {
+        articulo.remove();
+      };
 
-      const categoria = document.createElement("small");
-      categoria.textContent = foto.categoria
-        ? "📷 " + foto.categoria
-        : "";
+      articulo.appendChild(imagen);
 
-      caption.appendChild(titulo);
-      caption.appendChild(categoria);
+      if (foto.titulo || foto.categoria) {
+        const texto = document.createElement("div");
 
-      item.appendChild(imagen);
-      item.appendChild(caption);
+        texto.style.padding = "12px 4px";
 
-      contenedor.appendChild(item);
+        if (foto.titulo) {
+          const titulo = document.createElement("div");
+
+          titulo.textContent = foto.titulo;
+          titulo.style.fontWeight = "800";
+          titulo.style.fontSize = "16px";
+
+          texto.appendChild(titulo);
+        }
+
+        if (foto.categoria) {
+          const categoria = document.createElement("div");
+
+          categoria.textContent = foto.categoria;
+          categoria.style.color = "#8fb7c8";
+          categoria.style.fontSize = "13px";
+          categoria.style.marginTop = "4px";
+
+          texto.appendChild(categoria);
+        }
+
+        articulo.appendChild(texto);
+      }
+
+      contenedor.appendChild(articulo);
     });
-  }
 
-  if (document.readyState === "loading") {
-    document.addEventListener(
-      "DOMContentLoaded",
-      cargarGaleriaPublica
-    );
-  } else {
-    cargarGaleriaPublica();
+  } catch (error) {
+    console.error("Error cargando galería:", error);
+
+    contenedor.innerHTML = `
+      <div style="
+        text-align:center;
+        padding:30px;
+        color:#ffb0b0;
+      ">
+        No se pudo cargar la galería.
+      </div>
+    `;
   }
-})();
+}
+
+if (document.readyState === "loading") {
+  document.addEventListener(
+    "DOMContentLoaded",
+    cargarGaleriaPublica
+  );
+} else {
+  cargarGaleriaPublica();
+}
