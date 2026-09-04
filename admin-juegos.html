@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool & Beach - Juegos</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase.js"></script>
+<style>
+body{font-family:Arial,sans-serif;background:#f4fbff;margin:0;color:#123}
+header{background:#087ea4;color:white;padding:18px;text-align:center}
+main{max-width:1000px;margin:auto;padding:15px}
+.card{background:white;border-radius:12px;padding:18px;margin:15px 0;box-shadow:0 2px 10px #0001}
+input,select,button{width:100%;padding:12px;margin:6px 0;box-sizing:border-box;border-radius:8px;border:1px solid #ccc}
+button{background:#087ea4;color:white;border:0;font-weight:bold}
+button.danger{background:#d9534f}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav button{width:auto}
+.tab{display:none}.tab.active{display:block}
+table{width:100%;border-collapse:collapse}
+td,th{padding:9px;border-bottom:1px solid #ddd;text-align:left}
+h1,h2{margin-top:0}
+#panel{display:none}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏖️ Pool & Beach</h1>
+<p>Juegos · Torneos · Ranking · Mesas</p>
+</header>
+
+<main>
+
+<div id="login" class="card">
+<h2>Acceso administrador</h2>
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Contraseña">
+<button onclick="login()">Ingresar</button>
+<p id="loginMsg"></p>
+</div>
+
+<div id="panel">
+
+<div class="card">
+<button onclick="logout()">Cerrar sesión</button>
+</div>
+
+<nav class="card">
+<button onclick="tab('torneos')">🏆 Torneos</button>
+<button onclick="tab('jugadores')">👤 Jugadores</button>
+<button onclick="tab('mesas')">🎱 Mesas</button>
+<button onclick="tab('promos')">🔥 Promociones</button>
+</nav>
+
+<section id="torneos" class="tab active">
+
+<div class="card">
+<h2>Crear torneo</h2>
+<input id="torneoNombre" placeholder="Nombre del torneo">
+<input id="torneoJuego" placeholder="Juego">
+<input id="torneoFecha" type="date">
+<input id="torneoInscripcion" type="number" placeholder="Inscripción">
+<input id="premio1" type="number" placeholder="Premio 1°">
+<input id="premio2" type="number" placeholder="Premio 2°">
+<input id="maxParticipantes" type="number" placeholder="Máximo participantes">
+<button onclick="crearTorneo()">Crear torneo</button>
+</div>
+
+<div class="card">
+<h2>Torneos</h2>
+<div id="listaTorneos"></div>
+</div>
+
+</section>
+
+<section id="jugadores" class="tab">
+
+<div class="card">
+<h2>Agregar jugador</h2>
+<input id="jugadorNombre" placeholder="Nombre">
+<input id="jugadorTelefono" placeholder="Teléfono">
+<button onclick="crearJugador()">Agregar jugador</button>
+</div>
+
+<div class="card">
+<h2>Jugadores</h2>
+<div id="listaJugadores"></div>
+</div>
+
+</section>
+
+<section id="mesas" class="tab">
+
+<div class="card">
+<h2>Mesas</h2>
+<div id="listaMesas"></div>
+</div>
+
+</section>
+
+<section id="promos" class="tab">
+
+<div class="card">
+<h2>Crear promoción</h2>
+<input id="promoTitulo" placeholder="Título">
+<input id="promoDescripcion" placeholder="Descripción">
+<input id="promoPrecio" type="number" placeholder="Precio">
+<button onclick="crearPromo()">Crear promoción</button>
+</div>
+
+<div class="card">
+<h2>Promociones</h2>
+<div id="listaPromos"></div>
+</div>
+
+</section>
+
+</div>
+</main>
+
+<script>
+
+async function login(){
+const email=document.getElementById("email").value;
+const password=document.getElementById("password").value;
+
+const {error}=await supabaseClient.auth.signInWithPassword({
+email,password
+});
+
+if(error){
+document.getElementById("loginMsg").textContent=error.message;
+}else{
+mostrarPanel();
+}
+}
+
+async function logout(){
+await supabaseClient.auth.signOut();
+location.reload();
+}
+
+async function mostrarPanel(){
+const {data}=await supabaseClient.auth.getSession();
+
+if(data.session){
+document.getElementById("login").style.display="none";
+document.getElementById("panel").style.display="block";
+
+cargarTorneos();
+cargarJugadores();
+cargarMesas();
+cargarPromos();
+}
+}
+
+function tab(id){
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+document.getElementById(id).classList.add("active");
+}
+
+async function crearTorneo(){
+
+const {error}=await supabaseClient
+.from("torneos")
+.insert({
+nombre:document.getElementById("torneoNombre").value,
+juego:document.getElementById("torneoJuego").value,
+fecha:document.getElementById("torneoFecha").value,
+inscripcion:Number(document.getElementById("torneoInscripcion").value||0),
+premio_primero:Number(document.getElementById("premio1").value||0),
+premio_segundo:Number(document.getElementById("premio2").value||0),
+max_participantes:Number(document.getElementById("maxParticipantes").value||0)
+});
+
+if(error) alert(error.message);
+else{
+alert("Torneo creado");
+cargarTorneos();
+}
+}
+
+async function cargarTorneos(){
+
+const {data,error}=await supabaseClient
+.from("torneos")
+.select("*")
+.order("fecha",{ascending:true});
+
+if(error){
+document.getElementById("listaTorneos").textContent=error.message;
+return;
+}
+
+document.getElementById("listaTorneos").innerHTML=data.map(t=>`
+<div class="card">
+<h3>${escapeHtml(t.nombre)}</h3>
+<p>🎮 ${escapeHtml(t.juego)}</p>
+<p>📅 ${t.fecha}</p>
+<p>💰 Inscripción: $${Number(t.inscripcion||0).toLocaleString("es-AR")}</p>
+<p>🥇 $${Number(t.premio_primero||0).toLocaleString("es-AR")}</p>
+<p>🥈 $${Number(t.premio_segundo||0).toLocaleString("es-AR")}</p>
+<button class="danger" onclick="eliminarTorneo(${t.id})">Eliminar</button>
+</div>
+`).join("");
+}
+
+async function eliminarTorneo(id){
+
+if(!confirm("¿Eliminar este torneo?")) return;
+
+const {error}=await supabaseClient
+.from("torneos")
+.delete()
+.eq("id",id);
+
+if(error) alert(error.message);
+else cargarTorneos();
+}
+
+async function crearJugador(){
+
+const {error}=await supabaseClient
+.from("jugadores")
+.insert({
+nombre:document.getElementById("jugadorNombre").value,
+telefono:document.getElementById("jugadorTelefono").value
+});
+
+if(error) alert(error.message);
+else{
+alert("Jugador agregado");
+cargarJugadores();
+}
+}
+
+async function cargarJugadores(){
+
+const {data,error}=await supabaseClient
+.from("jugadores")
+.select("*")
+.order("nombre");
+
+if(error){
+document.getElementById("listaJugadores").textContent=error.message;
+return;
+}
+
+document.getElementById("listaJugadores").innerHTML=`
+<table>
+<tr><th>Nombre</th><th>Teléfono</th><th></th></tr>
+${data.map(j=>`
+<tr>
+<td>${escapeHtml(j.nombre)}</td>
+<td>${escapeHtml(j.telefono||"")}</td>
+<td><button class="danger" onclick="eliminarJugador(${j.id})">Eliminar</button></td>
+</tr>
+`).join("")}
+</table>`;
+}
+
+async function eliminarJugador(id){
+
+if(!confirm("¿Eliminar jugador?")) return;
+
+const {error}=await supabaseClient
+.from("jugadores")
+.delete()
+.eq("id",id);
+
+if(error) alert(error.message);
+else cargarJugadores();
+}
+
+async function cargarMesas(){
+
+const {data,error}=await supabaseClient
+.from("mesas")
+.select("*")
+.order("numero");
+
+if(error){
+document.getElementById("listaMesas").textContent=error.message;
+return;
+}
+
+document.getElementById("listaMesas").innerHTML=data.map(m=>`
+<div class="card">
+<h3>Mesa ${m.numero||""}</h3>
+<p>${escapeHtml(m.nombre||"")}</p>
+<p>Servicio: ${escapeHtml(m.servicio||"")}</p>
+<p>QR: ${escapeHtml(m.qr_token||"")}</p>
+</div>
+`).join("");
+}
+
+async function crearPromo(){
+
+const {error}=await supabaseClient
+.from("promociones")
+.insert({
+titulo:document.getElementById("promoTitulo").value,
+descripcion:document.getElementById("promoDescripcion").value,
+precio:Number(document.getElementById("promoPrecio").value||0)
+});
+
+if(error) alert(error.message);
+else{
+alert("Promoción creada");
+cargarPromos();
+}
+}
+
+async function cargarPromos(){
+
+const {data,error}=await supabaseClient
+.from("promociones")
+.select("*")
+.order("created_at",{ascending:false});
+
+if(error){
+document.getElementById("listaPromos").textContent=error.message;
+return;
+}
+
+document.getElementById("listaPromos").innerHTML=data.map(p=>`
+<div class="card">
+<h3>${escapeHtml(p.titulo)}</h3>
+<p>${escapeHtml(p.descripcion||"")}</p>
+<p>💰 $${Number(p.precio||0).toLocaleString("es-AR")}</p>
+<button class="danger" onclick="eliminarPromo(${p.id})">Eliminar</button>
+</div>
+`).join("");
+}
+
+async function eliminarPromo(id){
+
+if(!confirm("¿Eliminar promoción?")) return;
+
+const {error}=await supabaseClient
+.from("promociones")
+.delete()
+.eq("id",id);
+
+if(error) alert(error.message);
+else cargarPromos();
+}
+
+function escapeHtml(value){
+return String(value)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+}
+
+mostrarPanel();
+
+</script>
+
+</body>
+</html>
