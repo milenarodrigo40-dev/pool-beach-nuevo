@@ -44,7 +44,6 @@ textarea{
   border:1px solid #ccdce1;
   border-radius:10px;
   font-size:16px;
-  box-sizing:border-box;
   margin-bottom:12px;
 }
 textarea{
@@ -160,6 +159,23 @@ button:hover{
   border-radius:20px;
   font-size:12px;
   font-weight:bold;
+}
+/* NOTIFICACIÓN */
+#avisoNuevaReserva{
+  position:fixed;
+  top:15px;
+  left:10px;
+  right:10px;
+  z-index:999999;
+  padding:18px;
+  border-radius:14px;
+  background:#00bcd4;
+  color:white;
+  font-size:18px;
+  font-weight:bold;
+  text-align:center;
+  box-shadow:0 5px 20px rgba(0,0,0,.35);
+  cursor:pointer;
 }
 @media(max-width:700px){
   .form{
@@ -296,9 +312,7 @@ Seleccionar foto
   accept="image/*"
   required
 >
-<button
-  type="submit"
->
+<button type="submit">
 📸 Subir foto
 </button>
 </form>
@@ -406,12 +420,13 @@ Cargando reservas...
 </section>
 </section>
 </main>
+<!-- SUPABASE -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase.js"></script>
 <script>
-/* =========================
-   LOGIN
-========================= */
+/* =====================================================
+   ELEMENTOS
+===================================================== */
 const login =
   document.getElementById("login");
 const panel =
@@ -422,12 +437,47 @@ const loginMensaje =
   document.getElementById("loginMensaje");
 const logout =
   document.getElementById("logout");
+const formGaleria =
+  document.getElementById("formGaleria");
+const galeriaMensaje =
+  document.getElementById("galeriaMensaje");
+const fotos =
+  document.getElementById("fotos");
+const formReserva =
+  document.getElementById("formReserva");
+const mensaje =
+  document.getElementById("mensaje");
+const lista =
+  document.getElementById("lista");
+let canalReservasTiempoReal = null;
+/* =====================================================
+   INICIO
+===================================================== */
 logout.style.display = "none";
+/* =====================================================
+   ESCAPAR HTML
+===================================================== */
+function escaparHTML(valor){
+  return String(valor ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+/* =====================================================
+   LOGIN
+===================================================== */
 async function iniciarSesion(){
   const email =
-    document.getElementById("email").value.trim();
+    document
+      .getElementById("email")
+      .value
+      .trim();
   const password =
-    document.getElementById("password").value;
+    document
+      .getElementById("password")
+      .value;
   if(!email || !password){
     loginMensaje.textContent =
       "❌ Completá correo y contraseña.";
@@ -437,8 +487,8 @@ async function iniciarSesion(){
     "Ingresando...";
   const { error } =
     await supabaseClient.auth.signInWithPassword({
-      email: email,
-      password: password
+      email:email,
+      password:password
     });
   if(error){
     loginMensaje.textContent =
@@ -466,6 +516,7 @@ function mostrarPanel(){
     "block";
   cargarReservas();
   cargarFotos();
+  activarNotificacionesReservas();
 }
 function mostrarLogin(){
   login.style.display =
@@ -482,19 +533,20 @@ loginButton.addEventListener(
 logout.addEventListener(
   "click",
   async function(){
+    if(canalReservasTiempoReal){
+      await supabaseClient.removeChannel(
+        canalReservasTiempoReal
+      );
+      canalReservasTiempoReal =
+        null;
+    }
     await supabaseClient.auth.signOut();
     mostrarLogin();
   }
 );
-/* =========================
+/* =====================================================
    GALERÍA
-========================= */
-const formGaleria =
-  document.getElementById("formGaleria");
-const galeriaMensaje =
-  document.getElementById("galeriaMensaje");
-const fotos =
-  document.getElementById("fotos");
+===================================================== */
 async function cargarFotos(){
   fotos.innerHTML =
     "Cargando fotos...";
@@ -523,45 +575,62 @@ async function cargarFotos(){
     return;
   }
   fotos.innerHTML = "";
-  data.forEach(foto => {
+  data.forEach(function(foto){
     const card =
       document.createElement("div");
     card.className =
       "foto-card";
-    card.innerHTML = `
-      <img
-        src="${foto.url}"
-        alt="${escaparHTML(foto.titulo)}"
-      >
-      <div class="foto-info">
-        <span class="categoria">
-          ${escaparHTML(foto.categoria)}
-        </span>
-        <h3>
-          ${escaparHTML(foto.titulo)}
-        </h3>
-        <p>
-          Foto de Pool & Beach
-        </p>
-        <button
-          class="btn-eliminar"
-          onclick="eliminarFoto('${foto.id}','${escaparHTML(foto.ruta)}')"
-        >
-          🗑️ Eliminar foto
-        </button>
-      </div>
-    `;
+    const imagen =
+      document.createElement("img");
+    imagen.src =
+      foto.url;
+    imagen.alt =
+      foto.titulo || "Foto Pool & Beach";
+    const info =
+      document.createElement("div");
+    info.className =
+      "foto-info";
+    const categoria =
+      document.createElement("span");
+    categoria.className =
+      "categoria";
+    categoria.textContent =
+      foto.categoria || "";
+    const titulo =
+      document.createElement("h3");
+    titulo.textContent =
+      foto.titulo || "";
+    const descripcion =
+      document.createElement("p");
+    descripcion.textContent =
+      "Foto de Pool & Beach";
+    const boton =
+      document.createElement("button");
+    boton.className =
+      "btn-eliminar";
+    boton.textContent =
+      "🗑️ Eliminar foto";
+    boton.addEventListener(
+      "click",
+      function(){
+        eliminarFoto(
+          foto.id,
+          foto.ruta
+        );
+      }
+    );
+    info.appendChild(categoria);
+    info.appendChild(titulo);
+    info.appendChild(descripcion);
+    info.appendChild(boton);
+    card.appendChild(imagen);
+    card.appendChild(info);
     fotos.appendChild(card);
   });
 }
-function escaparHTML(valor){
-  return String(valor ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
+/* =====================================================
+   SUBIR FOTO
+===================================================== */
 formGaleria.addEventListener(
   "submit",
   async function(event){
@@ -605,7 +674,7 @@ formGaleria.addEventListener(
         "/" +
         nombreSeguro;
       const {
-        error: uploadError
+        error:uploadError
       } =
         await supabaseClient
           .storage
@@ -622,7 +691,7 @@ formGaleria.addEventListener(
         throw uploadError;
       }
       const {
-        data: publicData
+        data:publicData
       } =
         supabaseClient
           .storage
@@ -631,7 +700,7 @@ formGaleria.addEventListener(
       const url =
         publicData.publicUrl;
       const {
-        error: insertError
+        error:insertError
       } =
         await supabaseClient
           .from("galeria_fotos")
@@ -651,62 +720,55 @@ formGaleria.addEventListener(
     }catch(error){
       console.error(error);
       galeriaMensaje.textContent =
-        "❌ No se pudo subir la foto. Revisaremos los permisos de Storage.";
+        "❌ No se pudo subir la foto.";
     }
   }
 );
-/* =========================
+/* =====================================================
    ELIMINAR FOTO
-========================= */
+===================================================== */
 async function eliminarFoto(
   id,
   ruta
 ){
-  const confirmar =
-    confirm(
-      "¿Seguro que querés eliminar esta foto?"
-    );
-  if(!confirmar){
+  if(
+    !confirm(
+      "¿Querés eliminar esta foto?"
+    )
+  ){
     return;
   }
   try{
     const {
-      error: storageError
+      error:storageError
     } =
       await supabaseClient
         .storage
         .from("Galeria")
         .remove([ruta]);
     if(storageError){
-      throw storageError;
+      console.error(storageError);
     }
     const {
-      error: databaseError
+      error:dbError
     } =
       await supabaseClient
         .from("galeria_fotos")
         .delete()
         .eq("id",id);
-    if(databaseError){
-      throw databaseError;
+    if(dbError){
+      throw dbError;
     }
     cargarFotos();
   }catch(error){
     console.error(error);
-    alert(
-      "No se pudo eliminar la foto."
-    );
+    galeriaMensaje.textContent =
+      "❌ No se pudo eliminar la foto.";
   }
 }
-/* =========================
+/* =====================================================
    RESERVAS
-========================= */
-const form =
-  document.getElementById("formReserva");
-const lista =
-  document.getElementById("lista");
-const mensaje =
-  document.getElementById("mensaje");
+===================================================== */
 async function cargarReservas(){
   lista.innerHTML =
     "Cargando reservas...";
@@ -731,86 +793,148 @@ async function cargarReservas(){
       );
   if(error){
     lista.innerHTML =
-      "❌ Error al cargar reservas.";
+      "❌ No se pudieron cargar las reservas.";
     console.error(error);
     return;
   }
   if(!data || data.length === 0){
     lista.innerHTML =
-      "No hay reservas todavía.";
+      "No hay reservas.";
     return;
   }
   lista.innerHTML = "";
-  data.forEach(r => {
-    const div =
+  data.forEach(function(reserva){
+    const tarjeta =
       document.createElement("div");
-    div.className =
+    tarjeta.className =
       "reserva";
-    div.innerHTML = `
-      <p>
-        <strong>👤 Cliente:</strong>
-        ${escaparHTML(r.nombre)}
-      </p>
-      <p>
-        <strong>📞 Teléfono:</strong>
-        ${escaparHTML(r.telefono || "")}
-      </p>
-      <p>
-        <strong>📅 Fecha:</strong>
-        ${escaparHTML(r.fecha)}
-      </p>
-      <p>
-        <strong>🕐 Hora:</strong>
-        ${escaparHTML(r.hora)}
-      </p>
-      <p>
-        <strong>🎮 Servicio:</strong>
-        ${escaparHTML(r.servicio)}
-      </p>
-      <p>
-        <strong>👥 Personas:</strong>
-        ${escaparHTML(r.cantidad_personas)}
-      </p>
-      <p>
-        <strong>📝 Notas:</strong>
-        ${escaparHTML(r.notas || "Sin notas")}
-      </p>
-      <label>
-        <strong>Estado:</strong>
-      </label>
+    const nombre =
+      escaparHTML(
+        reserva.nombre || "Sin nombre"
+      );
+    const telefono =
+      escaparHTML(
+        reserva.telefono || ""
+      );
+    const fecha =
+      escaparHTML(
+        reserva.fecha || ""
+      );
+    const hora =
+      escaparHTML(
+        reserva.hora || ""
+      );
+    const servicio =
+      escaparHTML(
+        reserva.servicio || ""
+      );
+    const personas =
+      escaparHTML(
+        reserva.cantidad_personas || ""
+      );
+    const notas =
+      escaparHTML(
+        reserva.notas || ""
+      );
+    const estado =
+      reserva.estado || "pendiente";
+    tarjeta.innerHTML = `
+      <strong>
+        👤 ${nombre}
+      </strong>
+      <br><br>
+      📞 ${telefono}
+      <br>
+      📅 ${fecha}
+      <br>
+      🕐 ${hora}
+      <br>
+      🎯 ${servicio}
+      <br>
+      👥 ${personas} personas
+      ${
+        notas
+        ?
+        `<br>📝 ${notas}`
+        :
+        ""
+      }
+      <br><br>
+      <strong>
+        Estado:
+      </strong>
       <select
-        onchange="cambiarEstado(${r.id}, this.value)"
+        class="estadoReserva"
       >
         <option
           value="pendiente"
-          ${r.estado === "pendiente" ? "selected" : ""}
+          ${
+            estado === "pendiente"
+            ? "selected"
+            : ""
+          }
         >
           Pendiente
         </option>
         <option
           value="confirmada"
-          ${r.estado === "confirmada" ? "selected" : ""}
+          ${
+            estado === "confirmada"
+            ? "selected"
+            : ""
+          }
         >
           Confirmada
         </option>
         <option
           value="cancelada"
-          ${r.estado === "cancelada" ? "selected" : ""}
+          ${
+            estado === "cancelada"
+            ? "selected"
+            : ""
+          }
         >
           Cancelada
         </option>
       </select>
       <button
         class="eliminar"
-        onclick="eliminarReserva(${r.id})"
       >
         🗑️ Eliminar reserva
       </button>
     `;
-    lista.appendChild(div);
+    const selectEstado =
+      tarjeta.querySelector(
+        ".estadoReserva"
+      );
+    selectEstado.addEventListener(
+      "change",
+      function(){
+        cambiarEstadoReserva(
+          reserva.id,
+          selectEstado.value
+        );
+      }
+    );
+    const botonEliminar =
+      tarjeta.querySelector(
+        ".eliminar"
+      );
+    botonEliminar.addEventListener(
+      "click",
+      function(){
+        eliminarReserva(
+          reserva.id
+        );
+      }
+    );
+    lista.appendChild(tarjeta);
   });
 }
-async function cambiarEstado(
+/* =====================================================
+   CAMBIAR ESTADO
+===================================================== */
+async function cambiarEstadoReserva(
   id,
   estado
 ){
@@ -824,18 +948,21 @@ async function cambiarEstado(
       })
       .eq("id",id);
   if(error){
-    alert(
-      "No se pudo cambiar el estado."
-    );
     console.error(error);
+    alert(
+      "❌ No se pudo cambiar el estado."
+    );
     return;
   }
   cargarReservas();
 }
+/* =====================================================
+   ELIMINAR RESERVA
+===================================================== */
 async function eliminarReserva(id){
   if(
     !confirm(
-      "¿Seguro que querés eliminar esta reserva?"
+      "¿Querés eliminar esta reserva?"
     )
   ){
     return;
@@ -848,189 +975,138 @@ async function eliminarReserva(id){
       .delete()
       .eq("id",id);
   if(error){
-    alert(
-      "No se pudo eliminar la reserva."
-    );
     console.error(error);
+    alert(
+      "❌ No se pudo eliminar la reserva."
+    );
     return;
   }
   cargarReservas();
 }
-form.addEventListener(
-  "submit",
-  async function(e){
-    e.preventDefault();
-    mensaje.textContent =
-      "Guardando reserva...";
-    const reserva = {
-      nombre:
-        document
-          .getElementById("nombre")
-          .value
-          .trim(),
-      telefono:
-        document
-          .getElementById("telefono")
-          .value
-          .trim(),
-      fecha:
-        document
-          .getElementById("fecha")
-          .value,
-      hora:
-        document
-          .getElementById("hora")
-          .value,
-      servicio:
-        document
-          .getElementById("servicio")
-          .value,
-      cantidad_personas:
-        Number(
-          document
-            .getElementById("personas")
-            .value
-        ),
-      notas:
-        document
-          .getElementById("notas")
-          .value
-          .trim()
-    };
-    const {
-      error
-    } =
-      await supabaseClient
-        .from("reservas")
-        .insert([reserva]);
-    if(error){
-      mensaje.textContent =
-        "❌ Error: " +
-        error.message;
-      return;
-    }
-    mensaje.textContent =
-      "✅ Reserva guardada correctamente.";
-    form.reset();
-    cargarReservas();
+/* =====================================================
+   🔔 NOTIFICACIONES EN TIEMPO REAL
+===================================================== */
+function mostrarAvisoNuevaReserva(
+  reserva
+){
+  let aviso =
+    document.getElementById(
+      "avisoNuevaReserva"
+    );
+  if(!aviso){
+    aviso =
+      document.createElement("div");
+    aviso.id =
+      "avisoNuevaReserva";
+    document.body.appendChild(
+      aviso
+    );
+    aviso.addEventListener(
+      "click",
+      function(){
+        aviso.remove();
+      }
+    );
   }
-);
-/* =========================
-   INICIO
-========================= */
-verificarSesion();
-// 🔔 NOTIFICACIONES AUTOMÁTICAS DE NUEVAS RESERVAS
-let canalReservasTiempoReal = null;
-
-function mostrarAvisoNuevaReserva(reserva) {
-    let aviso = document.getElementById("avisoNuevaReserva");
-
-    if (!aviso) {
-        aviso = document.createElement("div");
-        aviso.id = "avisoNuevaReserva";
-
-        aviso.style.cssText = `
-            position: sticky;
-            top: 10px;
-            z-index: 99999;
-            margin: 10px 0;
-            padding: 16px;
-            border-radius: 12px;
-            background: #00bcd4;
-            color: white;
-            font-size: 17px;
-            font-weight: bold;
-            text-align: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,.3);
-            cursor: pointer;
-        `;
-
-        aviso.onclick = function() {
-            aviso.style.display = "none";
-        };
-
-        panel.prepend(aviso);
-    }
-
-    const nombre = escaparHTML(reserva?.nombre || "Cliente");
-    const servicio = escaparHTML(reserva?.servicio || "Reserva");
-
-    aviso.innerHTML = `
-        🔔 NUEVA RESERVA<br>
-        <span style="font-size:15px;">
-            ${nombre} — ${servicio}
-        </span>
-        <br>
-        <small>Tocá este aviso para cerrarlo</small>
-    `;
-
-    aviso.style.display = "block";
-
-    clearTimeout(window.temporizadorAvisoReserva);
-
-    window.temporizadorAvisoReserva = setTimeout(function() {
-        aviso.style.display = "none";
-    }, 15000);
+  const nombre =
+    escaparHTML(
+      reserva?.nombre ||
+      "Cliente"
+    );
+  const servicio =
+    escaparHTML(
+      reserva?.servicio ||
+      "Reserva"
+    );
+  aviso.innerHTML = `
+    🔔 NUEVA RESERVA
+    <br>
+    <span style="font-size:16px;">
+      ${nombre} — ${servicio}
+    </span>
+    <br>
+    <small>
+      Tocá el aviso para cerrarlo
+    </small>
+  `;
+  aviso.style.display =
+    "block";
+  clearTimeout(
+    window.temporizadorAvisoReserva
+  );
+  window.temporizadorAvisoReserva =
+    setTimeout(
+      function(){
+        if(aviso){
+          aviso.remove();
+        }
+      },
+      15000
+    );
 }
-
-function activarNotificacionesReservas() {
-
-    if (canalReservasTiempoReal) {
-        supabaseClient.removeChannel(canalReservasTiempoReal);
-    }
-
-    canalReservasTiempoReal = supabaseClient
-        .channel("notificaciones-reservas-admin")
-        .on(
-            "postgres_changes",
-            {
-                event: "INSERT",
-                schema: "public",
-                table: "reservas"
-            },
-            function(payload) {
-
-                console.log(
-                    "🔔 Nueva reserva recibida:",
-                    payload.new
-                );
-
-                mostrarAvisoNuevaReserva(payload.new);
-
-                if (typeof cargarReservas === "function") {
-                    cargarReservas();
-                }
-            }
-        )
-        .subscribe(function(status) {
-
+/* =====================================================
+   ACTIVAR REALTIME
+===================================================== */
+function activarNotificacionesReservas(){
+  console.log(
+    "🔔 Activando Realtime de reservas..."
+  );
+  if(canalReservasTiempoReal){
+    supabaseClient.removeChannel(
+      canalReservasTiempoReal
+    );
+  }
+  canalReservasTiempoReal =
+    supabaseClient
+      .channel(
+        "reservas-admin-tiempo-real-" +
+        Date.now()
+      )
+      .on(
+        "postgres_changes",
+        {
+          event:"INSERT",
+          schema:"public",
+          table:"reservas"
+        },
+        function(payload){
+          console.log(
+            "🔔 NUEVA RESERVA RECIBIDA:",
+            payload.new
+          );
+          mostrarAvisoNuevaReserva(
+            payload.new
+          );
+          cargarReservas();
+        }
+      )
+      .subscribe(
+        function(status){
+          console.log(
+            "📡 Estado Realtime:",
+            status
+          );
+          if(
+            status === "SUBSCRIBED"
+          ){
             console.log(
-                "Estado notificaciones reservas:",
-                status
+              "✅ NOTIFICACIONES ACTIVAS"
             );
-
-        });
+          }
+          if(
+            status === "CHANNEL_ERROR"
+          ){
+            console.error(
+              "❌ ERROR EN REALTIME"
+            );
+          }
+        }
+      );
 }
-
-// Activar automáticamente cuando el administrador entra
-const mostrarPanelOriginal = mostrarPanel;
-
-mostrarPanel = function() {
-
-    mostrarPanelOriginal();
-
-    activarNotificacionesReservas();
-
-};
-
-// Si ya había una sesión iniciada, activar también las notificaciones
-supabaseClient.auth.getSession().then(function(resultado) {
-
-    if (resultado.data.session) {
-        activarNotificacionesReservas();
-    }
-
-});
+/* =====================================================
+   INICIAR
+===================================================== */
+verificarSesion();
 </script>
 </body>
 </html>
