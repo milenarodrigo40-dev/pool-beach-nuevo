@@ -1,67 +1,36 @@
 (function(){
 
-const SUPABASE_URL =
-“https://nmpakeovqkdajtswjpgm.supabase.co”;
-
-const SUPABASE_ANON_KEY =
-“sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu”;
-
-function mostrarMensaje(texto){
-
-const galeria =
-  document.getElementById("galeriaFotos");
-if(!galeria) return;
-galeria.innerHTML = "";
-const mensaje =
-  document.createElement("div");
-mensaje.className = "empty";
-mensaje.textContent = texto;
-galeria.appendChild(mensaje);
-
-}
-
 async function cargarGaleria(){
 
-const galeria =
-  document.getElementById("galeriaFotos");
+const galeria = document.getElementById("galeriaFotos");
 if(!galeria) return;
 try{
-  if(!window.supabase){
-    mostrarMensaje(
-      "No se pudo conectar con la galería."
-    );
+  if(!window.supabaseClient){
+    galeria.innerHTML =
+      '<div class="empty">No se pudo conectar con la galería.</div>';
     return;
   }
-  const cliente =
-    window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_ANON_KEY
-    );
-  const resultado =
-    await cliente
-      .from("galeria_fotos")
-      .select("id,titulo,categoria,url,creado_en")
-      .order("creado_en",{ascending:false});
-  if(resultado.error){
+  const { data, error } =
+    await window.supabaseClient
+    .from("galeria_fotos")
+    .select("id,titulo,categoria,url,creado_en")
+    .order("creado_en",{ascending:false});
+  if(error){
     console.error(
-      "Error de Supabase:",
-      resultado.error
+      "Error de Supabase en galería:",
+      error
     );
-    mostrarMensaje(
-      "No se pudo cargar la galería."
-    );
+    galeria.innerHTML =
+      '<div class="empty">No se pudo cargar la galería.</div>';
     return;
   }
-  const fotos =
-    resultado.data || [];
-  if(fotos.length === 0){
-    mostrarMensaje(
-      "Todavía no hay fotos publicadas."
-    );
+  if(!data || data.length === 0){
+    galeria.innerHTML =
+      '<div class="empty">Todavía no hay fotos publicadas.</div>';
     return;
   }
   galeria.innerHTML = "";
-  fotos.forEach(function(foto){
+  data.forEach(function(foto){
     if(!foto.url) return;
     const item =
       document.createElement("div");
@@ -86,7 +55,10 @@ try{
           "empty";
         error.textContent =
           "No se pudo cargar esta imagen.";
-        item.appendChild(error);
+        item.insertBefore(
+          error,
+          item.firstChild
+        );
       };
     const caption =
       document.createElement("div");
@@ -109,25 +81,21 @@ try{
     galeria.appendChild(item);
   });
   if(!galeria.children.length){
-    mostrarMensaje(
-      "Todavía no hay fotos publicadas."
-    );
+    galeria.innerHTML =
+      '<div class="empty">Todavía no hay fotos publicadas.</div>';
   }
 }catch(error){
   console.error(
     "Error cargando galería:",
     error
   );
-  mostrarMensaje(
-    "No se pudo cargar la galería."
-  );
+  galeria.innerHTML =
+    '<div class="empty">No se pudo cargar la galería.</div>';
 }
 
 }
 
-if(
-document.readyState === “loading”
-){
+if(document.readyState === “loading”){
 
 document.addEventListener(
   "DOMContentLoaded",
