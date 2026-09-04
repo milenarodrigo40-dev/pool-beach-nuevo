@@ -3,1014 +3,692 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <title>Panel de Administración | Pool & Beach</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f3f7f9;
+  color:#17212b
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.hidden{display:none!important}
+
+#loginScreen{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#075d78,#0b9bc0)
+}
+.login-box{
+  width:100%;
+  max-width:420px;
+  background:#fff;
+  padding:30px;
+  border-radius:20px;
+  box-shadow:0 15px 45px rgba(0,0,0,.2)
+}
+.login-box h1{
+  text-align:center;
+  color:#075d78;
+  margin:0 0 8px
+}
+.login-box p{
+  text-align:center;
+  color:#687781;
+  margin:0 0 25px
+}
+.login-box input{
+  width:100%;
+  padding:14px;
+  margin-bottom:12px;
+  border:1px solid #d4dde2;
+  border-radius:10px
+}
+.login-button{
+  width:100%;
+  border:0;
+  padding:14px;
+  border-radius:10px;
+  background:#087ea1;
+  color:white;
+  font-weight:bold
+}
+#loginMessage{
+  color:#c62828;
+  text-align:center;
+  margin-top:14px;
+  font-size:14px
 }
 
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #f4f7f9;
-  color: #17212b;
+header{
+  background:#075d78;
+  color:white;
+  min-height:62px;
+  padding:12px 18px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  position:sticky;
+  top:0;
+  z-index:100
+}
+header h1{font-size:20px;margin:0}
+.header-right{
+  display:flex;
+  align-items:center;
+  gap:12px
+}
+.user-email{
+  font-size:13px;
+  max-width:300px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap
+}
+.logout-button{
+  border:0;
+  background:white;
+  color:#075d78;
+  padding:9px 13px;
+  border-radius:8px;
+  font-weight:bold
 }
 
-button,
-input,
-select,
-textarea {
-  font: inherit;
+.layout{
+  display:flex;
+  min-height:calc(100vh - 62px)
 }
-
-button {
-  cursor: pointer;
+.sidebar{
+  width:225px;
+  background:#102d39;
+  padding:12px 9px;
+  flex-shrink:0
 }
-
-.hidden {
-  display: none !important;
+.sidebar button{
+  display:block;
+  width:100%;
+  border:0;
+  background:transparent;
+  color:white;
+  text-align:left;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:4px
 }
-
-/* LOGIN */
-
-#loginScreen {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  background: linear-gradient(135deg, #0b6b88, #0e9ac1);
-}
-
-.login-box {
-  width: 100%;
-  max-width: 420px;
-  background: white;
-  padding: 30px;
-  border-radius: 20px;
-  box-shadow: 0 15px 40px rgba(0,0,0,.18);
-}
-
-.login-box h1 {
-  margin: 0 0 8px;
-  text-align: center;
-  color: #075d78;
-}
-
-.login-box p {
-  text-align: center;
-  color: #667781;
-  margin-bottom: 25px;
-}
-
-.login-box input {
-  width: 100%;
-  padding: 14px;
-  margin-bottom: 12px;
-  border: 1px solid #d5dde2;
-  border-radius: 10px;
-  outline: none;
-}
-
-.login-box input:focus {
-  border-color: #0b8caf;
-}
-
-.login-button {
-  width: 100%;
-  border: 0;
-  padding: 14px;
-  border-radius: 10px;
-  background: #087ea1;
-  color: white;
-  font-weight: bold;
-}
-
-.login-button:hover {
-  background: #066b88;
-}
-
-#loginMessage {
-  margin-top: 15px;
-  text-align: center;
-  color: #c62828;
-  font-size: 14px;
-}
-
-/* ADMIN */
-
-#adminPanel {
-  min-height: 100vh;
-}
-
-header {
-  background: #075d78;
-  color: white;
-  padding: 15px 20px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 15px;
-  position: sticky;
-  top: 0;
-  z-index: 100;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 20px;
-}
-
-.header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.user-email {
-  font-size: 13px;
-  opacity: .9;
-}
-
-.logout-button {
-  border: 0;
-  background: white;
-  color: #075d78;
-  padding: 9px 13px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.layout {
-  display: flex;
-  min-height: calc(100vh - 60px);
-}
-
-.sidebar {
-  width: 230px;
-  background: #102d39;
-  padding: 15px 10px;
-  flex-shrink: 0;
-}
-
-.sidebar button {
-  width: 100%;
-  text-align: left;
-  border: 0;
-  background: transparent;
-  color: white;
-  padding: 12px;
-  margin-bottom: 4px;
-  border-radius: 8px;
-}
-
 .sidebar button:hover,
-.sidebar button.active {
-  background: #087ea1;
+.sidebar button.active{background:#087ea1}
+
+.main{
+  flex:1;
+  padding:24px;
+  overflow-x:hidden
+}
+.section{display:none}
+.section.active{display:block}
+.section h2{
+  margin:0 0 20px;
+  color:#075d78
 }
 
-.main {
-  flex: 1;
-  padding: 25px;
-  overflow-x: hidden;
+.cards{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:22px
+}
+.card{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 4px 15px rgba(0,0,0,.07)
+}
+.card-title{
+  color:#687781;
+  font-size:14px
+}
+.card-number{
+  font-size:32px;
+  font-weight:bold;
+  color:#075d78;
+  margin-top:7px
+}
+.card-small{
+  color:#687781;
+  font-size:13px;
+  margin-top:6px
 }
 
-.section {
-  display: none;
+.box{
+  background:#fff;
+  border-radius:15px;
+  padding:20px;
+  box-shadow:0 4px 15px rgba(0,0,0,.06);
+  margin-bottom:20px
+}
+.box h3{margin-top:0;color:#075d78}
+
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:12px
+}
+.form-grid .full{grid-column:1/-1}
+label{
+  display:block;
+  font-size:13px;
+  color:#53636d;
+  margin-bottom:5px
+}
+input,select,textarea{
+  width:100%;
+  padding:10px;
+  border:1px solid #d2dce1;
+  border-radius:8px
+}
+textarea{
+  min-height:85px;
+  resize:vertical
 }
 
-.section.active {
-  display: block;
+.primary{
+  border:0;
+  background:#087ea1;
+  color:#fff;
+  padding:10px 15px;
+  border-radius:8px;
+  font-weight:bold
+}
+.secondary{
+  border:0;
+  background:#e7eef1;
+  color:#075d78;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:bold
+}
+.success{
+  border:0;
+  background:#2e7d32;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:bold
+}
+.danger{
+  border:0;
+  background:#c62828;
+  color:#fff;
+  padding:8px 12px;
+  border-radius:8px;
+  font-weight:bold
 }
 
-.section h2 {
-  margin-top: 0;
-  color: #075d78;
+.table-container{
+  background:#fff;
+  border-radius:15px;
+  padding:15px;
+  overflow-x:auto;
+  box-shadow:0 4px 15px rgba(0,0,0,.06)
+}
+table{
+  width:100%;
+  min-width:800px;
+  border-collapse:collapse
+}
+th{
+  background:#edf4f7;
+  color:#075d78;
+  padding:11px;
+  text-align:left;
+  font-size:13px
+}
+td{
+  padding:11px;
+  border-bottom:1px solid #edf0f2;
+  font-size:13px;
+  vertical-align:top
+}
+tr:hover td{background:#fafcfd}
+
+.badge{
+  display:inline-block;
+  padding:4px 8px;
+  border-radius:20px;
+  background:#e5f4f8;
+  color:#075d78;
+  font-size:12px;
+  font-weight:bold
+}
+.badge-green{
+  background:#e8f5e9;
+  color:#2e7d32
+}
+.badge-red{
+  background:#ffebee;
+  color:#c62828
+}
+.badge-yellow{
+  background:#fff8e1;
+  color:#8a6500
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:6px
 }
 
-/* CARDS */
-
-.cards {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 15px;
-  margin-bottom: 25px;
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px
+}
+.photo-card{
+  background:white;
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 4px 15px rgba(0,0,0,.07)
+}
+.photo-card img{
+  width:100%;
+  height:190px;
+  object-fit:cover;
+  display:block;
+  background:#e9eef0
+}
+.photo-info{padding:13px}
+.photo-info h3{margin:0 0 6px}
+.photo-info p{
+  margin:4px 0;
+  font-size:12px;
+  color:#687781;
+  word-break:break-word
 }
 
-.card {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,.07);
+.message{
+  padding:12px 15px;
+  border-radius:9px;
+  margin-bottom:15px;
+  background:#edf7fa;
+  color:#075d78
+}
+.error{
+  background:#ffebee;
+  color:#b71c1c
+}
+.loading{
+  padding:25px;
+  text-align:center;
+  color:#687781
+}
+.empty{
+  padding:30px;
+  text-align:center;
+  color:#77858d
 }
 
-.card-title {
-  color: #6c7a83;
-  font-size: 14px;
+@media(max-width:950px){
+  .cards{grid-template-columns:repeat(2,1fr)}
+  .photo-grid{grid-template-columns:repeat(2,1fr)}
 }
-
-.card-number {
-  font-size: 32px;
-  font-weight: bold;
-  color: #075d78;
-  margin-top: 8px;
-}
-
-.card-small {
-  margin-top: 7px;
-  color: #687781;
-  font-size: 13px;
-}
-
-/* TABLES */
-
-.table-container {
-  background: white;
-  border-radius: 15px;
-  padding: 15px;
-  overflow-x: auto;
-  box-shadow: 0 4px 15px rgba(0,0,0,.06);
-}
-
-table {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 750px;
-}
-
-th {
-  text-align: left;
-  background: #edf4f7;
-  color: #075d78;
-  padding: 12px;
-  font-size: 13px;
-}
-
-td {
-  padding: 12px;
-  border-bottom: 1px solid #edf0f2;
-  font-size: 13px;
-  vertical-align: top;
-}
-
-tr:hover td {
-  background: #fafcfd;
-}
-
-/* FORMS */
-
-.form-box {
-  background: white;
-  padding: 20px;
-  border-radius: 15px;
-  margin-bottom: 20px;
-  box-shadow: 0 4px 15px rgba(0,0,0,.06);
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.form-grid .full {
-  grid-column: 1 / -1;
-}
-
-.form-box label {
-  display: block;
-  font-size: 13px;
-  color: #53636d;
-  margin-bottom: 5px;
-}
-
-.form-box input,
-.form-box select,
-.form-box textarea {
-  width: 100%;
-  padding: 11px;
-  border: 1px solid #d5dde2;
-  border-radius: 8px;
-}
-
-.form-box textarea {
-  min-height: 90px;
-  resize: vertical;
-}
-
-.primary-button {
-  border: 0;
-  background: #087ea1;
-  color: white;
-  padding: 11px 16px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.primary-button:hover {
-  background: #066b88;
-}
-
-.secondary-button {
-  border: 0;
-  background: #e7eef1;
-  color: #075d78;
-  padding: 9px 13px;
-  border-radius: 8px;
-  font-weight: bold;
-}
-
-.danger-button {
-  border: 0;
-  background: #c62828;
-  color: white;
-  padding: 8px 11px;
-  border-radius: 7px;
-}
-
-.success-button {
-  border: 0;
-  background: #2e7d32;
-  color: white;
-  padding: 8px 11px;
-  border-radius: 7px;
-}
-
-.action-group {
-  display: flex;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.status-select {
-  padding: 7px;
-  border: 1px solid #ccd6db;
-  border-radius: 7px;
-}
-
-.badge {
-  display: inline-block;
-  padding: 4px 8px;
-  border-radius: 20px;
-  background: #e5f4f8;
-  color: #075d78;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.badge-danger {
-  background: #ffebee;
-  color: #c62828;
-}
-
-.badge-success {
-  background: #e8f5e9;
-  color: #2e7d32;
-}
-
-/* PHOTOS */
-
-.photo-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-}
-
-.photo-card {
-  background: white;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 15px rgba(0,0,0,.07);
-}
-
-.photo-card img {
-  width: 100%;
-  height: 190px;
-  object-fit: cover;
-  display: block;
-}
-
-.photo-info {
-  padding: 13px;
-}
-
-.photo-info h3 {
-  margin: 0 0 5px;
-  font-size: 16px;
-}
-
-.photo-info p {
-  margin: 4px 0;
-  color: #667781;
-  font-size: 13px;
-  word-break: break-word;
-}
-
-/* MENSAJES */
-
-.message {
-  padding: 12px 15px;
-  border-radius: 9px;
-  margin-bottom: 15px;
-  background: #edf7fa;
-  color: #075d78;
-}
-
-.error-message {
-  background: #ffebee;
-  color: #b71c1c;
-}
-
-.empty {
-  padding: 30px;
-  text-align: center;
-  color: #77858d;
-}
-
-.loading {
-  padding: 25px;
-  text-align: center;
-  color: #687781;
-}
-
-/* MOBILE */
-
-@media (max-width: 900px) {
-  .cards {
-    grid-template-columns: repeat(2, 1fr);
+@media(max-width:700px){
+  header{
+    flex-direction:column;
+    align-items:flex-start
   }
-
-  .photo-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .header-right{width:100%;justify-content:space-between}
+  .layout{display:block}
+  .sidebar{
+    width:100%;
+    display:flex;
+    overflow-x:auto;
+    gap:5px;
+    padding:8px
   }
-}
-
-@media (max-width: 700px) {
-
-  header {
-    flex-direction: column;
-    align-items: flex-start;
+  .sidebar button{
+    width:auto;
+    white-space:nowrap;
+    margin:0
   }
-
-  .header-right {
-    width: 100%;
-    justify-content: space-between;
-  }
-
-  .layout {
-    display: block;
-  }
-
-  .sidebar {
-    width: 100%;
-    display: flex;
-    overflow-x: auto;
-    gap: 5px;
-    padding: 8px;
-  }
-
-  .sidebar button {
-    width: auto;
-    white-space: nowrap;
-    margin: 0;
-  }
-
-  .main {
-    padding: 15px;
-  }
-
-  .cards {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .form-grid .full {
-    grid-column: auto;
-  }
-
-  .photo-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .user-email {
-    max-width: 200px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
+  .main{padding:15px}
+  .cards{grid-template-columns:1fr 1fr}
+  .form-grid{grid-template-columns:1fr}
+  .form-grid .full{grid-column:auto}
+  .photo-grid{grid-template-columns:1fr}
 }
 </style>
 </head>
 
 <body>
 
-<!-- ================= LOGIN ================= -->
-
+<!-- LOGIN -->
 <div id="loginScreen">
-
   <div class="login-box">
-
     <h1>Pool & Beach</h1>
-
     <p>Panel de Administración</p>
 
     <form id="loginForm">
-
       <input
-        type="email"
         id="email"
+        type="email"
         placeholder="Correo electrónico"
-        required
         autocomplete="email"
+        required
       >
 
       <input
-        type="password"
         id="password"
+        type="password"
         placeholder="Contraseña"
-        required
         autocomplete="current-password"
+        required
       >
 
       <button class="login-button" type="submit">
         Iniciar sesión
       </button>
-
     </form>
 
     <div id="loginMessage"></div>
+  </div>
+</div>
 
+
+<!-- PANEL -->
+<div id="adminPanel" class="hidden">
+
+<header>
+  <h1>Pool & Beach — Administración</h1>
+
+  <div class="header-right">
+    <span class="user-email" id="userEmail"></span>
+    <button class="logout-button" id="logoutButton">
+      Cerrar sesión
+    </button>
+  </div>
+</header>
+
+<div class="layout">
+
+<aside class="sidebar">
+
+  <button class="nav-button active" data-section="inicio">🏠 Inicio</button>
+  <button class="nav-button" data-section="reservas">📅 Reservas</button>
+  <button class="nav-button" data-section="mesas">🎱 Mesas</button>
+  <button class="nav-button" data-section="promociones">🔥 Promociones</button>
+  <button class="nav-button" data-section="fotos">📷 Fotos</button>
+  <button class="nav-button" data-section="productos">🍔 Productos</button>
+  <button class="nav-button" data-section="pedidos">🛒 Pedidos</button>
+  <button class="nav-button" data-section="juegos">🎮 Juegos</button>
+  <button class="nav-button" data-section="ranking">🏆 Ranking</button>
+  <button class="nav-button" data-section="torneos">🥇 Torneos</button>
+
+</aside>
+
+<main class="main">
+
+<div id="globalMessage"></div>
+
+
+<!-- INICIO -->
+<section id="inicio" class="section active">
+
+<h2>Panel de control</h2>
+
+<div class="cards">
+
+  <div class="card">
+    <div class="card-title">Reservas</div>
+    <div class="card-number" id="cardReservas">—</div>
+    <div class="card-small" id="cardReservasAvisos">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mesas</div>
+    <div class="card-number" id="cardMesas">—</div>
+    <div class="card-small" id="cardMesasActivas">—</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Promociones</div>
+    <div class="card-number" id="cardPromociones">—</div>
+    <div class="card-small">Promociones activas</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Fotos</div>
+    <div class="card-number" id="cardFotos">—</div>
+    <div class="card-small">Fotos registradas</div>
   </div>
 
 </div>
 
-
-<!-- ================= ADMIN ================= -->
-
-<div id="adminPanel" class="hidden">
-
-  <header>
-
-    <h1>Pool & Beach — Administración</h1>
-
-    <div class="header-right">
-
-      <span class="user-email" id="userEmail"></span>
-
-      <button class="logout-button" id="logoutButton">
-        Cerrar sesión
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <div class="layout">
-
-    <!-- MENU -->
-
-    <aside class="sidebar">
-
-      <button class="nav-button active" data-section="inicio">
-        🏠 Inicio
-      </button>
-
-      <button class="nav-button" data-section="reservas">
-        📅 Reservas
-      </button>
-
-      <button class="nav-button" data-section="mesas">
-        🎱 Mesas
-      </button>
-
-      <button class="nav-button" data-section="promociones">
-        🔥 Promociones
-      </button>
-
-      <button class="nav-button" data-section="fotos">
-        📷 Fotos
-      </button>
-
-      <button class="nav-button" data-section="productos">
-        🍔 Productos
-      </button>
-
-      <button class="nav-button" data-section="pedidos">
-        🛒 Pedidos
-      </button>
-
-      <button class="nav-button" data-section="juegos">
-        🎮 Juegos
-      </button>
-
-      <button class="nav-button" data-section="ranking">
-        🏆 Ranking
-      </button>
-
-      <button class="nav-button" data-section="torneos">
-        🥇 Torneos
-      </button>
-
-    </aside>
-
-
-    <!-- CONTENIDO -->
-
-    <main class="main">
-
-      <div id="globalMessage"></div>
-
-
-      <!-- ================= INICIO ================= -->
-
-      <section id="inicio" class="section active">
-
-        <h2>Panel de control</h2>
-
-        <div class="cards">
-
-          <div class="card">
-
-            <div class="card-title">
-              Reservas
-            </div>
-
-            <div class="card-number" id="cardReservas">
-              —
-            </div>
-
-            <div class="card-small" id="cardReservasAvisos">
-              Cargando...
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="card-title">
-              Mesas
-            </div>
-
-            <div class="card-number" id="cardMesas">
-              —
-            </div>
-
-            <div class="card-small">
-              Mesas registradas
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="card-title">
-              Promociones
-            </div>
-
-            <div class="card-number" id="cardPromociones">
-              —
-            </div>
-
-            <div class="card-small">
-              Promociones activas
-            </div>
-
-          </div>
-
-
-          <div class="card">
-
-            <div class="card-title">
-              Fotos
-            </div>
-
-            <div class="card-number" id="cardFotos">
-              —
-            </div>
-
-            <div class="card-small">
-              Fotos registradas
-            </div>
-
-          </div>
-
-        </div>
-
-
-        <div class="form-box">
-
-          <h3>Acciones rápidas</h3>
-
-          <div class="action-group">
-
-            <button
-              class="primary-button"
-              onclick="showSection('reservas')"
-            >
-              Ver reservas
-            </button>
-
-            <button
-              class="secondary-button"
-              onclick="showSection('promociones')"
-            >
-              Ver promociones
-            </button>
-
-            <button
-              class="secondary-button"
-              onclick="showSection('fotos')"
-            >
-              Administrar fotos
-            </button>
-
-            <button
-              class="secondary-button"
-              onclick="loadDashboard()"
-            >
-              🔄 Actualizar
-            </button>
-
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= RESERVAS ================= -->
-
-      <section id="reservas" class="section">
-
-        <h2>Reservas</h2>
-
-        <div id="reservasContent" class="table-container">
-
-          <div class="loading">
-            Cargando reservas...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= MESAS ================= -->
-
-      <section id="mesas" class="section">
-
-        <h2>Mesas</h2>
-
-        <div id="mesasContent" class="table-container">
-
-          <div class="loading">
-            Cargando mesas...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= PROMOCIONES ================= -->
-
-      <section id="promociones" class="section">
-
-        <h2>Promociones</h2>
-
-        <div class="form-box">
-
-          <h3>Nueva promoción</h3>
-
-          <form id="promoForm">
-
-            <div class="form-grid">
-
-              <div>
-                <label>Título</label>
-                <input id="promoTitulo" required>
-              </div>
-
-              <div>
-                <label>Precio</label>
-                <input
-                  id="promoPrecio"
-                  type="number"
-                  min="0"
-                  step="0.01"
-                >
-              </div>
-
-              <div class="full">
-
-                <label>Descripción</label>
-
-                <textarea id="promoDescripcion"></textarea>
-
-              </div>
-
-            </div>
-
-            <br>
-
-            <button class="primary-button" type="submit">
-              Agregar promoción
-            </button>
-
-          </form>
-
-        </div>
-
-
-        <div id="promocionesContent" class="table-container">
-
-          <div class="loading">
-            Cargando promociones...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= FOTOS ================= -->
-
-      <section id="fotos" class="section">
-
-        <h2>Galería de fotos</h2>
-
-        <div class="form-box">
-
-          <h3>Agregar una foto</h3>
-
-          <p style="color:#667781;font-size:13px;">
-            Pegá la URL pública de la imagen. La foto quedará registrada
-            en la galería de Pool & Beach.
-          </p>
-
-          <form id="photoForm">
-
-            <div class="form-grid">
-
-              <div>
-
-                <label>Título</label>
-
-                <input
-                  id="photoTitulo"
-                  placeholder="Ej: Pool & Beach"
-                  required
-                >
-
-              </div>
-
-
-              <div>
-
-                <label>Categoría</label>
-
-                <input
-                  id="photoCategoria"
-                  placeholder="Ej: Local"
-                >
-
-              </div>
-
-
-              <div class="full">
-
-                <label>URL de la imagen</label>
-
-                <input
-                  id="photoUrl"
-                  type="url"
-                  placeholder="https://..."
-                  required
-                >
-
-              </div>
-
-            </div>
-
-            <br>
-
-            <button class="primary-button" type="submit">
-              Agregar foto
-            </button>
-
-          </form>
-
-        </div>
-
-
-        <div id="fotosContent">
-
-          <div class="loading">
-            Cargando fotos...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= PRODUCTOS ================= -->
-
-      <section id="productos" class="section">
-
-        <h2>Productos</h2>
-
-        <div id="productosContent" class="table-container">
-
-          <div class="loading">
-            Cargando productos...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= PEDIDOS ================= -->
-
-      <section id="pedidos" class="section">
-
-        <h2>Pedidos</h2>
-
-        <div id="pedidosContent" class="table-container">
-
-          <div class="loading">
-            Cargando pedidos...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= JUEGOS ================= -->
-
-      <section id="juegos" class="section">
-
-        <h2>Juegos</h2>
-
-        <div id="juegosContent" class="table-container">
-
-          <div class="loading">
-            Cargando juegos...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= RANKING ================= -->
-
-      <section id="ranking" class="section">
-
-        <h2>Ranking de jugadores</h2>
-
-        <div id="rankingContent" class="table-container">
-
-          <div class="loading">
-            Cargando ranking...
-          </div>
-
-        </div>
-
-      </section>
-
-
-      <!-- ================= TORNEOS ================= -->
-
-      <section id="torneos" class="section">
-
-        <h2>Torneos</h2>
-
-        <div id="torneosContent" class="table-container">
-
-          <div class="loading">
-            Cargando torneos...
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
+<div class="box">
+  <h3>Acciones rápidas</h3>
+
+  <div class="actions">
+    <button class="primary" onclick="showSection('reservas')">
+      Ver reservas
+    </button>
+
+    <button class="secondary" onclick="showSection('pedidos')">
+      Ver pedidos
+    </button>
+
+    <button class="secondary" onclick="showSection('fotos')">
+      Administrar fotos
+    </button>
+
+    <button class="secondary" onclick="loadAll()">
+      🔄 Actualizar todo
+    </button>
   </div>
+</div>
 
+</section>
+
+
+<!-- RESERVAS -->
+<section id="reservas" class="section">
+
+<h2>Reservas</h2>
+
+<div id="reservasContent" class="table-container">
+  <div class="loading">Cargando reservas...</div>
+</div>
+
+</section>
+
+
+<!-- MESAS -->
+<section id="mesas" class="section">
+
+<h2>Mesas</h2>
+
+<div id="mesasContent" class="table-container">
+  <div class="loading">Cargando mesas...</div>
+</div>
+
+</section>
+
+
+<!-- PROMOCIONES -->
+<section id="promociones" class="section">
+
+<h2>Promociones</h2>
+
+<div class="box">
+
+<h3>Agregar promoción</h3>
+
+<form id="promoForm">
+
+<div class="form-grid">
+
+<div>
+<label>Título</label>
+<input id="promoTitulo" required>
+</div>
+
+<div>
+<label>Precio</label>
+<input id="promoPrecio" type="number" min="0" step="0.01">
+</div>
+
+<div class="full">
+<label>Descripción</label>
+<textarea id="promoDescripcion"></textarea>
+</div>
+
+</div>
+
+<br>
+
+<button class="primary" type="submit">
+Agregar promoción
+</button>
+
+</form>
+
+</div>
+
+<div id="promocionesContent" class="table-container">
+<div class="loading">Cargando promociones...</div>
+</div>
+
+</section>
+
+
+<!-- FOTOS -->
+<section id="fotos" class="section">
+
+<h2>Galería de fotos</h2>
+
+<div class="box">
+
+<h3>Agregar foto</h3>
+
+<p style="font-size:13px;color:#687781">
+Podés agregar una imagen utilizando su URL pública.
+</p>
+
+<form id="photoForm">
+
+<div class="form-grid">
+
+<div>
+<label>Título</label>
+<input id="photoTitulo" placeholder="Ej: Pool & Beach" required>
+</div>
+
+<div>
+<label>Categoría</label>
+<input id="photoCategoria" placeholder="Ej: Local">
+</div>
+
+<div class="full">
+<label>URL de la imagen</label>
+<input id="photoUrl" type="url" placeholder="https://..." required>
+</div>
+
+</div>
+
+<br>
+
+<button class="primary" type="submit">
+Agregar foto
+</button>
+
+</form>
+
+</div>
+
+<div id="fotosContent">
+<div class="loading">Cargando fotos...</div>
+</div>
+
+</section>
+
+
+<!-- PRODUCTOS -->
+<section id="productos" class="section">
+
+<h2>Productos</h2>
+
+<div class="box">
+
+<h3>Administración del menú</h3>
+
+<p style="font-size:13px;color:#687781">
+Desde acá podés activar u ocultar productos del sistema.
+</p>
+
+</div>
+
+<div id="productosContent" class="table-container">
+<div class="loading">Cargando productos...</div>
+</div>
+
+</section>
+
+
+<!-- PEDIDOS -->
+<section id="pedidos" class="section">
+
+<h2>Pedidos</h2>
+
+<div id="pedidosContent" class="table-container">
+<div class="loading">Cargando pedidos...</div>
+</div>
+
+</section>
+
+
+<!-- JUEGOS -->
+<section id="juegos" class="section">
+
+<h2>Juegos</h2>
+
+<div id="juegosContent" class="table-container">
+<div class="loading">Cargando juegos...</div>
+</div>
+
+</section>
+
+
+<!-- RANKING -->
+<section id="ranking" class="section">
+
+<h2>Ranking</h2>
+
+<div id="rankingContent" class="table-container">
+<div class="loading">Cargando ranking...</div>
+</div>
+
+</section>
+
+
+<!-- TORNEOS -->
+<section id="torneos" class="section">
+
+<h2>Torneos</h2>
+
+<div id="torneosContent" class="table-container">
+<div class="loading">Cargando torneos...</div>
+</div>
+
+</section>
+
+</main>
+</div>
 </div>
 
 
@@ -1021,45 +699,45 @@ tr:hover td {
 ========================================================= */
 
 const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+"https://nmpakeovqkdajtswjpgm.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+"sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
 const { createClient } = window.supabase;
 
 const supabaseClient =
-  createClient(SUPABASE_URL, SUPABASE_KEY);
+createClient(SUPABASE_URL, SUPABASE_KEY);
 
 
 /* =========================================================
    UTILIDADES
 ========================================================= */
 
-function escapeHtml(value) {
+function escapeHtml(value){
 
-  if (value === null || value === undefined) {
+  if(value === null || value === undefined){
     return "";
   }
 
   return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 
-function formatMoney(value) {
+function money(value){
 
-  if (value === null || value === undefined || value === "") {
+  if(value === null || value === undefined || value === ""){
     return "—";
   }
 
   const number = Number(value);
 
-  if (Number.isNaN(number)) {
+  if(Number.isNaN(number)){
     return escapeHtml(value);
   }
 
@@ -1067,45 +745,45 @@ function formatMoney(value) {
 }
 
 
-function formatDate(value) {
+function dateAR(value){
 
-  if (!value) {
+  if(!value){
     return "—";
   }
 
   const parts = String(value).split("-");
 
-  if (parts.length === 3) {
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  if(parts.length === 3){
+    return parts[2] + "/" + parts[1] + "/" + parts[0];
   }
 
   return escapeHtml(value);
 }
 
 
-function formatTime(value) {
+function timeAR(value){
 
-  if (!value) {
+  if(!value){
     return "—";
   }
 
-  return String(value).substring(0, 5);
+  return String(value).substring(0,5);
 }
 
 
-function showGlobalMessage(message, error = false) {
+function notify(message,error=false){
 
-  const box = document.getElementById("globalMessage");
+  const box =
+  document.getElementById("globalMessage");
 
-  box.innerHTML = `
-    <div class="message ${error ? "error-message" : ""}">
-      ${escapeHtml(message)}
-    </div>
-  `;
+  box.innerHTML =
+  `<div class="message ${error ? "error" : ""}">
+    ${escapeHtml(message)}
+  </div>`;
 
-  setTimeout(() => {
-    box.innerHTML = "";
-  }, 5000);
+  setTimeout(()=>{
+    box.innerHTML="";
+  },4500);
 }
 
 
@@ -1113,84 +791,57 @@ function showGlobalMessage(message, error = false) {
    NAVEGACIÓN
 ========================================================= */
 
-function showSection(sectionId) {
+function showSection(id){
 
-  document.querySelectorAll(".section")
-    .forEach(section => {
+  document
+    .querySelectorAll(".section")
+    .forEach(section=>{
       section.classList.remove("active");
     });
 
-  document.querySelectorAll(".nav-button")
-    .forEach(button => {
+  document
+    .querySelectorAll(".nav-button")
+    .forEach(button=>{
       button.classList.remove("active");
     });
 
   const section =
-    document.getElementById(sectionId);
+  document.getElementById(id);
 
-  if (section) {
+  if(section){
     section.classList.add("active");
   }
 
   const button =
-    document.querySelector(
-      `.nav-button[data-section="${sectionId}"]`
-    );
+  document.querySelector(
+    `.nav-button[data-section="${id}"]`
+  );
 
-  if (button) {
+  if(button){
     button.classList.add("active");
   }
 
-  if (sectionId === "reservas") {
-    loadReservas();
-  }
-
-  if (sectionId === "mesas") {
-    loadMesas();
-  }
-
-  if (sectionId === "promociones") {
-    loadPromociones();
-  }
-
-  if (sectionId === "fotos") {
-    loadFotos();
-  }
-
-  if (sectionId === "productos") {
-    loadProductos();
-  }
-
-  if (sectionId === "pedidos") {
-    loadPedidos();
-  }
-
-  if (sectionId === "juegos") {
-    loadJuegos();
-  }
-
-  if (sectionId === "ranking") {
-    loadRanking();
-  }
-
-  if (sectionId === "torneos") {
-    loadTorneos();
-  }
+  if(id==="reservas") loadReservas();
+  if(id==="mesas") loadMesas();
+  if(id==="promociones") loadPromociones();
+  if(id==="fotos") loadFotos();
+  if(id==="productos") loadProductos();
+  if(id==="pedidos") loadPedidos();
+  if(id==="juegos") loadJuegos();
+  if(id==="ranking") loadRanking();
+  if(id==="torneos") loadTorneos();
 }
 
 
-document.querySelectorAll(".nav-button")
-  .forEach(button => {
+document
+.querySelectorAll(".nav-button")
+.forEach(button=>{
 
-    button.addEventListener("click", () => {
-
-      showSection(
-        button.dataset.section
-      );
-
-    });
-
+  button.addEventListener("click",()=>{
+    showSection(button.dataset.section);
   });
+
+});
 
 
 /* =========================================================
@@ -1198,174 +849,164 @@ document.querySelectorAll(".nav-button")
 ========================================================= */
 
 document
-  .getElementById("loginForm")
-  .addEventListener("submit", async event => {
+.getElementById("loginForm")
+.addEventListener("submit",async event=>{
 
-    event.preventDefault();
+  event.preventDefault();
 
-    const email =
-      document.getElementById("email").value.trim();
+  const email =
+  document.getElementById("email").value.trim();
 
-    const password =
-      document.getElementById("password").value;
+  const password =
+  document.getElementById("password").value;
 
-    const message =
-      document.getElementById("loginMessage");
+  const message =
+  document.getElementById("loginMessage");
 
-    message.textContent = "Iniciando sesión...";
+  message.textContent="Iniciando sesión...";
 
-    const { error } =
-      await supabaseClient.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if (error) {
-
-      message.textContent =
-        "No se pudo iniciar sesión: " +
-        error.message;
-
-      return;
-    }
-
-    message.textContent = "";
-
-    await showAdmin();
-
+  const {error} =
+  await supabaseClient.auth.signInWithPassword({
+    email,
+    password
   });
 
+  if(error){
 
-/* =========================================================
-   MOSTRAR ADMIN
-========================================================= */
+    message.textContent =
+    "No se pudo iniciar sesión: " +
+    error.message;
 
-async function showAdmin() {
-
-  const {
-    data: { session }
-  } = await supabaseClient.auth.getSession();
-
-  if (!session) {
     return;
   }
 
-  document
-    .getElementById("loginScreen")
-    .classList.add("hidden");
+  message.textContent="";
+
+  await showAdmin();
+
+});
+
+
+async function showAdmin(){
+
+  const {
+    data:{session}
+  } =
+  await supabaseClient.auth.getSession();
+
+  if(!session) return;
 
   document
-    .getElementById("adminPanel")
-    .classList.remove("hidden");
+  .getElementById("loginScreen")
+  .classList.add("hidden");
 
   document
-    .getElementById("userEmail")
-    .textContent =
-      session.user.email || "";
+  .getElementById("adminPanel")
+  .classList.remove("hidden");
 
-  await loadDashboard();
+  document
+  .getElementById("userEmail")
+  .textContent =
+  session.user.email || "";
 
+  await loadAll();
 }
 
 
-/* =========================================================
-   CERRAR SESIÓN
-========================================================= */
-
 document
-  .getElementById("logoutButton")
-  .addEventListener("click", async () => {
+.getElementById("logoutButton")
+.addEventListener("click",async()=>{
 
-    await supabaseClient.auth.signOut();
+  await supabaseClient.auth.signOut();
 
-    location.reload();
+  location.reload();
 
-  });
+});
 
 
 /* =========================================================
    DASHBOARD
 ========================================================= */
 
-async function loadDashboard() {
+async function loadDashboard(){
 
-  try {
+  try{
 
     const reservas =
-      await supabaseClient
-        .from("reservas")
-        .select("id,notificacion_vista");
+    await supabaseClient
+    .from("reservas")
+    .select("id,notificacion_vista");
 
-    if (!reservas.error) {
+    if(!reservas.error){
 
       const total =
-        reservas.data?.length || 0;
+      reservas.data?.length || 0;
 
-      const pendientes =
-        reservas.data?.filter(
-          r => r.notificacion_vista === false
-        ).length || 0;
+      const sinVer =
+      reservas.data?.filter(
+        r => r.notificacion_vista !== true
+      ).length || 0;
 
       document.getElementById("cardReservas")
-        .textContent = total;
+      .textContent=total;
 
       document.getElementById("cardReservasAvisos")
-        .textContent =
-          `${pendientes} notificación(es) sin ver`;
-
+      .textContent =
+      sinVer + " notificación(es) sin ver";
     }
 
 
     const mesas =
-      await supabaseClient
-        .from("mesas")
-        .select("id");
+    await supabaseClient
+    .from("mesas")
+    .select("id,activa");
 
-    if (!mesas.error) {
+    if(!mesas.error){
+
+      const total =
+      mesas.data?.length || 0;
+
+      const activas =
+      mesas.data?.filter(m=>m.activa===true).length || 0;
 
       document.getElementById("cardMesas")
-        .textContent =
-          mesas.data?.length || 0;
+      .textContent=total;
 
+      document.getElementById("cardMesasActivas")
+      .textContent =
+      activas + " mesa(s) activas";
     }
 
 
     const promociones =
-      await supabaseClient
-        .from("promociones")
-        .select("id")
-        .eq("activa", true);
+    await supabaseClient
+    .from("promociones")
+    .select("id")
+    .eq("activa",true);
 
-    if (!promociones.error) {
+    if(!promociones.error){
 
       document.getElementById("cardPromociones")
-        .textContent =
-          promociones.data?.length || 0;
-
+      .textContent =
+      promociones.data?.length || 0;
     }
 
 
     const fotos =
-      await supabaseClient
-        .from("galeria_fotos")
-        .select("id");
+    await supabaseClient
+    .from("galeria_fotos")
+    .select("id");
 
-    if (!fotos.error) {
+    if(!fotos.error){
 
       document.getElementById("cardFotos")
-        .textContent =
-          fotos.data?.length || 0;
-
+      .textContent =
+      fotos.data?.length || 0;
     }
 
-  } catch (error) {
+  }catch(error){
 
     console.error(error);
-
-    showGlobalMessage(
-      "No se pudieron actualizar todas las tarjetas.",
-      true
-    );
 
   }
 
@@ -1376,240 +1017,207 @@ async function loadDashboard() {
    RESERVAS
 ========================================================= */
 
-async function loadReservas() {
+async function loadReservas(){
 
   const container =
-    document.getElementById("reservasContent");
+  document.getElementById("reservasContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando reservas...</div>`;
+  `<div class="loading">Cargando reservas...</div>`;
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("reservas")
-      .select("*")
-      .order("fecha", { ascending: true })
-      .order("hora", { ascending: true });
+  const {data,error} =
+  await supabaseClient
+  .from("reservas")
+  .select("*")
+  .order("fecha",{ascending:true})
+  .order("hora",{ascending:true});
 
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar reservas:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay reservas registradas.</div>`;
+    `<div class="message error">
+      Error al cargar reservas:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
-  let html = `
-    <table>
+  if(!data || data.length===0){
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Cliente</th>
-          <th>Teléfono</th>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Servicio</th>
-          <th>Personas</th>
-          <th>Estado</th>
-          <th>Notificación</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
+    container.innerHTML =
+    `<div class="empty">
+      No hay reservas registradas.
+    </div>`;
 
-      <tbody>
+    return;
+  }
+
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>ID</th>
+    <th>Cliente</th>
+    <th>Teléfono</th>
+    <th>Fecha</th>
+    <th>Hora</th>
+    <th>Servicio</th>
+    <th>Personas</th>
+    <th>Estado</th>
+    <th>Notificación</th>
+    <th>Acciones</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
-  data.forEach(reserva => {
+  data.forEach(r=>{
 
-    html += `
-      <tr>
+    html+=`
+    <tr>
 
-        <td>${escapeHtml(reserva.id)}</td>
+      <td>${escapeHtml(r.id)}</td>
 
-        <td>
-          <strong>${escapeHtml(reserva.nombre)}</strong>
+      <td>
+        <strong>${escapeHtml(r.nombre)}</strong>
+        ${
+          r.notas
+          ? `<br><small>${escapeHtml(r.notas)}</small>`
+          : ""
+        }
+      </td>
 
-          ${
-            reserva.notas
-              ? `<br><small>${escapeHtml(reserva.notas)}</small>`
-              : ""
-          }
-        </td>
+      <td>${escapeHtml(r.telefono || "—")}</td>
 
-        <td>
-          ${escapeHtml(reserva.telefono || "—")}
-        </td>
+      <td>${dateAR(r.fecha)}</td>
 
-        <td>
-          ${formatDate(reserva.fecha)}
-        </td>
+      <td>${timeAR(r.hora)}</td>
 
-        <td>
-          ${formatTime(reserva.hora)}
-        </td>
+      <td>${escapeHtml(r.servicio || "—")}</td>
 
-        <td>
-          ${escapeHtml(reserva.servicio || "—")}
-        </td>
+      <td>${escapeHtml(r.cantidad_personas || 1)}</td>
 
-        <td>
-          ${escapeHtml(reserva.cantidad_personas)}
-        </td>
+      <td>
+        <select
+          class="status-select"
+          data-reserva="${r.id}"
+        >
+          <option value="pendiente"
+          ${r.estado==="pendiente"?"selected":""}>
+          Pendiente
+          </option>
 
-        <td>
+          <option value="confirmada"
+          ${r.estado==="confirmada"?"selected":""}>
+          Confirmada
+          </option>
 
-          <select
-            class="status-select"
-            data-reserva-status="${reserva.id}"
-          >
+          <option value="cancelada"
+          ${r.estado==="cancelada"?"selected":""}>
+          Cancelada
+          </option>
+        </select>
+      </td>
 
-            <option
-              value="pendiente"
-              ${reserva.estado === "pendiente" ? "selected" : ""}
-            >
-              Pendiente
-            </option>
+      <td>
+        ${
+          r.notificacion_vista
+          ? `<span class="badge badge-green">Vista</span>`
+          : `<span class="badge badge-red">Nueva</span>`
+        }
+      </td>
 
-            <option
-              value="confirmada"
-              ${reserva.estado === "confirmada" ? "selected" : ""}
-            >
-              Confirmada
-            </option>
+      <td>
+        <div class="actions">
 
-            <option
-              value="cancelada"
-              ${reserva.estado === "cancelada" ? "selected" : ""}
-            >
-              Cancelada
-            </option>
-
-          </select>
-
-        </td>
-
-        <td>
+          <button
+            class="primary"
+            data-save-reserva="${r.id}">
+            Guardar
+          </button>
 
           ${
-            reserva.notificacion_vista
-              ? `<span class="badge badge-success">Vista</span>`
-              : `<span class="badge badge-danger">Sin ver</span>`
-          }
-
-        </td>
-
-        <td>
-
-          <div class="action-group">
-
-            ${
-              !reserva.notificacion_vista
-                ? `
-                  <button
-                    class="success-button"
-                    data-mark-reserva="${reserva.id}"
-                  >
-                    Marcar vista
-                  </button>
-                `
-                : ""
-            }
-
+            !r.notificacion_vista
+            ? `
             <button
-              class="secondary-button"
-              data-save-reserva="${reserva.id}"
-            >
-              Guardar estado
+              class="success"
+              data-view-reserva="${r.id}">
+              Marcar vista
             </button>
+            `
+            : ""
+          }
 
-          </div>
+        </div>
+      </td>
 
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 
   container
-    .querySelectorAll("[data-save-reserva]")
-    .forEach(button => {
+  .querySelectorAll("[data-save-reserva]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        const id =
-          button.dataset.saveReserva;
+      const id =
+      button.dataset.saveReserva;
 
-        const select =
-          container.querySelector(
-            `[data-reserva-status="${id}"]`
-          );
+      const select =
+      container.querySelector(
+        `[data-reserva="${id}"]`
+      );
 
-        await updateReservaEstado(
-          id,
-          select.value
-        );
-
-      });
+      await updateReserva(
+        id,
+        select.value
+      );
 
     });
+
+  });
 
 
   container
-    .querySelectorAll("[data-mark-reserva]")
-    .forEach(button => {
+  .querySelectorAll("[data-view-reserva]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        await markReservaViewed(
-          button.dataset.markReserva
-        );
-
-      });
+      await markReservaViewed(
+        button.dataset.viewReserva
+      );
 
     });
+
+  });
 
 }
 
 
-/* ACTUALIZAR ESTADO RESERVA */
+async function updateReserva(id,estado){
 
-async function updateReservaEstado(id, estado) {
+  const {error} =
+  await supabaseClient
+  .from("reservas")
+  .update({estado})
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("reservas")
-      .update({ estado })
-      .eq("id", id);
+  if(error){
 
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo actualizar la reserva: " +
+    notify(
+      "No se pudo actualizar la reserva: "+
       error.message,
       true
     );
@@ -1617,9 +1225,7 @@ async function updateReservaEstado(id, estado) {
     return;
   }
 
-  showGlobalMessage(
-    "Estado de la reserva actualizado."
-  );
+  notify("Reserva actualizada correctamente.");
 
   await loadReservas();
   await loadDashboard();
@@ -1627,24 +1233,21 @@ async function updateReservaEstado(id, estado) {
 }
 
 
-/* MARCAR NOTIFICACIÓN VISTA */
+async function markReservaViewed(id){
 
-async function markReservaViewed(id) {
+  const {error} =
+  await supabaseClient
+  .from("reservas")
+  .update({
+    notificacion_vista:true,
+    notificacion_vista_en:new Date().toISOString()
+  })
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("reservas")
-      .update({
-        notificacion_vista: true,
-        notificacion_vista_en:
-          new Date().toISOString()
-      })
-      .eq("id", id);
+  if(error){
 
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo marcar la notificación: " +
+    notify(
+      "No se pudo marcar la notificación: "+
       error.message,
       true
     );
@@ -1652,9 +1255,7 @@ async function markReservaViewed(id) {
     return;
   }
 
-  showGlobalMessage(
-    "Notificación marcada como vista."
-  );
+  notify("Notificación marcada como vista.");
 
   await loadReservas();
   await loadDashboard();
@@ -1666,103 +1267,87 @@ async function markReservaViewed(id) {
    MESAS
 ========================================================= */
 
-async function loadMesas() {
+async function loadMesas(){
 
   const container =
-    document.getElementById("mesasContent");
+  document.getElementById("mesasContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando mesas...</div>`;
+  `<div class="loading">Cargando mesas...</div>`;
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("mesas")
-      .select("*")
-      .order("numero", { ascending: true });
+  const {data,error} =
+  await supabaseClient
+  .from("mesas")
+  .select("*")
+  .order("numero",{ascending:true});
 
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar mesas:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay mesas registradas.</div>`;
+    `<div class="message error">
+      Error al cargar mesas:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
-  let html = `
-    <table>
+  if(!data || data.length===0){
 
-      <thead>
-        <tr>
-          <th>Número</th>
-          <th>Nombre</th>
-          <th>Servicio</th>
-          <th>Activa</th>
-          <th>QR Token</th>
-        </tr>
-      </thead>
+    container.innerHTML =
+    `<div class="empty">No hay mesas registradas.</div>`;
 
-      <tbody>
+    return;
+  }
+
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Número</th>
+    <th>Nombre</th>
+    <th>Servicio</th>
+    <th>Estado</th>
+    <th>QR Token</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
-  data.forEach(mesa => {
+  data.forEach(m=>{
 
-    html += `
-      <tr>
+    html+=`
+    <tr>
 
-        <td>
-          <strong>
-            ${escapeHtml(mesa.numero)}
-          </strong>
-        </td>
+      <td><strong>${escapeHtml(m.numero)}</strong></td>
 
-        <td>
-          ${escapeHtml(mesa.nombre || "—")}
-        </td>
+      <td>${escapeHtml(m.nombre || "—")}</td>
 
-        <td>
-          ${escapeHtml(mesa.servicio || "—")}
-        </td>
+      <td>${escapeHtml(m.servicio || "—")}</td>
 
-        <td>
-          ${
-            mesa.activa
-              ? `<span class="badge badge-success">Activa</span>`
-              : `<span class="badge badge-danger">Inactiva</span>`
-          }
-        </td>
+      <td>
+        ${
+          m.activa
+          ? `<span class="badge badge-green">Activa</span>`
+          : `<span class="badge badge-red">Inactiva</span>`
+        }
+      </td>
 
-        <td>
-          <small>
-            ${escapeHtml(mesa.qr_token || "—")}
-          </small>
-        </td>
+      <td>
+        <small>${escapeHtml(m.qr_token || "—")}</small>
+      </td>
 
-      </tr>
+    </tr>
     `;
 
   });
 
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 }
 
@@ -1771,159 +1356,130 @@ async function loadMesas() {
    PROMOCIONES
 ========================================================= */
 
-async function loadPromociones() {
+async function loadPromociones(){
 
   const container =
-    document.getElementById("promocionesContent");
+  document.getElementById("promocionesContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando promociones...</div>`;
+  `<div class="loading">Cargando promociones...</div>`;
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("promociones")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+  const {data,error} =
+  await supabaseClient
+  .from("promociones")
+  .select("*")
+  .order("created_at",{ascending:false});
 
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar promociones:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay promociones.</div>`;
+    `<div class="message error">
+      Error al cargar promociones:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
-  let html = `
-    <table>
+  if(!data || data.length===0){
 
-      <thead>
+    container.innerHTML =
+    `<div class="empty">No hay promociones.</div>`;
 
-        <tr>
-          <th>Título</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
+    return;
+  }
 
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Título</th>
+    <th>Descripción</th>
+    <th>Precio</th>
+    <th>Estado</th>
+    <th>Acción</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
-  data.forEach(promo => {
+  data.forEach(p=>{
 
-    html += `
-      <tr>
+    html+=`
+    <tr>
 
-        <td>
-          <strong>
-            ${escapeHtml(promo.titulo)}
-          </strong>
-        </td>
+      <td><strong>${escapeHtml(p.titulo)}</strong></td>
 
-        <td>
-          ${escapeHtml(promo.descripcion || "—")}
-        </td>
+      <td>${escapeHtml(p.descripcion || "—")}</td>
 
-        <td>
-          ${formatMoney(promo.precio)}
-        </td>
+      <td>${money(p.precio)}</td>
 
-        <td>
+      <td>
+        ${
+          p.activa
+          ? `<span class="badge badge-green">Activa</span>`
+          : `<span class="badge badge-red">Inactiva</span>`
+        }
+      </td>
 
-          ${
-            promo.activa
-              ? `<span class="badge badge-success">Activa</span>`
-              : `<span class="badge badge-danger">Inactiva</span>`
-          }
+      <td>
+        <button
+          class="secondary"
+          data-promo-id="${p.id}"
+          data-promo-active="${p.activa}">
+          ${p.activa ? "Desactivar" : "Activar"}
+        </button>
+      </td>
 
-        </td>
-
-        <td>
-
-          <button
-            class="secondary-button"
-            data-toggle-promo="${promo.id}"
-            data-active="${promo.activa}"
-          >
-            ${
-              promo.activa
-                ? "Desactivar"
-                : "Activar"
-            }
-          </button>
-
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 
   container
-    .querySelectorAll("[data-toggle-promo]")
-    .forEach(button => {
+  .querySelectorAll("[data-promo-id]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        const id =
-          button.dataset.togglePromo;
+      const id =
+      button.dataset.promoId;
 
-        const active =
-          button.dataset.active === "true";
+      const active =
+      button.dataset.promoActive==="true";
 
-        await togglePromocion(
-          id,
-          !active
-        );
-
-      });
+      await togglePromocion(
+        id,
+        !active
+      );
 
     });
+
+  });
 
 }
 
 
-/* TOGGLE PROMOCIÓN */
+async function togglePromocion(id,activa){
 
-async function togglePromocion(id, activa) {
+  const {error} =
+  await supabaseClient
+  .from("promociones")
+  .update({activa})
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("promociones")
-      .update({ activa })
-      .eq("id", id);
+  if(error){
 
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo actualizar la promoción: " +
+    notify(
+      "No se pudo actualizar la promoción: "+
       error.message,
       true
     );
@@ -1931,9 +1487,7 @@ async function togglePromocion(id, activa) {
     return;
   }
 
-  showGlobalMessage(
-    "Promoción actualizada."
-  );
+  notify("Promoción actualizada.");
 
   await loadPromociones();
   await loadDashboard();
@@ -1941,283 +1495,40 @@ async function togglePromocion(id, activa) {
 }
 
 
-/* NUEVA PROMOCIÓN */
-
 document
-  .getElementById("promoForm")
-  .addEventListener("submit", async event => {
+.getElementById("promoForm")
+.addEventListener("submit",async event=>{
 
-    event.preventDefault();
+  event.preventDefault();
 
-    const titulo =
-      document
-        .getElementById("promoTitulo")
-        .value
-        .trim();
+  const titulo =
+  document.getElementById("promoTitulo")
+  .value.trim();
 
-    const descripcion =
-      document
-        .getElementById("promoDescripcion")
-        .value
-        .trim();
+  const descripcion =
+  document.getElementById("promoDescripcion")
+  .value.trim();
 
-    const precioValue =
-      document
-        .getElementById("promoPrecio")
-        .value;
+  const precioValue =
+  document.getElementById("promoPrecio").value;
 
-    const precio =
-      precioValue === ""
-        ? null
-        : Number(precioValue);
+  const precio =
+  precioValue==="" ? null : Number(precioValue);
 
-
-    const { error } =
-      await supabaseClient
-        .from("promociones")
-        .insert({
-          titulo,
-          descripcion:
-            descripcion || null,
-          precio,
-          activa: true
-        });
-
-
-    if (error) {
-
-      showGlobalMessage(
-        "No se pudo crear la promoción: " +
-        error.message,
-        true
-      );
-
-      return;
-    }
-
-
-    document
-      .getElementById("promoForm")
-      .reset();
-
-    showGlobalMessage(
-      "Promoción creada correctamente."
-    );
-
-    await loadPromociones();
-    await loadDashboard();
-
+  const {error} =
+  await supabaseClient
+  .from("promociones")
+  .insert({
+    titulo,
+    descripcion:descripcion || null,
+    precio,
+    activa:true
   });
 
+  if(error){
 
-/* =========================================================
-   FOTOS
-========================================================= */
-
-async function loadFotos() {
-
-  const container =
-    document.getElementById("fotosContent");
-
-  container.innerHTML =
-    `<div class="loading">Cargando fotos...</div>`;
-
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("galeria_fotos")
-      .select("*")
-      .order("creado_en", {
-        ascending: false
-      });
-
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar fotos:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
-
-    container.innerHTML =
-      `<div class="empty">No hay fotos registradas.</div>`;
-
-    return;
-  }
-
-
-  let html = `
-    <div class="photo-grid">
-  `;
-
-
-  data.forEach(photo => {
-
-    html += `
-      <div class="photo-card">
-
-        <img
-          src="${escapeHtml(photo.url)}"
-          alt="${escapeHtml(photo.titulo || "Foto")}"
-          onerror="this.style.display='none'"
-        >
-
-        <div class="photo-info">
-
-          <h3>
-            ${escapeHtml(photo.titulo || "Sin título")}
-          </h3>
-
-          <p>
-            Categoría:
-            ${escapeHtml(photo.categoria || "—")}
-          </p>
-
-          <p>
-            URL:
-            ${escapeHtml(photo.url || "—")}
-          </p>
-
-          <br>
-
-          <button
-            class="danger-button"
-            data-delete-photo="${photo.id}"
-          >
-            Quitar foto
-          </button>
-
-        </div>
-
-      </div>
-    `;
-
-  });
-
-
-  html += `
-    </div>
-  `;
-
-
-  container.innerHTML = html;
-
-
-  container
-    .querySelectorAll("[data-delete-photo]")
-    .forEach(button => {
-
-      button.addEventListener("click", async () => {
-
-        const id =
-          button.dataset.deletePhoto;
-
-        const confirmed =
-          confirm(
-            "¿Querés quitar esta foto de la galería?"
-          );
-
-        if (!confirmed) {
-          return;
-        }
-
-        await deleteFoto(id);
-
-      });
-
-    });
-
-}
-
-
-/* NUEVA FOTO */
-
-document
-  .getElementById("photoForm")
-  .addEventListener("submit", async event => {
-
-    event.preventDefault();
-
-    const titulo =
-      document
-        .getElementById("photoTitulo")
-        .value
-        .trim();
-
-    const categoria =
-      document
-        .getElementById("photoCategoria")
-        .value
-        .trim();
-
-    const url =
-      document
-        .getElementById("photoUrl")
-        .value
-        .trim();
-
-
-    const { error } =
-      await supabaseClient
-        .from("galeria_fotos")
-        .insert({
-          titulo,
-          categoria:
-            categoria || null,
-          ruta: url,
-          url
-        });
-
-
-    if (error) {
-
-      showGlobalMessage(
-        "No se pudo agregar la foto: " +
-        error.message,
-        true
-      );
-
-      return;
-    }
-
-
-    document
-      .getElementById("photoForm")
-      .reset();
-
-    showGlobalMessage(
-      "Foto agregada correctamente."
-    );
-
-    await loadFotos();
-    await loadDashboard();
-
-  });
-
-
-/* BORRAR FOTO */
-
-async function deleteFoto(id) {
-
-  const { error } =
-    await supabaseClient
-      .from("galeria_fotos")
-      .delete()
-      .eq("id", id);
-
-
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo quitar la foto: " +
+    notify(
+      "No se pudo crear la promoción: "+
       error.message,
       true
     );
@@ -2225,10 +1536,192 @@ async function deleteFoto(id) {
     return;
   }
 
+  document.getElementById("promoForm").reset();
 
-  showGlobalMessage(
-    "Foto quitada de la galería."
-  );
+  notify("Promoción creada correctamente.");
+
+  await loadPromociones();
+  await loadDashboard();
+
+});
+
+
+/* =========================================================
+   FOTOS
+========================================================= */
+
+async function loadFotos(){
+
+  const container =
+  document.getElementById("fotosContent");
+
+  container.innerHTML =
+  `<div class="loading">Cargando fotos...</div>`;
+
+  const {data,error} =
+  await supabaseClient
+  .from("galeria_fotos")
+  .select("*")
+  .order("creado_en",{ascending:false});
+
+  if(error){
+
+    container.innerHTML =
+    `<div class="message error">
+      Error al cargar fotos:
+      ${escapeHtml(error.message)}
+    </div>`;
+
+    return;
+  }
+
+  if(!data || data.length===0){
+
+    container.innerHTML =
+    `<div class="empty">
+      No hay fotos registradas.
+    </div>`;
+
+    return;
+  }
+
+  let html=`<div class="photo-grid">`;
+
+  data.forEach(photo=>{
+
+    html+=`
+    <div class="photo-card">
+
+      <img
+        src="${escapeHtml(photo.url)}"
+        alt="${escapeHtml(photo.titulo || "Pool & Beach")}"
+      >
+
+      <div class="photo-info">
+
+        <h3>
+          ${escapeHtml(photo.titulo || "Sin título")}
+        </h3>
+
+        <p>
+          Categoría:
+          ${escapeHtml(photo.categoria || "—")}
+        </p>
+
+        <p>
+          ${escapeHtml(photo.url || "")}
+        </p>
+
+        <br>
+
+        <button
+          class="danger"
+          data-delete-photo="${photo.id}">
+          Quitar foto
+        </button>
+
+      </div>
+
+    </div>
+    `;
+
+  });
+
+  html+=`</div>`;
+
+  container.innerHTML=html;
+
+
+  container
+  .querySelectorAll("[data-delete-photo]")
+  .forEach(button=>{
+
+    button.addEventListener("click",async()=>{
+
+      if(!confirm("¿Querés quitar esta foto de la galería?")){
+        return;
+      }
+
+      await deleteFoto(
+        button.dataset.deletePhoto
+      );
+
+    });
+
+  });
+
+}
+
+
+document
+.getElementById("photoForm")
+.addEventListener("submit",async event=>{
+
+  event.preventDefault();
+
+  const titulo =
+  document.getElementById("photoTitulo")
+  .value.trim();
+
+  const categoria =
+  document.getElementById("photoCategoria")
+  .value.trim();
+
+  const url =
+  document.getElementById("photoUrl")
+  .value.trim();
+
+  const {error} =
+  await supabaseClient
+  .from("galeria_fotos")
+  .insert({
+    titulo,
+    categoria:categoria || null,
+    ruta:url,
+    url
+  });
+
+  if(error){
+
+    notify(
+      "No se pudo agregar la foto: "+
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  document.getElementById("photoForm").reset();
+
+  notify("Foto agregada correctamente.");
+
+  await loadFotos();
+  await loadDashboard();
+
+});
+
+
+async function deleteFoto(id){
+
+  const {error} =
+  await supabaseClient
+  .from("galeria_fotos")
+  .delete()
+  .eq("id",id);
+
+  if(error){
+
+    notify(
+      "No se pudo quitar la foto: "+
+      error.message,
+      true
+    );
+
+    return;
+  }
+
+  notify("Foto quitada de la galería.");
 
   await loadFotos();
   await loadDashboard();
@@ -2240,172 +1733,136 @@ async function deleteFoto(id) {
    PRODUCTOS
 ========================================================= */
 
-async function loadProductos() {
+async function loadProductos(){
 
   const container =
-    document.getElementById("productosContent");
+  document.getElementById("productosContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando productos...</div>`;
+  `<div class="loading">Cargando productos...</div>`;
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("productos")
-      .select("*")
-      .order("categoria", {
-        ascending: true
-      })
-      .order("nombre", {
-        ascending: true
-      });
+  const {data,error} =
+  await supabaseClient
+  .from("productos")
+  .select("*")
+  .order("categoria",{ascending:true})
+  .order("nombre",{ascending:true});
 
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar productos:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay productos registrados.</div>`;
+    `<div class="message error">
+      Error al cargar productos:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
+  if(!data || data.length===0){
 
-  let html = `
-    <table>
+    container.innerHTML =
+    `<div class="empty">
+      No hay productos registrados.
+    </div>`;
 
-      <thead>
+    return;
+  }
 
-        <tr>
-          <th>Nombre</th>
-          <th>Categoría</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Disponible</th>
-          <th>Acción</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Producto</th>
+    <th>Categoría</th>
+    <th>Descripción</th>
+    <th>Precio</th>
+    <th>Disponibilidad</th>
+    <th>Acción</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
+  data.forEach(p=>{
 
-  data.forEach(producto => {
+    html+=`
+    <tr>
 
-    html += `
-      <tr>
+      <td><strong>${escapeHtml(p.nombre)}</strong></td>
 
-        <td>
-          <strong>
-            ${escapeHtml(producto.nombre)}
-          </strong>
-        </td>
+      <td>${escapeHtml(p.categoria || "—")}</td>
 
-        <td>
-          ${escapeHtml(producto.categoria || "—")}
-        </td>
+      <td>${escapeHtml(p.descripcion || "—")}</td>
 
-        <td>
-          ${escapeHtml(producto.descripcion || "—")}
-        </td>
+      <td>${money(p.precio)}</td>
 
-        <td>
-          ${formatMoney(producto.precio)}
-        </td>
+      <td>
+        ${
+          p.disponible
+          ? `<span class="badge badge-green">Disponible</span>`
+          : `<span class="badge badge-red">Oculto</span>`
+        }
+      </td>
 
-        <td>
+      <td>
+        <button
+          class="secondary"
+          data-producto-id="${p.id}"
+          data-producto-active="${p.disponible}">
+          ${p.disponible ? "Ocultar" : "Mostrar"}
+        </button>
+      </td>
 
-          ${
-            producto.disponible
-              ? `<span class="badge badge-success">Disponible</span>`
-              : `<span class="badge badge-danger">No disponible</span>`
-          }
-
-        </td>
-
-        <td>
-
-          <button
-            class="secondary-button"
-            data-toggle-producto="${producto.id}"
-            data-active="${producto.disponible}"
-          >
-            ${
-              producto.disponible
-                ? "Ocultar"
-                : "Mostrar"
-            }
-          </button>
-
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 
   container
-    .querySelectorAll("[data-toggle-producto]")
-    .forEach(button => {
+  .querySelectorAll("[data-producto-id]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        const id =
-          button.dataset.toggleProducto;
+      const id =
+      button.dataset.productoId;
 
-        const active =
-          button.dataset.active === "true";
+      const active =
+      button.dataset.productoActive==="true";
 
-        await toggleProducto(
-          id,
-          !active
-        );
-
-      });
+      await toggleProducto(
+        id,
+        !active
+      );
 
     });
+
+  });
 
 }
 
 
-/* TOGGLE PRODUCTO */
+async function toggleProducto(id,disponible){
 
-async function toggleProducto(id, disponible) {
+  const {error} =
+  await supabaseClient
+  .from("productos")
+  .update({disponible})
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("productos")
-      .update({ disponible })
-      .eq("id", id);
+  if(error){
 
-
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo actualizar el producto: " +
+    notify(
+      "No se pudo actualizar el producto: "+
       error.message,
       true
     );
@@ -2413,10 +1870,7 @@ async function toggleProducto(id, disponible) {
     return;
   }
 
-
-  showGlobalMessage(
-    "Producto actualizado."
-  );
+  notify("Producto actualizado.");
 
   await loadProductos();
 
@@ -2427,223 +1881,187 @@ async function toggleProducto(id, disponible) {
    PEDIDOS
 ========================================================= */
 
-async function loadPedidos() {
+async function loadPedidos(){
 
   const container =
-    document.getElementById("pedidosContent");
+  document.getElementById("pedidosContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando pedidos...</div>`;
+  `<div class="loading">Cargando pedidos...</div>`;
 
+  const {data,error} =
+  await supabaseClient
+  .from("pedidos")
+  .select("*")
+  .order("created_at",{ascending:false});
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("pedidos")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
-
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar pedidos:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay pedidos registrados.</div>`;
+    `<div class="message error">
+      Error al cargar pedidos:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
+  if(!data || data.length===0){
 
-  let html = `
-    <table>
+    container.innerHTML =
+    `<div class="empty">No hay pedidos registrados.</div>`;
 
-      <thead>
+    return;
+  }
 
-        <tr>
-          <th>Cliente</th>
-          <th>Teléfono</th>
-          <th>Tipo</th>
-          <th>Entrega</th>
-          <th>Total</th>
-          <th>Estado</th>
-          <th>Notas</th>
-          <th>Fecha</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Cliente</th>
+    <th>Teléfono</th>
+    <th>Tipo</th>
+    <th>Entrega</th>
+    <th>Total</th>
+    <th>Estado</th>
+    <th>Notas</th>
+    <th>Fecha</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
+  data.forEach(p=>{
 
-  data.forEach(pedido => {
+    html+=`
+    <tr>
 
-    html += `
-      <tr>
+      <td>${escapeHtml(p.nombre_cliente || "—")}</td>
 
-        <td>
-          ${escapeHtml(pedido.nombre_cliente || "—")}
-        </td>
+      <td>${escapeHtml(p.telefono || "—")}</td>
 
-        <td>
-          ${escapeHtml(pedido.telefono || "—")}
-        </td>
+      <td>${escapeHtml(p.tipo || "—")}</td>
 
-        <td>
-          ${escapeHtml(pedido.tipo || "—")}
-        </td>
+      <td>
+        ${escapeHtml(p.tipo_entrega || "—")}
+        ${
+          p.direccion
+          ? `<br>${escapeHtml(p.direccion)}`
+          : ""
+        }
+      </td>
 
-        <td>
+      <td>${money(p.total)}</td>
 
-          ${escapeHtml(pedido.tipo_entrega || "—")}
+      <td>
 
-          ${
-            pedido.direccion
-              ? `<br>${escapeHtml(pedido.direccion)}`
-              : ""
-          }
+        <select
+          data-pedido-status="${p.id}"
+        >
 
-        </td>
+          <option value="pendiente"
+          ${p.estado==="pendiente"?"selected":""}>
+          Pendiente
+          </option>
 
-        <td>
-          ${formatMoney(pedido.total)}
-        </td>
+          <option value="confirmado"
+          ${p.estado==="confirmado"?"selected":""}>
+          Confirmado
+          </option>
 
-        <td>
+          <option value="preparando"
+          ${p.estado==="preparando"?"selected":""}>
+          Preparando
+          </option>
 
-          <select
-            class="status-select"
-            data-pedido-status="${pedido.id}"
-          >
+          <option value="listo"
+          ${p.estado==="listo"?"selected":""}>
+          Listo
+          </option>
 
-            <option value="pendiente"
-              ${pedido.estado === "pendiente" ? "selected" : ""}>
-              Pendiente
-            </option>
+          <option value="entregado"
+          ${p.estado==="entregado"?"selected":""}>
+          Entregado
+          </option>
 
-            <option value="confirmado"
-              ${pedido.estado === "confirmado" ? "selected" : ""}>
-              Confirmado
-            </option>
+          <option value="cancelado"
+          ${p.estado==="cancelado"?"selected":""}>
+          Cancelado
+          </option>
 
-            <option value="preparando"
-              ${pedido.estado === "preparando" ? "selected" : ""}>
-              Preparando
-            </option>
+        </select>
 
-            <option value="listo"
-              ${pedido.estado === "listo" ? "selected" : ""}>
-              Listo
-            </option>
+        <br><br>
 
-            <option value="entregado"
-              ${pedido.estado === "entregado" ? "selected" : ""}>
-              Entregado
-            </option>
+        <button
+          class="secondary"
+          data-save-pedido="${p.id}">
+          Guardar
+        </button>
 
-            <option value="cancelado"
-              ${pedido.estado === "cancelado" ? "selected" : ""}>
-              Cancelado
-            </option>
+      </td>
 
-          </select>
+      <td>${escapeHtml(p.notas || "—")}</td>
 
-          <br><br>
+      <td>
+        ${
+          p.created_at
+          ? new Date(p.created_at).toLocaleString("es-AR")
+          : "—"
+        }
+      </td>
 
-          <button
-            class="secondary-button"
-            data-save-pedido="${pedido.id}"
-          >
-            Guardar
-          </button>
-
-        </td>
-
-        <td>
-          ${escapeHtml(pedido.notas || "—")}
-        </td>
-
-        <td>
-          ${escapeHtml(
-            pedido.created_at
-              ? new Date(pedido.created_at)
-                  .toLocaleString("es-AR")
-              : "—"
-          )}
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 
   container
-    .querySelectorAll("[data-save-pedido]")
-    .forEach(button => {
+  .querySelectorAll("[data-save-pedido]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        const id =
-          button.dataset.savePedido;
+      const id =
+      button.dataset.savePedido;
 
-        const select =
-          container.querySelector(
-            `[data-pedido-status="${id}"]`
-          );
+      const select =
+      container.querySelector(
+        `[data-pedido-status="${id}"]`
+      );
 
-        await updatePedidoEstado(
-          id,
-          select.value
-        );
-
-      });
+      await updatePedido(
+        id,
+        select.value
+      );
 
     });
+
+  });
 
 }
 
 
-/* ACTUALIZAR PEDIDO */
+async function updatePedido(id,estado){
 
-async function updatePedidoEstado(id, estado) {
+  const {error} =
+  await supabaseClient
+  .from("pedidos")
+  .update({estado})
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("pedidos")
-      .update({ estado })
-      .eq("id", id);
+  if(error){
 
-
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo actualizar el pedido: " +
+    notify(
+      "No se pudo actualizar el pedido: "+
       error.message,
       true
     );
@@ -2651,10 +2069,7 @@ async function updatePedidoEstado(id, estado) {
     return;
   }
 
-
-  showGlobalMessage(
-    "Pedido actualizado."
-  );
+  notify("Pedido actualizado.");
 
   await loadPedidos();
 
@@ -2665,177 +2080,136 @@ async function updatePedidoEstado(id, estado) {
    JUEGOS
 ========================================================= */
 
-async function loadJuegos() {
+async function loadJuegos(){
 
   const container =
-    document.getElementById("juegosContent");
+  document.getElementById("juegosContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando juegos...</div>`;
+  `<div class="loading">Cargando juegos...</div>`;
 
+  const {data,error} =
+  await supabaseClient
+  .from("games")
+  .select("*")
+  .order("created_at",{ascending:true});
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("games")
-      .select("*")
-      .order("created_at", {
-        ascending: true
-      });
-
-
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar juegos:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay juegos registrados.</div>`;
+    `<div class="message error">
+      Error al cargar juegos:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
+  if(!data || data.length===0){
 
-  let html = `
-    <table>
+    container.innerHTML =
+    `<div class="empty">No hay juegos registrados.</div>`;
 
-      <thead>
+    return;
+  }
 
-        <tr>
-          <th>Juego</th>
-          <th>Descripción</th>
-          <th>Icono</th>
-          <th>Puntos</th>
-          <th>Tokens</th>
-          <th>Estado</th>
-          <th>Acción</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Juego</th>
+    <th>Descripción</th>
+    <th>Icono</th>
+    <th>Puntos</th>
+    <th>Tokens</th>
+    <th>Estado</th>
+    <th>Acción</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
+  data.forEach(g=>{
 
-  data.forEach(juego => {
+    html+=`
+    <tr>
 
-    html += `
-      <tr>
+      <td><strong>${escapeHtml(g.name)}</strong></td>
 
-        <td>
-          <strong>
-            ${escapeHtml(juego.name)}
-          </strong>
-        </td>
+      <td>${escapeHtml(g.description || "—")}</td>
 
-        <td>
-          ${escapeHtml(juego.description || "—")}
-        </td>
+      <td>${escapeHtml(g.icon || "—")}</td>
 
-        <td>
-          ${escapeHtml(juego.icon || "—")}
-        </td>
+      <td>${escapeHtml(g.points_reward ?? 0)}</td>
 
-        <td>
-          ${escapeHtml(juego.points_reward ?? 0)}
-        </td>
+      <td>${escapeHtml(g.tokens_reward ?? 0)}</td>
 
-        <td>
-          ${escapeHtml(juego.tokens_reward ?? 0)}
-        </td>
+      <td>
+        ${
+          g.active
+          ? `<span class="badge badge-green">Activo</span>`
+          : `<span class="badge badge-red">Inactivo</span>`
+        }
+      </td>
 
-        <td>
+      <td>
+        <button
+          class="secondary"
+          data-game-id="${g.id}"
+          data-game-active="${g.active}">
+          ${g.active ? "Desactivar" : "Activar"}
+        </button>
+      </td>
 
-          ${
-            juego.active
-              ? `<span class="badge badge-success">Activo</span>`
-              : `<span class="badge badge-danger">Inactivo</span>`
-          }
-
-        </td>
-
-        <td>
-
-          <button
-            class="secondary-button"
-            data-toggle-game="${juego.id}"
-            data-active="${juego.active}"
-          >
-            ${
-              juego.active
-                ? "Desactivar"
-                : "Activar"
-            }
-          </button>
-
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 
   container
-    .querySelectorAll("[data-toggle-game]")
-    .forEach(button => {
+  .querySelectorAll("[data-game-id]")
+  .forEach(button=>{
 
-      button.addEventListener("click", async () => {
+    button.addEventListener("click",async()=>{
 
-        const id =
-          button.dataset.toggleGame;
+      const id =
+      button.dataset.gameId;
 
-        const active =
-          button.dataset.active === "true";
+      const active =
+      button.dataset.gameActive==="true";
 
-        await toggleJuego(
-          id,
-          !active
-        );
-
-      });
+      await toggleJuego(
+        id,
+        !active
+      );
 
     });
+
+  });
 
 }
 
 
-/* TOGGLE JUEGO */
+async function toggleJuego(id,active){
 
-async function toggleJuego(id, active) {
+  const {error} =
+  await supabaseClient
+  .from("games")
+  .update({active})
+  .eq("id",id);
 
-  const { error } =
-    await supabaseClient
-      .from("games")
-      .update({ active })
-      .eq("id", id);
+  if(error){
 
-
-  if (error) {
-
-    showGlobalMessage(
-      "No se pudo actualizar el juego: " +
+    notify(
+      "No se pudo actualizar el juego: "+
       error.message,
       true
     );
@@ -2843,10 +2217,7 @@ async function toggleJuego(id, active) {
     return;
   }
 
-
-  showGlobalMessage(
-    "Juego actualizado."
-  );
+  notify("Juego actualizado.");
 
   await loadJuegos();
 
@@ -2857,119 +2228,84 @@ async function toggleJuego(id, active) {
    RANKING
 ========================================================= */
 
-async function loadRanking() {
+async function loadRanking(){
 
   const container =
-    document.getElementById("rankingContent");
+  document.getElementById("rankingContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando ranking...</div>`;
+  `<div class="loading">Cargando ranking...</div>`;
 
+  const {data,error} =
+  await supabaseClient
+  .from("profiles")
+  .select(
+    "id,display_name,role,points,tokens,streak"
+  )
+  .order("points",{ascending:false});
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("profiles")
-      .select(
-        "id,display_name,role,points,tokens,streak"
-      )
-      .order("points", {
-        ascending: false
-      });
-
-
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar ranking:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay jugadores en el ranking.</div>`;
+    `<div class="message error">
+      Error al cargar ranking:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
+  if(!data || data.length===0){
 
-  let html = `
-    <table>
+    container.innerHTML =
+    `<div class="empty">No hay jugadores.</div>`;
 
-      <thead>
+    return;
+  }
 
-        <tr>
-          <th>Posición</th>
-          <th>Jugador</th>
-          <th>Rol</th>
-          <th>Puntos</th>
-          <th>Tokens</th>
-          <th>Racha</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>#</th>
+    <th>Jugador</th>
+    <th>Rol</th>
+    <th>Puntos</th>
+    <th>Tokens</th>
+    <th>Racha</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
+  data.forEach((p,index)=>{
 
-  data.forEach((jugador, index) => {
+    html+=`
+    <tr>
 
-    html += `
-      <tr>
+      <td><strong>#${index+1}</strong></td>
 
-        <td>
-          <strong>
-            #${index + 1}
-          </strong>
-        </td>
+      <td>${escapeHtml(p.display_name || "Jugador")}</td>
 
-        <td>
-          ${escapeHtml(
-            jugador.display_name || "Jugador"
-          )}
-        </td>
+      <td>${escapeHtml(p.role || "player")}</td>
 
-        <td>
-          ${escapeHtml(jugador.role || "player")}
-        </td>
+      <td><strong>${escapeHtml(p.points ?? 0)}</strong></td>
 
-        <td>
-          <strong>
-            ${escapeHtml(jugador.points ?? 0)}
-          </strong>
-        </td>
+      <td>${escapeHtml(p.tokens ?? 0)}</td>
 
-        <td>
-          ${escapeHtml(jugador.tokens ?? 0)}
-        </td>
+      <td>${escapeHtml(p.streak ?? 0)}</td>
 
-        <td>
-          ${escapeHtml(jugador.streak ?? 0)}
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 }
 
@@ -2978,178 +2314,156 @@ async function loadRanking() {
    TORNEOS
 ========================================================= */
 
-async function loadTorneos() {
+async function loadTorneos(){
 
   const container =
-    document.getElementById("torneosContent");
+  document.getElementById("torneosContent");
 
   container.innerHTML =
-    `<div class="loading">Cargando torneos...</div>`;
+  `<div class="loading">Cargando torneos...</div>`;
 
+  const {data,error} =
+  await supabaseClient
+  .from("torneos")
+  .select("*")
+  .order("fecha",{ascending:false});
 
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("torneos")
-      .select("*")
-      .order("fecha", {
-        ascending: false
-      });
-
-
-  if (error) {
-
-    container.innerHTML = `
-      <div class="message error-message">
-        Error al cargar torneos:
-        ${escapeHtml(error.message)}
-      </div>
-    `;
-
-    return;
-  }
-
-
-  if (!data || data.length === 0) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">No hay torneos registrados.</div>`;
+    `<div class="message error">
+      Error al cargar torneos:
+      ${escapeHtml(error.message)}
+    </div>`;
 
     return;
   }
 
+  if(!data || data.length===0){
 
-  let html = `
-    <table>
+    container.innerHTML =
+    `<div class="empty">No hay torneos registrados.</div>`;
 
-      <thead>
+    return;
+  }
 
-        <tr>
-          <th>Nombre</th>
-          <th>Juego</th>
-          <th>Fecha</th>
-          <th>Inscripción</th>
-          <th>1° Premio</th>
-          <th>2° Premio</th>
-          <th>Máx. participantes</th>
-          <th>Estado</th>
-          <th>Notas</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
+  let html=`
+  <table>
+  <thead>
+  <tr>
+    <th>Nombre</th>
+    <th>Juego</th>
+    <th>Fecha</th>
+    <th>Inscripción</th>
+    <th>1° Premio</th>
+    <th>2° Premio</th>
+    <th>Máx.</th>
+    <th>Estado</th>
+    <th>Notas</th>
+  </tr>
+  </thead>
+  <tbody>
   `;
 
+  data.forEach(t=>{
 
-  data.forEach(torneo => {
+    html+=`
+    <tr>
 
-    html += `
-      <tr>
+      <td><strong>${escapeHtml(t.nombre)}</strong></td>
 
-        <td>
-          <strong>
-            ${escapeHtml(torneo.nombre)}
-          </strong>
-        </td>
+      <td>${escapeHtml(t.juego || "—")}</td>
 
-        <td>
-          ${escapeHtml(torneo.juego || "—")}
-        </td>
+      <td>${dateAR(t.fecha)}</td>
 
-        <td>
-          ${formatDate(torneo.fecha)}
-        </td>
+      <td>${money(t.inscripcion)}</td>
 
-        <td>
-          ${formatMoney(torneo.inscripcion)}
-        </td>
+      <td>${money(t.premio_primero)}</td>
 
-        <td>
-          ${formatMoney(torneo.premio_primero)}
-        </td>
+      <td>${money(t.premio_segundo)}</td>
 
-        <td>
-          ${formatMoney(torneo.premio_segundo)}
-        </td>
+      <td>${escapeHtml(t.max_participantes ?? "—")}</td>
 
-        <td>
-          ${escapeHtml(
-            torneo.max_participantes ?? "—"
-          )}
-        </td>
+      <td>
+        <span class="badge">
+          ${escapeHtml(t.estado || "—")}
+        </span>
+      </td>
 
-        <td>
-          <span class="badge">
-            ${escapeHtml(torneo.estado || "—")}
-          </span>
-        </td>
+      <td>${escapeHtml(t.notas || "—")}</td>
 
-        <td>
-          ${escapeHtml(torneo.notas || "—")}
-        </td>
-
-      </tr>
+    </tr>
     `;
 
   });
 
-
-  html += `
-      </tbody>
-    </table>
+  html+=`
+  </tbody>
+  </table>
   `;
 
-
-  container.innerHTML = html;
+  container.innerHTML=html;
 
 }
 
 
 /* =========================================================
-   SESIÓN AL ABRIR LA PÁGINA
+   CARGAR TODO
 ========================================================= */
 
-supabaseClient.auth
-  .getSession()
-  .then(async ({ data }) => {
+async function loadAll(){
 
-    if (data.session) {
+  await loadDashboard();
 
-      await showAdmin();
+  await loadReservas();
+  await loadMesas();
+  await loadPromociones();
+  await loadFotos();
+  await loadProductos();
+  await loadPedidos();
+  await loadJuegos();
+  await loadRanking();
+  await loadTorneos();
 
-    }
-
-  });
+}
 
 
 /* =========================================================
-   CAMBIO DE SESIÓN
+   RECUPERAR SESIÓN
 ========================================================= */
 
 supabaseClient.auth
-  .onAuthStateChange(async (event, session) => {
+.getSession()
+.then(async({data})=>{
 
-    if (session) {
+  if(data.session){
+    await showAdmin();
+  }
 
-      document
-        .getElementById("loginScreen")
-        .classList.add("hidden");
+});
 
-      document
-        .getElementById("adminPanel")
-        .classList.remove("hidden");
 
-      document
-        .getElementById("userEmail")
-        .textContent =
-          session.user.email || "";
+supabaseClient.auth
+.onAuthStateChange((event,session)=>{
 
-    }
+  if(session){
 
-  });
+    document
+    .getElementById("loginScreen")
+    .classList.add("hidden");
+
+    document
+    .getElementById("adminPanel")
+    .classList.remove("hidden");
+
+    document
+    .getElementById("userEmail")
+    .textContent =
+    session.user.email || "";
+
+  }
+
+});
 
 </script>
 
