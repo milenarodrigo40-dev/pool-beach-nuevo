@@ -3,1065 +3,1071 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Panel de Control | Pool & Beach</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
 <style>
 *{
   box-sizing:border-box;
 }
+
 body{
+  margin:0;
   font-family:Arial,sans-serif;
   background:#eef7fa;
   color:#123;
-  margin:0;
 }
+
 header{
   background:#002b40;
   color:white;
   padding:20px;
   text-align:center;
+  position:relative;
 }
+
 header h1{
+  margin:0;
   color:#55d8f2;
-  margin:0 0 5px;
+  font-size:28px;
 }
-.container{
-  max-width:1100px;
-  margin:auto;
-  padding:25px 16px;
+
+header p{
+  margin:6px 0 0;
 }
-section{
-  background:white;
-  padding:25px;
-  border-radius:18px;
-  margin-bottom:25px;
-  box-shadow:0 5px 20px rgba(0,0,0,.05);
-}
-input,
-select,
-textarea{
-  width:100%;
-  padding:13px;
-  border:1px solid #ccdce1;
-  border-radius:10px;
-  font-size:16px;
-  margin-bottom:12px;
-}
-textarea{
-  min-height:90px;
-}
+
 button{
   border:0;
-  background:#08a6c8;
-  color:white;
-  padding:13px 18px;
   border-radius:10px;
-  font-weight:bold;
-  font-size:16px;
+  padding:12px 16px;
   cursor:pointer;
+  font-weight:bold;
+  background:#00a9d4;
+  color:white;
 }
+
 button:hover{
   opacity:.9;
 }
-.form{
+
+.btn-danger{
+  background:#d93030;
+}
+
+.btn-green{
+  background:#159447;
+}
+
+.btn-dark{
+  background:#002b40;
+}
+
+.btn-orange{
+  background:#e58a00;
+}
+
+#btnCerrarSesion{
+  position:absolute;
+  right:15px;
+  top:15px;
+}
+
+.container{
+  max-width:1200px;
+  margin:auto;
+  padding:20px;
+}
+
+.panel{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  margin-bottom:20px;
+  box-shadow:0 3px 15px rgba(0,0,0,.08);
+}
+
+h2{
+  color:#002b40;
+  margin-top:0;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #ccdce2;
+  border-radius:9px;
+  margin:6px 0 12px;
+  font-size:16px;
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical;
+}
+
+.grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
   gap:15px;
 }
-.full{
-  grid-column:1/-1;
-}
-.lista{
-  margin-top:20px;
-  display:grid;
-  gap:12px;
-}
-.reserva{
-  border:1px solid #d9e7eb;
-  border-radius:14px;
-  padding:18px;
-  background:#f8fcfd;
-}
-.mensaje{
-  margin-top:15px;
-  font-weight:bold;
-}
-#panel{
-  display:none;
-}
-#login{
-  max-width:450px;
-  margin:40px auto;
-}
-#login button{
-  width:100%;
-}
-#logout{
-  float:right;
-  background:#d9534f;
-}
-.eliminar{
-  background:#d9534f;
-  margin-top:8px;
-  width:100%;
-}
-/* GALERÍA */
-.galeria-form{
-  display:grid;
-  gap:12px;
-}
-.galeria-info{
-  background:#eef9fc;
-  border-radius:12px;
-  padding:15px;
-  margin-bottom:20px;
-}
-.fotos{
+
+.grid-3{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:18px;
-  margin-top:25px;
+  gap:15px;
 }
+
+.login-box{
+  max-width:450px;
+  margin:50px auto;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.nav-buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:20px;
+}
+
+.reserva{
+  border:1px solid #d9e6eb;
+  border-radius:12px;
+  padding:15px;
+  margin-bottom:12px;
+  background:#f9fcfd;
+}
+
+.reserva strong{
+  color:#002b40;
+}
+
+.estado{
+  display:inline-block;
+  padding:6px 10px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold;
+  margin:5px 0;
+}
+
+.estado-pendiente{
+  background:#fff0b8;
+  color:#795900;
+}
+
+.estado-confirmada{
+  background:#c9f4d7;
+  color:#126b31;
+}
+
+.estado-cancelada{
+  background:#ffd2d2;
+  color:#8b1717;
+}
+
+.fotos-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
 .foto-card{
-  border:1px solid #d9e7eb;
-  border-radius:15px;
+  border:1px solid #d9e6eb;
+  border-radius:12px;
   overflow:hidden;
-  background:#fff;
+  background:white;
 }
+
 .foto-card img{
   width:100%;
-  height:210px;
+  height:180px;
   object-fit:cover;
-  background:#e8f2f5;
+  display:block;
 }
+
 .foto-info{
-  padding:15px;
+  padding:10px;
 }
-.foto-info h3{
-  margin:0 0 7px;
+
+.clientes-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:18px;
 }
-.foto-info p{
-  margin:5px 0 12px;
-  color:#5b7079;
+
+.cliente-card{
+  border:2px solid #d5e8ee;
+  border-radius:16px;
+  padding:18px;
+  background:white;
+  position:relative;
 }
-.btn-eliminar{
-  width:100%;
-  background:#d9534f;
+
+.cliente-card h3{
+  margin:0 0 5px;
+  color:#002b40;
 }
-.estado{
-  margin-top:12px;
+
+.numero-tarjeta{
+  color:#0785a6;
   font-weight:bold;
+  letter-spacing:2px;
+  margin-bottom:15px;
 }
-.categoria{
-  display:inline-block;
-  background:#dff6fb;
-  color:#087ea4;
-  padding:5px 9px;
-  border-radius:20px;
-  font-size:12px;
-  font-weight:bold;
+
+.cliente-datos{
+  line-height:1.6;
 }
-/* NOTIFICACIÓN */
+
+.cliente-metricas{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin:15px 0;
+}
+
+.metrica{
+  background:#eef9fc;
+  padding:12px;
+  border-radius:10px;
+  text-align:center;
+}
+
+.metrica strong{
+  display:block;
+  font-size:22px;
+  color:#007e9e;
+}
+
+.qr{
+  display:flex;
+  justify-content:center;
+  margin:15px 0;
+}
+
+.acciones-cliente{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+}
+
+.movimientos{
+  margin-top:15px;
+  border-top:1px solid #dce8ec;
+  padding-top:12px;
+}
+
+.movimiento{
+  background:#f5f9fa;
+  border-radius:8px;
+  padding:8px;
+  margin:5px 0;
+  font-size:14px;
+}
+
 #avisoNuevaReserva{
   position:fixed;
   top:15px;
-  left:10px;
-  right:10px;
-  z-index:999999;
+  left:50%;
+  transform:translateX(-50%);
+  width:min(92%,500px);
+  background:#0b8f55;
+  color:white;
   padding:18px;
   border-radius:14px;
-  background:#00bcd4;
-  color:white;
-  font-size:18px;
-  font-weight:bold;
+  box-shadow:0 8px 30px rgba(0,0,0,.3);
+  z-index:99999;
   text-align:center;
-  box-shadow:0 5px 20px rgba(0,0,0,.35);
   cursor:pointer;
+  animation:aparecer .3s ease;
 }
-@media(max-width:700px){
-  .form{
+
+#avisoNuevaReserva strong{
+  display:block;
+  font-size:19px;
+  margin-bottom:5px;
+}
+
+@keyframes aparecer{
+  from{
+    opacity:0;
+    transform:translate(-50%,-20px);
+  }
+  to{
+    opacity:1;
+    transform:translate(-50%,0);
+  }
+}
+
+.mensaje{
+  padding:12px;
+  border-radius:10px;
+  margin:10px 0;
+  display:none;
+}
+
+.mensaje.ok{
+  display:block;
+  background:#d5f5df;
+  color:#126b31;
+}
+
+.mensaje.error{
+  display:block;
+  background:#ffdada;
+  color:#8b1717;
+}
+
+.vacio{
+  padding:20px;
+  text-align:center;
+  color:#607d86;
+}
+
+@media(max-width:800px){
+  .grid,
+  .grid-3,
+  .clientes-grid,
+  .fotos-grid{
     grid-template-columns:1fr;
   }
-  .full{
-    grid-column:auto;
+
+  header{
+    padding-top:65px;
   }
-  #logout{
-    float:none;
-    margin-top:10px;
+
+  #btnCerrarSesion{
+    top:15px;
+    right:15px;
   }
-  .fotos{
-    grid-template-columns:1fr;
+
+  .acciones-cliente button{
+    flex:1 1 45%;
   }
 }
 </style>
 </head>
+
 <body>
+
+<div id="avisoNuevaReserva" class="hidden">
+  <strong>🔔 ¡NUEVA RESERVA!</strong>
+  <span id="textoNuevaReserva">Hay una nueva reserva.</span>
+  <br>
+  <small>Tocá para verla</small>
+</div>
+
 <header>
-<button id="logout">
-Cerrar sesión
-</button>
-<h1>Pool & Beach</h1>
-<p>Panel de Control</p>
+  <button id="btnCerrarSesion" class="btn-danger hidden" onclick="cerrarSesion()">
+    Cerrar sesión
+  </button>
+
+  <h1>🏖️ Pool & Beach</h1>
+  <p>Panel de Control</p>
 </header>
-<main class="container">
-<!-- LOGIN -->
-<section id="login">
-<h2>🔐 Acceso administrador</h2>
-<input
-  id="email"
-  type="email"
-  placeholder="Correo electrónico"
->
-<input
-  id="password"
-  type="password"
-  placeholder="Contraseña"
->
-<button id="loginButton">
-Ingresar
-</button>
-<div
-  id="loginMensaje"
-  class="mensaje"
-></div>
-</section>
-<!-- PANEL -->
-<section id="panel">
-<h2>👋 Administración</h2>
-<p>
-Panel de administración de Pool & Beach.
-</p>
-<a
-  href="admin-juegos.html"
-  style="
-  display:block;
-  background:#087ea4;
-  color:white;
-  text-decoration:none;
-  text-align:center;
-  padding:13px;
-  border-radius:10px;
-  margin:15px 0;
-  font-weight:bold;
-  "
->
-🎮 Juegos, Torneos y Ranking
-</a>
-<!-- GALERÍA -->
-<section>
-<h2>📸 Galería de fotos</h2>
-<div class="galeria-info">
-<strong>
-Desde acá vas a poder administrar las fotos de Pool & Beach.
-</strong>
-<p>
-Podés subir fotos de mesas, mapa, fútbol,
-comidas, torneos, eventos y del local.
-</p>
+
+<div class="container">
+
+  <!-- LOGIN -->
+  <section id="loginSection" class="panel login-box">
+
+    <h2>🔐 Iniciar sesión</h2>
+
+    <label>Email</label>
+    <input
+      type="email"
+      id="emailLogin"
+      placeholder="Tu email"
+      autocomplete="email"
+    >
+
+    <label>Contraseña</label>
+    <input
+      type="password"
+      id="passwordLogin"
+      placeholder="Tu contraseña"
+      autocomplete="current-password"
+    >
+
+    <button onclick="iniciarSesion()" style="width:100%;">
+      Ingresar
+    </button>
+
+    <div id="mensajeLogin" class="mensaje"></div>
+
+  </section>
+
+
+  <!-- PANEL -->
+  <main id="panelSection" class="hidden">
+
+    <div class="nav-buttons">
+
+      <button class="btn-dark" onclick="window.location.href='admin-juegos.html'">
+        🎮 Juegos, Torneos y Ranking
+      </button>
+
+      <button onclick="document.getElementById('clientes').scrollIntoView({behavior:'smooth'})">
+        👤 Tarjetas de clientes
+      </button>
+
+      <button onclick="document.getElementById('reservas').scrollIntoView({behavior:'smooth'})">
+        📅 Reservas
+      </button>
+
+      <button onclick="document.getElementById('galeria').scrollIntoView({behavior:'smooth'})">
+        📸 Fotos
+      </button>
+
+      <button class="btn-dark" onclick="window.open('https://pool-beach-puerto-piramides.vercel.app/','_blank')">
+        🌐 Ver página
+      </button>
+
+    </div>
+
+
+    <!-- CLIENTES -->
+    <section id="clientes" class="panel">
+
+      <h2>👤 Tarjetas de clientes</h2>
+
+      <p>
+        Creá la tarjeta digital del cliente con número único y QR personal.
+      </p>
+
+      <div class="grid">
+
+        <div>
+          <label>Nombre y apellido *</label>
+          <input id="clienteNombre" type="text" placeholder="Ej: Juan Pérez">
+        </div>
+
+        <div>
+          <label>Teléfono</label>
+          <input id="clienteTelefono" type="tel" placeholder="Ej: 2804...">
+        </div>
+
+        <div>
+          <label>Email</label>
+          <input id="clienteEmail" type="email" placeholder="Ej: cliente@email.com">
+        </div>
+
+      </div>
+
+      <button onclick="crearCliente()" class="btn-green">
+        ➕ Crear tarjeta
+      </button>
+
+      <div id="mensajeCliente" class="mensaje"></div>
+
+      <hr>
+
+      <label>🔎 Buscar cliente</label>
+      <input
+        id="buscarCliente"
+        type="search"
+        placeholder="Nombre, teléfono o número de tarjeta..."
+        oninput="mostrarClientesFiltrados()"
+      >
+
+      <div id="listaClientes" class="clientes-grid"></div>
+
+    </section>
+
+
+    <!-- RESERVAS -->
+    <section id="reservas" class="panel">
+
+      <h2>📅 Reservas</h2>
+
+      <h3>➕ Crear reserva</h3>
+
+      <div class="grid">
+
+        <div>
+          <label>Nombre *</label>
+          <input id="resNombre" type="text" placeholder="Nombre">
+        </div>
+
+        <div>
+          <label>Teléfono</label>
+          <input id="resTelefono" type="tel" placeholder="Teléfono">
+        </div>
+
+        <div>
+          <label>Fecha *</label>
+          <input id="resFecha" type="date">
+        </div>
+
+        <div>
+          <label>Hora *</label>
+          <input id="resHora" type="time">
+        </div>
+
+        <div>
+          <label>Servicio</label>
+          <input id="resServicio" type="text" placeholder="Reserva / Juego / Mesa...">
+        </div>
+
+        <div>
+          <label>Cantidad de personas</label>
+          <input id="resPersonas" type="number" min="1" value="2">
+        </div>
+
+      </div>
+
+      <label>Notas</label>
+      <textarea id="resNotas" placeholder="Notas de la reserva"></textarea>
+
+      <button onclick="crearReserva()" class="btn-green">
+        ➕ Guardar reserva
+      </button>
+
+      <div id="mensajeReserva" class="mensaje"></div>
+
+      <hr>
+
+      <h3>📋 Reservas registradas</h3>
+
+      <div id="listaReservas"></div>
+
+    </section>
+
+
+    <!-- GALERIA -->
+    <section id="galeria" class="panel">
+
+      <h2>📸 Administrar fotos</h2>
+
+      <p>
+        Podés agregar fotos directamente desde este panel.
+      </p>
+
+      <div class="grid">
+
+        <div>
+          <label>Título</label>
+          <input id="fotoTitulo" type="text" placeholder="Ej: Pool & Beach">
+        </div>
+
+        <div>
+          <label>Categoría</label>
+          <select id="fotoCategoria">
+            <option value="general">General</option>
+            <option value="comida">Comida</option>
+            <option value="juegos">Juegos</option>
+            <option value="local">Local</option>
+            <option value="eventos">Eventos</option>
+          </select>
+        </div>
+
+      </div>
+
+      <label>Seleccionar foto</label>
+      <input id="fotoArchivo" type="file" accept="image/*">
+
+      <button onclick="subirFoto()" class="btn-green">
+        📤 Subir foto
+      </button>
+
+      <div id="mensajeFoto" class="mensaje"></div>
+
+      <hr>
+
+      <div id="listaFotos" class="fotos-grid"></div>
+
+    </section>
+
+  </main>
+
 </div>
-<form
-  id="formGaleria"
-  class="galeria-form"
->
-<label>
-Título de la foto
-</label>
-<input
-  id="fotoTitulo"
-  type="text"
-  placeholder="Ejemplo: Mesa RASSON"
-  required
->
-<label>
-Categoría
-</label>
-<select
-  id="fotoCategoria"
-  required
->
-<option value="">
-Seleccionar categoría
-</option>
-<option value="mesas">
-🎱 Mesas
-</option>
-<option value="mapa">
-🗺️ Mapa
-</option>
-<option value="futbol">
-⚽ Fútbol
-</option>
-<option value="comidas">
-🍔 Comidas
-</option>
-<option value="torneos">
-🏆 Torneos
-</option>
-<option value="local">
-🏠 Local
-</option>
-<option value="eventos">
-🎉 Eventos
-</option>
-</select>
-<label>
-Seleccionar foto
-</label>
-<input
-  id="fotoArchivo"
-  type="file"
-  accept="image/*"
-  required
->
-<button type="submit">
-📸 Subir foto
-</button>
-</form>
-<div
-  id="galeriaMensaje"
-  class="estado"
-></div>
-<div
-  id="fotos"
-  class="fotos"
->
-Cargando fotos...
-</div>
-</section>
-<!-- RESERVAS -->
-<section>
-<h2>📅 Nueva reserva</h2>
-<form
-  id="formReserva"
-  class="form"
->
-<input
-  id="nombre"
-  type="text"
-  placeholder="Nombre del cliente"
-  required
->
-<input
-  id="telefono"
-  type="tel"
-  placeholder="Teléfono"
-  required
->
-<input
-  id="fecha"
-  type="date"
-  required
->
-<input
-  id="hora"
-  type="time"
-  required
->
-<select
-  id="servicio"
-  required
->
-<option value="">
-Elegir servicio
-</option>
-<option value="Pool">
-🎱 Pool
-</option>
-<option value="Mesa RASSON">
-🎱 Mesa RASSON
-</option>
-<option value="PlayStation">
-🎮 PlayStation
-</option>
-<option value="Simulador">
-🏎️ Simulador
-</option>
-<option value="Juegos">
-🎲 Juegos
-</option>
-<option value="Futbol por TV">
-⚽ Fútbol por TV
-</option>
-<option value="Mesa">
-🍽️ Mesa
-</option>
-</select>
-<input
-  id="personas"
-  type="number"
-  min="1"
-  placeholder="Cantidad de personas"
-  required
->
-<textarea
-  id="notas"
-  class="full"
-  placeholder="Notas de la reserva"
-></textarea>
-<button
-  class="full"
-  type="submit"
->
-➕ Guardar reserva
-</button>
-</form>
-<div
-  id="mensaje"
-  class="mensaje"
-></div>
-<h2 style="margin-top:30px;">
-📋 Reservas
-</h2>
-<div
-  id="lista"
-  class="lista"
->
-Cargando reservas...
-</div>
-</section>
-</section>
-</main>
-<!-- SUPABASE -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+
+
 <script>
-/* =====================================================
-   ELEMENTOS
-===================================================== */
-const login =
-  document.getElementById("login");
-const panel =
-  document.getElementById("panel");
-const loginButton =
-  document.getElementById("loginButton");
-const loginMensaje =
-  document.getElementById("loginMensaje");
-const logout =
-  document.getElementById("logout");
-const formGaleria =
-  document.getElementById("formGaleria");
-const galeriaMensaje =
-  document.getElementById("galeriaMensaje");
-const fotos =
-  document.getElementById("fotos");
-const formReserva =
-  document.getElementById("formReserva");
-const mensaje =
-  document.getElementById("mensaje");
-const lista =
-  document.getElementById("lista");
-let canalReservasTiempoReal = null;
-/* =====================================================
-   INICIO
-===================================================== */
-logout.style.display = "none";
-/* =====================================================
-   ESCAPAR HTML
-===================================================== */
+/* =========================================================
+   SUPABASE
+========================================================= */
+
+const SUPABASE_URL =
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
+
+const SUPABASE_ANON_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+let canalReservas = null;
+let intervaloReservas = null;
+let ultimaReservaId = null;
+let avisoIds = new Set();
+let todosLosClientes = [];
+let qrPendientes = [];
+
+
+/* =========================================================
+   FUNCIONES GENERALES
+========================================================= */
+
 function escaparHTML(valor){
-  return String(valor ?? "")
+  if(valor === null || valor === undefined) return "";
+
+  return String(valor)
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
     .replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
-/* =====================================================
-   LOGIN
-===================================================== */
-async function iniciarSesion(){
-  const email =
-    document
-      .getElementById("email")
-      .value
-      .trim();
-  const password =
-    document
-      .getElementById("password")
-      .value;
-  if(!email || !password){
-    loginMensaje.textContent =
-      "❌ Completá correo y contraseña.";
-    return;
-  }
-  loginMensaje.textContent =
-    "Ingresando...";
-  const { error } =
-    await supabaseClient.auth.signInWithPassword({
-      email:email,
-      password:password
-    });
-  if(error){
-    loginMensaje.textContent =
-      "❌ Correo o contraseña incorrectos.";
-    console.error(error);
-    return;
-  }
-  mostrarPanel();
+
+
+function mostrarMensaje(id,texto,tipo="ok"){
+  const elemento = document.getElementById(id);
+
+  if(!elemento) return;
+
+  elemento.textContent = texto;
+  elemento.className = "mensaje " + tipo;
+
+  setTimeout(()=>{
+    elemento.className = "mensaje";
+  },5000);
 }
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function iniciarSesion(){
+
+  const email =
+    document.getElementById("emailLogin").value.trim();
+
+  const password =
+    document.getElementById("passwordLogin").value;
+
+  if(!email || !password){
+    mostrarMensaje(
+      "mensajeLogin",
+      "Completá email y contraseña.",
+      "error"
+    );
+    return;
+  }
+
+  const {data,error} =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
+  if(error){
+
+    mostrarMensaje(
+      "mensajeLogin",
+      "No se pudo iniciar sesión: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  mostrarPanel();
+
+  try{
+    if(
+      "Notification" in window &&
+      Notification.permission === "default"
+    ){
+      await Notification.requestPermission();
+    }
+  }catch(e){
+    console.log("Permiso de notificaciones:",e);
+  }
+}
+
+
+async function cerrarSesion(){
+
+  try{
+    if(canalReservas){
+      await supabaseClient.removeChannel(canalReservas);
+      canalReservas = null;
+    }
+  }catch(e){}
+
+  if(intervaloReservas){
+    clearInterval(intervaloReservas);
+    intervaloReservas = null;
+  }
+
+  await supabaseClient.auth.signOut();
+
+  document.getElementById("panelSection")
+    .classList.add("hidden");
+
+  document.getElementById("loginSection")
+    .classList.remove("hidden");
+
+  document.getElementById("btnCerrarSesion")
+    .classList.add("hidden");
+}
+
+
 async function verificarSesion(){
-  const { data } =
+
+  const {data} =
     await supabaseClient.auth.getSession();
-  if(data.session){
+
+  if(data && data.session){
     mostrarPanel();
   }else{
-    mostrarLogin();
+    document.getElementById("loginSection")
+      .classList.remove("hidden");
+
+    document.getElementById("panelSection")
+      .classList.add("hidden");
   }
 }
-function mostrarPanel(){
-  login.style.display =
-    "none";
-  panel.style.display =
-    "block";
-  logout.style.display =
-    "block";
-  cargarReservas();
-  cargarFotos();
+
+
+async function mostrarPanel(){
+
+  document.getElementById("loginSection")
+    .classList.add("hidden");
+
+  document.getElementById("panelSection")
+    .classList.remove("hidden");
+
+  document.getElementById("btnCerrarSesion")
+    .classList.remove("hidden");
+
+  await cargarReservas();
+  await cargarFotos();
+  await cargarClientes();
+
   activarNotificacionesReservas();
 }
-function mostrarLogin(){
-  login.style.display =
-    "block";
-  panel.style.display =
-    "none";
-  logout.style.display =
-    "none";
-}
-loginButton.addEventListener(
-  "click",
-  iniciarSesion
-);
-logout.addEventListener(
-  "click",
-  async function(){
-    if(canalReservasTiempoReal){
-      await supabaseClient.removeChannel(
-        canalReservasTiempoReal
-      );
-      canalReservasTiempoReal =
-        null;
-    }
-    await supabaseClient.auth.signOut();
-    mostrarLogin();
-  }
-);
-/* =====================================================
-   GALERÍA
-===================================================== */
-async function cargarFotos(){
-  fotos.innerHTML =
-    "Cargando fotos...";
-  const {
-    data,
-    error
-  } =
-    await supabaseClient
-      .from("galeria_fotos")
-      .select("*")
-      .order(
-        "creado_en",
-        {
-          ascending:false
-        }
-      );
-  if(error){
-    fotos.innerHTML =
-      "Todavía no hay fotos cargadas.";
-    console.error(error);
-    return;
-  }
-  if(!data || data.length === 0){
-    fotos.innerHTML =
-      "No hay fotos todavía.";
-    return;
-  }
-  fotos.innerHTML = "";
-  data.forEach(function(foto){
-    const card =
-      document.createElement("div");
-    card.className =
-      "foto-card";
-    const imagen =
-      document.createElement("img");
-    imagen.src =
-      foto.url;
-    imagen.alt =
-      foto.titulo || "Foto Pool & Beach";
-    const info =
-      document.createElement("div");
-    info.className =
-      "foto-info";
-    const categoria =
-      document.createElement("span");
-    categoria.className =
-      "categoria";
-    categoria.textContent =
-      foto.categoria || "";
-    const titulo =
-      document.createElement("h3");
-    titulo.textContent =
-      foto.titulo || "";
-    const descripcion =
-      document.createElement("p");
-    descripcion.textContent =
-      "Foto de Pool & Beach";
-    const boton =
-      document.createElement("button");
-    boton.className =
-      "btn-eliminar";
-    boton.textContent =
-      "🗑️ Eliminar foto";
-    boton.addEventListener(
-      "click",
-      function(){
-        eliminarFoto(
-          foto.id,
-          foto.ruta
-        );
-      }
-    );
-    info.appendChild(categoria);
-    info.appendChild(titulo);
-    info.appendChild(descripcion);
-    info.appendChild(boton);
-    card.appendChild(imagen);
-    card.appendChild(info);
-    fotos.appendChild(card);
-  });
-}
-/* =====================================================
-   SUBIR FOTO
-===================================================== */
-formGaleria.addEventListener(
-  "submit",
-  async function(event){
-    event.preventDefault();
-    const titulo =
-      document
-        .getElementById("fotoTitulo")
-        .value
-        .trim();
-    const categoria =
-      document
-        .getElementById("fotoCategoria")
-        .value;
-    const archivo =
-      document
-        .getElementById("fotoArchivo")
-        .files[0];
-    if(!archivo){
-      galeriaMensaje.textContent =
-        "❌ Seleccioná una foto.";
-      return;
-    }
-    galeriaMensaje.textContent =
-      "📤 Subiendo foto...";
-    try{
-      const extension =
-        archivo.name
-          .split(".")
-          .pop()
-          .toLowerCase();
-      const nombreSeguro =
-        Date.now() +
-        "-" +
-        Math.random()
-          .toString(36)
-          .substring(2,8) +
-        "." +
-        extension;
-      const ruta =
-        categoria +
-        "/" +
-        nombreSeguro;
-      const {
-        error:uploadError
-      } =
-        await supabaseClient
-          .storage
-          .from("Galeria")
-          .upload(
-            ruta,
-            archivo,
-            {
-              cacheControl:"3600",
-              upsert:false
-            }
-          );
-      if(uploadError){
-        throw uploadError;
-      }
-      const {
-        data:publicData
-      } =
-        supabaseClient
-          .storage
-          .from("Galeria")
-          .getPublicUrl(ruta);
-      const url =
-        publicData.publicUrl;
-      const {
-        error:insertError
-      } =
-        await supabaseClient
-          .from("galeria_fotos")
-          .insert({
-            titulo:titulo,
-            categoria:categoria,
-            ruta:ruta,
-            url:url
-          });
-      if(insertError){
-        throw insertError;
-      }
-      galeriaMensaje.textContent =
-        "✅ Foto subida correctamente.";
-      formGaleria.reset();
-      cargarFotos();
-    }catch(error){
-      console.error(error);
-      galeriaMensaje.textContent =
-        "❌ No se pudo subir la foto.";
-    }
-  }
-);
-/* =====================================================
-   ELIMINAR FOTO
-===================================================== */
-async function eliminarFoto(
-  id,
-  ruta
-){
-  if(
-    !confirm(
-      "¿Querés eliminar esta foto?"
-    )
-  ){
-    return;
-  }
-  try{
-    const {
-      error:storageError
-    } =
-      await supabaseClient
-        .storage
-        .from("Galeria")
-        .remove([ruta]);
-    if(storageError){
-      console.error(storageError);
-    }
-    const {
-      error:dbError
-    } =
-      await supabaseClient
-        .from("galeria_fotos")
-        .delete()
-        .eq("id",id);
-    if(dbError){
-      throw dbError;
-    }
-    cargarFotos();
-  }catch(error){
-    console.error(error);
-    galeriaMensaje.textContent =
-      "❌ No se pudo eliminar la foto.";
-  }
-}
-/* =====================================================
+
+
+/* =========================================================
    RESERVAS
-===================================================== */
+========================================================= */
+
+async function crearReserva(){
+
+  const nombre =
+    document.getElementById("resNombre").value.trim();
+
+  const telefono =
+    document.getElementById("resTelefono").value.trim();
+
+  const fecha =
+    document.getElementById("resFecha").value;
+
+  const hora =
+    document.getElementById("resHora").value;
+
+  const servicio =
+    document.getElementById("resServicio").value.trim();
+
+  const personas =
+    parseInt(document.getElementById("resPersonas").value) || 1;
+
+  const notas =
+    document.getElementById("resNotas").value.trim();
+
+  if(!nombre || !fecha || !hora){
+
+    mostrarMensaje(
+      "mensajeReserva",
+      "Completá nombre, fecha y hora.",
+      "error"
+    );
+
+    return;
+  }
+
+  const {error} =
+    await supabaseClient
+      .from("reservas")
+      .insert([{
+        nombre,
+        telefono,
+        fecha,
+        hora,
+        servicio,
+        cantidad_personas:personas,
+        estado:"pendiente",
+        notas
+      }]);
+
+  if(error){
+
+    mostrarMensaje(
+      "mensajeReserva",
+      "Error al guardar: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+  document.getElementById("resNombre").value="";
+  document.getElementById("resTelefono").value="";
+  document.getElementById("resFecha").value="";
+  document.getElementById("resHora").value="";
+  document.getElementById("resServicio").value="";
+  document.getElementById("resPersonas").value="2";
+  document.getElementById("resNotas").value="";
+
+  mostrarMensaje(
+    "mensajeReserva",
+    "Reserva guardada correctamente.",
+    "ok"
+  );
+
+  await cargarReservas();
+}
+
+
 async function cargarReservas(){
-  lista.innerHTML =
-    "Cargando reservas...";
-  const {
-    data,
-    error
-  } =
+
+  const contenedor =
+    document.getElementById("listaReservas");
+
+  if(!contenedor) return;
+
+  contenedor.innerHTML =
+    "<div class='vacio'>Cargando reservas...</div>";
+
+  const {data,error} =
     await supabaseClient
       .from("reservas")
       .select("*")
-      .order(
-        "fecha",
-        {
-          ascending:true
-        }
-      )
-      .order(
-        "hora",
-        {
-          ascending:true
-        }
-      );
+      .order("fecha",{ascending:true})
+      .order("hora",{ascending:true});
+
   if(error){
-    lista.innerHTML =
-      "❌ No se pudieron cargar las reservas.";
-    console.error(error);
+
+    contenedor.innerHTML =
+      "<div class='mensaje error'>Error: " +
+      escaparHTML(error.message) +
+      "</div>";
+
     return;
   }
-  if(!data || data.length === 0){
-    lista.innerHTML =
-      "No hay reservas.";
+
+  if(!data || data.length===0){
+
+    contenedor.innerHTML =
+      "<div class='vacio'>No hay reservas.</div>";
+
     return;
   }
-  lista.innerHTML = "";
-  data.forEach(function(reserva){
-    const tarjeta =
-      document.createElement("div");
-    tarjeta.className =
-      "reserva";
-    const nombre =
-      escaparHTML(
-        reserva.nombre || "Sin nombre"
-      );
-    const telefono =
-      escaparHTML(
-        reserva.telefono || ""
-      );
-    const fecha =
-      escaparHTML(
-        reserva.fecha || ""
-      );
-    const hora =
-      escaparHTML(
-        reserva.hora || ""
-      );
-    const servicio =
-      escaparHTML(
-        reserva.servicio || ""
-      );
-    const personas =
-      escaparHTML(
-        reserva.cantidad_personas || ""
-      );
-    const notas =
-      escaparHTML(
-        reserva.notas || ""
-      );
-    const estado =
-      reserva.estado || "pendiente";
-    tarjeta.innerHTML = `
-      <strong>
-        👤 ${nombre}
-      </strong>
-      <br><br>
-      📞 ${telefono}
-      <br>
-      📅 ${fecha}
-      <br>
-      🕐 ${hora}
-      <br>
-      🎯 ${servicio}
-      <br>
-      👥 ${personas} personas
-      ${
-        notas
-        ?
-        `<br>📝 ${notas}`
-        :
-        ""
-      }
-      <br><br>
-      <strong>
-        Estado:
-      </strong>
-      <select
-        class="estadoReserva"
-      >
-        <option
-          value="pendiente"
+
+  contenedor.innerHTML =
+    data.map(reserva=>{
+
+      const estado =
+        String(reserva.estado || "pendiente").toLowerCase();
+
+      let clase="estado-pendiente";
+
+      if(estado==="confirmada")
+        clase="estado-confirmada";
+
+      if(estado==="cancelada")
+        clase="estado-cancelada";
+
+      return `
+        <div class="reserva">
+
+          <strong>
+            👤 ${escaparHTML(reserva.nombre)}
+          </strong>
+
+          <br>
+
+          📅 ${escaparHTML(reserva.fecha || "-")}
+          &nbsp;
+          🕐 ${escaparHTML(reserva.hora || "-")}
+
+          <br>
+
+          📞 ${escaparHTML(reserva.telefono || "-")}
+
+          <br>
+
+          🎯 Servicio:
+          ${escaparHTML(reserva.servicio || "-")}
+
+          <br>
+
+          👥 Personas:
+          ${escaparHTML(reserva.cantidad_personas || "-")}
+
+          <br>
+
+          <span class="estado ${clase}">
+            ${escaparHTML(estado)}
+          </span>
+
           ${
-            estado === "pendiente"
-            ? "selected"
+            reserva.notas
+            ? `<br>📝 ${escaparHTML(reserva.notas)}`
             : ""
           }
-        >
-          Pendiente
-        </option>
-        <option
-          value="confirmada"
-          ${
-            estado === "confirmada"
-            ? "selected"
-            : ""
-          }
-        >
-          Confirmada
-        </option>
-        <option
-          value="cancelada"
-          ${
-            estado === "cancelada"
-            ? "selected"
-            : ""
-          }
-        >
-          Cancelada
-        </option>
-      </select>
-      <button
-        class="eliminar"
-      >
-        🗑️ Eliminar reserva
-      </button>
-    `;
-    const selectEstado =
-      tarjeta.querySelector(
-        ".estadoReserva"
-      );
-    selectEstado.addEventListener(
-      "change",
-      function(){
-        cambiarEstadoReserva(
-          reserva.id,
-          selectEstado.value
-        );
-      }
-    );
-    const botonEliminar =
-      tarjeta.querySelector(
-        ".eliminar"
-      );
-    botonEliminar.addEventListener(
-      "click",
-      function(){
-        eliminarReserva(
-          reserva.id
-        );
-      }
-    );
-    lista.appendChild(tarjeta);
-  });
+
+          <br><br>
+
+          <button
+            class="btn-green"
+            onclick="cambiarEstadoReserva('${reserva.id}','confirmada')"
+          >
+            ✅ Confirmar
+          </button>
+
+          <button
+            class="btn-orange"
+            onclick="cambiarEstadoReserva('${reserva.id}','pendiente')"
+          >
+            ⏳ Pendiente
+          </button>
+
+          <button
+            class="btn-danger"
+            onclick="cambiarEstadoReserva('${reserva.id}','cancelada')"
+          >
+            ❌ Cancelar
+          </button>
+
+          <button
+            class="btn-danger"
+            onclick="eliminarReserva('${reserva.id}')"
+          >
+            🗑️ Eliminar
+          </button>
+
+        </div>
+      `;
+
+    }).join("");
 }
-/* =====================================================
-   CAMBIAR ESTADO
-===================================================== */
-async function cambiarEstadoReserva(
-  id,
-  estado
-){
-  const {
-    error
-  } =
+
+
+async function cambiarEstadoReserva(id,estado){
+
+  const {error} =
     await supabaseClient
       .from("reservas")
-      .update({
-        estado:estado
-      })
+      .update({estado})
       .eq("id",id);
+
   if(error){
-    console.error(error);
-    alert(
-      "❌ No se pudo cambiar el estado."
-    );
+
+    alert("No se pudo cambiar el estado: " + error.message);
+
     return;
   }
-  cargarReservas();
+
+  await cargarReservas();
 }
-/* =====================================================
-   ELIMINAR RESERVA
-===================================================== */
+
+
 async function eliminarReserva(id){
-  if(
-    !confirm(
-      "¿Querés eliminar esta reserva?"
-    )
-  ){
+
+  if(!confirm("¿Querés eliminar esta reserva?"))
     return;
-  }
-  const {
-    error
-  } =
+
+  const {error} =
     await supabaseClient
       .from("reservas")
       .delete()
       .eq("id",id);
+
   if(error){
-    console.error(error);
-    alert(
-      "❌ No se pudo eliminar la reserva."
-    );
+
+    alert("No se pudo eliminar: " + error.message);
+
     return;
   }
-  cargarReservas();
+
+  await cargarReservas();
 }
-/* =====================================================
-   🔔 NOTIFICACIONES EN TIEMPO REAL
-===================================================== */
-function mostrarAvisoNuevaReserva(
-  reserva
-){
-  let aviso =
-    document.getElementById(
-      "avisoNuevaReserva"
-    );
-  if(!aviso){
-    aviso =
-      document.createElement("div");
-    aviso.id =
-      "avisoNuevaReserva";
-    document.body.appendChild(
-      aviso
-    );
-    aviso.addEventListener(
-      "click",
-      function(){
-        aviso.remove();
-      }
-    );
+
+
+/* =========================================================
+   NOTIFICACIONES DE RESERVAS
+   TIEMPO REAL + RESPALDO AUTOMÁTICO
+========================================================= */
+
+async function activarNotificacionesReservas(){
+
+  /*
+    Evitamos crear varios canales si el panel
+    se vuelve a abrir.
+  */
+
+  if(canalReservas){
+
+    try{
+      await supabaseClient.removeChannel(canalReservas);
+    }catch(e){}
+
+    canalReservas=null;
   }
-  const nombre =
-    escaparHTML(
-      reserva?.nombre ||
-      "Cliente"
-    );
-  const servicio =
-    escaparHTML(
-      reserva?.servicio ||
-      "Reserva"
-    );
-  aviso.innerHTML = `
-    🔔 NUEVA RESERVA
-    <br>
-    <span style="font-size:16px;">
-      ${nombre} — ${servicio}
-    </span>
-    <br>
-    <small>
-      Tocá el aviso para cerrarlo
-    </small>
-  `;
-  aviso.style.display =
-    "block";
-  clearTimeout(
-    window.temporizadorAvisoReserva
-  );
-  window.temporizadorAvisoReserva =
-    setTimeout(
-      function(){
-        if(aviso){
-          aviso.remove();
-        }
-      },
-      15000
-    );
-}
-/* =====================================================
-   ACTIVAR REALTIME
-===================================================== */
-function activarNotificacionesReservas(){
-  console.log(
-    "🔔 Activando Realtime de reservas..."
-  );
-  if(canalReservasTiempoReal){
-    supabaseClient.removeChannel(
-      canalReservasTiempoReal
-    );
+
+  if(intervaloReservas){
+    clearInterval(intervaloReservas);
+    intervaloReservas=null;
   }
-  canalReservasTiempoReal =
+
+  /*
+    Primero guardamos la última reserva existente.
+    Esto evita que aparezca una alerta por una reserva vieja
+    apenas se abre el panel.
+  */
+
+  const {data,error} =
+    await supabaseClient
+      .from("reservas")
+      .select("id,creado_en")
+      .order("creado_en",{ascending:false})
+      .limit(1);
+
+  if(!error && data && data.length){
+
+    ultimaReservaId=data[0].id;
+
+  }else{
+
+    ultimaReservaId=null;
+  }
+
+
+  /*
+    REALTIME
+  */
+
+  canalReservas =
     supabaseClient
-      .channel(
-        "reservas-admin-tiempo-real-" +
-        Date.now()
-      )
+      .channel("admin-reservas-" + Date.now())
       .on(
         "postgres_changes",
         {
@@ -1069,44 +1075,1106 @@ function activarNotificacionesReservas(){
           schema:"public",
           table:"reservas"
         },
-        function(payload){
-          console.log(
-            "🔔 NUEVA RESERVA RECIBIDA:",
-            payload.new
-          );
-          mostrarAvisoNuevaReserva(
-            payload.new
-          );
-          cargarReservas();
+        async payload=>{
+
+          console.log("Nueva reserva REALTIME:",payload);
+
+          if(
+            payload &&
+            payload.new &&
+            payload.new.id
+          ){
+
+            mostrarNotificacionReserva(
+              payload.new
+            );
+
+            ultimaReservaId =
+              payload.new.id;
+
+            await cargarReservas();
+          }
         }
       )
-      .subscribe(
-        function(status){
-          console.log(
-            "📡 Estado Realtime:",
-            status
-          );
-          if(
-            status === "SUBSCRIBED"
-          ){
-            console.log(
-              "✅ NOTIFICACIONES ACTIVAS"
-            );
-          }
-          if(
-            status === "CHANNEL_ERROR"
-          ){
-            console.error(
-              "❌ ERROR EN REALTIME"
-            );
-          }
+      .subscribe(status=>{
+
+        console.log(
+          "Estado notificaciones reservas:",
+          status
+        );
+
+      });
+
+
+  /*
+    RESPALDO:
+    consulta cada 10 segundos.
+  */
+
+  intervaloReservas =
+    setInterval(
+      comprobarNuevaReserva,
+      10000
+    );
+
+}
+
+
+/*
+  Esta función funciona aunque Realtime falle.
+*/
+
+async function comprobarNuevaReserva(){
+
+  try{
+
+    const {data,error} =
+      await supabaseClient
+        .from("reservas")
+        .select("*")
+        .order("creado_en",{ascending:false})
+        .limit(1);
+
+    if(error || !data || !data.length)
+      return;
+
+    const nueva=data[0];
+
+    /*
+      Primera comprobación:
+      simplemente guardamos la reserva actual.
+    */
+
+    if(!ultimaReservaId){
+
+      ultimaReservaId=nueva.id;
+
+      return;
+    }
+
+    /*
+      Si cambió el ID, realmente apareció
+      una nueva reserva.
+    */
+
+    if(
+      nueva.id !== ultimaReservaId &&
+      !avisoIds.has(nueva.id)
+    ){
+
+      ultimaReservaId=nueva.id;
+
+      mostrarNotificacionReserva(nueva);
+
+      await cargarReservas();
+    }
+
+  }catch(error){
+
+    console.log(
+      "Error comprobando reservas:",
+      error
+    );
+  }
+}
+
+
+function mostrarNotificacionReserva(reserva){
+
+  if(!reserva || !reserva.id)
+    return;
+
+  /*
+    Evita doble aviso si Realtime y polling
+    detectan la misma reserva.
+  */
+
+  if(avisoIds.has(reserva.id))
+    return;
+
+  avisoIds.add(reserva.id);
+
+  const aviso =
+    document.getElementById(
+      "avisoNuevaReserva"
+    );
+
+  const texto =
+    document.getElementById(
+      "textoNuevaReserva"
+    );
+
+  if(!aviso || !texto)
+    return;
+
+  texto.textContent =
+    (reserva.nombre || "Un cliente") +
+    " reservó para " +
+    (reserva.fecha || "") +
+    " a las " +
+    (reserva.hora || "");
+
+  aviso.classList.remove("hidden");
+
+  aviso.onclick=()=>{
+
+    aviso.classList.add("hidden");
+
+    document
+      .getElementById("reservas")
+      .scrollIntoView({
+        behavior:"smooth"
+      });
+  };
+
+
+  /*
+    Notificación del navegador cuando está permitida.
+  */
+
+  try{
+
+    if(
+      "Notification" in window &&
+      Notification.permission === "granted"
+    ){
+
+      new Notification(
+        "🔔 Nueva reserva - Pool & Beach",
+        {
+          body:
+            (reserva.nombre || "Cliente") +
+            " - " +
+            (reserva.fecha || "") +
+            " " +
+            (reserva.hora || "")
         }
       );
+    }
+
+  }catch(e){
+    console.log("Notificación navegador:",e);
+  }
+
+
+  /*
+    La dejamos visible 10 segundos.
+  */
+
+  setTimeout(()=>{
+
+    aviso.classList.add("hidden");
+
+  },10000);
 }
-/* =====================================================
-   INICIAR
-===================================================== */
+
+
+/* =========================================================
+   GALERIA
+========================================================= */
+
+async function subirFoto(){
+
+  const archivo =
+    document.getElementById("fotoArchivo").files[0];
+
+  const titulo =
+    document.getElementById("fotoTitulo").value.trim();
+
+  const categoria =
+    document.getElementById("fotoCategoria").value;
+
+  if(!archivo){
+
+    mostrarMensaje(
+      "mensajeFoto",
+      "Seleccioná una foto.",
+      "error"
+    );
+
+    return;
+  }
+
+  try{
+
+    mostrarMensaje(
+      "mensajeFoto",
+      "Subiendo foto...",
+      "ok"
+    );
+
+    const nombreSeguro =
+      archivo.name
+        .replace(/[^a-zA-Z0-9._-]/g,"-");
+
+    const ruta =
+      Date.now() + "-" + nombreSeguro;
+
+
+    const {error:uploadError} =
+      await supabaseClient
+        .storage
+        .from("Galeria")
+        .upload(
+          ruta,
+          archivo,
+          {
+            upsert:false,
+            contentType:archivo.type
+          }
+        );
+
+    if(uploadError)
+      throw uploadError;
+
+
+    const {data:urlData} =
+      supabaseClient
+        .storage
+        .from("Galeria")
+        .getPublicUrl(ruta);
+
+    const url =
+      urlData.publicUrl;
+
+
+    const {error:insertError} =
+      await supabaseClient
+        .from("galeria_fotos")
+        .insert([{
+          titulo:titulo || archivo.name,
+          categoria,
+          url,
+          ruta
+        }]);
+
+    if(insertError)
+      throw insertError;
+
+
+    document.getElementById("fotoArchivo").value="";
+    document.getElementById("fotoTitulo").value="";
+
+    mostrarMensaje(
+      "mensajeFoto",
+      "Foto subida correctamente.",
+      "ok"
+    );
+
+    await cargarFotos();
+
+  }catch(error){
+
+    mostrarMensaje(
+      "mensajeFoto",
+      "Error al subir foto: " + error.message,
+      "error"
+    );
+  }
+}
+
+
+async function cargarFotos(){
+
+  const contenedor =
+    document.getElementById("listaFotos");
+
+  if(!contenedor) return;
+
+  contenedor.innerHTML =
+    "<div class='vacio'>Cargando fotos...</div>";
+
+
+  const {data,error} =
+    await supabaseClient
+      .from("galeria_fotos")
+      .select("*")
+      .order("creado_en",{ascending:false});
+
+  if(error){
+
+    contenedor.innerHTML =
+      "<div class='mensaje error'>Error: " +
+      escaparHTML(error.message) +
+      "</div>";
+
+    return;
+  }
+
+
+  if(!data || data.length===0){
+
+    contenedor.innerHTML =
+      "<div class='vacio'>Todavía no hay fotos.</div>";
+
+    return;
+  }
+
+
+  contenedor.innerHTML =
+    data.map(foto=>`
+
+      <div class="foto-card">
+
+        <img
+          src="${escaparHTML(foto.url)}"
+          alt="${escaparHTML(foto.titulo || "Foto")}"
+          onerror="this.style.display='none'"
+        >
+
+        <div class="foto-info">
+
+          <strong>
+            ${escaparHTML(foto.titulo || "Sin título")}
+          </strong>
+
+          <br>
+
+          <small>
+            ${escaparHTML(foto.categoria || "general")}
+          </small>
+
+          <br><br>
+
+          <button
+            class="btn-danger"
+            onclick="eliminarFoto('${foto.id}','${escaparHTML(foto.ruta || "")}')"
+          >
+            🗑️ Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+}
+
+
+async function eliminarFoto(id,ruta){
+
+  if(!confirm("¿Querés eliminar esta foto?"))
+    return;
+
+
+  const {error:dbError} =
+    await supabaseClient
+      .from("galeria_fotos")
+      .delete()
+      .eq("id",id);
+
+  if(dbError){
+
+    alert(
+      "No se pudo eliminar de la galería: " +
+      dbError.message
+    );
+
+    return;
+  }
+
+
+  if(ruta){
+
+    await supabaseClient
+      .storage
+      .from("Galeria")
+      .remove([ruta]);
+  }
+
+
+  await cargarFotos();
+}
+
+
+/* =========================================================
+   CLIENTES
+========================================================= */
+
+function generarNumeroTarjeta(){
+
+  const caracteres =
+    "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+  let codigo="";
+
+  for(let i=0;i<8;i++){
+
+    codigo +=
+      caracteres[
+        Math.floor(
+          Math.random()*caracteres.length
+        )
+      ];
+  }
+
+  return "PB-" + codigo;
+}
+
+
+async function crearCliente(){
+
+  const nombre =
+    document
+      .getElementById("clienteNombre")
+      .value
+      .trim();
+
+  const telefono =
+    document
+      .getElementById("clienteTelefono")
+      .value
+      .trim();
+
+  const email =
+    document
+      .getElementById("clienteEmail")
+      .value
+      .trim();
+
+  if(!nombre){
+
+    mostrarMensaje(
+      "mensajeCliente",
+      "El nombre es obligatorio.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  let numeroTarjeta="";
+
+
+  /*
+    Generamos un número y verificamos que no exista.
+  */
+
+  for(let intento=0;intento<10;intento++){
+
+    const candidato =
+      generarNumeroTarjeta();
+
+    const {data} =
+      await supabaseClient
+        .from("clientes")
+        .select("id")
+        .eq("numero_tarjeta",candidato)
+        .maybeSingle();
+
+    if(!data){
+
+      numeroTarjeta=candidato;
+      break;
+    }
+  }
+
+
+  if(!numeroTarjeta){
+
+    mostrarMensaje(
+      "mensajeCliente",
+      "No se pudo generar un número de tarjeta.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  const {data,error} =
+    await supabaseClient
+      .from("clientes")
+      .insert([{
+        nombre,
+        telefono,
+        email,
+        numero_tarjeta:numeroTarjeta,
+        puntos:0,
+        saldo:0,
+        activo:true
+      }])
+      .select()
+      .single();
+
+
+  if(error){
+
+    mostrarMensaje(
+      "mensajeCliente",
+      "Error al crear cliente: " + error.message,
+      "error"
+    );
+
+    return;
+  }
+
+
+  document.getElementById("clienteNombre").value="";
+  document.getElementById("clienteTelefono").value="";
+  document.getElementById("clienteEmail").value="";
+
+
+  mostrarMensaje(
+    "mensajeCliente",
+    "Tarjeta creada: " + data.numero_tarjeta,
+    "ok"
+  );
+
+
+  await cargarClientes();
+}
+
+
+async function cargarClientes(){
+
+  const {data,error} =
+    await supabaseClient
+      .from("clientes")
+      .select("*")
+      .order("creado_en",{ascending:false});
+
+
+  if(error){
+
+    document.getElementById("listaClientes").innerHTML =
+      "<div class='mensaje error'>Error al cargar clientes: " +
+      escaparHTML(error.message) +
+      "</div>";
+
+    return;
+  }
+
+
+  todosLosClientes=data || [];
+
+  mostrarClientesFiltrados();
+}
+
+
+function mostrarClientesFiltrados(){
+
+  const contenedor =
+    document.getElementById("listaClientes");
+
+  const busqueda =
+    document
+      .getElementById("buscarCliente")
+      .value
+      .trim()
+      .toLowerCase();
+
+
+  const clientes =
+    todosLosClientes.filter(cliente=>{
+
+      if(!busqueda)
+        return true;
+
+      return (
+        String(cliente.nombre || "")
+          .toLowerCase()
+          .includes(busqueda)
+        ||
+        String(cliente.telefono || "")
+          .toLowerCase()
+          .includes(busqueda)
+        ||
+        String(cliente.numero_tarjeta || "")
+          .toLowerCase()
+          .includes(busqueda)
+      );
+
+    });
+
+
+  if(!clientes.length){
+
+    contenedor.innerHTML =
+      "<div class='vacio'>No se encontraron clientes.</div>";
+
+    return;
+  }
+
+
+  contenedor.innerHTML =
+    clientes.map(cliente=>`
+
+      <div class="cliente-card">
+
+        <h3>
+          👤 ${escaparHTML(cliente.nombre)}
+        </h3>
+
+        <div class="numero-tarjeta">
+          💳 ${escaparHTML(cliente.numero_tarjeta)}
+        </div>
+
+        <div class="cliente-datos">
+
+          📞 ${escaparHTML(cliente.telefono || "Sin teléfono")}
+          <br>
+
+          ✉️ ${escaparHTML(cliente.email || "Sin email")}
+          <br>
+
+          ${cliente.activo ? "🟢 Activo" : "🔴 Inactivo"}
+
+        </div>
+
+
+        <div class="qr" id="qr-${cliente.id}"></div>
+
+
+        <div class="cliente-metricas">
+
+          <div class="metrica">
+            ⭐ Puntos
+            <strong>
+              ${Number(cliente.puntos || 0)}
+            </strong>
+          </div>
+
+          <div class="metrica">
+            💰 Saldo
+            <strong>
+              $${Number(cliente.saldo || 0).toLocaleString("es-AR")}
+            </strong>
+          </div>
+
+        </div>
+
+
+        <div class="acciones-cliente">
+
+          <button
+            class="btn-green"
+            onclick="cargarSaldo('${cliente.id}')"
+          >
+            💰 Cargar saldo
+          </button>
+
+          <button
+            onclick="cargarPuntos('${cliente.id}')"
+          >
+            ⭐ Cargar puntos
+          </button>
+
+          <button
+            class="btn-dark"
+            onclick="verHistorial('${cliente.id}')"
+          >
+            📋 Historial
+          </button>
+
+          <button
+            class="btn-orange"
+            onclick="cambiarEstadoCliente('${cliente.id}',${cliente.activo})"
+          >
+            ${cliente.activo ? "⛔ Desactivar" : "✅ Activar"}
+          </button>
+
+        </div>
+
+
+        <div
+          id="historial-${cliente.id}"
+          class="movimientos hidden"
+        ></div>
+
+      </div>
+
+    `).join("");
+
+
+  /*
+    Generar QR después de pintar las tarjetas.
+  */
+
+  clientes.forEach(cliente=>{
+
+    const elemento =
+      document.getElementById(
+        "qr-" + cliente.id
+      );
+
+    if(!elemento)
+      return;
+
+    try{
+
+      new QRCode(
+        elemento,
+        {
+          text:cliente.numero_tarjeta,
+          width:150,
+          height:150,
+          correctLevel:QRCode.CorrectLevel.M
+        }
+      );
+
+    }catch(e){
+
+      console.log("Error QR:",e);
+    }
+
+  });
+
+}
+
+
+/* =========================================================
+   SALDO
+========================================================= */
+
+async function cargarSaldo(id){
+
+  const cantidadTexto =
+    prompt(
+      "¿Cuánto saldo querés cargar?\nEjemplo: 10000"
+    );
+
+  if(cantidadTexto===null)
+    return;
+
+  const cantidad =
+    Number(
+      cantidadTexto
+        .replace(",",".")
+    );
+
+
+  if(!Number.isFinite(cantidad) || cantidad<=0){
+
+    alert("Ingresá un importe válido.");
+
+    return;
+  }
+
+
+  const {data:cliente,error:clienteError} =
+    await supabaseClient
+      .from("clientes")
+      .select("saldo")
+      .eq("id",id)
+      .single();
+
+
+  if(clienteError){
+
+    alert(clienteError.message);
+
+    return;
+  }
+
+
+  const nuevoSaldo =
+    Number(cliente.saldo || 0) + cantidad;
+
+
+  const {error:updateError} =
+    await supabaseClient
+      .from("clientes")
+      .update({
+        saldo:nuevoSaldo
+      })
+      .eq("id",id);
+
+
+  if(updateError){
+
+    alert(
+      "No se pudo actualizar saldo: " +
+      updateError.message
+    );
+
+    return;
+  }
+
+
+  const {error:movError} =
+    await supabaseClient
+      .from("movimientos_clientes")
+      .insert([{
+        cliente_id:id,
+        tipo:"saldo",
+        concepto:"Carga de saldo",
+        cantidad:cantidad,
+        puntos:0
+      }]);
+
+
+  if(movError){
+
+    console.log(
+      "Saldo actualizado pero no se pudo guardar movimiento:",
+      movError
+    );
+  }
+
+
+  await cargarClientes();
+}
+
+
+/* =========================================================
+   PUNTOS
+========================================================= */
+
+async function cargarPuntos(id){
+
+  const cantidadTexto =
+    prompt(
+      "¿Cuántos puntos querés cargar?\nEjemplo: 100"
+    );
+
+  if(cantidadTexto===null)
+    return;
+
+  const cantidad =
+    parseInt(cantidadTexto);
+
+
+  if(!Number.isInteger(cantidad) || cantidad<=0){
+
+    alert("Ingresá una cantidad válida de puntos.");
+
+    return;
+  }
+
+
+  const {data:cliente,error:clienteError} =
+    await supabaseClient
+      .from("clientes")
+      .select("puntos")
+      .eq("id",id)
+      .single();
+
+
+  if(clienteError){
+
+    alert(clienteError.message);
+
+    return;
+  }
+
+
+  const nuevosPuntos =
+    Number(cliente.puntos || 0) + cantidad;
+
+
+  const {error:updateError} =
+    await supabaseClient
+      .from("clientes")
+      .update({
+        puntos:nuevosPuntos
+      })
+      .eq("id",id);
+
+
+  if(updateError){
+
+    alert(
+      "No se pudieron actualizar los puntos: " +
+      updateError.message
+    );
+
+    return;
+  }
+
+
+  const {error:movError} =
+    await supabaseClient
+      .from("movimientos_clientes")
+      .insert([{
+        cliente_id:id,
+        tipo:"puntos",
+        concepto:"Carga de puntos",
+        cantidad:0,
+        puntos:cantidad
+      }]);
+
+
+  if(movError){
+
+    console.log(
+      "Puntos actualizados pero movimiento no guardado:",
+      movError
+    );
+  }
+
+
+  await cargarClientes();
+}
+
+
+/* =========================================================
+   HISTORIAL
+========================================================= */
+
+async function verHistorial(id){
+
+  const contenedor =
+    document.getElementById(
+      "historial-" + id
+    );
+
+  if(!contenedor)
+    return;
+
+
+  if(!contenedor.classList.contains("hidden")){
+
+    contenedor.classList.add("hidden");
+
+    return;
+  }
+
+
+  contenedor.classList.remove("hidden");
+
+  contenedor.innerHTML =
+    "Cargando historial...";
+
+
+  const {data,error} =
+    await supabaseClient
+      .from("movimientos_clientes")
+      .select("*")
+      .eq("cliente_id",id)
+      .order("creado_en",{ascending:false});
+
+
+  if(error){
+
+    contenedor.innerHTML =
+      "<div class='mensaje error'>" +
+      escaparHTML(error.message) +
+      "</div>";
+
+    return;
+  }
+
+
+  if(!data || !data.length){
+
+    contenedor.innerHTML =
+      "<div class='vacio'>No hay movimientos todavía.</div>";
+
+    return;
+  }
+
+
+  contenedor.innerHTML =
+    "<strong>📋 Historial</strong>" +
+
+    data.map(mov=>{
+
+      const fecha =
+        mov.creado_en
+          ? new Date(mov.creado_en)
+              .toLocaleString("es-AR")
+          : "";
+
+      return `
+
+        <div class="movimiento">
+
+          <strong>
+            ${escaparHTML(mov.concepto || mov.tipo)}
+          </strong>
+
+          <br>
+
+          ${
+            Number(mov.cantidad || 0) > 0
+            ? "💰 $" +
+              Number(mov.cantidad)
+                .toLocaleString("es-AR")
+            : ""
+          }
+
+          ${
+            Number(mov.puntos || 0) > 0
+            ? " ⭐ +" +
+              Number(mov.puntos) +
+              " puntos"
+            : ""
+          }
+
+          <br>
+
+          <small>
+            ${escaparHTML(fecha)}
+          </small>
+
+        </div>
+
+      `;
+
+    }).join("");
+}
+
+
+/* =========================================================
+   ACTIVAR / DESACTIVAR CLIENTE
+========================================================= */
+
+async function cambiarEstadoCliente(id,activoActual){
+
+  const nuevoEstado=!activoActual;
+
+  const {error} =
+    await supabaseClient
+      .from("clientes")
+      .update({
+        activo:nuevoEstado
+      })
+      .eq("id",id);
+
+
+  if(error){
+
+    alert(
+      "No se pudo cambiar el estado: " +
+      error.message
+    );
+
+    return;
+  }
+
+
+  await cargarClientes();
+}
+
+
+/* =========================================================
+   TECLADO LOGIN
+========================================================= */
+
+document.addEventListener("keydown",event=>{
+
+  if(
+    event.key==="Enter" &&
+    !document
+      .getElementById("loginSection")
+      .classList.contains("hidden")
+  ){
+
+    iniciarSesion();
+  }
+
+});
+
+
+/* =========================================================
+   INICIO
+========================================================= */
+
 verificarSesion();
+
 </script>
+
 </body>
 </html>
