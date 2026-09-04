@@ -919,6 +919,118 @@ form.addEventListener(
    INICIO
 ========================= */
 verificarSesion();
+// 🔔 NOTIFICACIONES AUTOMÁTICAS DE NUEVAS RESERVAS
+let canalReservasTiempoReal = null;
+
+function mostrarAvisoNuevaReserva(reserva) {
+    let aviso = document.getElementById("avisoNuevaReserva");
+
+    if (!aviso) {
+        aviso = document.createElement("div");
+        aviso.id = "avisoNuevaReserva";
+
+        aviso.style.cssText = `
+            position: sticky;
+            top: 10px;
+            z-index: 99999;
+            margin: 10px 0;
+            padding: 16px;
+            border-radius: 12px;
+            background: #00bcd4;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,.3);
+            cursor: pointer;
+        `;
+
+        aviso.onclick = function() {
+            aviso.style.display = "none";
+        };
+
+        panel.prepend(aviso);
+    }
+
+    const nombre = escaparHTML(reserva?.nombre || "Cliente");
+    const servicio = escaparHTML(reserva?.servicio || "Reserva");
+
+    aviso.innerHTML = `
+        🔔 NUEVA RESERVA<br>
+        <span style="font-size:15px;">
+            ${nombre} — ${servicio}
+        </span>
+        <br>
+        <small>Tocá este aviso para cerrarlo</small>
+    `;
+
+    aviso.style.display = "block";
+
+    clearTimeout(window.temporizadorAvisoReserva);
+
+    window.temporizadorAvisoReserva = setTimeout(function() {
+        aviso.style.display = "none";
+    }, 15000);
+}
+
+function activarNotificacionesReservas() {
+
+    if (canalReservasTiempoReal) {
+        supabaseClient.removeChannel(canalReservasTiempoReal);
+    }
+
+    canalReservasTiempoReal = supabaseClient
+        .channel("notificaciones-reservas-admin")
+        .on(
+            "postgres_changes",
+            {
+                event: "INSERT",
+                schema: "public",
+                table: "reservas"
+            },
+            function(payload) {
+
+                console.log(
+                    "🔔 Nueva reserva recibida:",
+                    payload.new
+                );
+
+                mostrarAvisoNuevaReserva(payload.new);
+
+                if (typeof cargarReservas === "function") {
+                    cargarReservas();
+                }
+            }
+        )
+        .subscribe(function(status) {
+
+            console.log(
+                "Estado notificaciones reservas:",
+                status
+            );
+
+        });
+}
+
+// Activar automáticamente cuando el administrador entra
+const mostrarPanelOriginal = mostrarPanel;
+
+mostrarPanel = function() {
+
+    mostrarPanelOriginal();
+
+    activarNotificacionesReservas();
+
+};
+
+// Si ya había una sesión iniciada, activar también las notificaciones
+supabaseClient.auth.getSession().then(function(resultado) {
+
+    if (resultado.data.session) {
+        activarNotificacionesReservas();
+    }
+
+});
 </script>
 </body>
 </html>
