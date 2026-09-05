@@ -918,18 +918,19 @@ button:disabled{
     </p>
 
     <!--
-      IMPORTANTE:
-      La imagen debe llamarse exactamente:
+      MAPA INTEGRADO
 
+      El archivo debe estar en la raíz del proyecto,
+      al mismo nivel que index.html.
+
+      Nombre exacto:
       Mapa-guia.png
-
-      y estar en la misma carpeta que index.html.
     -->
 
     <img
       id="mapImage"
       class="map"
-      src="./Mapa-guia.png"
+      src="/Mapa-guia.png"
       alt="Mapa de guía de Pool & Beach"
       onerror="mapImageError()"
     >
@@ -939,9 +940,10 @@ button:disabled{
       class="notice dangerText hidden"
     >
       No se pudo cargar el mapa.
-      Verificá que la imagen se llame exactamente
+      Verificá que el archivo se llame exactamente
       <b>Mapa-guia.png</b>
-      y esté junto a <b>index.html</b>.
+      y esté en la raíz del proyecto junto a
+      <b>index.html</b>.
     </div>
 
   </div>
@@ -1226,15 +1228,29 @@ function toast(message){
 }
 
 
+/* =====================================================
+   ERROR DEL MAPA
+===================================================== */
+
 function mapImageError(){
 
-  $('mapImage')
-    .classList
-    .add('hidden');
+  const image =
+    $('mapImage');
 
-  $('mapError')
-    .classList
-    .remove('hidden');
+  const errorBox =
+    $('mapError');
+
+  if(image){
+
+    image.classList.add('hidden');
+
+  }
+
+  if(errorBox){
+
+    errorBox.classList.remove('hidden');
+
+  }
 
 }
 
@@ -1403,11 +1419,6 @@ async function startPlayer(){
   currentUser =
     session.user;
 
-
-  /*
-    Intentamos actualizar el nombre
-    en el perfil.
-  */
 
   const {
     error:
@@ -1709,6 +1720,7 @@ async function registerGame(){
   await refreshPlayer();
 
   await loadRanking();
+
 
 }
 
@@ -2925,6 +2937,7 @@ async function adminLogin(){
 
 
   await checkAdmin();
+
 
 }
 
