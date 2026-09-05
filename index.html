@@ -1,2281 +1,1752 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Pool & Beach | Fase Final de Integración</title>
-
-<meta name="description" content="Pool & Beach Puerto Pirámides - juegos, puntos, tokens, premios, torneos y reservas.">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pool & Beach — Juegos</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
 :root{
-  --bg:#07151b;
-  --card:#0d242d;
-  --card2:#12323d;
-  --text:#f4fbfd;
-  --muted:#9eb5bd;
-  --accent:#70d6ff;
-  --accent2:#8ff0d0;
-  --danger:#ff7676;
-  --ok:#75e6a5;
-  --line:#21424d;
+--bg:#06131e;
+--card:#0c2333;
+--card2:#123149;
+--line:#24536a;
+--sky:#62dcff;
+--gold:#ffd166;
+--green:#67e7a2;
+--red:#ff7182;
+--txt:#f5fbff;
+--muted:#9ab5c5
 }
 
-*{
-  box-sizing:border-box;
-}
+*{box-sizing:border-box}
 
 body{
-  margin:0;
-  background:linear-gradient(180deg,#061218,#0a1d25 50%,#061218);
-  color:var(--text);
-  font-family:Arial,Helvetica,sans-serif;
+margin:0;
+background:radial-gradient(circle at 20% 0,#16415a 0,#06131e 45%,#03080d 100%);
+color:var(--txt);
+font:15px system-ui,-apple-system,Segoe UI,sans-serif
 }
 
-a{
-  color:var(--accent);
+.app{
+max-width:920px;
+margin:auto;
+padding:15px 14px 90px
 }
 
-button,
-input,
-select{
-  font:inherit;
-}
-
-button{
-  cursor:pointer;
-  border:0;
-  border-radius:12px;
-  padding:12px 16px;
-  font-weight:700;
-  background:var(--accent);
-  color:#06202a;
-}
-
-button.secondary{
-  background:#1b3944;
-  color:var(--text);
-}
-
-button.danger{
-  background:#6d252d;
-  color:#fff;
-}
-
-.wrap{
-  max-width:1100px;
-  margin:auto;
-  padding:18px;
-}
-
-.hero{
-  padding:28px 0 10px;
-  text-align:center;
-}
-
-.hero h1{
-  font-size:clamp(30px,7vw,54px);
-  margin:0 0 8px;
-}
-
-.hero p{
-  color:var(--muted);
-  margin:0;
-}
-
-.pill{
-  display:inline-block;
-  background:#123640;
-  border:1px solid var(--line);
-  padding:7px 11px;
-  border-radius:999px;
-  color:var(--accent2);
-  font-size:13px;
-  margin:5px;
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-  gap:14px;
-}
-
-.card{
-  background:rgba(13,36,45,.94);
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 12px 30px #0004;
-}
-
-.card h2,
-.card h3{
-  margin-top:0;
-}
-
-.stat{
-  font-size:34px;
-  font-weight:800;
-}
-
-.muted{
-  color:var(--muted);
-}
-
-.section{
-  margin:26px 0;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.row{
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.field{
-  display:flex;
-  flex-direction:column;
-  gap:6px;
-  margin:8px 0;
-}
-
-.field input,
-.field select{
-  background:#081a21;
-  color:var(--text);
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:11px;
-  width:100%;
-}
-
-.table{
-  width:100%;
-  border-collapse:collapse;
-}
-
-.table th,
-.table td{
-  padding:10px;
-  border-bottom:1px solid var(--line);
-  text-align:left;
-  font-size:14px;
-}
-
-.qr{
-  background:#fff;
-  padding:12px;
-  border-radius:12px;
-  display:inline-block;
-}
-
-.mesa-card{
-  display:flex;
-  flex-direction:column;
-  gap:10px;
-}
-
-.toast{
-  position:fixed;
-  right:14px;
-  bottom:14px;
-  background:#102f39;
-  border:1px solid var(--line);
-  padding:14px 16px;
-  border-radius:12px;
-  max-width:360px;
-  z-index:50;
-}
-
-.notice{
-  padding:12px;
-  border-radius:12px;
-  background:#102f39;
-  border:1px solid var(--line);
-  margin:10px 0;
-}
-
-.ok{
-  color:var(--ok);
-}
-
-.dangerText{
-  color:var(--danger);
-}
-
-.map{
-  width:100%;
-  border-radius:16px;
-  border:1px solid var(--line);
-  display:block;
-  background:#fff;
-  min-height:220px;
-  object-fit:contain;
-}
-
-.small{
-  font-size:12px;
-}
-
-.footer{
-  text-align:center;
-  color:var(--muted);
-  padding:30px 0;
-}
-
-.nav{
-  position:sticky;
-  top:0;
-  z-index:20;
-  background:#061218ee;
-  backdrop-filter:blur(8px);
-  border-bottom:1px solid var(--line);
-}
-
-.nav .wrap{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  padding-top:10px;
-  padding-bottom:10px;
+.top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:14px
 }
 
 .brand{
-  font-weight:900;
+font-size:21px;
+font-weight:950
 }
 
-.anchor{
-  scroll-margin-top:70px;
+.brand span{
+color:var(--sky)
 }
 
 .badge{
-  background:#193e4b;
-  border:1px solid var(--line);
-  padding:5px 8px;
-  border-radius:8px;
-  font-size:12px;
+font-size:10px;
+border:1px solid var(--line);
+padding:7px 10px;
+border-radius:99px;
+color:var(--sky)
 }
 
-@media(max-width:700px){
-  .nav .wrap{
-    flex-direction:column;
-    gap:8px;
-  }
+.hero{
+padding:21px;
+border:1px solid var(--line);
+border-radius:23px;
+background:linear-gradient(145deg,#103a54,#0a1c2b);
+box-shadow:0 18px 45px #0006
+}
 
-  .nav .row{
-    justify-content:center;
-  }
+.hero h1{
+margin:0 0 5px;
+font-size:27px
+}
 
-  .nav a{
-    font-size:12px;
-  }
+.hero p{
+margin:0;
+color:var(--muted);
+line-height:1.45
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:9px;
+margin-top:15px
+}
+
+.stat{
+background:#061722aa;
+border:1px solid #1d4357;
+border-radius:14px;
+padding:10px
+}
+
+.stat small{
+display:block;
+color:var(--muted);
+font-size:10px
+}
+
+.stat b{
+font-size:20px;
+color:var(--gold)
+}
+
+.tabs{
+display:flex;
+gap:8px;
+overflow:auto;
+margin:15px 0
+}
+
+.tab,.btn{
+border-radius:13px;
+padding:11px 13px;
+border:1px solid var(--line);
+font-weight:900;
+cursor:pointer
+}
+
+.tab{
+background:#0b2130;
+color:var(--txt);
+white-space:nowrap
+}
+
+.tab.active{
+background:var(--sky);
+color:#052031
+}
+
+.btn{
+background:var(--sky);
+color:#052031;
+border:0
+}
+
+.btn.gold{
+background:var(--gold)
+}
+
+.btn.dark{
+background:#15364b;
+color:var(--txt);
+border:1px solid #2a5870
+}
+
+.btn.red{
+background:var(--red);
+color:#2b0710
+}
+
+.view{
+display:none
+}
+
+.view.active{
+display:block
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:11px
+}
+
+.card{
+background:linear-gradient(155deg,var(--card2),var(--card));
+border:1px solid var(--line);
+border-radius:19px;
+padding:16px
+}
+
+.game{
+min-height:145px;
+cursor:pointer
+}
+
+.icon{
+font-size:29px
+}
+
+.game h3{
+margin:8px 0 4px
+}
+
+.muted{
+color:var(--muted);
+font-size:12px;
+line-height:1.45
+}
+
+.hidden{
+display:none!important
+}
+
+.center{
+text-align:center
+}
+
+.question{
+font-size:20px;
+font-weight:900;
+text-align:center;
+margin:18px 0
+}
+
+.row{
+display:flex;
+gap:9px;
+flex-wrap:wrap
+}
+
+.row>*{
+flex:1;
+min-width:130px
+}
+
+.table{
+width:100%;
+border-collapse:collapse;
+font-size:12px
+}
+
+.table th,.table td{
+padding:9px 6px;
+border-bottom:1px solid #193c4f;
+text-align:left
+}
+
+.rank{
+color:var(--gold);
+font-weight:900
+}
+
+.notice{
+padding:12px;
+border-radius:13px;
+background:#102a3b;
+border:1px solid #26536b;
+margin:9px 0;
+font-size:12px
+}
+
+.qr{
+max-width:230px;
+width:100%;
+background:white;
+padding:10px;
+border-radius:12px;
+margin:12px auto;
+display:block
+}
+
+.input,select{
+width:100%;
+padding:11px;
+border-radius:11px;
+background:#071925;
+border:1px solid #2a5267;
+color:var(--txt);
+margin:5px 0 9px
+}
+
+.footer{
+position:fixed;
+bottom:0;
+left:0;
+right:0;
+text-align:center;
+padding:9px;
+background:#06121eee;
+border-top:1px solid #173548;
+color:#7894a5;
+font-size:10px
+}
+
+@media(max-width:600px){
+.stats{
+grid-template-columns:repeat(2,1fr)
+}
+
+.grid{
+grid-template-columns:1fr 1fr
+}
+
+.hero h1{
+font-size:23px
+}
 }
 </style>
 </head>
 
 <body>
 
-<div class="nav">
-  <div class="wrap">
+<div class="app">
 
-    <div class="brand">
-      🎱 Pool & Beach
-    </div>
-
-    <div class="row">
-      <a href="#jugador">Jugador</a>
-      <a href="#premios">Premios</a>
-      <a href="#torneos">Torneos</a>
-      <a href="#estadisticas">Estadísticas</a>
-      <a href="#mapa">Mapa</a>
-      <a href="#admin">Panel</a>
-    </div>
-
-  </div>
+<div class="top">
+<div class="brand">POOL <span>&</span> BEACH</div>
+<div class="badge" id="connection">CONECTANDO...</div>
 </div>
-
-<main class="wrap">
 
 <section class="hero">
 
-  <span class="pill">
-    PUERTO PIRÁMIDES
-  </span>
+<h1>🎱 Jugá. Sumá. Competí.</h1>
 
-  <span class="pill" id="mesaBadge">
-    Mesa no seleccionada
-  </span>
+<p>
+Escaneaste una mesa de Pool & Beach.
+Jugá desde el celular, sin instalar ninguna aplicación.
+</p>
 
-  <h1>
-    Pool & Beach Games
-  </h1>
+<div class="stats">
 
-  <p>
-    Escaneá el QR de tu mesa, identificáte y empezá a sumar puntos y tokens.
-  </p>
+<div class="stat">
+<small>Mesa</small>
+<b id="mesa">—</b>
+</div>
 
-</section>
+<div class="stat">
+<small>Fichas</small>
+<b id="tokens">0</b>
+</div>
 
+<div class="stat">
+<small>Puntos</small>
+<b id="points">0</b>
+</div>
 
-<!-- ========================================= -->
-<!-- JUGADOR -->
-<!-- ========================================= -->
+<div class="stat">
+<small>Nivel</small>
+<b id="level">1</b>
+</div>
 
-<section id="jugador" class="section anchor">
-
-  <div class="card">
-
-    <h2>
-      🎮 Tu jugador
-    </h2>
-
-    <div id="authBox">
-
-      <div class="field">
-
-        <label>
-          ¿Cómo querés aparecer?
-        </label>
-
-        <input
-          id="playerName"
-          maxlength="40"
-          placeholder="Tu nombre o apodo"
-        >
-
-      </div>
-
-      <div class="row">
-
-        <button onclick="startPlayer()">
-          Entrar como jugador
-        </button>
-
-        <button
-          class="secondary"
-          onclick="refreshPlayer()"
-        >
-          Actualizar
-        </button>
-
-      </div>
-
-      <div
-        id="authMsg"
-        class="notice small"
-      >
-        El sistema utiliza una sesión anónima de Supabase.
-        No necesitás crear una cuenta para jugar.
-      </div>
-
-    </div>
-
-
-    <div
-      id="playerStats"
-      class="hidden"
-    >
-
-      <div class="grid">
-
-        <div class="card">
-          <div class="muted">
-            Jugador
-          </div>
-
-          <div
-            id="sName"
-            class="stat"
-            style="font-size:25px"
-          >
-            —
-          </div>
-        </div>
-
-
-        <div class="card">
-
-          <div class="muted">
-            Puntos
-          </div>
-
-          <div
-            id="sPoints"
-            class="stat"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="muted">
-            Tokens
-          </div>
-
-          <div
-            id="sTokens"
-            class="stat"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="muted">
-            Posición
-          </div>
-
-          <div
-            id="sRank"
-            class="stat"
-          >
-            —
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="muted">
-            Racha
-          </div>
-
-          <div
-            id="sStreak"
-            class="stat"
-          >
-            0
-          </div>
-
-        </div>
-
-
-        <div class="card">
-
-          <div class="muted">
-            Partidas
-          </div>
-
-          <div
-            id="sGames"
-            class="stat"
-          >
-            0
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
+</div>
 
 </section>
 
+<nav class="tabs">
 
-<!-- ========================================= -->
-<!-- PARTIDAS -->
-<!-- ========================================= -->
+<button class="tab active" onclick="show('games',this)">
+🎮 Juegos
+</button>
 
-<section class="section">
+<button class="tab" onclick="show('ranking',this)">
+🏆 Ranking
+</button>
 
-  <div class="card">
+<button class="tab" onclick="show('prizes',this)">
+🎁 Premios
+</button>
 
-    <h2>
-      🏁 Registrar una partida
-    </h2>
+<button class="tab" onclick="show('tournaments',this)">
+🥇 Torneos
+</button>
 
-    <div class="field">
+<button class="tab" onclick="show('qr',this)">
+📱 QR
+</button>
 
-      <label>
-        Juego
-      </label>
+<button class="tab" onclick="show('admin',this)">
+⚙️ Admin
+</button>
 
-      <select id="gameSelect">
-        <option>
-          Cargando juegos...
-        </option>
-      </select>
+</nav>
 
-    </div>
+<section id="games" class="view active">
 
-    <div class="row">
-
-      <button onclick="registerGame()">
-        Registrar partida y cobrar recompensa
-      </button>
-
-    </div>
-
-    <div
-      id="gameMsg"
-      class="notice"
-    >
-      Seleccioná un juego.
-      Los puntos y tokens salen de la recompensa configurada en Supabase.
-    </div>
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- PREMIOS -->
-<!-- ========================================= -->
-
-<section
-  id="premios"
-  class="section anchor"
->
-
-  <div class="card">
-
-    <h2>
-      🎁 Premios
-    </h2>
-
-    <div
-      id="prizes"
-      class="grid"
-    ></div>
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- TORNEOS -->
-<!-- ========================================= -->
-
-<section
-  id="torneos"
-  class="section anchor"
->
-
-  <div class="card">
-
-    <h2>
-      🏆 Torneos interactivos
-    </h2>
-
-    <div
-      id="tournaments"
-      class="grid"
-    ></div>
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- ESTADISTICAS -->
-<!-- ========================================= -->
-
-<section
-  id="estadisticas"
-  class="section anchor"
->
-
-  <div class="card">
-
-    <h2>
-      📊 Ranking y estadísticas
-    </h2>
-
-    <div
-      id="ranking"
-    ></div>
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- MAPA -->
-<!-- ========================================= -->
-
-<section
-  id="mapa"
-  class="section anchor"
->
-
-  <div class="card">
-
-    <h2>
-      🗺️ Mapa / guía
-    </h2>
-
-    <p class="muted">
-      Encontrá fácilmente Pool & Beach en Puerto Pirámides.
-    </p>
-
-    <img
-      class="map"
-      src="Mapa-guia.png"
-      alt="Mapa guía de Pool & Beach"
-      onerror="
-        this.insertAdjacentHTML(
-          'afterend',
-          '<div class=&quot;notice dangerText&quot;>No se encontró Mapa-guia.png. Verificá que el nombre sea exactamente ese y que esté en la misma carpeta que index.html.</div>'
-        )
-      "
-    >
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- QR -->
-<!-- ========================================= -->
-
-<section class="section">
-
-  <div class="card">
-
-    <h2>
-      📱 QR individuales por mesa
-    </h2>
-
-    <p class="muted">
-      Cada QR abre esta misma página con la mesa seleccionada automáticamente.
-    </p>
-
-    <div
-      id="qrs"
-      class="grid"
-    ></div>
-
-  </div>
-
-</section>
-
-
-<!-- ========================================= -->
-<!-- ADMIN -->
-<!-- ========================================= -->
-
-<section
-  id="admin"
-  class="section anchor"
->
-
-  <div class="card">
-
-    <h2>
-      🔐 Panel de control
-    </h2>
-
-    <div id="adminLogin">
-
-      <p class="muted">
-        Acceso exclusivo para usuarios con rol admin o staff.
-      </p>
-
-      <div class="grid">
-
-        <div class="field">
-
-          <label>
-            Email
-          </label>
-
-          <input
-            id="adminEmail"
-            type="email"
-            autocomplete="username"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label>
-            Contraseña
-          </label>
-
-          <input
-            id="adminPassword"
-            type="password"
-            autocomplete="current-password"
-          >
-
-        </div>
-
-      </div>
-
-      <button onclick="adminLogin()">
-        Iniciar sesión
-      </button>
-
-      <div
-        id="adminMsg"
-        class="notice small"
-      ></div>
-
-    </div>
-
-
-    <div
-      id="adminPanel"
-      class="hidden"
-    >
-
-      <div class="row">
-
-        <span
-          id="adminWho"
-          class="badge"
-        ></span>
-
-        <button
-          class="secondary"
-          onclick="loadAdmin()"
-        >
-          Actualizar panel
-        </button>
-
-        <button
-          class="danger"
-          onclick="adminLogout()"
-        >
-          Cerrar sesión
-        </button>
-
-      </div>
-
-
-      <div class="section">
-
-        <h3>
-          🔔 Nuevas reservas
-        </h3>
-
-        <div
-          id="adminReservations"
-        ></div>
-
-      </div>
-
-
-      <div class="section">
-
-        <h3>
-          🛎️ Nuevos pedidos
-        </h3>
-
-        <div
-          id="adminOrders"
-        ></div>
-
-      </div>
-
-
-      <div class="section">
-
-        <h3>
-          🎁 Canjes pendientes
-        </h3>
-
-        <div
-          id="adminRedemptions"
-        ></div>
-
-      </div>
-
-
-      <div class="section">
-
-        <h3>
-          📱 QRs de mesas
-        </h3>
-
-        <div
-          id="adminQrs"
-          class="grid"
-        ></div>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
+<div class="grid" id="gamesGrid"></div>
 
 <div
-  id="toast"
-  class="toast hidden"
-></div>
+id="gamebox"
+class="card hidden"
+style="margin-top:12px">
+</div>
 
+</section>
 
-<footer class="footer">
+<section id="ranking" class="view">
 
-  Pool & Beach · Puerto Pirámides
-  · Sistema de juegos y fidelización
+<div class="card">
 
-</footer>
+<h2>🏆 Ranking</h2>
 
-</main>
+<div class="muted">
+Los mejores jugadores de Pool & Beach.
+</div>
 
+<div id="rankingList"></div>
+
+</div>
+
+</section>
+
+<section id="prizes" class="view">
+
+<div class="card">
+
+<h2>🎁 Premios</h2>
+
+<div id="prizeList"></div>
+
+</div>
+
+</section>
+
+<section id="tournaments" class="view">
+
+<div class="card">
+
+<h2>🥇 Torneos</h2>
+
+<div id="tourList"></div>
+
+</div>
+
+</section>
+
+<section id="qr" class="view">
+
+<div class="card center">
+
+<h2>📱 QR por mesa</h2>
+
+<p class="muted">
+Cada mesa puede tener su propio acceso.
+</p>
+
+<label>Mesa</label>
+
+<select
+id="tableSelect"
+onchange="makeQR()">
+</select>
+
+<img
+id="qrimg"
+class="qr"
+alt="QR de mesa">
+
+<div
+class="badge"
+id="qrtext">
+</div>
+
+</div>
+
+</section>
+
+<section id="admin" class="view">
+
+<div class="card">
+
+<h2>⚙️ Administración</h2>
+
+<div class="notice">
+Panel preparado para gestionar juegos,
+premios, torneos, mesas y estadísticas
+con Supabase.
+</div>
+
+<div id="adminStats"></div>
+
+<h3>Mesas</h3>
+
+<div id="adminTables"></div>
+
+</div>
+
+</section>
+
+</div>
+
+<div class="footer">
+Pool & Beach · sistema online
+</div>
 
 <script>
 
-/* =========================================
-   SUPABASE
-========================================= */
-
-const SUPABASE_URL =
+const SB_URL =
 'https://nmpakeovqkdajtswjpgm.supabase.co';
 
-const SUPABASE_KEY =
+const SB_KEY =
 'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-const sb =
+const db =
 window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
+SB_URL,
+SB_KEY
 );
 
+let profile=null;
+let games=[];
+let mesaId=null;
 
-/* =========================================
-   VARIABLES
-========================================= */
-
-let currentMesa = null;
-let currentUser = null;
-let currentProfile = null;
+const $ =
+id => document.getElementById(id);
 
 
-/* =========================================
-   HELPERS
-========================================= */
+/* =========================
+   NAVEGACIÓN
+========================= */
 
-const $ = id =>
-  document.getElementById(id);
+function show(id,el){
 
+document
+.querySelectorAll('.view')
+.forEach(x =>
+x.classList.remove('active')
+);
 
-function toast(msg){
+$(id).classList.add('active');
 
-  $('toast').textContent = msg;
+document
+.querySelectorAll('.tab')
+.forEach(x =>
+x.classList.remove('active')
+);
 
-  $('toast').classList.remove('hidden');
+el.classList.add('active');
 
-  setTimeout(
-    () => $('toast').classList.add('hidden'),
-    3500
-  );
+if(id==='ranking')
+loadRanking();
 
-}
+if(id==='prizes')
+loadPrizes();
 
+if(id==='tournaments')
+loadTours();
 
-function esc(s){
+if(id==='qr')
+loadTables();
 
-  return String(s ?? '')
-    .replace(
-      /[&<>"']/g,
-      m => ({
-        '&':'&amp;',
-        '<':'&lt;',
-        '>':'&gt;',
-        '"':'&quot;',
-        "'":'&#39;'
-      }[m])
-    );
-
-}
-
-
-function money(v){
-
-  return Number(v || 0)
-    .toLocaleString(
-      'es-AR',
-      {
-        maximumFractionDigits:0
-      }
-    );
+if(id==='admin')
+loadAdmin();
 
 }
 
 
-/* =========================================
+/* =========================
    INICIO
-========================================= */
+========================= */
 
 async function init(){
 
-  const p =
-    new URLSearchParams(location.search)
-      .get('mesa');
+try{
 
-  if(p){
+const mesaNum =
+new URLSearchParams(location.search)
+.get('mesa') || '1';
 
-    await loadMesa(p);
-
-  }
-
-  await loadGames();
-
-  await loadPrizes();
-
-  await loadTournaments();
-
-  await loadRanking();
-
-  await renderQrs();
-
-  const {
-    data:{session}
-  } =
-  await sb.auth.getSession();
-
-  if(session){
-
-    currentUser =
-      session.user;
-
-    await refreshPlayer();
-
-  }
-
-}
+$('mesa').textContent =
+mesaNum;
 
 
-/* =========================================
-   MESA DESDE QR
-========================================= */
+/* Buscar mesa */
 
-async function loadMesa(token){
+const {data:mesa} =
+await db
+.from('tables_pool')
+.select('*')
+.eq('table_number',+mesaNum)
+.maybeSingle();
 
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('mesas')
-    .select(
-      'id,numero,nombre,servicio,activa,qr_token'
-    )
-    .eq('qr_token',token)
-    .eq('activa',true)
-    .maybeSingle();
+mesaId =
+mesa?.id || null;
 
 
-  if(error || !data){
+/* Sesión */
 
-    $('mesaBadge').textContent =
-      'QR no válido';
-
-    return;
-
-  }
+let {
+data:{session}
+} =
+await db.auth.getSession();
 
 
-  currentMesa = data;
+/* Login anónimo */
 
-  $('mesaBadge').textContent =
-    `Mesa ${data.numero} · ${data.servicio || ''}`;
+if(!session){
+
+let r =
+await db.auth.signInAnonymously();
+
+session =
+r.data?.session;
 
 }
 
 
-/* =========================================
-   CREAR JUGADOR
-========================================= */
-
-async function startPlayer(){
-
-  const name =
-    $('playerName')
-      .value
-      .trim();
-
-
-  if(!name){
-
-    $('authMsg').textContent =
-      'Escribí un nombre o apodo.';
-
-    return;
-
-  }
-
-
-  let session =
-    (
-      await sb.auth.getSession()
-    ).data.session;
-
-
-  if(!session){
-
-    const {
-      data,
-      error
-    } =
-    await sb.auth.signInAnonymously({
-
-      options:{
-        data:{
-          display_name:name
-        }
-      }
-
-    });
-
-
-    if(error){
-
-      $('authMsg').innerHTML =
-        'No se pudo iniciar el jugador. ' +
-        'En Supabase activá <b>Anonymous Sign-Ins</b> ' +
-        'en Authentication → Sign In / Providers → Anonymous.';
-
-      console.error(error);
-
-      return;
-
-    }
-
-
-    session =
-      data.session;
-
-  }
-
-  else{
-
-    const {error} =
-      await sb
-        .from('profiles')
-        .update({
-          display_name:name
-        })
-        .eq(
-          'id',
-          session.user.id
-        );
-
-    if(error){
-
-      console.error(error);
-
-    }
-
-  }
-
-
-  currentUser =
-    session.user;
-
-  await refreshPlayer();
-
-  toast(
-    'Jugador listo 🎮'
-  );
-
-}
-
-
-/* =========================================
-   DATOS DEL JUGADOR
-========================================= */
-
-async function refreshPlayer(){
-
-  if(!currentUser){
-
-    const x =
-      await sb.auth.getSession();
-
-    currentUser =
-      x.data.session?.user || null;
-
-  }
-
-
-  if(!currentUser){
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-  await sb.rpc(
-    'mi_resumen_jugador'
-  );
-
-
-  if(error){
-
-    console.error(error);
-
-    return;
-
-  }
-
-
-  currentProfile =
-    data;
-
-
-  $('authBox')
-    .classList
-    .add('hidden');
-
-
-  $('playerStats')
-    .classList
-    .remove('hidden');
-
-
-  $('sName').textContent =
-    data.display_name ||
-    'Jugador';
-
-
-  $('sPoints').textContent =
-    data.points || 0;
-
-
-  $('sTokens').textContent =
-    data.tokens || 0;
-
-
-  $('sRank').textContent =
-    data.posicion
-      ? `#${data.posicion}`
-      : '—';
-
-
-  $('sStreak').textContent =
-    data.streak || 0;
-
-
-  $('sGames').textContent =
-    data.partidas || 0;
-
-}
-
-
-/* =========================================
-   JUEGOS
-========================================= */
-
-async function loadGames(){
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('games')
-    .select(
-      'id,name,description,icon,points_reward,tokens_reward'
-    )
-    .eq(
-      'active',
-      true
-    )
-    .order('name');
-
-
-  if(error){
-
-    $('gameSelect').innerHTML =
-      '<option>Error al cargar juegos</option>';
-
-    console.error(error);
-
-    return;
-
-  }
-
-
-  $('gameSelect').innerHTML =
-    data
-      .map(
-        g =>
-        `<option value="${g.id}">
-          ${esc(g.icon || '🎮')}
-          ${esc(g.name)}
-          · +${g.points_reward || 0} pts
-          / +${g.tokens_reward || 0} tokens
-        </option>`
-      )
-      .join('');
-
-}
-
-
-/* =========================================
-   ID DE MESA
-========================================= */
-
-async function tablePoolId(){
-
-  if(!currentMesa){
-
-    return null;
-
-  }
-
-
-  const {
-    data
-  } =
-  await sb
-    .from('tables_pool')
-    .select('id')
-    .eq(
-      'table_number',
-      currentMesa.numero
-    )
-    .maybeSingle();
-
-
-  return data?.id || null;
-
-}
-
-
-/* =========================================
-   REGISTRAR PARTIDA
-========================================= */
-
-async function registerGame(){
-
-  if(!currentUser){
-
-    $('gameMsg').textContent =
-      'Primero entrá como jugador.';
-
-    return;
-
-  }
-
-
-  const gid =
-    $('gameSelect').value;
-
-
-  if(!gid){
-
-    return;
-
-  }
-
-
-  const tid =
-    await tablePoolId();
-
-
-  const {
-    data,
-    error
-  } =
-  await sb.rpc(
-    'registrar_partida',
-    {
-      p_game_id:gid,
-      p_table_id:tid,
-      p_metadata:{
-        mesa_numero:
-          currentMesa?.numero || null
-      }
-    }
-  );
-
-
-  if(error){
-
-    $('gameMsg').innerHTML =
-      `<span class="dangerText">
-        ${esc(error.message)}
-      </span>`;
-
-    return;
-
-  }
-
-
-  $('gameMsg').innerHTML =
-    `<span class="ok">
-      Partida registrada:
-      +${data.points_awarded} puntos
-      y
-      +${data.tokens_awarded} tokens.
-    </span>`;
-
-
-  await refreshPlayer();
-
-  await loadRanking();
-
-}
-
-
-/* =========================================
-   PREMIOS
-========================================= */
-
-async function loadPrizes(){
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('prizes')
-    .select(
-      'id,name,description,token_cost,stock'
-    )
-    .eq(
-      'active',
-      true
-    )
-    .order(
-      'token_cost'
-    );
-
-
-  if(error){
-
-    $('prizes').innerHTML =
-      '<div class="notice">No se pudieron cargar los premios.</div>';
-
-    return;
-
-  }
-
-
-  $('prizes').innerHTML =
-    data.length
-
-      ? data
-        .map(
-          p =>
-          `<div class="card">
-
-            <h3>
-              🎁 ${esc(p.name)}
-            </h3>
-
-            <p class="muted">
-              ${esc(p.description || '')}
-            </p>
-
-            <p>
-              <b>
-                ${money(p.token_cost)} tokens
-              </b>
-
-              ${
-                p.stock !== null
-                  ? ` · stock: ${p.stock}`
-                  : ''
-              }
-
-            </p>
-
-            <button
-              onclick="redeem('${p.id}')"
-            >
-              Canjear
-            </button>
-
-          </div>`
-        )
-        .join('')
-
-      :
-
-      '<div class="notice">Todavía no hay premios activos.</div>';
-
-}
-
-
-/* =========================================
-   CANJEAR PREMIO
-========================================= */
-
-async function redeem(id){
-
-  if(!currentUser){
-
-    toast(
-      'Primero entrá como jugador.'
-    );
-
-    return;
-
-  }
-
-
-  if(
-    !confirm(
-      '¿Querés canjear este premio?'
-    )
-  ){
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-  await sb.rpc(
-    'canjear_premio',
-    {
-      p_prize_id:id
-    }
-  );
-
-
-  if(error){
-
-    toast(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  toast(
-    `Canje solicitado: ${data.prize}. ` +
-    `Te quedan ${data.tokens_remaining} tokens.`
-  );
-
-
-  await refreshPlayer();
-
-  await loadPrizes();
-
-}
-
-
-/* =========================================
-   TORNEOS
-========================================= */
-
-async function loadTournaments(){
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('tournaments')
-    .select(
-      'id,name,game_type,starts_at,entry_tokens,max_players,status'
-    )
-    .eq(
-      'status',
-      'open'
-    )
-    .order(
-      'starts_at',
-      {
-        ascending:true
-      }
-    );
-
-
-  if(error){
-
-    $('tournaments').innerHTML =
-      '<div class="notice">No se pudieron cargar los torneos.</div>';
-
-    return;
-
-  }
-
-
-  let counts = {};
-
-
-  if(data.length){
-
-    const {
-      data:ps
-    } =
-    await sb
-      .from('tournament_players')
-      .select(
-        'tournament_id'
-      );
-
-
-    (ps || [])
-      .forEach(
-        x =>
-          counts[x.tournament_id] =
-            (
-              counts[x.tournament_id] || 0
-            ) + 1
-      );
-
-  }
-
-
-  $('tournaments').innerHTML =
-    data.length
-
-      ?
-
-      data
-        .map(
-          t =>
-          `<div class="card">
-
-            <h3>
-              🏆 ${esc(t.name)}
-            </h3>
-
-            <p>
-              ${esc(t.game_type || '')}
-            </p>
-
-            <p class="muted">
-
-              ${
-                t.starts_at
-                  ? new Date(
-                      t.starts_at
-                    ).toLocaleString(
-                      'es-AR'
-                    )
-                  : 'Fecha a confirmar'
-              }
-
-              · inscripción:
-              ${t.entry_tokens || 0}
-              tokens
-
-              ·
-              ${counts[t.id] || 0}/
-              ${t.max_players || '∞'}
-
-            </p>
-
-            <button
-              onclick="joinTournament('${t.id}')"
-            >
-              Inscribirme
-            </button>
-
-          </div>`
-        )
-        .join('')
-
-      :
-
-      '<div class="notice">No hay torneos abiertos en este momento.</div>';
-
-}
-
-
-/* =========================================
-   INSCRIPCION TORNEO
-========================================= */
-
-async function joinTournament(id){
-
-  if(!currentUser){
-
-    toast(
-      'Primero entrá como jugador.'
-    );
-
-    return;
-
-  }
-
-
-  const {
-    error
-  } =
-  await sb.rpc(
-    'inscribirme_torneo',
-    {
-      p_tournament_id:id
-    }
-  );
-
-
-  if(error){
-
-    toast(
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  toast(
-    '¡Inscripción realizada! 🏆'
-  );
-
-
-  await loadTournaments();
-
-}
-
-
-/* =========================================
-   RANKING
-========================================= */
-
-async function loadRanking(){
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('ranking_jugadores')
-    .select(
-      'display_name,points,tokens,streak,partidas,posicion'
-    )
-    .order(
-      'posicion'
-    )
-    .limit(20);
-
-
-  if(error){
-
-    $('ranking').innerHTML =
-      '<div class="notice">No se pudo cargar el ranking.</div>';
-
-    return;
-
-  }
-
-
-  $('ranking').innerHTML =
-
-    `<table class="table">
-
-      <thead>
-
-        <tr>
-          <th>#</th>
-          <th>Jugador</th>
-          <th>Puntos</th>
-          <th>Tokens</th>
-          <th>Racha</th>
-          <th>Partidas</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        ${
-          (data || [])
-            .map(
-              r =>
-              `<tr>
-
-                <td>
-                  ${r.posicion}
-                </td>
-
-                <td>
-                  ${esc(r.display_name)}
-                </td>
-
-                <td>
-                  ${r.points}
-                </td>
-
-                <td>
-                  ${r.tokens}
-                </td>
-
-                <td>
-                  ${r.streak}
-                </td>
-
-                <td>
-                  ${r.partidas}
-                </td>
-
-              </tr>`
-            )
-            .join('')
-        }
-
-      </tbody>
-
-    </table>`;
-
-}
-
-
-/* =========================================
-   MESAS
-========================================= */
-
-async function getPublicMesaData(){
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('mesas')
-    .select(
-      'numero,nombre,servicio,activa,qr_token'
-    )
-    .eq(
-      'activa',
-      true
-    )
-    .order(
-      'numero'
-    );
-
-
-  return error
-    ? []
-    : data || [];
-
-}
-
-
-/* =========================================
-   URL QR
-========================================= */
-
-function qrUrl(token){
-
-  return `${location.origin}${location.pathname}?mesa=${encodeURIComponent(token)}`;
-
-}
-
-
-/* =========================================
-   CREAR QR
-========================================= */
-
-async function renderQrs(target='qrs'){
-
-  const list =
-    await getPublicMesaData();
-
-
-  const box =
-    $(target);
-
-
-  if(!box){
-
-    return;
-
-  }
-
-
-  box.innerHTML =
-    list
-      .map(
-        m =>
-        `<div class="card mesa-card">
-
-          <h3>
-            🎱
-            ${esc(
-              m.nombre ||
-              'Mesa ' + m.numero
-            )}
-          </h3>
-
-          <div class="small muted">
-            ${esc(
-              m.servicio || ''
-            )}
-          </div>
-
-          <div
-            id="qr-${m.numero}"
-            class="qr"
-          ></div>
-
-          <div class="small">
-            ${esc(
-              qrUrl(m.qr_token)
-            )}
-          </div>
-
-          <button
-            class="secondary"
-            onclick="
-              window.open(
-                '${qrUrl(m.qr_token)}',
-                '_blank'
-              )
-            "
-          >
-            Abrir mesa
-          </button>
-
-        </div>`
-      )
-      .join('');
-
-
-  list.forEach(
-    m =>
-      new QRCode(
-        $(`qr-${m.numero}`),
-        {
-          text:
-            qrUrl(m.qr_token),
-
-          width:180,
-
-          height:180
-        }
-      )
-  );
-
-}
-
-
-/* =========================================
-   LOGIN ADMIN
-========================================= */
-
-async function adminLogin(){
-
-  const email =
-    $('adminEmail')
-      .value
-      .trim();
-
-  const password =
-    $('adminPassword')
-      .value;
-
-
-  const {
-    data,
-    error
-  } =
-  await sb.auth.signInWithPassword(
-    {
-      email,
-      password
-    }
-  );
-
-
-  if(error){
-
-    $('adminMsg').textContent =
-      error.message;
-
-    return;
-
-  }
-
-
-  currentUser =
-    data.user;
-
-
-  await checkAdmin();
-
-}
-
-
-/* =========================================
-   COMPROBAR ADMIN
-========================================= */
-
-async function checkAdmin(){
-
-  if(!currentUser){
-
-    return;
-
-  }
-
-
-  const {
-    data,
-    error
-  } =
-  await sb
-    .from('profiles')
-    .select(
-      'display_name,role'
-    )
-    .eq(
-      'id',
-      currentUser.id
-    )
-    .single();
-
-
-  if(
-    error ||
-    !data ||
-    ![
-      'admin',
-      'staff'
-    ].includes(data.role)
-  ){
-
-    $('adminMsg').textContent =
-      'Este usuario no tiene permisos de admin/staff.';
-
-    return;
-
-  }
-
-
-  $('adminLogin')
-    .classList
-    .add('hidden');
-
-
-  $('adminPanel')
-    .classList
-    .remove('hidden');
-
-
-  $('adminWho').textContent =
-    `${data.display_name} · ${data.role}`;
-
-
-  await loadAdmin();
-
-}
-
-
-/* =========================================
-   PANEL ADMIN
-========================================= */
-
-async function loadAdmin(){
-
-  const r =
-    await sb
-      .from('reservas')
-      .select('*')
-      .order(
-        'created_at',
-        {
-          ascending:false
-        }
-      )
-      .limit(30);
-
-
-  $('adminReservations').innerHTML =
-    r.error
-
-      ?
-
-      `<div class="notice dangerText">
-        ${esc(r.error.message)}
-      </div>`
-
-      :
-
-      renderAdminRows(
-        r.data,
-        'reserva'
-      );
-
-
-  const p =
-    await sb
-      .from('pedidos')
-      .select('*')
-      .order(
-        'created_at',
-        {
-          ascending:false
-        }
-      )
-      .limit(30);
-
-
-  $('adminOrders').innerHTML =
-    p.error
-
-      ?
-
-      `<div class="notice dangerText">
-        ${esc(p.error.message)}
-      </div>`
-
-      :
-
-      renderAdminRows(
-        p.data,
-        'pedido'
-      );
-
-
-  const x =
-    await sb
-      .from('prize_redemptions')
-      .select(
-        'id,token_cost,status,created_at,prize_id,user_id,prizes(name),profiles(display_name)'
-      )
-      .order(
-        'created_at',
-        {
-          ascending:false
-        }
-      )
-      .limit(30);
-
-
-  $('adminRedemptions').innerHTML =
-    x.error
-
-      ?
-
-      `<div class="notice dangerText">
-        ${esc(x.error.message)}
-      </div>`
-
-      :
-
-      renderAdminRows(
-        x.data,
-        'canje'
-      );
-
-
-  await renderQrs(
-    'adminQrs'
-  );
-
-}
-
-
-/* =========================================
-   FILAS ADMIN
-========================================= */
-
-function renderAdminRows(
-  rows,
-  type
-){
-
-  if(!rows?.length){
-
-    return `
-      <div class="notice">
-        No hay registros.
-      </div>
-    `;
-
-  }
-
-
-  return `
-
-    <table class="table">
-
-      <thead>
-
-        <tr>
-          <th>Fecha</th>
-          <th>Detalle</th>
-          <th>Estado</th>
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        ${
-          rows
-            .map(
-              x => {
-
-                let detail = '';
-
-                let status =
-                  x.estado ||
-                  x.status ||
-                  '';
-
-
-                if(
-                  type === 'reserva'
-                ){
-
-                  detail =
-                    `${esc(x.nombre)}
-                     · ${esc(x.servicio || '')}
-                     · ${esc(x.fecha)}
-                     ${esc(x.hora)}`;
-
-                }
-
-
-                if(
-                  type === 'pedido'
-                ){
-
-                  detail =
-                    `${esc(
-                      x.nombre_cliente ||
-                      'Cliente'
-                    )}
-                    · $${money(x.total)}
-                    · ${esc(
-                      x.tipo_entrega ||
-                      x.tipo ||
-                      ''
-                    )}`;
-
-                }
-
-
-                if(
-                  type === 'canje'
-                ){
-
-                  detail =
-                    `${esc(
-                      x.profiles?.display_name ||
-                      'Jugador'
-                    )}
-                    · ${esc(
-                      x.prizes?.name ||
-                      'Premio'
-                    )}
-                    · ${x.token_cost}
-                    tokens`;
-
-                }
-
-
-                return `
-
-                  <tr>
-
-                    <td>
-                      ${new Date(
-                        x.created_at
-                      ).toLocaleString(
-                        'es-AR'
-                      )}
-                    </td>
-
-                    <td>
-                      ${detail}
-                    </td>
-
-                    <td>
-                      <span class="badge">
-                        ${esc(status)}
-                      </span>
-                    </td>
-
-                  </tr>
-
-                `;
-
-              }
-            )
-            .join('')
-        }
-
-      </tbody>
-
-    </table>
-
-  `;
-
-}
-
-
-/* =========================================
-   CERRAR SESION
-========================================= */
-
-async function adminLogout(){
-
-  await sb.auth.signOut();
-
-  location.reload();
-
-}
-
-
-/* =========================================
-   CAMBIOS DE SESION
-========================================= */
-
-sb.auth.onAuthStateChange(
-  async(
-    event,
-    session
-  ) => {
-
-    if(session){
-
-      currentUser =
-        session.user;
-
-      await refreshPlayer();
-
-      await checkAdmin();
-
-    }
-
-  }
+if(!session)
+throw new Error(
+'No se pudo iniciar sesión'
 );
 
 
-/* =========================================
-   ARRANCAR
-========================================= */
+/* Perfil */
+
+let r =
+await db
+.from('profiles')
+.select('*')
+.eq('id',session.user.id)
+.maybeSingle();
+
+
+if(!r.data){
+
+await db
+.from('profiles')
+.insert({
+id:session.user.id,
+display_name:
+'Jugador ' +
+session.user.id.slice(0,4)
+});
+
+r =
+await db
+.from('profiles')
+.select('*')
+.eq('id',session.user.id)
+.single();
+
+}
+
+
+profile=r.data;
+
+$('connection').textContent =
+'● ONLINE';
+
+
+await loadGames();
+
+updateHeader();
+
+await loadRanking();
+
+await loadPrizes();
+
+await loadTours();
+
+await loadTables();
+
+
+}catch(e){
+
+console.error(e);
+
+$('connection').textContent =
+'ERROR';
+
+$('gamebox')
+.classList.remove('hidden');
+
+$('gamebox').innerHTML =
+'<b>No se pudo conectar.</b>' +
+'<p class="muted">' +
+e.message +
+'</p>';
+
+}
+
+}
+
+
+/* =========================
+   DATOS DEL JUGADOR
+========================= */
+
+function updateHeader(){
+
+if(!profile)
+return;
+
+$('tokens').textContent =
+profile.tokens ?? 0;
+
+$('points').textContent =
+profile.points ?? 0;
+
+$('level').textContent =
+Math.floor(
+(profile.points ?? 0) / 100
+) + 1;
+
+}
+
+
+/* =========================
+   JUEGOS
+========================= */
+
+async function loadGames(){
+
+let r =
+await db
+.from('games')
+.select('*')
+.eq('active',true)
+.order('created_at');
+
+games =
+r.data || [];
+
+$('gamesGrid').innerHTML =
+games.map(g => `
+
+<div
+class="card game"
+onclick="play('${g.id}')">
+
+<div class="icon">
+${g.icon || '🎮'}
+</div>
+
+<h3>
+${g.name}
+</h3>
+
+<div class="muted">
+${g.description || ''}
+</div>
+
+<div
+style="
+margin-top:10px;
+color:var(--sky);
+font-size:12px;
+font-weight:900">
+
+JUGAR →
+
+</div>
+
+</div>
+
+`).join('');
+
+}
+
+
+/* =========================
+   ABRIR JUEGO
+========================= */
+
+async function play(id){
+
+let g =
+games.find(x => x.id === id);
+
+if(!g)
+return;
+
+let task;
+
+if(g.name === 'Trivia Express')
+task = triviaTask();
+
+else if(g.name === 'Dados Beach')
+task = diceTask();
+
+else if(g.name === 'Duelo 1 vs 1')
+task = duelTask();
+
+else if(g.name === 'Misión del día')
+task = missionTask();
+
+else if(g.name === 'Desafío de Pool')
+task = poolTask();
+
+else
+task = retoTask();
+
+
+$('gamebox')
+.classList.remove('hidden');
+
+$('gamebox').innerHTML =
+'<h2>' +
+g.icon +
+' ' +
+g.name +
+'</h2>' +
+task;
+
+}
+
+
+/* =========================
+   REGISTRAR PARTIDA
+========================= */
+
+function action(gameId,extra={}){
+
+let g =
+games.find(x => x.id === gameId);
+
+if(!g || !profile)
+return;
+
+
+db
+.from('game_plays')
+.insert({
+
+user_id:profile.id,
+
+game_id:gameId,
+
+table_id:mesaId,
+
+points_awarded:
+g.points_reward,
+
+tokens_awarded:
+g.tokens_reward,
+
+metadata:extra
+
+})
+.then(async r => {
+
+if(r.error)
+throw r.error;
+
+
+let np =
+(profile.points || 0) +
+(g.points_reward || 0);
+
+let nt =
+(profile.tokens || 0) +
+(g.tokens_reward || 0);
+
+
+let u =
+await db
+.from('profiles')
+.update({
+
+points:np,
+
+tokens:nt,
+
+streak:
+(profile.streak || 0) + 1
+
+})
+.eq('id',profile.id);
+
+
+if(u.error)
+throw u.error;
+
+
+profile={
+...profile,
+
+points:np,
+
+tokens:nt,
+
+streak:
+(profile.streak || 0) + 1
+};
+
+
+updateHeader();
+
+
+alert(
+'¡Ganaste ' +
+g.points_reward +
+' puntos y ' +
+g.tokens_reward +
+' fichas!'
+);
+
+
+})
+.catch(e =>
+alert(e.message)
+);
+
+}
+
+
+/* =========================
+   RETO
+========================= */
+
+function retoTask(){
+
+let a=[
+
+'Meté una bola difícil 🎱',
+
+'Hacé una combinación',
+
+'Tiro con banda',
+
+'Desafiá al ganador',
+
+'Conseguí 3 bolas seguidas'
+
+];
+
+let x =
+a[Math.floor(Math.random()*a.length)];
+
+let g =
+games.find(
+x => x.name === 'Reto Pool & Beach'
+);
+
+return `
+
+<div class="question">
+${x}
+</div>
+
+<button
+class="btn gold"
+onclick="action('${g?.id}')">
+
+✅ ¡Lo hice!
+
+</button>
+
+`;
+
+}
+
+
+/* =========================
+   POOL
+========================= */
+
+function poolTask(){
+
+let a=[
+
+'Embocá la bola 8',
+
+'Embocá 2 bolas seguidas',
+
+'Hacé un tiro con banda',
+
+'Hacé una combinación'
+
+];
+
+let x =
+a[Math.floor(Math.random()*a.length)];
+
+let g =
+games.find(
+x => x.name === 'Desafío de Pool'
+);
+
+return `
+
+<div class="question">
+${x}
+</div>
+
+<button
+class="btn"
+onclick="action('${g?.id}')">
+
+🎱 Desafío logrado
+
+</button>
+
+`;
+
+}
+
+
+/* =========================
+   DADOS
+========================= */
+
+function diceTask(){
+
+let n =
+Math.floor(Math.random()*6)+1;
+
+let g =
+games.find(
+x => x.name === 'Dados Beach'
+);
+
+return `
+
+<div
+class="question"
+style="font-size:55px">
+
+${n} 🎲
+
+</div>
+
+<button
+class="btn gold"
+onclick="action('${g?.id}',{roll:${n}})">
+
+Cobrar tirada
+
+</button>
+
+`;
+
+}
+
+
+/* =========================
+   MISIÓN
+========================= */
+
+function missionTask(){
+
+let g =
+games.find(
+x => x.name === 'Misión del día'
+);
+
+return `
+
+<div class="question">
+
+⭐ Completá una misión
+especial del local
+
+</div>
+
+<p class="muted">
+
+El personal puede validar
+el desafío antes del premio.
+
+</p>
+
+<button
+class="btn gold"
+onclick="action('${g?.id}')">
+
+Completar misión
+
+</button>
+
+`;
+
+}
+
+
+/* =========================
+   DUELO
+========================= */
+
+function duelTask(){
+
+let g =
+games.find(
+x => x.name === 'Duelo 1 vs 1'
+);
+
+return `
+
+<div class="question">
+
+👥 Jugador ganador de la ronda
+
+</div>
+
+<div class="row">
+
+<button
+class="btn"
+onclick="action('${g?.id}',{winner:1})">
+
+JUGADOR 1
+
+</button>
+
+<button
+class="btn"
+onclick="action('${g?.id}',{winner:2})">
+
+JUGADOR 2
+
+</button>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================
+   TRIVIA
+========================= */
+
+function triviaTask(){
+
+let q=[
+
+[
+'¿Qué número es la bola negra?',
+'8'
+],
+
+[
+'¿Cuántas bolas numeradas hay en bola 8?',
+'15'
+],
+
+[
+'¿Quién ganó el Mundial 2022?',
+'Argentina'
+]
+
+][
+Math.floor(Math.random()*3)
+];
+
+
+let g =
+games.find(
+x => x.name === 'Trivia Express'
+);
+
+
+let opts=[
+
+q[1],
+
+q[1]==='Argentina'
+?'Brasil'
+:q[1]==='8'
+?'9'
+:'16',
+
+'7',
+
+'10'
+
+].sort(
+()=>Math.random()-.5
+);
+
+
+return `
+
+<div class="question">
+${q[0]}
+</div>
+
+${opts.map(o => `
+
+<button
+class="btn dark"
+style="
+width:100%;
+margin:4px 0"
+onclick="triviaAnswer(
+'${o}',
+'${q[1]}',
+'${g?.id}'
+)">
+
+${o}
+
+</button>
+
+`).join('')}
+
+`;
+
+}
+
+
+function triviaAnswer(o,c,id){
+
+if(o===c)
+
+action(
+id,
+{answer:o}
+);
+
+else
+
+alert(
+'Incorrecto. ¡Probá otra vez!'
+);
+
+}
+
+
+/* =========================
+   RANKING
+========================= */
+
+async function loadRanking(){
+
+let r =
+await db
+.from('ranking')
+.select('*')
+.order('position')
+.limit(20);
+
+let a =
+r.data || [];
+
+$('rankingList').innerHTML =
+
+a.length
+
+?
+
+'<table class="table">' +
+
+'<tr>' +
+'<th>#</th>' +
+'<th>Jugador</th>' +
+'<th>Puntos</th>' +
+'<th>Fichas</th>' +
+'</tr>' +
+
+a.map(x => `
+
+<tr>
+
+<td class="rank">
+${x.position}
+</td>
+
+<td>
+${x.display_name}
+</td>
+
+<td>
+${x.points}
+</td>
+
+<td>
+${x.tokens}
+</td>
+
+</tr>
+
+`).join('') +
+
+'</table>'
+
+:
+
+'<div class="notice">' +
+'Todavía no hay jugadores en el ranking.' +
+'</div>';
+
+}
+
+
+/* =========================
+   PREMIOS
+========================= */
+
+async function loadPrizes(){
+
+let r =
+await db
+.from('prizes')
+.select('*')
+.eq('active',true)
+.order('token_cost');
+
+
+$('prizeList').innerHTML =
+
+(r.data || []).map(p => `
+
+<div class="notice">
+
+<b>
+🎁 ${p.name}
+</b>
+
+<br>
+
+<span class="muted">
+${p.description || ''}
+</span>
+
+<br>
+
+<span class="badge">
+${p.token_cost} fichas
+</span>
+
+<button
+class="btn dark"
+style="
+float:right;
+padding:7px 10px"
+onclick="redeem(
+'${p.id}',
+${p.token_cost},
+'${p.name.replace(/'/g,"\\'")}'
+)">
+
+Canjear
+
+</button>
+
+<div style="clear:both"></div>
+
+</div>
+
+`).join('');
+
+}
+
+
+/* =========================
+   CANJEAR PREMIO
+========================= */
+
+async function redeem(id,cost,name){
+
+if(profile.tokens < cost)
+
+return alert(
+'Te faltan fichas. Tenés ' +
+profile.tokens +
+' y necesitás ' +
+cost +
+'.'
+);
+
+
+let r =
+await db
+.from('prize_redemptions')
+.insert({
+
+user_id:profile.id,
+
+prize_id:id,
+
+token_cost:cost
+
+});
+
+
+if(r.error)
+return alert(r.error.message);
+
+
+let u =
+await db
+.from('profiles')
+.update({
+
+tokens:
+profile.tokens-cost
+
+})
+.eq(
+'id',
+profile.id
+);
+
+
+if(u.error)
+return alert(u.error.message);
+
+
+profile.tokens -= cost;
+
+updateHeader();
+
+
+alert(
+'Canje solicitado: ' +
+name +
+'\nMostrá esta pantalla al personal.'
+);
+
+}
+
+
+/* =========================
+   TORNEOS
+========================= */
+
+async function loadTours(){
+
+let r =
+await db
+.from('tournaments')
+.select('*')
+.in(
+'status',
+[
+'open',
+'in_progress'
+]
+)
+.order('starts_at');
+
+
+$('tourList').innerHTML =
+
+(r.data || []).length
+
+?
+
+(r.data || []).map(t => `
+
+<div class="notice">
+
+<b>
+🥇 ${t.name}
+</b>
+
+<br>
+
+🎱 ${t.game_type}
+
+·
+
+🎟️ ${t.entry_tokens} fichas
+
+·
+
+👥 ${t.max_players || 'sin límite'}
+
+<br>
+
+<button
+class="btn"
+style="margin-top:8px"
+onclick="join(
+'${t.id}',
+${t.entry_tokens}
+)">
+
+Inscribirme
+
+</button>
+
+</div>
+
+`).join('')
+
+:
+
+'<div class="notice">' +
+'No hay torneos abiertos actualmente.' +
+'</div>';
+
+}
+
+
+/* =========================
+   INSCRIPCIÓN TORNEO
+========================= */
+
+async function join(id,cost){
+
+if(profile.tokens < cost)
+
+return alert(
+'No tenés fichas suficientes.'
+);
+
+
+let r =
+await db
+.from('tournament_players')
+.insert({
+
+tournament_id:id,
+
+user_id:profile.id
+
+});
+
+
+if(r.error)
+return alert(r.error.message);
+
+
+let u =
+await db
+.from('profiles')
+.update({
+
+tokens:
+profile.tokens-cost
+
+})
+.eq(
+'id',
+profile.id
+);
+
+
+if(u.error)
+return alert(u.error.message);
+
+
+profile.tokens -= cost;
+
+updateHeader();
+
+
+alert(
+'¡Inscripción registrada!'
+);
+
+}
+
+
+/* =========================
+   MESAS
+========================= */
+
+async function loadTables(){
+
+let r =
+await db
+.from('tables_pool')
+.select('*')
+.eq('active',true)
+.order('table_number');
+
+
+let a =
+r.data || [];
+
+
+$('tableSelect').innerHTML =
+
+a.map(t => `
+
+<option
+value="${t.table_number}">
+
+Mesa ${t.table_number}
+
+</option>
+
+`).join('');
+
+
+$('tableSelect').value =
+
+new URLSearchParams(location.search)
+.get('mesa')
+
+||
+
+a[0]?.table_number
+
+||
+
+1;
+
+
+makeQR();
+
+
+$('adminTables').innerHTML =
+
+a.map(t => `
+
+<div class="notice">
+
+🎱 Mesa ${t.table_number}
+
+—
+
+${t.name || 'Activa'}
+
+</div>
+
+`).join('');
+
+}
+
+
+/* =========================
+   GENERAR QR
+========================= */
+
+function makeQR(){
+
+let n =
+$('tableSelect').value || '1';
+
+
+let url =
+location.origin +
+location.pathname +
+'?mesa=' +
+encodeURIComponent(n);
+
+
+$('qrimg').src =
+
+'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' +
+
+encodeURIComponent(url);
+
+
+$('qrtext').textContent =
+'Mesa ' +
+n +
+' · ' +
+url;
+
+}
+
+
+/* =========================
+   ADMIN
+========================= */
+
+async function loadAdmin(){
+
+let [
+p,
+g,
+t,
+b
+] =
+
+await Promise.all([
+
+db
+.from('profiles')
+.select(
+'id',
+{
+count:'exact',
+head:true
+}
+),
+
+db
+.from('game_plays')
+.select(
+'id',
+{
+count:'exact',
+head:true
+}
+),
+
+db
+.from('tournaments')
+.select(
+'id',
+{
+count:'exact',
+head:true
+}
+),
+
+db
+.from('business_events')
+.select('amount')
+
+]);
+
+
+let total =
+
+(b.data || [])
+.reduce(
+(s,x) =>
+s +
+Number(
+x.amount || 0
+),
+0
+);
+
+
+$('adminStats').innerHTML = `
+
+<div class="grid">
+
+<div class="notice">
+
+<b>Jugadores</b>
+
+<br>
+
+${p.count || 0}
+
+</div>
+
+<div class="notice">
+
+<b>Partidas</b>
+
+<br>
+
+${g.count || 0}
+
+</div>
+
+<div class="notice">
+
+<b>Torneos</b>
+
+<br>
+
+${t.count || 0}
+
+</div>
+
+<div class="notice">
+
+<b>Importe registrado</b>
+
+<br>
+
+$${total.toLocaleString('es-AR')}
+
+</div>
+
+</div>
+
+`;
+
+}
+
+
+/* =========================
+   ARRANQUE
+========================= */
 
 init();
 
