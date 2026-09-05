@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pool & Beach Games | Puerto Pirámides</title>
-<meta name="description"
-content="Pool & Beach Games - juegos, puntos, tokens, ranking, premios y torneos en Puerto Pirámides.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
@@ -42,6 +40,10 @@ input{
 }
 button{
   cursor:pointer;
+}
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
 }
 a{
   color:inherit;
@@ -137,6 +139,9 @@ header{
   background:#07141d;
   color:white;
   outline:none;
+}
+.name-form input:focus{
+  border-color:var(--primary);
 }
 .stats{
   display:grid;
@@ -254,10 +259,6 @@ section{
   background:var(--danger);
   color:white;
 }
-.btn:disabled{
-  opacity:.5;
-  cursor:not-allowed;
-}
 .ranking{
   display:flex;
   flex-direction:column;
@@ -355,119 +356,173 @@ footer{
   .rank-row{
     grid-template-columns:38px 1fr auto;
   }
+  .header-inner{
+    min-height:60px;
+  }
+  .logo{
+    font-size:17px;
+  }
+  .table-badge{
+    font-size:11px;
+    padding:8px 10px;
+  }
 }
 </style>
 </head>
 <body>
 <header>
   <div class="container header-inner">
-    <div class="logo">POOL <span>&</span> BEACH <span>GAMES</span></div>
-    <div id="tableBadge" class="table-badge">Mesa: —</div>
+<div class="logo">
+  POOL <span>&</span> BEACH <span>GAMES</span>
+</div>
+<div id="tableBadge" class="table-badge">
+  Mesa: —
+</div>
   </div>
 </header>
 <main class="container">
   <div class="hero">
-    <h1>🎱 Pool & Beach <span>Games</span></h1>
-    <p>
-      Jugá, sumá puntos, conseguí tokens, subí en el ranking
-      y canjeá premios.
-    </p>
+<h1>
+  🎱 Pool & Beach <span>Games</span>
+</h1>
+<p>
+  Jugá, sumá puntos, conseguí tokens, subí en el ranking
+  y canjeá premios.
+</p>
   </div>
   <div class="profile-card">
-    <div class="profile-top">
-      <div>
-        <div class="small">Jugador</div>
-        <div id="playerName" class="player-name">Cargando...</div>
-      </div>
-      <div id="playerId" class="small"></div>
-    </div>
-    <div class="name-form">
-      <input
-        id="nameInput"
-        type="text"
-        maxlength="40"
-        placeholder="¿Cómo te llamamos?"
-      >
-      <button class="btn" style="width:auto" onclick="saveName()">
-        Guardar nombre
-      </button>
-    </div>
-    <div class="stats">
-      <div class="stat">
-        <div id="points" class="stat-value">0</div>
-        <div class="stat-label">⭐ PUNTOS</div>
-      </div>
-      <div class="stat">
-        <div id="tokens" class="stat-value">0</div>
-        <div class="stat-label">🪙 TOKENS</div>
-      </div>
-      <div class="stat">
-        <div id="streak" class="stat-value">0</div>
-        <div class="stat-label">🔥 RACHA</div>
-      </div>
-      <div class="stat">
-        <div id="plays" class="stat-value">0</div>
-        <div class="stat-label">🎮 PARTIDAS</div>
-      </div>
+<div class="profile-top">
+  <div>
+    <div class="small">Jugador</div>
+    <div id="playerName" class="player-name">
+      Cargando...
     </div>
   </div>
+  <div id="playerId" class="small"></div>
+</div>
+<div class="name-form">
+  <input
+    id="nameInput"
+    type="text"
+    maxlength="40"
+    placeholder="¿Cómo te llamamos?"
+    autocomplete="nickname"
+  >
+  <button
+    id="saveNameButton"
+    class="btn"
+    style="width:auto"
+    onclick="saveName()"
+  >
+    Guardar nombre
+  </button>
+</div>
+<div class="stats">
+  <div class="stat">
+    <div id="points" class="stat-value">0</div>
+    <div class="stat-label">⭐ PUNTOS</div>
+  </div>
+  <div class="stat">
+    <div id="tokens" class="stat-value">0</div>
+    <div class="stat-label">🪙 TOKENS</div>
+  </div>
+  <div class="stat">
+    <div id="streak" class="stat-value">0</div>
+    <div class="stat-label">🔥 RACHA</div>
+  </div>
+  <div class="stat">
+    <div id="plays" class="stat-value">0</div>
+    <div class="stat-label">🎮 PARTIDAS</div>
+  </div>
+</div>
+  </div>
   <nav>
-    <a class="tab" href="#juegos">🎮 Juegos</a>
-    <a class="tab" href="#ranking">🏆 Ranking</a>
-    <a class="tab" href="#premios">🎁 Premios</a>
-    <a class="tab" href="#torneos">🏅 Torneos</a>
-    <a class="tab" href="admin.html">⚙️ Admin</a>
+<a class="tab" href="#juegos">🎮 Juegos</a>
+<a class="tab" href="#ranking">🏆 Ranking</a>
+<a class="tab" href="#premios">🎁 Premios</a>
+<a class="tab" href="#torneos">🏅 Torneos</a>
+<a class="tab" href="admin.html">⚙️ Admin</a>
   </nav>
   <section id="juegos">
-    <div class="section-title">
-      <h2>🎮 Juegos</h2>
-      <span class="small">Elegí un desafío</span>
-    </div>
-    <div id="gamesGrid" class="grid">
-      <div class="empty">Cargando juegos...</div>
-    </div>
+<div class="section-title">
+  <h2>🎮 Juegos</h2>
+  <span class="small">
+    Elegí un desafío
+  </span>
+</div>
+<div id="gamesGrid" class="grid">
+  <div class="empty">
+    Cargando juegos...
+  </div>
+</div>
   </section>
   <section id="ranking">
-    <div class="section-title">
-      <h2>🏆 Ranking</h2>
-      <span class="small">Top 100</span>
-    </div>
-    <div id="rankingList" class="ranking">
-      <div class="empty">Cargando ranking...</div>
-    </div>
+<div class="section-title">
+  <h2>🏆 Ranking</h2>
+  <span class="small">
+    Top 100
+  </span>
+</div>
+<div id="rankingList" class="ranking">
+  <div class="empty">
+    Cargando ranking...
+  </div>
+</div>
   </section>
   <section id="premios">
-    <div class="section-title">
-      <h2>🎁 Premios</h2>
-      <span class="small">Canjeá con tus tokens</span>
-    </div>
-    <div id="prizesGrid" class="grid">
-      <div class="empty">Cargando premios...</div>
-    </div>
+<div class="section-title">
+  <h2>🎁 Premios</h2>
+  <span class="small">
+    Canjeá con tus tokens
+  </span>
+</div>
+<div id="prizesGrid" class="grid">
+  <div class="empty">
+    Cargando premios...
+  </div>
+</div>
   </section>
   <section id="torneos">
-    <div class="section-title">
-      <h2>🏅 Torneos</h2>
-      <span class="small">Competí y ganá</span>
-    </div>
-    <div id="tournamentsGrid" class="grid">
-      <div class="empty">Cargando torneos...</div>
-    </div>
+<div class="section-title">
+  <h2>🏅 Torneos</h2>
+  <span class="small">
+    Competí y ganá
+  </span>
+</div>
+<div id="tournamentsGrid" class="grid">
+  <div class="empty">
+    Cargando torneos...
+  </div>
+</div>
   </section>
 </main>
 <div id="message" class="message"></div>
 <footer>
-  <div>Pool & Beach · Puerto Pirámides</div>
-  <div style="margin-top:6px">Pool & Beach Games</div>
+  <div>
+    Pool & Beach · Puerto Pirámides
+  </div>
+  <div style="margin-top:6px">
+    Pool & Beach Games
+  </div>
 </footer>
 <script>
-const SB_URL = 'https://nmpakeovqkdajtswjpgm.supabase.co';
-const SB_KEY = 'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
-const db = window.supabase.createClient(SB_URL, SB_KEY);
+const SB_URL =
+  'https://nmpakeovqkdajtswjpgm.supabase.co';
+const SB_KEY =
+  'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
+const db =
+  window.supabase.createClient(
+    SB_URL,
+    SB_KEY
+  );
 let currentUser = null;
 let profile = null;
 let currentTable = null;
 let games = [];
+let isPlaying = false;
+let isSavingName = false;
+let isRedeeming = false;
+let isJoiningTournament = false;
 function escapeHTML(value){
   return String(value ?? '')
     .replaceAll('&','&amp;')
@@ -477,16 +532,23 @@ function escapeHTML(value){
     .replaceAll("'","&#039;");
 }
 function showMessage(text,error=false){
-  const el=document.getElementById('message');
-  el.textContent=text;
-  el.className='message show' + (error ? ' error' : '');
+  const el =
+    document.getElementById('message');
+  el.textContent = text;
+  el.className =
+    'message show' +
+    (error ? ' error' : '');
   clearTimeout(window.messageTimer);
-  window.messageTimer=setTimeout(()=>{
-    el.className='message';
-  },3500);
+  window.messageTimer =
+    setTimeout(()=>{
+      el.className='message';
+    },3500);
 }
 function getTableFromURL(){
-  const params=new URLSearchParams(window.location.search);
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
   return (
     params.get('mesa') ||
     params.get('table') ||
@@ -495,175 +557,415 @@ function getTableFromURL(){
   );
 }
 async function initAuth(){
-  const {data,error}=await db.auth.getSession();
+  const {
+    data,
+    error
+  } = await db.auth.getSession();
   if(error) throw error;
   if(data.session){
-    currentUser=data.session.user;
+    currentUser =
+      data.session.user;
     return;
   }
-  const result=await db.auth.signInAnonymously();
-  if(result.error) throw result.error;
-  currentUser=result.data.user;
+  const result =
+    await db.auth.signInAnonymously();
+  if(result.error)
+    throw result.error;
+  currentUser =
+    result.data.user;
 }
 async function loadTable(){
-  const tableParam=getTableFromURL();
+  const tableParam =
+    getTableFromURL();
   if(!tableParam){
-    document.getElementById('tableBadge').textContent='Mesa: general';
+    document.getElementById(
+      'tableBadge'
+    ).textContent =
+      'Mesa: general';
     return;
   }
-  let query=db
-    .from('tables_pool')
-    .select('*')
-    .eq('active',true);
+  let query =
+    db
+      .from('tables_pool')
+      .select('*')
+      .eq('active',true);
   if(/^[0-9]+$/.test(tableParam)){
-    query=query.eq('table_number',Number(tableParam));
+    query =
+      query.eq(
+        'table_number',
+        Number(tableParam)
+      );
   }else{
-    query=query.eq('id',tableParam);
+    query =
+      query.eq(
+        'id',
+        tableParam
+      );
   }
-  const {data,error}=await query.maybeSingle();
+  const {
+    data,
+    error
+  } =
+    await query.maybeSingle();
   if(error){
     console.error(error);
-    document.getElementById('tableBadge').textContent='Mesa: ' + tableParam;
+    document.getElementById(
+      'tableBadge'
+    ).textContent =
+      'Mesa: ' +
+      escapeHTML(tableParam);
     return;
   }
   if(data){
-    currentTable=data;
-    document.getElementById('tableBadge').textContent=
-      'Mesa: ' + (data.table_number ?? data.name ?? tableParam);
+    currentTable = data;
+    document.getElementById(
+      'tableBadge'
+    ).textContent =
+      'Mesa: ' +
+      (
+        data.table_number ??
+        data.name ??
+        tableParam
+      );
   }else{
-    document.getElementById('tableBadge').textContent='Mesa: ' + tableParam;
+    document.getElementById(
+      'tableBadge'
+    ).textContent =
+      'Mesa: ' +
+      tableParam;
   }
 }
 async function loadProfile(){
-  const {data,error}=await db.rpc('get_or_create_profile');
+  const {
+    data,
+    error
+  } =
+    await db.rpc(
+      'get_or_create_profile'
+    );
   if(error) throw error;
-  profile=typeof data==='string' ? JSON.parse(data) : data;
+  profile =
+    typeof data === 'string'
+      ? JSON.parse(data)
+      : data;
   if(Array.isArray(profile)){
     profile=profile[0];
   }
   if(!profile){
-    throw new Error('No se pudo cargar el perfil.');
+    throw new Error(
+      'No se pudo cargar el perfil.'
+    );
   }
   renderProfile();
 }
 function renderProfile(){
-  document.getElementById('playerName').textContent=
-    profile.display_name || 'Jugador';
-  document.getElementById('playerId').textContent=
-    profile.id ? 'ID: ' + String(profile.id).slice(0,8) : '';
-  document.getElementById('points').textContent=
+  document.getElementById(
+    'playerName'
+  ).textContent =
+    profile.display_name ||
+    'Jugador';
+  document.getElementById(
+    'playerId'
+  ).textContent =
+    profile.id
+      ? 'ID: ' +
+        String(profile.id).slice(0,8)
+      : '';
+  document.getElementById(
+    'points'
+  ).textContent =
     Number(profile.points || 0);
-  document.getElementById('tokens').textContent=
+  document.getElementById(
+    'tokens'
+  ).textContent =
     Number(profile.tokens || 0);
-  document.getElementById('streak').textContent=
+  document.getElementById(
+    'streak'
+  ).textContent =
     Number(profile.streak || 0);
-  document.getElementById('nameInput').value=
+  document.getElementById(
+    'nameInput'
+  ).value =
     profile.display_name || '';
 }
 async function saveName(){
-  const input=document.getElementById('nameInput');
-  const name=input.value.trim();
+  if(isSavingName) return;
+  const input =
+    document.getElementById(
+      'nameInput'
+    );
+  const button =
+    document.getElementById(
+      'saveNameButton'
+    );
+  const name =
+    input.value.trim();
   if(!name){
-    showMessage('Escribí un nombre.',true);
+    showMessage(
+      'Escribí un nombre.',
+      true
+    );
     return;
   }
-  try{
-    const {data,error}=await db.rpc(
-      'update_display_name',
-      {p_display_name:name}
+  if(name.length < 2){
+    showMessage(
+      'El nombre debe tener al menos 2 caracteres.',
+      true
     );
+    return;
+  }
+  isSavingName=true;
+  button.disabled=true;
+  button.textContent='Guardando...';
+  try{
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        'update_display_name',
+        {
+          p_display_name:name
+        }
+      );
     if(error) throw error;
-    profile.display_name=name;
+    profile.display_name =
+      name;
     renderProfile();
-    showMessage('Nombre guardado correctamente.');
+    showMessage(
+      '✅ Nombre guardado correctamente.'
+    );
   }catch(error){
     console.error(error);
-    showMessage(error.message || 'No se pudo guardar el nombre.',true);
+    showMessage(
+      error.message ||
+      'No se pudo guardar el nombre.',
+      true
+    );
+  }finally{
+    isSavingName=false;
+    button.disabled=false;
+    button.textContent='Guardar nombre';
   }
 }
 async function loadGames(){
-  const {data,error}=await db
-    .from('games')
-    .select('*')
-    .eq('active',true)
-    .order('created_at',{ascending:true});
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('games')
+      .select('*')
+      .eq('active',true)
+      .order(
+        'created_at',
+        {ascending:true}
+      );
   if(error) throw error;
   games=data || [];
   renderGames();
 }
 function gameIcon(game){
-  if(game.icon) return game.icon;
-  const text=(game.name || '').toLowerCase();
-  if(text.includes('pool')) return '🎱';
-  if(text.includes('dado')) return '🎲';
-  if(text.includes('trivia')) return '🧠';
-  if(text.includes('duelo')) return '⚔️';
-  if(text.includes('misión')) return '🎯';
+  if(game.icon)
+    return game.icon;
+  const text =
+    (game.name || '')
+      .toLowerCase();
+  if(text.includes('pool'))
+    return '🎱';
+  if(text.includes('dado'))
+    return '🎲';
+  if(text.includes('trivia'))
+    return '🧠';
+  if(text.includes('duelo'))
+    return '⚔️';
+  if(
+    text.includes('misión') ||
+    text.includes('mision')
+  )
+    return '🎯';
   return '🎮';
 }
 function renderGames(){
-  const grid=document.getElementById('gamesGrid');
+  const grid =
+    document.getElementById(
+      'gamesGrid'
+    );
   if(!games.length){
-    grid.innerHTML='<div class="empty">No hay juegos activos.</div>';
+    grid.innerHTML =
+      '<div class="empty">No hay juegos activos.</div>';
     return;
   }
-  grid.innerHTML=games.map(game=>{
-    const name=escapeHTML(game.name || 'Juego');
-    const description=escapeHTML(game.description || 'Desafío Pool & Beach');
-    const points=Number(game.points_reward || 0);
-    const tokens=Number(game.tokens_reward || 0);
-    return `
-      <article class="card">
-        <div class="game-icon">${gameIcon(game)}</div>
-        <h3>${name}</h3>
-        <p>${description}</p>
-        <div class="reward">
-          <span class="badge">⭐ +${points} puntos</span>
-          <span class="badge">🪙 +${tokens} tokens</span>
-        </div>
-        ${renderGameButton(game)}
-      </article>
-    `;
-  }).join('');
+  grid.innerHTML =
+    games.map(game=>{
+      const name =
+        escapeHTML(
+          game.name ||
+          'Juego'
+        );
+      const description =
+        escapeHTML(
+          game.description ||
+          'Desafío Pool & Beach'
+        );
+      const points =
+        Number(
+          game.points_reward || 0
+        );
+      const tokens =
+        Number(
+          game.tokens_reward || 0
+        );
+      return `
+        <article class="card">
+          <div class="game-icon">
+            ${gameIcon(game)}
+          </div>
+          <h3>${name}</h3>
+          <p>${description}</p>
+          <div class="reward">
+            <span class="badge">
+              ⭐ +${points} puntos
+            </span>
+            <span class="badge">
+              🪙 +${tokens} tokens
+            </span>
+          </div>
+          ${renderGameButton(game)}
+        </article>
+      `;
+    }).join('');
 }
 function renderGameButton(game){
-  const name=(game.name || '').toLowerCase();
+  const safeId =
+    escapeHTML(game.id);
+  const name =
+    (game.name || '')
+      .toLowerCase();
   if(name.includes('trivia')){
-    return `<button class="btn" onclick="startTrivia('${game.id}')">🧠 Jugar Trivia</button>`;
+    return `
+      <button
+        class="btn"
+        data-game-button="${safeId}"
+        onclick="startTrivia('${safeId}')"
+      >
+        🧠 Jugar Trivia
+      </button>
+    `;
   }
   if(name.includes('dado')){
-    return `<button class="btn secondary" onclick="startDice('${game.id}')">🎲 Tirar dados</button>`;
+    return `
+      <button
+        class="btn secondary"
+        data-game-button="${safeId}"
+        onclick="startDice('${safeId}')"
+      >
+        🎲 Tirar dados
+      </button>
+    `;
   }
   if(name.includes('duelo')){
-    return `<button class="btn gold" onclick="startDuel('${game.id}')">⚔️ Iniciar duelo</button>`;
+    return `
+      <button
+        class="btn gold"
+        data-game-button="${safeId}"
+        onclick="startDuel('${safeId}')"
+      >
+        ⚔️ Iniciar duelo
+      </button>
+    `;
   }
-  if(name.includes('misión')){
-    return `<button class="btn" onclick="startMission('${game.id}')">🎯 Completar misión</button>`;
+  if(
+    name.includes('misión') ||
+    name.includes('mision')
+  ){
+    return `
+      <button
+        class="btn"
+        data-game-button="${safeId}"
+        onclick="startMission('${safeId}')"
+      >
+        🎯 Completar misión
+      </button>
+    `;
   }
   if(name.includes('pool')){
-    return `<button class="btn secondary" onclick="startPool('${game.id}')">🎱 Registrar partida</button>`;
+    return `
+      <button
+        class="btn secondary"
+        data-game-button="${safeId}"
+        onclick="startPool('${safeId}')"
+      >
+        🎱 Registrar partida
+      </button>
+    `;
   }
-  return `<button class="btn" onclick="playGeneric('${game.id}')">🎮 Jugar</button>`;
+  return `
+    <button
+      class="btn"
+      data-game-button="${safeId}"
+      onclick="playGeneric('${safeId}')"
+    >
+      🎮 Jugar
+    </button>
+  `;
 }
 function getGame(id){
-  return games.find(g=>String(g.id)===String(id));
+  return games.find(
+    g =>
+      String(g.id) ===
+      String(id)
+  );
 }
-async function playGame(gameId,metadata={}){
+function setGameButtonsDisabled(disabled){
+  document
+    .querySelectorAll(
+      '[data-game-button]'
+    )
+    .forEach(button=>{
+      button.disabled=disabled;
+    });
+}
+async function playGame(
+  gameId,
+  metadata={}
+){
+  if(isPlaying)
+    return;
+  if(!currentUser){
+    showMessage(
+      'No hay un jugador conectado.',
+      true
+    );
+    return;
+  }
+  const game =
+    getGame(gameId);
+  if(!game){
+    showMessage(
+      'No se encontró el juego.',
+      true
+    );
+    return;
+  }
+  isPlaying=true;
+  setGameButtonsDisabled(true);
   try{
-    const button=document.querySelector(
-      `[onclick*="${gameId}"]`
-    );
-    if(button){
-      button.disabled=true;
-    }
-    const {data,error}=await db.rpc(
-      'play_game',
-      {
-        p_game_id:gameId,
-        p_table_id:currentTable ? currentTable.id : null,
-        p_metadata:metadata
-      }
-    );
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        'play_game',
+        {
+          p_game_id:gameId,
+          p_table_id:
+            currentTable
+              ? currentTable.id
+              : null,
+          p_metadata:metadata
+        }
+      );
     if(error) throw error;
     let result=data;
     if(typeof result==='string'){
@@ -671,354 +973,675 @@ async function playGame(gameId,metadata={}){
         result=JSON.parse(result);
       }catch{}
     }
-    if(Array.isArray(result)){
+    if(Array.isArray(result))
       result=result[0];
-    }
-    if(result && result.points_awarded !== undefined){
+    if(
+      result &&
+      result.points_awarded !== undefined
+    ){
       showMessage(
-        `🎉 ¡Partida registrada! +${result.points_awarded} puntos y +${result.tokens_awarded} tokens`
+        `🎉 ¡Partida registrada! +${Number(result.points_awarded || 0)} puntos y +${Number(result.tokens_awarded || 0)} tokens`
       );
     }else{
-      showMessage('🎉 ¡Partida registrada correctamente!');
+      showMessage(
+        '🎉 ¡Partida registrada correctamente!'
+      );
     }
-    await loadProfile();
-    await loadPlaysCount();
-    await loadRanking();
+    await Promise.all([
+      loadProfile(),
+      loadPlaysCount(),
+      loadRanking()
+    ]);
   }catch(error){
     console.error(error);
     showMessage(
-      error.message || 'No se pudo registrar la partida.',
+      error.message ||
+      'No se pudo registrar la partida.',
       true
     );
   }finally{
-    document.querySelectorAll('.btn').forEach(btn=>{
-      btn.disabled=false;
-    });
+    isPlaying=false;
+    setGameButtonsDisabled(false);
   }
 }
 async function playGeneric(gameId){
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'generic'
-  });
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'generic'
+    }
+  );
 }
 async function startPool(gameId){
-  if(!confirm('¿Querés registrar esta partida de Pool?')){
+  if(isPlaying) return;
+  if(
+    !confirm(
+      '¿Querés registrar esta partida de Pool?'
+    )
+  )
     return;
-  }
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'pool'
-  });
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'pool'
+    }
+  );
 }
 async function startMission(gameId){
-  if(!confirm('¿Completaste la misión del día?')){
+  if(isPlaying) return;
+  if(
+    !confirm(
+      '¿Completaste la misión del día?'
+    )
+  )
     return;
-  }
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'mission'
-  });
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'mission'
+    }
+  );
 }
 async function startDuel(gameId){
-  if(!confirm('¿Querés registrar el resultado de este duelo?')){
+  if(isPlaying) return;
+  if(
+    !confirm(
+      '¿Querés registrar el resultado de este duelo?'
+    )
+  )
     return;
-  }
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'duel'
-  });
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'duel'
+    }
+  );
 }
 async function startDice(gameId){
-  const roll=Math.floor(Math.random()*6)+1;
-  showMessage(`🎲 Salió ${roll}`);
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'dice',
-    roll
-  });
+  if(isPlaying) return;
+  const roll =
+    Math.floor(
+      Math.random()*6
+    ) + 1;
+  showMessage(
+    `🎲 Salió ${roll}`
+  );
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'dice',
+      roll
+    }
+  );
 }
-const triviaQuestions=[
+const triviaQuestions = [
   {
-    q:'¿Cuántas bolas tiene un juego estándar de pool americano incluyendo la blanca?',
-    options:['12','16','20'],
+    q:
+      '¿Cuántas bolas tiene un juego estándar de pool americano incluyendo la blanca?',
+    options:[
+      '12',
+      '16',
+      '20'
+    ],
     answer:'16'
   },
   {
-    q:'¿Qué número tiene la bola negra?',
-    options:['7','8','10'],
+    q:
+      '¿Qué número tiene la bola negra?',
+    options:[
+      '7',
+      '8',
+      '10'
+    ],
     answer:'8'
   },
   {
-    q:'¿En qué país se encuentra Puerto Pirámides?',
-    options:['Argentina','Chile','Uruguay'],
+    q:
+      '¿En qué país se encuentra Puerto Pirámides?',
+    options:[
+      'Argentina',
+      'Chile',
+      'Uruguay'
+    ],
     answer:'Argentina'
   },
   {
-    q:'¿Qué animal es famoso por visitar Península Valdés?',
-    options:['Ballena franca austral','Pingüino emperador','Oso polar'],
+    q:
+      '¿Qué animal es famoso por visitar Península Valdés?',
+    options:[
+      'Ballena franca austral',
+      'Pingüino emperador',
+      'Oso polar'
+    ],
     answer:'Ballena franca austral'
   }
 ];
 async function startTrivia(gameId){
-  const question=
+  if(isPlaying) return;
+  const question =
     triviaQuestions[
-      Math.floor(Math.random()*triviaQuestions.length)
+      Math.floor(
+        Math.random() *
+        triviaQuestions.length
+      )
     ];
-  const answer=prompt(
-    question.q +
-    '\n\n1) ' + question.options[0] +
-    '\n2) ' + question.options[1] +
-    '\n3) ' + question.options[2] +
-    '\n\nEscribí 1, 2 o 3.'
-  );
-  if(answer===null) return;
-  const index=Number(answer)-1;
+  const answer =
+    prompt(
+      question.q +
+      '\n\n1) ' +
+      question.options[0] +
+      '\n2) ' +
+      question.options[1] +
+      '\n3) ' +
+      question.options[2] +
+      '\n\nEscribí 1, 2 o 3.'
+    );
+  if(answer===null)
+    return;
+  const index =
+    Number(answer)-1;
   if(
     !Number.isInteger(index) ||
     index<0 ||
     index>=question.options.length
   ){
-    showMessage('Respuesta inválida.',true);
+    showMessage(
+      'Respuesta inválida.',
+      true
+    );
     return;
   }
-  const selected=question.options[index];
-  if(selected!==question.answer){
+  const selected =
+    question.options[index];
+  if(
+    selected !==
+    question.answer
+  ){
     showMessage(
       `❌ Incorrecto. La respuesta era: ${question.answer}`,
       true
     );
     return;
   }
-  showMessage('✅ ¡Respuesta correcta!');
-  await playGame(gameId,{
-    source:'web',
-    game_mode:'trivia',
-    question:question.q,
-    answer:selected
-  });
+  showMessage(
+    '✅ ¡Respuesta correcta!'
+  );
+  await playGame(
+    gameId,
+    {
+      source:'web',
+      game_mode:'trivia',
+      question:question.q,
+      answer:selected
+    }
+  );
 }
 async function loadPlaysCount(){
-  if(!currentUser) return;
-  const {count,error}=await db
-    .from('game_plays')
-    .select('id',{count:'exact',head:true})
-    .eq('user_id',currentUser.id);
+  if(!currentUser)
+    return;
+  const {
+    count,
+    error
+  } =
+    await db
+      .from('game_plays')
+      .select(
+        'id',
+        {
+          count:'exact',
+          head:true
+        }
+      )
+      .eq(
+        'user_id',
+        currentUser.id
+      );
   if(error){
     console.error(error);
     return;
   }
-  document.getElementById('plays').textContent=
+  document.getElementById(
+    'plays'
+  ).textContent =
     Number(count || 0);
 }
 async function loadRanking(){
-  const container=document.getElementById('rankingList');
-  try{
-    /*
-      IMPORTANTE:
-      El ranking NO consulta profiles directamente.
-      Usa la función segura creada en Supabase:
-      public.get_public_ranking()
-      Esto permite mostrar el ranking público sin
-      exponer todos los datos privados de profiles.
-    */
-    const {data,error}=await db.rpc(
-      'get_public_ranking'
+  const container =
+    document.getElementById(
+      'rankingList'
     );
+  try{
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        'get_public_ranking'
+      );
     if(error) throw error;
-    const rows=Array.isArray(data) ? data : [];
+    const rows =
+      Array.isArray(data)
+        ? data
+        : [];
     if(!rows.length){
-      container.innerHTML=
+      container.innerHTML =
         '<div class="empty">Todavía no hay jugadores en el ranking.</div>';
       return;
     }
-    const myId=currentUser ? currentUser.id : null;
-    container.innerHTML=rows.map((player,index)=>{
-      const position=index+1;
-      let medal='';
-      if(position===1) medal='🥇';
-      else if(position===2) medal='🥈';
-      else if(position===3) medal='🥉';
-      const isMe=
-        myId &&
-        String(player.id)===String(myId);
-      return `
-        <div class="rank-row" ${isMe ? 'style="border-color:var(--primary);"' : ''}>
-          <div class="rank-number">
-            ${medal || position}
-          </div>
-          <div>
-            <div class="rank-name">
-              ${escapeHTML(player.display_name || 'Jugador')}
-              ${isMe ? ' 👈' : ''}
+    const myId =
+      currentUser
+        ? currentUser.id
+        : null;
+    container.innerHTML =
+      rows.map(
+        (player,index)=>{
+          const position =
+            index+1;
+          let medal='';
+          if(position===1)
+            medal='🥇';
+          else if(position===2)
+            medal='🥈';
+          else if(position===3)
+            medal='🥉';
+          const isMe =
+            myId &&
+            String(player.id) ===
+            String(myId);
+          return `
+            <div
+              class="rank-row"
+              ${
+                isMe
+                  ? 'style="border-color:var(--primary);"'
+                  : ''
+              }
+            >
+              <div class="rank-number">
+                ${medal || position}
+              </div>
+              <div>
+                <div class="rank-name">
+                  ${escapeHTML(
+                    player.display_name ||
+                    'Jugador'
+                  )}
+                  ${isMe ? ' 👈' : ''}
+                </div>
+                <div class="small">
+                  🔥 ${
+                    Number(
+                      player.streak || 0
+                    )
+                  } racha
+                  · 🪙 ${
+                    Number(
+                      player.tokens || 0
+                    )
+                  } tokens
+                </div>
+              </div>
+              <div class="rank-points">
+                ⭐ ${
+                  Number(
+                    player.points || 0
+                  )
+                }
+              </div>
             </div>
-            <div class="small">
-              🔥 ${Number(player.streak || 0)} racha
-              · 🪙 ${Number(player.tokens || 0)} tokens
-            </div>
-          </div>
-          <div class="rank-points">
-            ⭐ ${Number(player.points || 0)}
-          </div>
-        </div>
-      `;
-    }).join('');
+          `;
+        }
+      ).join('');
   }catch(error){
     console.error(error);
-    container.innerHTML=
+    container.innerHTML =
       '<div class="empty">No se pudo cargar el ranking.</div>';
   }
 }
 async function loadPrizes(){
-  const grid=document.getElementById('prizesGrid');
-  const {data,error}=await db
-    .from('prizes')
-    .select('*')
-    .eq('active',true)
-    .order('token_cost',{ascending:true});
+  const grid =
+    document.getElementById(
+      'prizesGrid'
+    );
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('prizes')
+      .select('*')
+      .eq('active',true)
+      .order(
+        'token_cost',
+        {
+          ascending:true
+        }
+      );
   if(error){
     console.error(error);
-    grid.innerHTML=
+    grid.innerHTML =
       '<div class="empty">No se pudieron cargar los premios.</div>';
     return;
   }
-  const prizes=data || [];
+  const prizes =
+    data || [];
   if(!prizes.length){
-    grid.innerHTML=
+    grid.innerHTML =
       '<div class="empty">Todavía no hay premios disponibles.</div>';
     return;
   }
-  grid.innerHTML=prizes.map(prize=>{
-    const cost=Number(prize.token_cost || 0);
-    return `
-      <article class="card prize-card">
-        <div class="game-icon">🎁</div>
-        <h3>${escapeHTML(prize.name || 'Premio')}</h3>
-        <p>${escapeHTML(prize.description || '')}</p>
-        <div class="reward">
-          <span class="badge">🪙 ${cost} tokens</span>
-        </div>
-        <button
-          class="btn gold"
-          onclick="redeemPrize('${prize.id}')"
-        >
-          Canjear premio
-        </button>
-      </article>
-    `;
-  }).join('');
+  grid.innerHTML =
+    prizes.map(
+      prize=>{
+        const cost =
+          Number(
+            prize.token_cost || 0
+          );
+        const safeId =
+          escapeHTML(prize.id);
+        const name =
+          escapeHTML(
+            prize.name ||
+            'Premio'
+          );
+        return `
+          <article class="card prize-card">
+            <div class="game-icon">
+              🎁
+            </div>
+            <h3>
+              ${name}
+            </h3>
+            <p>
+              ${escapeHTML(
+                prize.description || ''
+              )}
+            </p>
+            <div class="reward">
+              <span class="badge">
+                🪙 ${cost} tokens
+              </span>
+            </div>
+            <button
+              class="btn gold"
+              data-prize-id="${safeId}"
+              onclick="redeemPrize('${safeId}')"
+            >
+              🎁 Canjear premio
+            </button>
+          </article>
+        `;
+      }
+    ).join('');
 }
 async function redeemPrize(prizeId){
-  const prizeName='este premio';
-  if(!confirm(`¿Querés canjear ${prizeName}?`)){
+  if(isRedeeming)
     return;
-  }
-  try{
-    const {data,error}=await db.rpc(
-      'redeem_prize',
-      {
-        p_prize_id:prizeId
-      }
+  const prize =
+    document.querySelector(
+      `[data-prize-id="${CSS.escape(String(prizeId))}"]`
     );
+  let prizeName =
+    'este premio';
+  let prizeCost =
+    0;
+  if(prize){
+    const card =
+      prize.closest('.prize-card');
+    if(card){
+      const title =
+        card.querySelector('h3');
+      if(title)
+        prizeName =
+          title.textContent.trim();
+      const badge =
+        card.querySelector('.badge');
+      if(badge){
+        const match =
+          badge.textContent.match(
+            /([0-9]+)/
+          );
+        if(match)
+          prizeCost =
+            Number(match[1]);
+      }
+    }
+  }
+  if(
+    !confirm(
+      `¿Querés canjear "${prizeName}" por ${prizeCost} tokens?`
+    )
+  )
+    return;
+  isRedeeming=true;
+  document
+    .querySelectorAll(
+      '[data-prize-id]'
+    )
+    .forEach(button=>{
+      button.disabled=true;
+    });
+  try{
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        'redeem_prize',
+        {
+          p_prize_id:prizeId
+        }
+      );
     if(error) throw error;
     await loadProfile();
     showMessage(
-      '🎁 ¡Premio canjeado! Mostrá esta pantalla al personal.'
+      `🎁 ¡Canje realizado! "${prizeName}". Mostrá esta pantalla al personal.`
     );
   }catch(error){
     console.error(error);
     showMessage(
-      error.message || 'No se pudo canjear el premio.',
+      error.message ||
+      'No se pudo canjear el premio.',
       true
     );
+  }finally{
+    isRedeeming=false;
+    document
+      .querySelectorAll(
+        '[data-prize-id]'
+      )
+      .forEach(button=>{
+        button.disabled=false;
+      });
   }
 }
 async function loadTournaments(){
-  const grid=document.getElementById('tournamentsGrid');
-  const {data,error}=await db
-    .from('tournaments')
-    .select('*')
-    .in('status',['open','in_progress'])
-    .order('starts_at',{ascending:true});
+  const grid =
+    document.getElementById(
+      'tournamentsGrid'
+    );
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('tournaments')
+      .select('*')
+      .in(
+        'status',
+        [
+          'open',
+          'in_progress'
+        ]
+      )
+      .order(
+        'starts_at',
+        {
+          ascending:true
+        }
+      );
   if(error){
     console.error(error);
-    grid.innerHTML=
+    grid.innerHTML =
       '<div class="empty">No se pudieron cargar los torneos.</div>';
     return;
   }
-  const tournaments=data || [];
+  const tournaments =
+    data || [];
   if(!tournaments.length){
-    grid.innerHTML=
+    grid.innerHTML =
       '<div class="empty">No hay torneos abiertos actualmente.</div>';
     return;
   }
-  grid.innerHTML=tournaments.map(tournament=>{
-    const start=tournament.starts_at
-      ? new Date(tournament.starts_at).toLocaleString('es-AR',{
-          dateStyle:'short',
-          timeStyle:'short'
-        })
-      : 'Fecha a confirmar';
-    return `
-      <article class="card tournament-card">
-        <div class="game-icon">🏅</div>
-        <h3>${escapeHTML(tournament.name || 'Torneo')}</h3>
-        <span class="status">
-          ${escapeHTML(tournament.status || 'abierto')}
-        </span>
-        <p>
-          🎮 Juego:
-          ${escapeHTML(tournament.game_type || 'Pool & Beach')}
-        </p>
-        <p>
-          📅 ${escapeHTML(start)}
-        </p>
-        <div class="reward">
-          <span class="badge">
-            🪙 Inscripción:
-            ${Number(tournament.entry_tokens || 0)}
-          </span>
-          <span class="badge">
-            👥 Máximo:
-            ${Number(tournament.max_players || 0)}
-          </span>
-        </div>
-        <button
-          class="btn secondary"
-          onclick="joinTournament('${tournament.id}')"
-        >
-          🏅 Inscribirme
-        </button>
-      </article>
-    `;
-  }).join('');
-}
-async function joinTournament(tournamentId){
-  if(!confirm('¿Querés inscribirte en este torneo?')){
-    return;
-  }
-  try{
-    const {data,error}=await db.rpc(
-      'join_tournament',
-      {
-        p_tournament_id:tournamentId
+  grid.innerHTML =
+    tournaments.map(
+      tournament=>{
+        const start =
+          tournament.starts_at
+            ? new Date(
+                tournament.starts_at
+              ).toLocaleString(
+                'es-AR',
+                {
+                  dateStyle:'short',
+                  timeStyle:'short'
+                }
+              )
+            : 'Fecha a confirmar';
+        const safeId =
+          escapeHTML(
+            tournament.id
+          );
+        return `
+          <article class="card tournament-card">
+            <div class="game-icon">
+              🏅
+            </div>
+            <h3>
+              ${escapeHTML(
+                tournament.name ||
+                'Torneo'
+              )}
+            </h3>
+            <span class="status">
+              ${
+                escapeHTML(
+                  tournament.status ||
+                  'abierto'
+                )
+              }
+            </span>
+            <p>
+              🎮 Juego:
+              ${
+                escapeHTML(
+                  tournament.game_type ||
+                  'Pool & Beach'
+                )
+              }
+            </p>
+            <p>
+              📅 ${
+                escapeHTML(start)
+              }
+            </p>
+            <div class="reward">
+              <span class="badge">
+                🪙 Inscripción:
+                ${
+                  Number(
+                    tournament.entry_tokens ||
+                    0
+                  )
+                }
+              </span>
+              <span class="badge">
+                👥 Máximo:
+                ${
+                  Number(
+                    tournament.max_players ||
+                    0
+                  )
+                }
+              </span>
+            </div>
+            <button
+              class="btn secondary"
+              data-tournament-id="${safeId}"
+              onclick="joinTournament('${safeId}')"
+            >
+              🏅 Inscribirme
+            </button>
+          </article>
+        `;
       }
-    );
+    ).join('');
+}
+async function joinTournament(
+  tournamentId
+){
+  if(isJoiningTournament)
+    return;
+  if(
+    !confirm(
+      '¿Querés inscribirte en este torneo?'
+    )
+  )
+    return;
+  isJoiningTournament=true;
+  document
+    .querySelectorAll(
+      '[data-tournament-id]'
+    )
+    .forEach(button=>{
+      button.disabled=true;
+    });
+  try{
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        'join_tournament',
+        {
+          p_tournament_id:
+            tournamentId
+        }
+      );
     if(error) throw error;
     await loadProfile();
     await loadTournaments();
-    showMessage('🏅 ¡Te inscribiste correctamente!');
+    showMessage(
+      '🏅 ¡Te inscribiste correctamente!'
+    );
   }catch(error){
     console.error(error);
     showMessage(
-      error.message || 'No se pudo realizar la inscripción.',
+      error.message ||
+      'No se pudo realizar la inscripción.',
       true
     );
+  }finally{
+    isJoiningTournament=false;
+    document
+      .querySelectorAll(
+        '[data-tournament-id]'
+      )
+      .forEach(button=>{
+        button.disabled=false;
+      });
   }
 }
 async function boot(){
   try{
-    document.body.classList.add('loading');
+    document.body.classList.add(
+      'loading'
+    );
     await initAuth();
     await loadTable();
     await loadProfile();
@@ -1029,10 +1652,14 @@ async function boot(){
       loadTournaments(),
       loadPlaysCount()
     ]);
-    document.body.classList.remove('loading');
+    document.body.classList.remove(
+      'loading'
+    );
   }catch(error){
     console.error(error);
-    document.body.classList.remove('loading');
+    document.body.classList.remove(
+      'loading'
+    );
     showMessage(
       error.message ||
       'No se pudo conectar con Pool & Beach Games.',
