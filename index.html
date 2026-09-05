@@ -542,12 +542,20 @@ section{
   color:var(--yellow);
 }
 
+.error{
+  color:var(--red);
+}
+
 footer{
   margin-top:50px;
   border-top:1px solid var(--border);
   padding:30px 0;
   color:var(--muted);
   text-align:center;
+}
+
+.hidden{
+  display:none!important;
 }
 
 @media(max-width:850px){
@@ -680,20 +688,16 @@ footer{
   </div>
 </section>
 
+
 <section>
   <div class="container">
 
     <div class="section-title">
       <h2>Tu progreso</h2>
-      <p>Tu actividad queda asociada a esta sesión.</p>
+      <p>Todo lo que ganás queda asociado a tu sesión.</p>
     </div>
 
     <div class="profile">
-
-      <div class="stat">
-        <small>Jugador</small>
-        <strong id="playerName">Jugador</strong>
-      </div>
 
       <div class="stat">
         <small>Puntos</small>
@@ -706,8 +710,13 @@ footer{
       </div>
 
       <div class="stat">
-        <small>Mesa</small>
-        <strong id="profileTable">—</strong>
+        <small>Partidas</small>
+        <strong id="profileGames">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Ranking</small>
+        <strong id="profileRanking">—</strong>
       </div>
 
     </div>
@@ -715,12 +724,13 @@ footer{
   </div>
 </section>
 
+
 <section id="juegos">
   <div class="container">
 
     <div class="section-title">
       <h2>🎮 Juegos</h2>
-      <p>Elegí tu desafío.</p>
+      <p>Elegí un desafío y empezá a sumar.</p>
     </div>
 
     <div id="gamesGrid" class="grid">
@@ -730,42 +740,34 @@ footer{
   </div>
 </section>
 
+
 <section id="trivia">
   <div class="container">
 
     <div class="section-title">
-      <h2>🧠 Trivia Express</h2>
-      <p>Respondé correctamente y ganá puntos.</p>
+      <h2>🧠 Trivia</h2>
+      <p>Respondé correctamente y ganá puntos y tokens.</p>
     </div>
 
     <div class="card trivia-box">
 
       <div id="triviaStart">
 
-        <div class="game-icon">🧠</div>
-
-        <h3>Trivia Express</h3>
-
         <p>
-          Comenzá una partida y respondé la pregunta.
-          Las preguntas se obtienen directamente desde Supabase.
+          Poné a prueba tus conocimientos con una pregunta
+          de Pool & Beach.
         </p>
 
-        <div class="reward">
-          <span>⭐ 20 puntos</span>
-          <span>🪙 10 tokens</span>
-        </div>
+        <br>
 
         <button class="btn btn-primary"
                 onclick="startTrivia()">
-          Comenzar trivia
+          🧠 Empezar trivia
         </button>
 
       </div>
 
-      <div id="triviaGame" style="display:none">
-
-        <div id="triviaProgress"></div>
+      <div id="triviaGame" class="hidden">
 
         <div id="triviaQuestion"
              class="trivia-question">
@@ -776,8 +778,7 @@ footer{
         </div>
 
         <div id="triviaResult"
-             class="duel-status"
-             style="display:none">
+             class="duel-status">
         </div>
 
       </div>
@@ -787,75 +788,72 @@ footer{
   </div>
 </section>
 
+
 <section id="duelos">
   <div class="container">
 
     <div class="section-title">
       <h2>⚔️ Duelo 1 vs 1</h2>
-      <p>
-        Creá un desafío o uníte al duelo de otro jugador.
-      </p>
+      <p>Creá un duelo o uníte a un jugador que esté esperando.</p>
     </div>
 
     <div class="duel-layout">
 
       <div class="card">
 
-        <div class="game-icon">⚔️</div>
-
         <h3>Crear duelo</h3>
 
         <p>
-          Publicá un duelo para que otro jugador de la mesa
-          pueda aceptarlo.
+          Elegí un juego compatible y esperá a otro jugador.
         </p>
 
-        <div class="reward">
-          <span>⭐ 30 puntos</span>
-          <span>🪙 15 tokens</span>
-        </div>
+        <br>
 
-        <button id="createDuelBtn"
-                class="btn btn-primary"
+        <select id="duelGame"
+                class="score-input">
+          <option value="">Cargando juegos...</option>
+        </select>
+
+        <br><br>
+
+        <button class="btn btn-primary"
                 onclick="createDuel()">
-          Crear desafío
+          ⚔️ Crear duelo
         </button>
 
-        <div id="myDuelStatus"
-             class="duel-status"
-             style="display:none">
+        <div id="duelStatus"
+             class="duel-status">
+          No tenés un duelo activo.
         </div>
 
       </div>
 
+
       <div class="card">
 
-        <h3>🔥 Duelos disponibles</h3>
+        <h3>Duelo disponibles</h3>
 
         <p>
-          Elegí un duelo abierto para enfrentarte a otro jugador.
+          También podés unirte a un duelo creado por otro jugador.
         </p>
 
-        <div id="duelList"
+        <div id="waitingDuels"
              class="duel-list">
-          <div class="loading">
-            Cargando duelos...
-          </div>
-        </div>
 
-        <button class="btn btn-secondary"
-                onclick="loadDuels()"
-                style="margin-top:15px">
-          🔄 Actualizar
-        </button>
+          <div class="loading">
+            Buscando duelos...
+          </div>
+
+        </div>
 
       </div>
 
     </div>
 
-    <div id="activeDuelPanel"
-         class="card"
-         style="display:none;margin-top:18px">
+
+    <div id="activeDuelCard"
+         class="card hidden"
+         style="margin-top:18px;">
 
       <h3>⚔️ Tu duelo</h3>
 
@@ -863,7 +861,7 @@ footer{
            class="duel-status">
       </div>
 
-      <label for="duelScore">
+      <label>
         Tu puntuación
       </label>
 
@@ -872,13 +870,13 @@ footer{
         class="score-input"
         type="number"
         min="0"
-        max="999"
         placeholder="Ingresá tu puntuación">
 
+      <br><br>
+
       <button class="btn btn-green"
-              style="margin-top:12px"
-              onclick="submitDuel()">
-        Confirmar puntuación
+              onclick="submitDuelScore()">
+        ✅ Enviar resultado
       </button>
 
     </div>
@@ -886,46 +884,93 @@ footer{
   </div>
 </section>
 
+
 <section id="torneos">
   <div class="container">
 
     <div class="section-title">
       <h2>🏆 Torneos</h2>
-      <p>
-        Inscribite, competí y avanzá de ronda.
-      </p>
+      <p>Competí contra otros jugadores y llegá a la final.</p>
     </div>
 
-    <div id="tournamentsGrid"
-         class="grid">
-      <div class="loading">
-        Cargando torneos...
-      </div>
-    </div>
+    <div class="tournament-layout">
 
-    <div class="tournament-layout"
-         style="margin-top:18px">
+      <div class="card tournament-card">
 
-      <div class="card">
+        <div class="tournament-status"
+             id="tournamentStatus">
+          Cargando
+        </div>
 
-        <h3>📋 Mis partidos</h3>
+        <h3 id="tournamentName">
+          Duelo Torneo Pool & Beach
+        </h3>
 
-        <div id="myMatches">
-          <div class="empty">
-            Seleccioná un torneo para ver sus partidos.
+        <p id="tournamentDescription">
+          Torneo competitivo de Pool & Beach.
+        </p>
+
+        <div class="tournament-info">
+
+          <div class="info-box">
+            <small>Jugadores</small>
+            <strong id="tournamentPlayers">0/16</strong>
           </div>
+
+          <div class="info-box">
+            <small>Entrada</small>
+            <strong id="tournamentEntry">0 🪙</strong>
+          </div>
+
+          <div class="info-box">
+            <small>Estado</small>
+            <strong id="tournamentState">—</strong>
+          </div>
+
+        </div>
+
+        <button class="btn btn-yellow"
+                onclick="joinTournament()"
+                id="joinTournamentButton">
+          🏆 Inscribirme
+        </button>
+
+        <div id="tournamentMessage"
+             class="duel-status">
         </div>
 
       </div>
 
+
       <div class="card">
 
-        <h3>🥇 Tabla del torneo</h3>
+        <h3>📋 Cuadro del torneo</h3>
 
-        <div id="tournamentStandings">
+        <div id="tournamentMatches"
+             style="margin-top:15px;">
+
           <div class="empty">
-            Seleccioná un torneo para ver la tabla.
+            El cuadro aparecerá cuando el torneo comience.
           </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <div class="card"
+         style="margin-top:18px;">
+
+      <h3>🏅 Clasificación</h3>
+
+      <div id="tournamentRanking"
+           class="ranking"
+           style="margin-top:15px;">
+
+        <div class="empty">
+          Cargando clasificación...
         </div>
 
       </div>
@@ -935,73 +980,88 @@ footer{
   </div>
 </section>
 
+
 <section id="ranking">
   <div class="container">
 
     <div class="section-title">
-      <h2>🥇 Ranking</h2>
-      <p>Los mejores jugadores de Pool & Beach Games.</p>
+      <h2>🥇 Ranking general</h2>
+      <p>Los jugadores que más puntos acumulan.</p>
     </div>
 
     <div class="card">
 
       <div id="rankingList"
            class="ranking">
+
         <div class="loading">
           Cargando ranking...
         </div>
+
       </div>
 
     </div>
 
   </div>
 </section>
+
 
 <section id="premios">
   <div class="container">
 
     <div class="section-title">
       <h2>🎁 Premios</h2>
-      <p>Canjeá tus tokens cuando tengas suficientes.</p>
+      <p>Usá tus tokens para canjear premios disponibles.</p>
     </div>
 
     <div id="prizesGrid"
          class="prize-grid">
+
       <div class="loading">
         Cargando premios...
       </div>
+
     </div>
 
   </div>
 </section>
 
+
 <section id="mesa">
   <div class="container">
+
+    <div class="section-title">
+      <h2>🪑 Tu mesa</h2>
+      <p>Esta sesión queda vinculada a la mesa desde la que ingresaste.</p>
+    </div>
 
     <div class="card table-box">
 
       <div>
 
-        <div class="section-title">
-          <h2>🪑 Tu mesa</h2>
-          <p>
-            Esta sesión puede asociarse a una mesa mediante QR.
-          </p>
-        </div>
+        <p>
+          Mesa actual
+        </p>
 
-        <div class="table-code"
-             id="tableCode">
+        <div id="tableCode"
+             class="table-code">
           Sin mesa
         </div>
 
-        <p style="color:var(--muted);margin-top:8px">
-          Si ingresaste desde el QR de la mesa,
-          la mesa aparecerá automáticamente.
+        <p id="tableName"
+           style="margin-top:8px;color:var(--muted);">
         </p>
 
       </div>
 
-      <div id="qrContainer"></div>
+      <div id="qrContainer"
+           class="qr">
+
+        <span style="color:#111;">
+          QR
+        </span>
+
+      </div>
 
     </div>
 
@@ -1010,20 +1070,34 @@ footer{
 
 </main>
 
+
 <footer>
+
   <div class="container">
-    <strong>POOL & BEACH GAMES</strong><br>
-    Puerto Pirámides · Patagonia Argentina
+
+    <strong>
+      POOL & BEACH GAMES
+    </strong>
+
+    <br><br>
+
+    Puerto Pirámides · Chubut · Argentina
+
+    <br>
+
+    <span>
+      Jugá · Competí · Ganá
+    </span>
+
   </div>
+
 </footer>
+
 
 <div id="toast"></div>
 
-<script>
 
-/* ============================================================
-   SUPABASE
-============================================================ */
+<script>
 
 const SUPABASE_URL =
   "https://nmpakeovqkdajtswjpgm.supabase.co";
@@ -1031,34 +1105,31 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const db =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
 
-/* ============================================================
-   ESTADO GLOBAL
-============================================================ */
+const params =
+  new URLSearchParams(window.location.search);
+
+const mesaParam =
+  params.get("mesa") ||
+  params.get("table") ||
+  params.get("codigo");
+
 
 let currentUser = null;
 let currentProfile = null;
 let currentTable = null;
-
-let currentTriviaSession = null;
-let currentTriviaQuestion = null;
-
 let currentDuel = null;
-let currentTournament = null;
+let currentTrivia = null;
 
+const TOURNAMENT_ID =
+  "d22253e4-52ef-4345-9976-dec9dff1b76b";
 
-/* ============================================================
-   UTILIDADES
-============================================================ */
-
-function $(id){
-  return document.getElementById(id);
-}
 
 function escapeHtml(value){
 
@@ -1071,123 +1142,68 @@ function escapeHtml(value){
 
 }
 
-function toast(message){
-
-  const el = $("toast");
-
-  if(!el) return;
-
-  el.textContent = message;
-  el.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer = setTimeout(()=>{
-    el.classList.remove("show");
-  },3200);
-
-}
 
 function scrollToId(id){
 
-  document.getElementById(id)?.scrollIntoView({
-    behavior:"smooth"
-  });
+  document
+    .getElementById(id)
+    ?.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
 
 }
 
-function formatDate(value){
 
-  if(!value) return "—";
+function showToast(message,type=""){
 
-  try{
+  const toast =
+    document.getElementById("toast");
 
-    return new Date(value).toLocaleString(
-      "es-AR",
-      {
-        dateStyle:"short",
-        timeStyle:"short"
-      }
-    );
+  toast.textContent = message;
 
-  }catch{
+  toast.className = "";
 
-    return String(value);
+  toast.classList.add("show");
 
+  if(type){
+    toast.classList.add(type);
   }
 
-}
+  clearTimeout(window.toastTimer);
 
-function normalizeResult(data){
-
-  if(Array.isArray(data)){
-    return data[0] ?? null;
-  }
-
-  return data ?? null;
+  window.toastTimer =
+    setTimeout(()=>{
+      toast.classList.remove("show");
+    },3500);
 
 }
 
 
-/* ============================================================
-   INICIO
-============================================================ */
+function errorMessage(error){
 
-document.addEventListener(
-  "DOMContentLoaded",
-  init
-);
-
-async function init(){
-
-  try{
-
-    await ensureAuth();
-
-    await loadTable();
-
-    await loadProfile();
-
-    await Promise.allSettled([
-      loadGames(),
-      loadDuels(),
-      loadTournaments(),
-      loadRanking(),
-      loadPrizes()
-    ]);
-
-    setupRealtime();
-
-  }catch(error){
-
-    console.error(
-      "Error de inicialización:",
-      error
-    );
-
-    toast(
-      "No se pudo inicializar completamente la aplicación."
-    );
-
-  }
+  return error?.message ||
+         error?.details ||
+         error?.hint ||
+         "Ocurrió un error.";
 
 }
 
 
-/* ============================================================
-   AUTENTICACIÓN ANÓNIMA
-============================================================ */
+/* =========================
+   AUTENTICACIÓN
+========================= */
 
-async function ensureAuth(){
+async function initAuth(){
 
   const {
     data,
     error
   } =
-    await db.auth.getSession();
+  await db.auth.getSession();
 
   if(error){
-    throw error;
+    console.error(error);
   }
 
   if(data?.session?.user){
@@ -1195,198 +1211,40 @@ async function ensureAuth(){
     currentUser =
       data.session.user;
 
-    return;
-
-  }
-
-  const result =
-    await db.auth.signInAnonymously();
-
-  if(result.error){
-
-    console.error(
-      "Anonymous auth:",
-      result.error
-    );
-
-    throw result.error;
-
-  }
-
-  currentUser =
-    result.data?.user ?? null;
-
-}
-
-
-/* ============================================================
-   MESA
-============================================================ */
-
-async function loadTable(){
-
-  const params =
-    new URLSearchParams(
-      window.location.search
-    );
-
-  const mesaParam =
-    params.get("mesa");
-
-  if(!mesaParam){
-
-    updateTableUI(null);
-
-    return;
-
-  }
-
-  try{
-
-    let query =
-      db
-        .from("tables_pool")
-        .select("*");
-
-    if(/^\d+$/.test(mesaParam)){
-
-      query =
-        query.eq(
-          "numero",
-          Number(mesaParam)
-        );
-
-    }else{
-
-      query =
-        query.eq(
-          "codigo",
-          mesaParam
-        );
-
-    }
+  }else{
 
     const {
-      data,
-      error
+      data:authData,
+      error:authError
     } =
-      await query
-        .limit(1)
-        .maybeSingle();
+    await db.auth.signInAnonymously();
 
-    if(error){
+    if(authError){
 
-      console.warn(
-        "tables_pool:",
-        error
+      console.error(authError);
+
+      showToast(
+        "No se pudo iniciar la sesión.",
+        "error"
       );
-
-      updateTableUI({
-        numero:mesaParam,
-        codigo:mesaParam
-      });
 
       return;
 
     }
 
-    currentTable =
-      data || {
-        numero:mesaParam,
-        codigo:mesaParam
-      };
-
-    updateTableUI(
-      currentTable
-    );
-
-  }catch(error){
-
-    console.warn(error);
-
-    updateTableUI({
-      numero:mesaParam,
-      codigo:mesaParam
-    });
+    currentUser =
+      authData.user;
 
   }
+
+  await loadProfile();
 
 }
 
 
-function updateTableUI(table){
-
-  let value = "Sin mesa";
-
-  if(table){
-
-    value =
-      table.numero ??
-      table.codigo ??
-      table.id ??
-      "Mesa";
-
-  }
-
-  $("headerTable").textContent =
-    String(value);
-
-  $("profileTable").textContent =
-    String(value);
-
-  $("tableCode").textContent =
-    `Mesa ${value}`;
-
-  createQR();
-
-}
-
-
-/* ============================================================
-   QR
-============================================================ */
-
-function createQR(){
-
-  const container =
-    $("qrContainer");
-
-  if(!container) return;
-
-  const mesa =
-    currentTable?.numero ??
-    currentTable?.codigo;
-
-  if(!mesa){
-
-    container.innerHTML = "";
-
-    return;
-
-  }
-
-  const url =
-    `${window.location.origin}${window.location.pathname}?mesa=${encodeURIComponent(mesa)}`;
-
-  const qr =
-    `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(url)}`;
-
-  container.innerHTML = `
-    <div class="qr">
-      <img
-        src="${qr}"
-        width="180"
-        height="180"
-        alt="QR Mesa ${escapeHtml(mesa)}">
-    </div>
-  `;
-
-}
-
-
-/* ============================================================
+/* =========================
    PERFIL
-============================================================ */
+========================= */
 
 async function loadProfile(){
 
@@ -1394,23 +1252,20 @@ async function loadProfile(){
     data,
     error
   } =
-    await db.rpc(
-      "get_or_create_profile"
-    );
+  await db.rpc(
+    "get_or_create_profile"
+  );
 
   if(error){
 
-    console.error(
-      "Perfil:",
-      error
-    );
+    console.error(error);
 
     return;
 
   }
 
   currentProfile =
-    normalizeResult(data);
+    data;
 
   updateProfileUI();
 
@@ -1419,12 +1274,14 @@ async function loadProfile(){
 
 function updateProfileUI(){
 
-  if(!currentProfile) return;
+  if(!currentProfile){
+    return;
+  }
 
   const points =
     Number(
       currentProfile.points ??
-      currentProfile.puntos ??
+      currentProfile.total_points ??
       0
     );
 
@@ -1432,69 +1289,213 @@ function updateProfileUI(){
     Number(
       currentProfile.tokens ??
       currentProfile.token_balance ??
-      currentProfile.saldo_tokens ??
       0
     );
 
-  const name =
-    currentProfile.display_name ??
-    currentProfile.nombre ??
-    "Jugador";
+  const games =
+    Number(
+      currentProfile.games_played ??
+      currentProfile.total_games ??
+      0
+    );
 
-  $("playerName").textContent =
-    name;
+  document.getElementById(
+    "headerPoints"
+  ).textContent = points;
 
-  $("profilePoints").textContent =
-    points;
+  document.getElementById(
+    "headerTokens"
+  ).textContent = tokens;
 
-  $("profileTokens").textContent =
-    tokens;
+  document.getElementById(
+    "profilePoints"
+  ).textContent = points;
 
-  $("headerPoints").textContent =
-    points;
+  document.getElementById(
+    "profileTokens"
+  ).textContent = tokens;
 
-  $("headerTokens").textContent =
-    tokens;
+  document.getElementById(
+    "profileGames"
+  ).textContent = games;
 
 }
 
 
-/* ============================================================
-   JUEGOS
-============================================================ */
+/* =========================
+   MESA
+========================= */
 
-async function loadGames(){
+async function loadTable(){
 
-  const grid =
-    $("gamesGrid");
+  if(!mesaParam){
+
+    document.getElementById(
+      "headerTable"
+    ).textContent = "Sin mesa";
+
+    document.getElementById(
+      "tableCode"
+    ).textContent = "Sin mesa";
+
+    document.getElementById(
+      "tableName"
+    ).textContent =
+      "Ingresá desde el QR de una mesa.";
+
+    return;
+
+  }
+
+  let query =
+    db
+      .from("tables_pool")
+      .select("*")
+      .eq("active",true)
+      .limit(1);
+
+  const numericMesa =
+    Number(mesaParam);
+
+  if(
+    Number.isInteger(numericMesa) &&
+    String(numericMesa) === String(mesaParam)
+  ){
+
+    query =
+      query.eq(
+        "table_number",
+        numericMesa
+      );
+
+  }else{
+
+    query =
+      query.eq(
+        "codigo",
+        mesaParam
+      );
+
+  }
 
   const {
     data,
     error
   } =
-    await db
-      .from("games")
-      .select("*")
-      .eq("active",true)
-      .order("created_at",{
-        ascending:true
-      });
+  await query.maybeSingle();
 
   if(error){
 
-    console.error(
-      "games:",
+    console.warn(
+      "No se pudo cargar la mesa:",
       error
     );
 
-    grid.innerHTML = `
-      <div class="card">
-        <h3>⚠️ Juegos</h3>
-        <p>
-          No se pudieron cargar los juegos.
-        </p>
-      </div>
-    `;
+  }
+
+  currentTable =
+    data || {
+      id:null,
+      table_number:
+        Number.isFinite(numericMesa)
+          ? numericMesa
+          : null,
+      codigo:mesaParam,
+      name:"Mesa"
+    };
+
+  const tableValue =
+    currentTable.table_number ??
+    currentTable.codigo ??
+    "Mesa";
+
+  document.getElementById(
+    "headerTable"
+  ).textContent =
+    "Mesa " + tableValue;
+
+  document.getElementById(
+    "tableCode"
+  ).textContent =
+    "MESA " + tableValue;
+
+  document.getElementById(
+    "tableName"
+  ).textContent =
+    currentTable.name ||
+    "Pool & Beach";
+
+  generateQR();
+
+}
+
+
+function generateQR(){
+
+  const container =
+    document.getElementById(
+      "qrContainer"
+    );
+
+  if(!mesaParam){
+
+    container.innerHTML =
+      "<span style='color:#111'>Sin QR</span>";
+
+    return;
+
+  }
+
+  const url =
+    window.location.href;
+
+  const qrUrl =
+    "https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=" +
+    encodeURIComponent(url);
+
+  container.innerHTML =
+    `<img src="${qrUrl}"
+          width="160"
+          height="160"
+          alt="QR de mesa">`;
+
+}
+
+
+/* =========================
+   JUEGOS
+========================= */
+
+async function loadGames(){
+
+  const grid =
+    document.getElementById(
+      "gamesGrid"
+    );
+
+  const select =
+    document.getElementById(
+      "duelGame"
+    );
+
+  const {
+    data,
+    error
+  } =
+  await db
+    .from("games")
+    .select("*")
+    .eq("active",true)
+    .order("created_at");
+
+  if(error){
+
+    console.error(error);
+
+    grid.innerHTML =
+      `<div class="empty">
+        No se pudieron cargar los juegos.
+      </div>`;
 
     return;
 
@@ -1502,11 +1503,10 @@ async function loadGames(){
 
   if(!data?.length){
 
-    grid.innerHTML = `
-      <div class="empty">
+    grid.innerHTML =
+      `<div class="empty">
         No hay juegos activos.
-      </div>
-    `;
+      </div>`;
 
     return;
 
@@ -1515,110 +1515,70 @@ async function loadGames(){
   grid.innerHTML =
     data.map(game => {
 
-      const id =
-        game.id;
-
-      const name =
-        game.name ??
-        game.nombre ??
-        "Juego";
-
-      const icon =
-        game.icon ??
-        game.emoji ??
-        "🎮";
-
       const points =
-        game.points_reward ??
-        game.reward_points ??
-        game.puntos ??
-        0;
+        Number(game.points_reward ?? 0);
 
       const tokens =
-        game.token_reward ??
-        game.reward_tokens ??
-        game.tokens ??
-        0;
-
-      const description =
-        game.description ??
-        game.descripcion ??
-        "Superá el desafío y ganá recompensas.";
-
-      const isTrivia =
-        /trivia/i.test(name);
-
-      const isDuel =
-        /duelo/i.test(name);
+        Number(game.tokens_reward ?? 0);
 
       return `
-        <article class="card">
+        <div class="card">
 
           <div class="game-icon">
-            ${escapeHtml(icon)}
+            ${escapeHtml(game.icon || "🎮")}
           </div>
 
           <h3>
-            ${escapeHtml(name)}
+            ${escapeHtml(game.name)}
           </h3>
 
           <p>
-            ${escapeHtml(description)}
+            ${escapeHtml(
+              game.description ||
+              "Desafío Pool & Beach."
+            )}
           </p>
 
           <div class="reward">
-            <span>⭐ ${Number(points)} puntos</span>
-            <span>🪙 ${Number(tokens)} tokens</span>
+            <span>🎯 ${points} pts</span>
+            <span>🪙 ${tokens} tokens</span>
           </div>
 
-          ${
-            isTrivia
-            ?
-            `
-              <button
-                class="btn btn-primary"
-                onclick="scrollToId('trivia')">
-                🧠 Jugar trivia
-              </button>
-            `
-            :
-            isDuel
-            ?
-            `
-              <button
-                class="btn btn-primary"
-                onclick="scrollToId('duelos')">
-                ⚔️ Ir al duelo
-              </button>
-            `
-            :
-            `
-              <button
-                class="btn btn-primary"
-                onclick="playSimpleGame('${id}')">
-                🎮 Jugar
-              </button>
-            `
-          }
+          <button
+            class="btn btn-primary"
+            onclick="playGame('${game.id}')">
 
-        </article>
+            🎮 Jugar
+
+          </button>
+
+        </div>
       `;
 
     }).join("");
 
+
+  select.innerHTML =
+    `<option value="">
+      Elegí un juego
+    </option>` +
+    data.map(game => `
+      <option value="${game.id}">
+        ${escapeHtml(game.icon || "🎮")}
+        ${escapeHtml(game.name)}
+      </option>
+    `).join("");
+
 }
 
 
-/* ============================================================
-   JUEGO SIMPLE
-============================================================ */
-
-async function playSimpleGame(gameId){
+async function playGame(gameId){
 
   if(!currentTable?.id){
 
-    toast(
-      "Ingresá desde el QR de una mesa para jugar."
+    showToast(
+      "Ingresá desde el QR de una mesa para jugar.",
+      "warning"
     );
 
     return;
@@ -1629,36 +1589,34 @@ async function playSimpleGame(gameId){
     data,
     error
   } =
-    await db.rpc(
-      "play_game",
-      {
-        p_game_id:gameId,
-        p_table_id:currentTable.id,
-        p_metadata:{
-          source:"index",
-          played_at:new Date().toISOString()
-        }
+  await db.rpc(
+    "play_game",
+    {
+      p_game_id:gameId,
+      p_table_id:currentTable.id,
+      p_metadata:{
+        source:"web",
+        mesa:mesaParam
       }
-    );
+    }
+  );
 
   if(error){
 
-    console.error(
-      "play_game:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No se pudo iniciar el juego."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
 
   }
 
-  toast(
-    "🎮 ¡Juego iniciado!"
+  showToast(
+    "¡Partida registrada! 🎉",
+    "success"
   );
 
   await loadProfile();
@@ -1666,64 +1624,33 @@ async function playSimpleGame(gameId){
 }
 
 
-/* ============================================================
-   BUSCAR JUEGO
-============================================================ */
-
-async function findGameByName(name){
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("games")
-      .select("*")
-      .ilike("name",name)
-      .limit(1)
-      .maybeSingle();
-
-  if(error){
-
-    console.error(
-      "findGameByName:",
-      error
-    );
-
-    return null;
-
-  }
-
-  return data;
-
-}
-
-
-/* ============================================================
+/* =========================
    TRIVIA
-============================================================ */
+========================= */
 
 async function startTrivia(){
 
   if(!currentTable?.id){
 
-    toast(
-      "Ingresá desde el QR de una mesa para jugar trivia."
+    showToast(
+      "Necesitás estar vinculado a una mesa.",
+      "warning"
     );
 
     return;
 
   }
 
-  const triviaGame =
+  const game =
     await findGameByName(
       "Trivia Express"
     );
 
-  if(!triviaGame){
+  if(!game){
 
-    toast(
-      "No se encontró Trivia Express."
+    showToast(
+      "No se encontró Trivia Express.",
+      "error"
     );
 
     return;
@@ -1734,115 +1661,111 @@ async function startTrivia(){
     data,
     error
   } =
-    await db.rpc(
-      "start_trivia_game",
-      {
-        p_game_id:triviaGame.id,
-        p_table_id:currentTable.id
-      }
-    );
+  await db.rpc(
+    "start_trivia_game",
+    {
+      p_game_id:game.id,
+      p_table_id:currentTable.id
+    }
+  );
 
   if(error){
 
-    console.error(
-      "start_trivia_game:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No hay preguntas disponibles."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
 
   }
 
-  currentTriviaSession =
-    normalizeResult(data);
+  currentTrivia =
+    data;
 
-  currentTriviaQuestion =
-    currentTriviaSession?.question ??
-    currentTriviaSession?.current_question ??
-    currentTriviaSession;
-
-  $("triviaStart").style.display =
-    "none";
-
-  $("triviaGame").style.display =
-    "block";
-
-  $("triviaResult").style.display =
-    "none";
-
-  renderTrivia();
+  renderTrivia(data);
 
 }
 
 
-function renderTrivia(){
+function renderTrivia(data){
 
-  const q =
-    currentTriviaQuestion;
+  document
+    .getElementById("triviaStart")
+    .classList.add("hidden");
 
-  if(!q){
-
-    $("triviaQuestion").textContent =
-      "No se recibió una pregunta.";
-
-    return;
-
-  }
+  document
+    .getElementById("triviaGame")
+    .classList.remove("hidden");
 
   const question =
-    q.question ??
-    q.pregunta ??
-    q.text ??
+    data?.question ||
+    data?.current_question ||
+    data;
+
+  const questionText =
+    question?.question ||
+    question?.text ||
     "Pregunta";
 
-  let answers =
-    q.options ??
-    q.answers ??
-    q.opciones ??
+  const answers =
+    question?.answers ||
+    question?.options ||
     [];
 
-  if(typeof answers === "string"){
+  document.getElementById(
+    "triviaQuestion"
+  ).textContent =
+    questionText;
 
-    try{
-      answers = JSON.parse(answers);
-    }catch{
-      answers = [];
-    }
+  document.getElementById(
+    "triviaResult"
+  ).textContent = "";
 
-  }
-
-  $("triviaProgress").innerHTML =
-    `<span class="badge">🧠 Pregunta</span>`;
-
-  $("triviaQuestion").textContent =
-    question;
-
-  $("triviaAnswers").innerHTML =
-    Array.isArray(answers)
-    ?
+  document.getElementById(
+    "triviaAnswers"
+  ).innerHTML =
     answers.map(
       (answer,index) => `
         <button
           class="answer"
           onclick="answerTrivia(${index})">
-          ${escapeHtml(answer)}
+
+          ${escapeHtml(
+            typeof answer === "string"
+              ? answer
+              : answer.text ??
+                answer.answer ??
+                answer.option ??
+                ""
+          )}
+
         </button>
       `
-    ).join("")
-    :
-    `<div class="empty">No hay respuestas disponibles.</div>`;
+    ).join("");
 
 }
 
 
-async function answerTrivia(index){
+async function answerTrivia(answerIndex){
 
-  if(!currentTriviaSession){
+  if(!currentTrivia){
+    return;
+  }
+
+  const sessionId =
+    currentTrivia.session_id ??
+    currentTrivia.id ??
+    currentTrivia.game_session_id;
+
+  if(!sessionId){
+
+    showToast(
+      "No se encontró la sesión de trivia.",
+      "error"
+    );
 
     return;
 
@@ -1853,178 +1776,125 @@ async function answerTrivia(index){
       "#triviaAnswers .answer"
     );
 
-  buttons.forEach(btn=>{
-    btn.disabled = true;
-  });
-
-  const sessionId =
-    currentTriviaSession.session_id ??
-    currentTriviaSession.id ??
-    currentTriviaSession.game_session_id;
-
-  if(!sessionId){
-
-    toast(
-      "No se encontró la sesión de trivia."
-    );
-
-    buttons.forEach(btn=>{
-      btn.disabled = false;
-    });
-
-    return;
-
-  }
+  buttons.forEach(
+    button => button.disabled = true
+  );
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "answer_trivia",
-      {
-        p_session_id:sessionId,
-        p_answer_index:index
-      }
-    );
+  await db.rpc(
+    "answer_trivia",
+    {
+      p_session_id:sessionId,
+      p_answer_index:answerIndex
+    }
+  );
 
   if(error){
 
-    console.error(
-      "answer_trivia:",
-      error
+    console.error(error);
+
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
-    toast(
-      error.message ||
-      "No se pudo procesar la respuesta."
+    buttons.forEach(
+      button => button.disabled = false
     );
-
-    buttons.forEach(btn=>{
-      btn.disabled = false;
-    });
 
     return;
 
   }
 
-  const result =
-    normalizeResult(data);
-
   const correct =
-    result?.correct ??
-    result?.is_correct ??
+    data?.correct ??
+    data?.is_correct ??
     false;
 
-  if(correct){
+  buttons[
+    answerIndex
+  ]?.classList.add(
+    correct
+      ? "correct"
+      : "wrong"
+  );
 
-    buttons[index]?.classList.add(
-      "correct"
+  const result =
+    document.getElementById(
+      "triviaResult"
     );
 
-    $("triviaResult").style.display =
-      "block";
+  result.textContent =
+    correct
+      ? "✅ ¡Correcto! Ganaste la recompensa."
+      : "❌ Incorrecto. ¡Probá de nuevo!";
 
-    $("triviaResult").innerHTML =
-      `
-        <strong class="success">
-          ✅ ¡Correcto!
-        </strong><br>
-        Ganaste la recompensa.
-      `;
-
-    toast(
-      "🎉 ¡Respuesta correcta!"
-    );
-
-  }else{
-
-    buttons[index]?.classList.add(
-      "wrong"
-    );
-
-    $("triviaResult").style.display =
-      "block";
-
-    $("triviaResult").innerHTML =
-      `
-        <strong>
-          ❌ Respuesta incorrecta
-        </strong><br>
-        ¡Probá otra vez!
-      `;
-
-    toast(
-      "❌ Respuesta incorrecta"
-    );
-
-  }
+  result.className =
+    "duel-status " +
+    (correct
+      ? "success"
+      : "error");
 
   await loadProfile();
 
 }
 
 
-/* ============================================================
+/* =========================
    DUELOS
-============================================================ */
+========================= */
 
 async function createDuel(){
 
+  const gameId =
+    document.getElementById(
+      "duelGame"
+    ).value;
+
+  if(!gameId){
+
+    showToast(
+      "Elegí un juego.",
+      "warning"
+    );
+
+    return;
+
+  }
+
   if(!currentTable?.id){
 
-    toast(
-      "Necesitás estar asociado a una mesa."
+    showToast(
+      "Necesitás estar vinculado a una mesa.",
+      "warning"
     );
 
     return;
 
   }
-
-  const game =
-    await findGameByName(
-      "Duelo 1 vs 1"
-    );
-
-  if(!game){
-
-    toast(
-      "No se encontró el juego de duelo."
-    );
-
-    return;
-
-  }
-
-  const button =
-    $("createDuelBtn");
-
-  button.disabled = true;
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "create_duel",
-      {
-        p_game_id:game.id,
-        p_table_id:currentTable.id
-      }
-    );
-
-  button.disabled = false;
+  await db.rpc(
+    "create_duel",
+    {
+      p_game_id:gameId,
+      p_table_id:currentTable.id
+    }
+  );
 
   if(error){
 
-    console.error(
-      "create_duel:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No se pudo crear el duelo."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
@@ -2032,39 +1902,33 @@ async function createDuel(){
   }
 
   currentDuel =
-    normalizeResult(data);
+    data;
 
-  $("myDuelStatus").style.display =
-    "block";
-
-  $("myDuelStatus").innerHTML =
-    `
-      <strong>⚔️ Duelo creado</strong><br>
-      Esperando rival...
-    `;
-
-  toast(
-    "⚔️ Duelo creado. Esperando rival."
+  showToast(
+    "Duelo creado. Esperando rival ⚔️",
+    "success"
   );
 
-  await loadDuels();
+  await loadWaitingDuels();
+
+  showActiveDuel();
 
 }
 
 
-async function loadDuels(){
+async function loadWaitingDuels(){
 
-  const list =
-    $("duelList");
+  const container =
+    document.getElementById(
+      "waitingDuels"
+    );
 
   if(!currentTable?.id){
 
-    list.innerHTML =
-      `
-        <div class="empty">
-          Asociá una mesa para ver los duelos.
-        </div>
-      `;
+    container.innerHTML =
+      `<div class="empty">
+        Escaneá el QR de una mesa para ver duelos.
+      </div>`;
 
     return;
 
@@ -2074,26 +1938,21 @@ async function loadDuels(){
     data,
     error
   } =
-    await db.rpc(
-      "get_waiting_duels",
-      {
-        p_table_id:currentTable.id
-      }
-    );
+  await db.rpc(
+    "get_waiting_duels",
+    {
+      p_table_id:currentTable.id
+    }
+  );
 
   if(error){
 
-    console.error(
-      "get_waiting_duels:",
-      error
-    );
+    console.error(error);
 
-    list.innerHTML =
-      `
-        <div class="empty">
-          No se pudieron cargar los duelos.
-        </div>
-      `;
+    container.innerHTML =
+      `<div class="empty">
+        No se pudieron cargar los duelos.
+      </div>`;
 
     return;
 
@@ -2101,49 +1960,48 @@ async function loadDuels(){
 
   if(!data?.length){
 
-    list.innerHTML =
-      `
-        <div class="empty">
-          No hay duelos esperando rival.
-        </div>
-      `;
+    container.innerHTML =
+      `<div class="empty">
+        No hay jugadores esperando rival.
+      </div>`;
 
     return;
 
   }
 
-  list.innerHTML =
+  container.innerHTML =
     data.map(duel => {
 
       const id =
         duel.id ??
         duel.duel_id;
 
-      const creator =
-        duel.creator_name ??
+      const name =
         duel.player_name ??
-        duel.created_by_name ??
+        duel.display_name ??
         "Jugador";
 
       return `
         <div class="duel-item">
 
           <div>
-
             <strong>
-              ⚔️ ${escapeHtml(creator)}
+              ⚔️ ${escapeHtml(name)}
             </strong>
 
-            <div style="color:var(--muted);font-size:12px;margin-top:4px">
-              Esperando rival
-            </div>
+            <br>
 
+            <small style="color:var(--muted)">
+              Esperando rival
+            </small>
           </div>
 
           <button
             class="btn btn-green"
             onclick="joinDuel('${id}')">
+
             Unirme
+
           </button>
 
         </div>
@@ -2156,37 +2014,24 @@ async function loadDuels(){
 
 async function joinDuel(duelId){
 
-  if(!duelId){
-
-    toast(
-      "Duelo inválido."
-    );
-
-    return;
-
-  }
-
   const {
     data,
     error
   } =
-    await db.rpc(
-      "join_duel",
-      {
-        p_duel_id:duelId
-      }
-    );
+  await db.rpc(
+    "join_duel",
+    {
+      p_duel_id:duelId
+    }
+  );
 
   if(error){
 
-    console.error(
-      "join_duel:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No se pudo unir al duelo."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
@@ -2194,47 +2039,74 @@ async function joinDuel(duelId){
   }
 
   currentDuel =
-    normalizeResult(data);
+    data;
 
-  $("activeDuelPanel").style.display =
-    "block";
-
-  $("activeDuelInfo").innerHTML =
-    `
-      <strong>⚔️ Duelo activo</strong><br>
-      Ya podés ingresar tu puntuación cuando termine la partida.
-    `;
-
-  toast(
-    "⚔️ ¡Te uniste al duelo!"
+  showToast(
+    "¡Te uniste al duelo! ⚔️",
+    "success"
   );
 
-  await loadDuels();
+  showActiveDuel();
 
 }
 
 
-async function submitDuel(){
+function showActiveDuel(){
+
+  if(!currentDuel){
+    return;
+  }
+
+  document
+    .getElementById(
+      "activeDuelCard"
+    )
+    .classList.remove("hidden");
+
+  const status =
+    currentDuel.status ??
+    "active";
+
+  document.getElementById(
+    "activeDuelInfo"
+  ).textContent =
+    "Estado del duelo: " +
+    status;
+
+  document.getElementById(
+    "duelStatus"
+  ).textContent =
+    "⚔️ Tenés un duelo activo.";
+
+}
+
+
+async function submitDuelScore(){
 
   if(!currentDuel){
 
-    toast(
-      "No hay un duelo activo."
+    showToast(
+      "No hay un duelo activo.",
+      "warning"
     );
 
     return;
 
   }
 
-  const score =
-    Number(
-      $("duelScore").value
+  const input =
+    document.getElementById(
+      "duelScore"
     );
+
+  const score =
+    Number(input.value);
 
   if(!Number.isFinite(score) || score < 0){
 
-    toast(
-      "Ingresá una puntuación válida."
+    showToast(
+      "Ingresá una puntuación válida.",
+      "warning"
     );
 
     return;
@@ -2242,419 +2114,322 @@ async function submitDuel(){
   }
 
   const duelId =
-    currentDuel.duel_id ??
-    currentDuel.id;
-
-  if(!duelId){
-
-    toast(
-      "No se encontró el duelo."
-    );
-
-    return;
-
-  }
+    currentDuel.id ??
+    currentDuel.duel_id;
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "submit_duel_score",
-      {
-        p_duel_id:duelId,
-        p_score:score
-      }
-    );
+  await db.rpc(
+    "submit_duel_score",
+    {
+      p_duel_id:duelId,
+      p_score:score
+    }
+  );
 
   if(error){
 
-    console.error(
-      "submit_duel_score:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No se pudo guardar la puntuación."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
 
   }
 
-  const result =
-    normalizeResult(data);
+  currentDuel =
+    data;
 
-  const status =
-    result?.status ??
-    result?.state ??
-    "";
+  showToast(
+    "Resultado enviado ✅",
+    "success"
+  );
+
+  await loadProfile();
 
   if(
-    status === "completed" ||
-    result?.winner
+    data?.status === "completed" ||
+    data?.completed === true
   ){
 
-    $("activeDuelInfo").innerHTML =
-      `
-        <strong>🏁 Duelo terminado</strong><br>
-        ${escapeHtml(
-          result?.message ??
-          "El resultado fue registrado."
-        )}
-      `;
+    document.getElementById(
+      "activeDuelInfo"
+    ).textContent =
+      "🏁 Duelo terminado.";
+
+  }
+
+}
+
+
+/* =========================
+   TORNEO
+========================= */
+
+async function loadTournament(){
+
+  const {
+    data,
+    error
+  } =
+  await db
+    .from("tournaments")
+    .select("*")
+    .eq("id",TOURNAMENT_ID)
+    .maybeSingle();
+
+  if(error){
+
+    console.error(error);
+
+    document.getElementById(
+      "tournamentMessage"
+    ).textContent =
+      "No se pudo cargar el torneo.";
+
+    return;
+
+  }
+
+  if(!data){
+
+    document.getElementById(
+      "tournamentStatus"
+    ).textContent =
+      "No disponible";
+
+    document.getElementById(
+      "tournamentMessage"
+    ).textContent =
+      "No se encontró el torneo.";
+
+    return;
+
+  }
+
+  document.getElementById(
+    "tournamentName"
+  ).textContent =
+    data.name ||
+    "Torneo Pool & Beach";
+
+  document.getElementById(
+    "tournamentDescription"
+  ).textContent =
+    data.description ||
+    "Torneo competitivo de Pool & Beach.";
+
+  document.getElementById(
+    "tournamentEntry"
+  ).textContent =
+    `${Number(data.entry_tokens ?? 0)} 🪙`;
+
+  document.getElementById(
+    "tournamentStatus"
+  ).textContent =
+    tournamentStatusText(
+      data.status
+    );
+
+  document.getElementById(
+    "tournamentState"
+  ).textContent =
+    tournamentStatusText(
+      data.status
+    );
+
+  const {
+    count,
+    error:countError
+  } =
+  await db
+    .from("tournament_players")
+    .select(
+      "id",
+      {
+        count:"exact",
+        head:true
+      }
+    )
+    .eq(
+      "tournament_id",
+      TOURNAMENT_ID
+    );
+
+  if(!countError){
+
+    document.getElementById(
+      "tournamentPlayers"
+    ).textContent =
+      `${count ?? 0}/${Number(
+        data.max_players ?? 16
+      )}`;
+
+  }
+
+  updateTournamentButton(
+    data.status
+  );
+
+  await loadTournamentMatches();
+
+  await loadTournamentRanking();
+
+}
+
+
+function tournamentStatusText(status){
+
+  const map = {
+    open:"Abierto",
+    in_progress:"En curso",
+    completed:"Finalizado",
+    cancelled:"Cancelado"
+  };
+
+  return map[status] ||
+    status ||
+    "—";
+
+}
+
+
+function updateTournamentButton(status){
+
+  const button =
+    document.getElementById(
+      "joinTournamentButton"
+    );
+
+  if(status === "open"){
+
+    button.disabled = false;
+    button.textContent =
+      "🏆 Inscribirme";
 
   }else{
 
-    $("activeDuelInfo").innerHTML =
-      `
-        <strong class="success">
-          ✅ Puntuación registrada
-        </strong><br>
-        Esperando el resultado del rival.
-      `;
+    button.disabled = true;
+
+    button.textContent =
+      status === "in_progress"
+        ? "🏆 Torneo en curso"
+        : "🏆 No disponible";
 
   }
-
-  $("duelScore").value = "";
-
-  toast(
-    "✅ Puntuación registrada."
-  );
-
-  await loadProfile();
-  await loadDuels();
 
 }
 
 
-/* ============================================================
-   TORNEOS
-============================================================ */
-
-async function loadTournaments(){
-
-  const grid =
-    $("tournamentsGrid");
+async function joinTournament(){
 
   const {
     data,
     error
   } =
-    await db
-      .from("tournaments")
-      .select("*")
-      .order("starts_at",{
-        ascending:true
-      });
-
-  if(error){
-
-    console.error(
-      "tournaments:",
-      error
-    );
-
-    grid.innerHTML =
-      `
-        <div class="card">
-          <h3>⚠️ Torneos</h3>
-          <p>
-            No se pudieron cargar los torneos.
-          </p>
-        </div>
-      `;
-
-    return;
-
-  }
-
-  if(!data?.length){
-
-    grid.innerHTML =
-      `
-        <div class="empty">
-          No hay torneos disponibles.
-        </div>
-      `;
-
-    return;
-
-  }
-
-  grid.innerHTML =
-    data.map(tournament => {
-
-      const id =
-        tournament.id;
-
-      const name =
-        tournament.name ??
-        tournament.nombre ??
-        "Torneo";
-
-      const status =
-        tournament.status ??
-        tournament.estado ??
-        "open";
-
-      const maxPlayers =
-        tournament.max_players ??
-        tournament.maxPlayers ??
-        16;
-
-      const entryTokens =
-        tournament.entry_tokens ??
-        tournament.inscription_tokens ??
-        0;
-
-      const starts =
-        tournament.starts_at ??
-        tournament.fecha_inicio;
-
-      const isOpen =
-        status === "open";
-
-      return `
-        <article class="card tournament-card">
-
-          <div class="tournament-status">
-            ${escapeHtml(status)}
-          </div>
-
-          <div class="game-icon">
-            🏆
-          </div>
-
-          <h3>
-            ${escapeHtml(name)}
-          </h3>
-
-          <p>
-            Competencia Pool & Beach.
-            Avanzá ronda por ronda hasta la final.
-          </p>
-
-          <div class="tournament-info">
-
-            <div class="info-box">
-              <small>Jugadores</small>
-              <strong>${maxPlayers}</strong>
-            </div>
-
-            <div class="info-box">
-              <small>Entrada</small>
-              <strong>🪙 ${entryTokens}</strong>
-            </div>
-
-            <div class="info-box">
-              <small>Inicio</small>
-              <strong>${formatDate(starts)}</strong>
-            </div>
-
-          </div>
-
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-
-            ${
-              isOpen
-              ?
-              `
-                <button
-                  class="btn btn-primary"
-                  onclick="joinTournament('${id}')">
-                  🏆 Inscribirme
-                </button>
-              `
-              :
-              `
-                <button
-                  class="btn btn-secondary"
-                  onclick="selectTournament('${id}')">
-                  Ver competencia
-                </button>
-              `
-            }
-
-            <button
-              class="btn btn-secondary"
-              onclick="selectTournament('${id}')">
-              📋 Ver partidos
-            </button>
-
-          </div>
-
-        </article>
-      `;
-
-    }).join("");
-
-}
-
-
-/* ============================================================
-   INSCRIPCIÓN TORNEO
-============================================================ */
-
-async function joinTournament(tournamentId){
-
-  if(!tournamentId){
-
-    toast(
-      "Torneo inválido."
-    );
-
-    return;
-
-  }
-
-  const {
-    data,
-    error
-  } =
-    await db.rpc(
-      "join_tournament",
-      {
-        p_tournament_id:tournamentId
-      }
-    );
-
-  if(error){
-
-    console.error(
-      "join_tournament:",
-      error
-    );
-
-    toast(
-      error.message ||
-      "No se pudo realizar la inscripción."
-    );
-
-    return;
-
-  }
-
-  toast(
-    "🏆 ¡Inscripción realizada!"
+  await db.rpc(
+    "join_tournament",
+    {
+      p_tournament_id:
+        TOURNAMENT_ID
+    }
   );
 
-  await loadProfile();
+  if(error){
+
+    console.error(error);
+
+    showToast(
+      errorMessage(error),
+      "error"
+    );
+
+    return;
+
+  }
+
+  showToast(
+    "¡Te inscribiste al torneo! 🏆",
+    "success"
+  );
+
+  document.getElementById(
+    "tournamentMessage"
+  ).textContent =
+    "✅ Inscripción confirmada.";
 
   /*
-    Intentamos pasar el torneo de OPEN a
-    IN_PROGRESS cuando ya hay al menos
-    2 jugadores.
-
-    Si la función todavía no está disponible
-    en Supabase, no rompe la interfaz.
+    CORRECCIÓN:
+    al llegar a 2 jugadores se llama
+    a la función segura de Supabase.
+    Esa función es la que crea el cuadro.
   */
 
-  try{
-
-    const start =
-      await db.rpc(
-        "start_tournament_if_ready",
-        {
-          p_tournament_id:tournamentId
-        }
-      );
-
-    if(start.error){
-
-      console.warn(
-        "start_tournament_if_ready:",
-        start.error.message
-      );
-
+  const {
+    data:startData,
+    error:startError
+  } =
+  await db.rpc(
+    "start_tournament_if_ready",
+    {
+      p_tournament_id:
+        TOURNAMENT_ID
     }
+  );
 
-  }catch(error){
+  if(startError){
 
     console.warn(
-      "Inicio automático no disponible:",
-      error
+      "El torneo todavía no puede iniciarse:",
+      startError
+    );
+
+  }else{
+
+    console.log(
+      "Inicio de torneo:",
+      startData
     );
 
   }
 
-  await loadTournaments();
-
-  await selectTournament(
-    tournamentId
-  );
+  await loadTournament();
 
 }
 
 
-/* ============================================================
-   SELECCIONAR TORNEO
-============================================================ */
-
-async function selectTournament(tournamentId){
-
-  currentTournament =
-    tournamentId;
-
-  scrollToId("torneos");
-
-  await Promise.allSettled([
-    loadTournamentMatches(tournamentId),
-    loadTournamentStandings(tournamentId)
-  ]);
-
-}
-
-
-/* ============================================================
-   PARTIDOS DEL TORNEO
-============================================================ */
-
-async function loadTournamentMatches(
-  tournamentId
-){
+async function loadTournamentMatches(){
 
   const container =
-    $("myMatches");
-
-  if(!tournamentId){
-
-    container.innerHTML =
-      `
-        <div class="empty">
-          Seleccioná un torneo.
-        </div>
-      `;
-
-    return;
-
-  }
+    document.getElementById(
+      "tournamentMatches"
+    );
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "get_tournament_matches",
-      {
-        p_tournament_id:tournamentId
-      }
-    );
+  await db.rpc(
+    "get_tournament_matches",
+    {
+      p_tournament_id:
+        TOURNAMENT_ID
+    }
+  );
 
   if(error){
 
-    console.error(
-      "get_tournament_matches:",
-      error
-    );
+    console.error(error);
 
     container.innerHTML =
-      `
-        <div class="empty">
-          No se pudieron cargar los partidos.
-        </div>
-      `;
+      `<div class="empty">
+        No se pudo cargar el cuadro.
+      </div>`;
 
     return;
 
@@ -2663,14 +2438,9 @@ async function loadTournamentMatches(
   if(!data?.length){
 
     container.innerHTML =
-      `
-        <div class="empty">
-          Todavía no hay partidos generados.
-          <br><br>
-          El cuadro aparecerá cuando la competencia
-          esté habilitada.
-        </div>
-      `;
+      `<div class="empty">
+        El cuadro aparecerá cuando el torneo comience.
+      </div>`;
 
     return;
 
@@ -2679,47 +2449,37 @@ async function loadTournamentMatches(
   container.innerHTML =
     data.map(match => {
 
-      const matchId =
-        match.id ??
-        match.match_id;
-
-      const player1 =
-        match.player1_name ??
-        match.player_1_name ??
-        match.player1_display_name ??
-        "Jugador 1";
-
-      const player2 =
-        match.player2_name ??
-        match.player_2_name ??
-        match.player2_display_name ??
-        "Jugador 2";
-
-      const score1 =
-        match.player1_score ??
-        match.score1 ??
-        match.player_1_score ??
-        "—";
-
-      const score2 =
-        match.player2_score ??
-        match.score2 ??
-        match.player_2_score ??
-        "—";
-
       const round =
         match.round ??
-        match.round_number ??
-        "Ronda";
+        1;
+
+      const number =
+        match.match_number ??
+        "";
+
+      const p1 =
+        match.player1_name ??
+        match.player1_display_name ??
+        match.player1_id ??
+        "Esperando";
+
+      const p2 =
+        match.player2_name ??
+        match.player2_display_name ??
+        match.player2_id ??
+        "Esperando";
+
+      const s1 =
+        match.player1_score ??
+        "—";
+
+      const s2 =
+        match.player2_score ??
+        "—";
 
       const status =
         match.status ??
         "pending";
-
-      const canScore =
-        status === "pending" ||
-        status === "active" ||
-        status === "in_progress";
 
       return `
         <div class="match">
@@ -2727,61 +2487,35 @@ async function loadTournamentMatches(
           <div class="match-header">
 
             <span>
-              ${escapeHtml(String(round))}
+              Ronda ${escapeHtml(round)}
+              · Partido ${escapeHtml(number)}
             </span>
 
             <span>
-              ${escapeHtml(String(status))}
+              ${escapeHtml(status)}
             </span>
 
           </div>
 
           <div class="player-row">
-            <span>
-              ${escapeHtml(player1)}
-            </span>
-
             <strong>
-              ${escapeHtml(String(score1))}
+              ${escapeHtml(p1)}
             </strong>
+
+            <span>
+              ${escapeHtml(s1)}
+            </span>
           </div>
 
           <div class="player-row">
-            <span>
-              ${escapeHtml(player2)}
-            </span>
-
             <strong>
-              ${escapeHtml(String(score2))}
+              ${escapeHtml(p2)}
             </strong>
+
+            <span>
+              ${escapeHtml(s2)}
+            </span>
           </div>
-
-          ${
-            canScore
-            ?
-            `
-              <div style="margin-top:10px">
-
-                <input
-                  id="tournamentScore_${matchId}"
-                  class="score-input"
-                  type="number"
-                  min="0"
-                  max="999"
-                  placeholder="Tu puntuación">
-
-                <button
-                  class="btn btn-green"
-                  style="margin-top:8px"
-                  onclick="submitTournamentScore('${matchId}')">
-                  Registrar resultado
-                </button>
-
-              </div>
-            `
-            :
-            ""
-          }
 
         </div>
       `;
@@ -2791,145 +2525,33 @@ async function loadTournamentMatches(
 }
 
 
-/* ============================================================
-   RESULTADO TORNEO
-============================================================ */
-
-async function submitTournamentScore(
-  matchId
-){
-
-  const input =
-    document.getElementById(
-      `tournamentScore_${matchId}`
-    );
-
-  if(!input){
-
-    toast(
-      "No se encontró el campo de puntuación."
-    );
-
-    return;
-
-  }
-
-  const score =
-    Number(input.value);
-
-  if(
-    !Number.isFinite(score) ||
-    score < 0 ||
-    score > 999
-  ){
-
-    toast(
-      "Ingresá una puntuación válida."
-    );
-
-    return;
-
-  }
-
-  const {
-    data,
-    error
-  } =
-    await db.rpc(
-      "submit_tournament_score",
-      {
-        p_match_id:matchId,
-        p_score:score
-      }
-    );
-
-  if(error){
-
-    console.error(
-      "submit_tournament_score:",
-      error
-    );
-
-    toast(
-      error.message ||
-      "No se pudo registrar el resultado."
-    );
-
-    return;
-
-  }
-
-  const result =
-    normalizeResult(data);
-
-  toast(
-    result?.message ??
-    "🏆 Resultado registrado."
-  );
-
-  await Promise.allSettled([
-    loadTournamentMatches(currentTournament),
-    loadTournamentStandings(currentTournament),
-    loadProfile(),
-    loadTournaments()
-  ]);
-
-}
-
-
-/* ============================================================
-   TABLA DEL TORNEO
-   CAMPOS REALES DE get_tournament_standings:
-   ranking_position
-   display_name
-   score
-   status
-============================================================ */
-
-async function loadTournamentStandings(
-  tournamentId
-){
+async function loadTournamentRanking(){
 
   const container =
-    $("tournamentStandings");
-
-  if(!tournamentId){
-
-    container.innerHTML =
-      `
-        <div class="empty">
-          Seleccioná un torneo.
-        </div>
-      `;
-
-    return;
-
-  }
+    document.getElementById(
+      "tournamentRanking"
+    );
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "get_tournament_standings",
-      {
-        p_tournament_id:tournamentId
-      }
-    );
+  await db.rpc(
+    "get_tournament_standings",
+    {
+      p_tournament_id:
+        TOURNAMENT_ID
+    }
+  );
 
   if(error){
 
-    console.error(
-      "get_tournament_standings:",
-      error
-    );
+    console.error(error);
 
     container.innerHTML =
-      `
-        <div class="empty">
-          No se pudo cargar la tabla.
-        </div>
-      `;
+      `<div class="empty">
+        No se pudo cargar la clasificación.
+      </div>`;
 
     return;
 
@@ -2938,11 +2560,9 @@ async function loadTournamentStandings(
   if(!data?.length){
 
     container.innerHTML =
-      `
-        <div class="empty">
-          Todavía no hay jugadores en la tabla.
-        </div>
-      `;
+      `<div class="empty">
+        Todavía no hay jugadores clasificados.
+      </div>`;
 
     return;
 
@@ -2958,38 +2578,21 @@ async function loadTournamentStandings(
 
         const name =
           row.display_name ??
-          row.player_name ??
-          row.nombre ??
           "Jugador";
 
         const score =
           Number(
-            row.score ??
-            row.points ??
-            row.puntos ??
-            0
+            row.score ?? 0
           );
 
         const status =
-          row.status ??
-          "";
-
-        let medal =
-          position;
-
-        if(Number(position) === 1){
-          medal = "🥇";
-        }else if(Number(position) === 2){
-          medal = "🥈";
-        }else if(Number(position) === 3){
-          medal = "🥉";
-        }
+          row.status ?? "";
 
         return `
           <div class="rank-row">
 
             <div class="rank-number">
-              ${medal}
+              #${escapeHtml(position)}
             </div>
 
             <div class="rank-name">
@@ -2997,7 +2600,7 @@ async function loadTournamentStandings(
             </div>
 
             <div class="rank-points">
-              ⭐ ${score}
+              ${score} pts
             </div>
 
             <div class="rank-tokens">
@@ -3013,101 +2616,44 @@ async function loadTournamentStandings(
 }
 
 
-/* ============================================================
+/* =========================
    RANKING GENERAL
-============================================================ */
+========================= */
 
 async function loadRanking(){
 
   const container =
-    $("rankingList");
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db.rpc(
-        "get_public_ranking"
-      );
-
-    if(error){
-
-      throw error;
-
-    }
-
-    renderRanking(
-      data || []
+    document.getElementById(
+      "rankingList"
     );
 
-  }catch(error){
+  const {
+    data,
+    error
+  } =
+  await db.rpc(
+    "get_public_ranking"
+  );
 
-    console.warn(
-      "get_public_ranking:",
-      error
-    );
+  if(error){
 
-    try{
+    console.error(error);
 
-      const {
-        data,
-        error:profileError
-      } =
-        await db
-          .from("profiles")
-          .select("*")
-          .order("points",{
-            ascending:false
-          })
-          .limit(20);
+    container.innerHTML =
+      `<div class="empty">
+        No se pudo cargar el ranking.
+      </div>`;
 
-      if(profileError){
-
-        throw profileError;
-
-      }
-
-      renderRanking(
-        data || []
-      );
-
-    }catch(fallbackError){
-
-      console.error(
-        "Ranking fallback:",
-        fallbackError
-      );
-
-      container.innerHTML =
-        `
-          <div class="empty">
-            El ranking se mostrará cuando
-            haya jugadores registrados.
-          </div>
-        `;
-
-    }
+    return;
 
   }
-
-}
-
-
-function renderRanking(data){
-
-  const container =
-    $("rankingList");
 
   if(!data?.length){
 
     container.innerHTML =
-      `
-        <div class="empty">
-          Todavía no hay jugadores en el ranking.
-        </div>
-      `;
+      `<div class="empty">
+        Todavía no hay jugadores.
+      </div>`;
 
     return;
 
@@ -3124,41 +2670,29 @@ function renderRanking(data){
 
         const name =
           row.display_name ??
-          row.player_name ??
-          row.nombre ??
+          row.name ??
           "Jugador";
 
         const points =
           Number(
             row.points ??
-            row.puntos ??
             row.score ??
+            row.total_points ??
             0
           );
 
         const tokens =
           Number(
             row.tokens ??
-            row.token_balance ??
+            row.total_tokens ??
             0
           );
-
-        let medal =
-          position;
-
-        if(Number(position) === 1){
-          medal = "🥇";
-        }else if(Number(position) === 2){
-          medal = "🥈";
-        }else if(Number(position) === 3){
-          medal = "🥉";
-        }
 
         return `
           <div class="rank-row">
 
             <div class="rank-number">
-              ${medal}
+              #${escapeHtml(position)}
             </div>
 
             <div class="rank-name">
@@ -3166,7 +2700,7 @@ function renderRanking(data){
             </div>
 
             <div class="rank-points">
-              ⭐ ${points} pts
+              🎯 ${points} pts
             </div>
 
             <div class="rank-tokens">
@@ -3182,39 +2716,35 @@ function renderRanking(data){
 }
 
 
-/* ============================================================
+/* =========================
    PREMIOS
-============================================================ */
+========================= */
 
 async function loadPrizes(){
 
-  const grid =
-    $("prizesGrid");
+  const container =
+    document.getElementById(
+      "prizesGrid"
+    );
 
   const {
     data,
     error
   } =
-    await db
-      .from("prizes")
-      .select("*")
-      .order("cost_tokens",{
-        ascending:true
-      });
+  await db
+    .from("prizes")
+    .select("*")
+    .eq("active",true)
+    .order("token_cost");
 
   if(error){
 
-    console.error(
-      "prizes:",
-      error
-    );
+    console.error(error);
 
-    grid.innerHTML =
-      `
-        <div class="empty">
-          No se pudieron cargar los premios.
-        </div>
-      `;
+    container.innerHTML =
+      `<div class="empty">
+        No se pudieron cargar los premios.
+      </div>`;
 
     return;
 
@@ -3222,126 +2752,113 @@ async function loadPrizes(){
 
   if(!data?.length){
 
-    grid.innerHTML =
-      `
-        <div class="empty">
-          Todavía no hay premios cargados.
-        </div>
-      `;
+    container.innerHTML =
+      `<div class="empty">
+        No hay premios disponibles.
+      </div>`;
 
     return;
 
   }
 
-  grid.innerHTML =
-    data.map(prize => {
+  container.innerHTML =
+    data.map(
+      prize => {
 
-      const id =
-        prize.id;
+        const cost =
+          Number(
+            prize.token_cost ?? 0
+          );
 
-      const name =
-        prize.name ??
-        prize.nombre ??
-        "Premio";
+        const stock =
+          prize.stock;
 
-      const description =
-        prize.description ??
-        prize.descripcion ??
-        "";
+        return `
+          <div class="prize">
 
-      const cost =
-        prize.cost_tokens ??
-        prize.token_cost ??
-        prize.tokens ??
-        0;
+            <div class="prize-icon">
+              🎁
+            </div>
 
-      const icon =
-        prize.icon ??
-        prize.emoji ??
-        "🎁";
+            <h3>
+              ${escapeHtml(prize.name)}
+            </h3>
 
-      return `
-        <article class="prize">
+            <p style="margin:8px 0;color:var(--muted);line-height:1.5;">
+              ${escapeHtml(
+                prize.description || ""
+              )}
+            </p>
 
-          <div class="prize-icon">
-            ${escapeHtml(icon)}
+            <div class="reward">
+
+              <span>
+                🪙 ${cost} tokens
+              </span>
+
+              ${
+                stock !== null &&
+                stock !== undefined
+                  ? `<span>
+                      Stock: ${escapeHtml(stock)}
+                    </span>`
+                  : ""
+              }
+
+            </div>
+
+            <button
+              class="btn btn-yellow"
+              onclick="redeemPrize('${prize.id}')">
+
+              🎁 Canjear
+
+            </button>
+
           </div>
+        `;
 
-          <h3>
-            ${escapeHtml(name)}
-          </h3>
-
-          <p style="color:var(--muted);margin:8px 0 14px">
-            ${escapeHtml(description)}
-          </p>
-
-          <div class="reward">
-            <span>🪙 ${cost} tokens</span>
-          </div>
-
-          <button
-            class="btn btn-yellow"
-            onclick="redeemPrize('${id}')">
-            Canjear
-          </button>
-
-        </article>
-      `;
-
-    }).join("");
+      }
+    ).join("");
 
 }
 
 
-/* ============================================================
-   CANJEAR PREMIO
-============================================================ */
-
-async function redeemPrize(
-  prizeId
-){
+async function redeemPrize(prizeId){
 
   if(!confirm(
     "¿Querés canjear este premio?"
   )){
-
     return;
-
   }
 
   const {
     data,
     error
   } =
-    await db.rpc(
-      "redeem_prize",
-      {
-        p_prize_id:prizeId
-      }
-    );
+  await db.rpc(
+    "redeem_prize",
+    {
+      p_prize_id:prizeId
+    }
+  );
 
   if(error){
 
-    console.error(
-      "redeem_prize:",
-      error
-    );
+    console.error(error);
 
-    toast(
-      error.message ||
-      "No se pudo realizar el canje."
+    showToast(
+      errorMessage(error),
+      "error"
     );
 
     return;
 
   }
 
-  const result =
-    normalizeResult(data);
-
-  toast(
-    result?.message ??
-    "🎁 ¡Premio canjeado correctamente!"
+  showToast(
+    "¡Premio canjeado correctamente! 🎁",
+    "success"
   );
 
   await loadProfile();
@@ -3350,70 +2867,149 @@ async function redeemPrize(
 }
 
 
-/* ============================================================
+/* =========================
+   UTILIDADES
+========================= */
+
+async function findGameByName(name){
+
+  const {
+    data,
+    error
+  } =
+  await db
+    .from("games")
+    .select("*")
+    .eq("active",true)
+    .ilike("name",name)
+    .maybeSingle();
+
+  if(error){
+
+    console.error(error);
+
+    return null;
+
+  }
+
+  return data;
+
+}
+
+
+/* =========================
    REALTIME
-   CORRECCIÓN IMPORTANTE:
-   La tabla correcta es duel_matches,
-   NO duels.
-============================================================ */
+========================= */
 
 function setupRealtime(){
 
+  db
+    .channel("pool-beach-live")
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"duel_matches"
+      },
+      async () => {
+
+        await loadWaitingDuels();
+
+        if(currentDuel){
+
+          await refreshActiveDuel();
+
+        }
+
+      }
+    )
+    .on(
+      "postgres_changes",
+      {
+        event:"*",
+        schema:"public",
+        table:"tournament_matches"
+      },
+      async () => {
+
+        await loadTournamentMatches();
+        await loadTournamentRanking();
+
+      }
+    )
+    .subscribe();
+
+}
+
+
+async function refreshActiveDuel(){
+
+  if(!currentDuel){
+    return;
+  }
+
+  const duelId =
+    currentDuel.id ??
+    currentDuel.duel_id;
+
+  if(!duelId){
+    return;
+  }
+
+  const {
+    data,
+    error
+  } =
+  await db
+    .from("duel_matches")
+    .select("*")
+    .eq("id",duelId)
+    .maybeSingle();
+
+  if(error){
+
+    console.warn(error);
+
+    return;
+
+  }
+
+  if(data){
+
+    currentDuel =
+      {
+        ...currentDuel,
+        ...data
+      };
+
+    showActiveDuel();
+
+  }
+
+}
+
+
+/* =========================
+   ACTUALIZACIÓN
+========================= */
+
+async function refreshAll(){
+
   try{
 
-    db
-      .channel("pool-beach-live")
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"duel_matches"
-        },
-        async ()=>{
-          await loadDuels();
-        }
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"tournament_matches"
-        },
-        async ()=>{
-
-          if(currentTournament){
-
-            await Promise.allSettled([
-              loadTournamentMatches(
-                currentTournament
-              ),
-              loadTournamentStandings(
-                currentTournament
-              )
-            ]);
-
-          }
-
-        }
-      )
-
-      .subscribe(
-        status=>{
-          console.log(
-            "Realtime:",
-            status
-          );
-        }
-      );
+    await loadProfile();
+    await loadTable();
+    await loadGames();
+    await loadWaitingDuels();
+    await loadTournament();
+    await loadRanking();
+    await loadPrizes();
 
   }catch(error){
 
-    console.warn(
-      "Realtime no disponible:",
+    console.error(
+      "Error actualizando:",
       error
     );
 
@@ -3422,89 +3018,48 @@ function setupRealtime(){
 }
 
 
-/* ============================================================
-   REFRESCO AUTOMÁTICO
-============================================================ */
+/* =========================
+   INICIO
+========================= */
 
-setInterval(
-  async ()=>{
+async function init(){
 
-    try{
+  try{
 
-      await loadProfile();
+    await initAuth();
 
-      await loadDuels();
+    await loadTable();
+    await loadGames();
+    await loadWaitingDuels();
+    await loadTournament();
+    await loadRanking();
+    await loadPrizes();
 
-      await loadRanking();
+    setupRealtime();
 
-      await loadTournaments();
+    setInterval(
+      refreshAll,
+      15000
+    );
 
-      if(currentTournament){
+  }catch(error){
 
-        await Promise.allSettled([
-          loadTournamentMatches(
-            currentTournament
-          ),
-          loadTournamentStandings(
-            currentTournament
-          )
-        ]);
+    console.error(
+      "Error inicial:",
+      error
+    );
 
-      }
+    showToast(
+      "Error al iniciar Pool & Beach Games.",
+      "error"
+    );
 
-    }catch(error){
+  }
 
-      console.warn(
-        "Refresco:",
-        error
-      );
-
-    }
-
-  },
-  15000
-);
+}
 
 
-/* ============================================================
-   EXPOSICIÓN GLOBAL
-============================================================ */
-
-window.startTrivia =
-  startTrivia;
-
-window.answerTrivia =
-  answerTrivia;
-
-window.createDuel =
-  createDuel;
-
-window.joinDuel =
-  joinDuel;
-
-window.submitDuel =
-  submitDuel;
-
-window.loadDuels =
-  loadDuels;
-
-window.joinTournament =
-  joinTournament;
-
-window.selectTournament =
-  selectTournament;
-
-window.submitTournamentScore =
-  submitTournamentScore;
-
-window.redeemPrize =
-  redeemPrize;
-
-window.playSimpleGame =
-  playSimpleGame;
-
-window.scrollToId =
-  scrollToId;
+init();
 
 </script>
 
