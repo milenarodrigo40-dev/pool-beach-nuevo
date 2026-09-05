@@ -6,2063 +6,3458 @@
 <title>Pool & Beach Games | Puerto Pirámides</title>
 <meta name="description" content="Pool & Beach Games Puerto Pirámides. Juegos, duelos, torneos, trivia, puntos, tokens, ranking y premios.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
-:root{--bg:#071923;--bg2:#0c2633;--card:#102f3e;--card2:#12394a;--text:#f5fbff;--muted:#a9c4cf;--primary:#31d7ff;--green:#42e695;--yellow:#ffd166;--red:#ff647c;--border:rgba(255,255,255,.10);--shadow:0 15px 40px rgba(0,0,0,.25);--radius:22px}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top right,rgba(49,215,255,.13),transparent 30%),linear-gradient(180deg,var(--bg),#041018 100%);color:var(--text);min-height:100vh}
-button,input,select{font:inherit}
-button{cursor:pointer}
-button:disabled{cursor:not-allowed;opacity:.5}
-a{color:inherit;text-decoration:none}
-.container{width:min(1180px,94%);margin:auto}
-header{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(4,16,24,.90);border-bottom:1px solid var(--border)}
-.header-inner{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.logo{font-size:21px;font-weight:900;white-space:nowrap}
-.logo span{color:var(--primary)}
-.header-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--border);font-size:13px;font-weight:700}
-.hero{padding:55px 0 35px}
-.hero-box{border:1px solid var(--border);background:linear-gradient(135deg,rgba(18,57,74,.96),rgba(6,27,38,.96));border-radius:30px;padding:38px;box-shadow:var(--shadow);overflow:hidden;position:relative}
-.hero-box:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-100px;top:-100px;background:rgba(49,215,255,.10)}
-.hero h1{font-size:clamp(34px,7vw,68px);line-height:.95;margin-bottom:18px}
-.hero h1 span{color:var(--primary)}
-.hero p{max-width:700px;color:var(--muted);font-size:17px;line-height:1.6}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
-section{padding:30px 0}
-.section-title{margin-bottom:18px}
-.section-title h2{font-size:28px}
-.section-title p{color:var(--muted);margin-top:6px}
-.profile{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px}
-.stat small{display:block;color:var(--muted);margin-bottom:7px}
-.stat strong{font-size:27px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.card{background:linear-gradient(180deg,var(--card),#0a2531);border:1px solid var(--border);border-radius:var(--radius);padding:21px;box-shadow:0 10px 30px rgba(0,0,0,.13)}
-.game-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:rgba(49,215,255,.10);margin-bottom:14px}
-.card h3{font-size:20px;margin-bottom:7px}
-.card p{color:var(--muted);line-height:1.5}
-.reward{margin:15px 0;display:flex;gap:8px;flex-wrap:wrap}
-.reward span{background:rgba(255,255,255,.07);border-radius:999px;padding:7px 10px;font-size:12px}
-.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:900;transition:.2s}
-.btn:hover:not(:disabled){transform:translateY(-2px)}
-.btn-primary{background:var(--primary);color:#03131a}
-.btn-secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border)}
-.btn-green{background:var(--green);color:#052016}
-.btn-yellow{background:var(--yellow);color:#251b00}
-.btn-red{background:var(--red);color:white}
-.duel-layout,.tournament-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.duel-status{margin:12px 0;padding:13px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
-.duel-list{display:grid;gap:10px;margin-top:15px}
-.duel-item{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.score-input{width:100%;padding:13px;border-radius:13px;border:1px solid var(--border);background:#061923;color:white;outline:none}
-.score-input:focus{border-color:var(--primary)}
-.tournament-card{position:relative}
-.tournament-status{position:absolute;right:15px;top:15px;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;background:rgba(66,230,149,.13);color:var(--green)}
-.tournament-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
-.info-box{background:rgba(255,255,255,.05);border-radius:12px;padding:10px}
-.info-box small{color:var(--muted);display:block}
-.info-box strong{display:block;margin-top:3px}
-.match{background:rgba(255,255,255,.04);border:1px solid var(--border);padding:14px;border-radius:15px;margin-bottom:10px}
-.match-header{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:10px}
-.player-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0}
-.trivia-box{max-width:800px;margin:auto}
-.trivia-question{font-size:24px;line-height:1.3;margin:20px 0}
-.answers{display:grid;gap:10px}
-.answer{width:100%;text-align:left;padding:16px;border-radius:15px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:white;font-weight:700}
-.answer:hover:not(:disabled){background:rgba(49,215,255,.12);border-color:rgba(49,215,255,.4)}
-.answer.correct{background:rgba(66,230,149,.20);border-color:var(--green)}
-.answer.wrong{background:rgba(255,100,124,.18);border-color:var(--red)}
-.ranking{display:grid;gap:8px}
-.rank-row{display:grid;grid-template-columns:50px 1fr auto auto;align-items:center;gap:10px;padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px}
-.rank-number{font-size:21px;font-weight:900}
-.rank-name{font-weight:800}
-.rank-points,.rank-tokens{font-size:13px;color:var(--muted)}
-.prize-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-.prize{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}
-.prize-icon{font-size:35px;margin-bottom:10px}
-.table-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px}
-.table-code{font-size:28px;font-weight:900;color:var(--primary)}
-.qr{background:white;padding:10px;border-radius:15px;display:inline-flex}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(100px);opacity:0;z-index:999;background:#102f3e;border:1px solid var(--border);padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);transition:.3s;max-width:90%;text-align:center}
-#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.loading,.empty{color:var(--muted);padding:15px 0}
-footer{margin-top:50px;border-top:1px solid var(--border);padding:30px 0;color:var(--muted);text-align:center}
-@media(max-width:850px){
-.grid{grid-template-columns:1fr 1fr}
-.profile{grid-template-columns:1fr 1fr}
-.prize-grid{grid-template-columns:1fr 1fr}
-.duel-layout,.tournament-layout{grid-template-columns:1fr}
+:root{
+  --bg:#071923;
+  --bg2:#0c2633;
+  --card:#102f3e;
+  --card2:#12394a;
+  --text:#f5fbff;
+  --muted:#a9c2cc;
+  --primary:#48d7ff;
+  --secondary:#6ee7b7;
+  --gold:#ffd166;
+  --danger:#ff6b6b;
+  --border:rgba(255,255,255,.10);
+  --shadow:0 18px 50px rgba(0,0,0,.25);
+  --radius:22px;
 }
-@media(max-width:560px){
-.hero{padding-top:25px}
-.hero-box{padding:25px 20px;border-radius:23px}
-.grid{grid-template-columns:1fr}
-.profile{grid-template-columns:1fr 1fr}
-.prize-grid{grid-template-columns:1fr 1fr}
-.header-inner{align-items:flex-start;padding:12px 0}
-.header-stats{max-width:190px}
-.badge{font-size:11px;padding:6px 8px}
-.rank-row{grid-template-columns:38px 1fr auto}
-.rank-tokens{display:none}
-.tournament-info{grid-template-columns:1fr 1fr}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
 }
-.map-card{margin-top:18px}
-.map-wrap{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:#eaf8fb}
-.map-wrap img{display:block;width:100%;height:auto;min-height:260px;object-fit:cover}
-.map-note{margin-top:10px;color:var(--muted);font-size:12px}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at top left,rgba(72,215,255,.12),transparent 30%),
+    radial-gradient(circle at top right,rgba(110,231,183,.08),transparent 25%),
+    var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  line-height:1.5;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+img{
+  max-width:100%;
+  display:block;
+}
+
+.container{
+  width:min(1180px,calc(100% - 30px));
+  margin:auto;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.muted{
+  color:var(--muted);
+}
+
+.small{
+  font-size:.86rem;
+}
+
+.section{
+  padding:55px 0;
+}
+
+.section-title{
+  font-size:clamp(1.7rem,4vw,2.6rem);
+  margin-bottom:10px;
+}
+
+.section-subtitle{
+  color:var(--muted);
+  max-width:760px;
+  margin-bottom:28px;
+}
+
+.card{
+  background:linear-gradient(145deg,rgba(18,57,74,.94),rgba(10,35,46,.94));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  padding:22px;
+}
+
+.grid{
+  display:grid;
+  gap:18px;
+}
+
+.grid-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.grid-4{
+  grid-template-columns:repeat(4,minmax(0,1fr));
+}
+
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:12px 17px;
+  font-weight:800;
+  transition:.2s ease;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+}
+
+.btn:hover{
+  transform:translateY(-1px);
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:#06202a;
+}
+
+.btn-secondary{
+  background:var(--secondary);
+  color:#06251d;
+}
+
+.btn-gold{
+  background:var(--gold);
+  color:#302500;
+}
+
+.btn-dark{
+  background:#0a202b;
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+.btn-danger{
+  background:var(--danger);
+  color:#280b0b;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:6px 10px;
+  border-radius:999px;
+  background:rgba(72,215,255,.12);
+  color:var(--primary);
+  font-size:.8rem;
+  font-weight:800;
+  border:1px solid rgba(72,215,255,.18);
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:1000;
+  backdrop-filter:blur(15px);
+  background:rgba(7,25,35,.88);
+  border-bottom:1px solid var(--border);
+}
+
+.nav{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.logo{
+  font-weight:1000;
+  font-size:1.2rem;
+  letter-spacing:.3px;
+}
+
+.logo span{
+  color:var(--primary);
+}
+
+.nav-links{
+  display:flex;
+  gap:8px;
+  align-items:center;
+  flex-wrap:wrap;
+}
+
+.nav-links a{
+  padding:9px 11px;
+  border-radius:10px;
+  color:var(--muted);
+  font-size:.9rem;
+}
+
+.nav-links a:hover{
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+}
+
+.hero{
+  min-height:680px;
+  display:flex;
+  align-items:center;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(180deg,rgba(3,18,27,.15),rgba(3,18,27,.8)),
+    radial-gradient(circle at 20% 25%,rgba(72,215,255,.22),transparent 28%),
+    radial-gradient(circle at 80% 35%,rgba(110,231,183,.15),transparent 25%);
+}
+
+.hero::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      120deg,
+      transparent 0,
+      transparent 60px,
+      rgba(255,255,255,.015) 61px,
+      rgba(255,255,255,.015) 62px
+    );
+  pointer-events:none;
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+  max-width:820px;
+}
+
+.hero h1{
+  font-size:clamp(2.6rem,8vw,5.8rem);
+  line-height:.95;
+  margin:16px 0;
+}
+
+.hero h1 span{
+  color:var(--primary);
+}
+
+.hero p{
+  font-size:clamp(1rem,2vw,1.25rem);
+  color:var(--muted);
+  max-width:720px;
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:35px;
+}
+
+.stat{
+  padding:16px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--border);
+  border-radius:16px;
+}
+
+.stat strong{
+  display:block;
+  font-size:1.45rem;
+  color:var(--primary);
+}
+
+.progress-card{
+  margin-top:-35px;
+  position:relative;
+  z-index:5;
+}
+
+.progress-grid{
+  display:grid;
+  grid-template-columns:1.5fr repeat(3,1fr);
+  gap:15px;
+}
+
+.progress-item{
+  padding:17px;
+  background:rgba(255,255,255,.045);
+  border-radius:15px;
+  border:1px solid var(--border);
+}
+
+.progress-item strong{
+  display:block;
+  font-size:1.5rem;
+  margin-top:4px;
+}
+
+.game-card{
+  position:relative;
+  overflow:hidden;
+}
+
+.game-icon{
+  font-size:2.5rem;
+  margin-bottom:12px;
+}
+
+.game-card h3{
+  margin-bottom:7px;
+}
+
+.game-card p{
+  color:var(--muted);
+  min-height:66px;
+}
+
+.game-card .btn{
+  margin-top:18px;
+  width:100%;
+}
+
+.form{
+  display:grid;
+  gap:13px;
+}
+
+.field{
+  display:grid;
+  gap:7px;
+}
+
+.field label{
+  font-weight:700;
+  font-size:.9rem;
+}
+
+.field input,
+.field select{
+  width:100%;
+  border:1px solid var(--border);
+  background:#081d27;
+  color:var(--text);
+  border-radius:12px;
+  padding:12px 13px;
+  outline:none;
+}
+
+.field input:focus,
+.field select:focus{
+  border-color:var(--primary);
+}
+
+.notice{
+  padding:13px 15px;
+  border-radius:13px;
+  background:rgba(72,215,255,.08);
+  border:1px solid rgba(72,215,255,.15);
+  color:var(--muted);
+}
+
+.notice.success{
+  background:rgba(110,231,183,.08);
+  border-color:rgba(110,231,183,.18);
+}
+
+.notice.error{
+  background:rgba(255,107,107,.08);
+  border-color:rgba(255,107,107,.18);
+  color:#ffd0d0;
+}
+
+.game-board{
+  display:grid;
+  gap:15px;
+}
+
+.question{
+  font-size:1.25rem;
+  font-weight:800;
+  margin:12px 0 20px;
+}
+
+.answers{
+  display:grid;
+  gap:10px;
+}
+
+.answer{
+  width:100%;
+  text-align:left;
+  border:1px solid var(--border);
+  background:#0a202b;
+  color:var(--text);
+  border-radius:14px;
+  padding:14px;
+  font-weight:700;
+}
+
+.answer:hover{
+  border-color:var(--primary);
+  background:#0d2936;
+}
+
+.answer.correct{
+  background:rgba(110,231,183,.15);
+  border-color:var(--secondary);
+}
+
+.answer.wrong{
+  background:rgba(255,107,107,.15);
+  border-color:var(--danger);
+}
+
+.duel-status{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:15px;
+  text-align:center;
+}
+
+.player{
+  padding:20px;
+  border-radius:17px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+}
+
+.player-score{
+  font-size:2rem;
+  font-weight:1000;
+  color:var(--primary);
+}
+
+.vs{
+  font-weight:1000;
+  color:var(--gold);
+}
+
+.tournament-row,
+.ranking-row,
+.prize-row{
+  display:grid;
+  grid-template-columns:1.5fr 1fr 1fr auto;
+  gap:12px;
+  align-items:center;
+  padding:14px 0;
+  border-bottom:1px solid var(--border);
+}
+
+.tournament-row:last-child,
+.ranking-row:last-child,
+.prize-row:last-child{
+  border-bottom:0;
+}
+
+.rank{
+  font-size:1.4rem;
+  font-weight:1000;
+  color:var(--gold);
+}
+
+.prize{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.prize-icon{
+  width:55px;
+  height:55px;
+  border-radius:15px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,209,102,.1);
+  font-size:1.7rem;
+}
+
+.map-wrap{
+  overflow:hidden;
+  border-radius:20px;
+  border:1px solid var(--border);
+  background:#f5efe2;
+}
+
+.map-wrap img{
+  width:100%;
+  height:auto;
+}
+
+.table-code{
+  font-family:monospace;
+  background:#061720;
+  border:1px solid var(--border);
+  padding:8px 10px;
+  border-radius:9px;
+  display:inline-block;
+  word-break:break-all;
+}
+
+footer{
+  border-top:1px solid var(--border);
+  padding:30px 0;
+  margin-top:30px;
+  color:var(--muted);
+}
+
+.toast{
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  z-index:5000;
+  max-width:min(390px,calc(100% - 36px));
+  background:#0c2734;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  padding:14px 17px;
+  border-radius:14px;
+  transform:translateY(30px);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+}
+
+.toast.show{
+  transform:translateY(0);
+  opacity:1;
+}
+
+.modal{
+  position:fixed;
+  inset:0;
+  z-index:4000;
+  background:rgba(0,0,0,.7);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+}
+
+.modal.show{
+  display:flex;
+}
+
+.modal-box{
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow:auto;
+}
+
+.close{
+  float:right;
+  border:0;
+  background:transparent;
+  color:var(--muted);
+  font-size:1.5rem;
+}
+
+.empty{
+  text-align:center;
+  padding:28px;
+  color:var(--muted);
+}
+
+.loading{
+  opacity:.7;
+}
+
+@media(max-width:900px){
+  .grid-4{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .grid-3{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .progress-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .nav-links{
+    display:none;
+  }
+}
+
+@media(max-width:650px){
+  .container{
+    width:min(100% - 22px,1180px);
+  }
+
+  .section{
+    padding:40px 0;
+  }
+
+  .hero{
+    min-height:620px;
+  }
+
+  .hero h1{
+    font-size:3.2rem;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4,
+  .progress-grid{
+    grid-template-columns:1fr;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .tournament-row,
+  .ranking-row,
+  .prize-row{
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+
+  .duel-status{
+    grid-template-columns:1fr;
+  }
+
+  .vs{
+    order:2;
+  }
+
+  .hero-actions .btn{
+    width:100%;
+  }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="container header-inner">
-<div class="logo">POOL <span>&</span> BEACH</div>
+  <div class="container nav">
+    <a href="#inicio" class="logo">POOL <span>&</span> BEACH <span>GAMES</span></a>
 
-<div class="header-stats">
-<div class="badge">🎯 <span id="headerPoints">0</span> pts</div>
-<div class="badge">🪙 <span id="headerTokens">0</span> tokens</div>
-<div class="badge">🪑 <span id="headerTable">Sin mesa</span></div>
-</div>
-</div>
+    <nav class="nav-links">
+      <a href="#juegos">Juegos</a>
+      <a href="#duelo">Duelo</a>
+      <a href="#torneos">Torneos</a>
+      <a href="#trivia">Trivia</a>
+      <a href="#ranking">Ranking</a>
+      <a href="#premios">Premios</a>
+      <a href="#mapa">Mapa</a>
+    </nav>
+  </div>
 </header>
 
 <main>
 
-<section class="hero">
-<div class="container">
-<div class="hero-box">
-<h1>POOL & BEACH<br><span>GAMES</span></h1>
+<section id="inicio" class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <span class="badge">🎮 POOL & BEACH GAMES · PUERTO PIRÁMIDES</span>
 
-<p>
-Jugá desde tu mesa, ganá puntos y tokens, enfrentá rivales,
-competí en torneos, respondé trivias y subí en el ranking.
-</p>
+      <h1>
+        Jugá.<br>
+        Competí.<br>
+        <span>Gan&aacute;.</span>
+      </h1>
 
-<div class="hero-actions">
-<button class="btn btn-primary" onclick="scrollToId('juegos')">🎮 Jugar ahora</button>
-<button class="btn btn-secondary" onclick="scrollToId('duelos')">⚔️ Duelo 1 vs 1</button>
-<button class="btn btn-secondary" onclick="scrollToId('torneos')">🏆 Torneos</button>
-<button class="btn btn-secondary" onclick="scrollToId('mapa')">🗺️ Mapa</button>
-</div>
-</div>
-</div>
+      <p>
+        El sistema de juegos de Pool & Beach.
+        Sumá puntos, enfrentá jugadores, participá en torneos,
+        respondé trivias y canjeá tus premios.
+      </p>
+
+      <div class="hero-actions">
+        <a class="btn btn-primary" href="#juegos">🎮 Ver juegos</a>
+        <a class="btn btn-secondary" href="#torneos">🏆 Ver torneos</a>
+        <a class="btn btn-dark" href="#ranking">🥇 Ranking</a>
+      </div>
+
+      <div class="stats">
+        <div class="stat">
+          <strong id="heroPlayers">—</strong>
+          <span class="muted">Jugadores</span>
+        </div>
+
+        <div class="stat">
+          <strong id="heroPoints">—</strong>
+          <span class="muted">Puntos</span>
+        </div>
+
+        <div class="stat">
+          <strong id="heroTournaments">—</strong>
+          <span class="muted">Torneos</span>
+        </div>
+
+        <div class="stat">
+          <strong>∞</strong>
+          <span class="muted">Diversión</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
 
-<section>
-<div class="container">
-<div class="section-title">
-<h2>Tu progreso</h2>
-<p>Tu actividad queda asociada a esta sesión.</p>
-</div>
+<section class="container progress-card">
+  <div class="card">
+    <div class="progress-grid">
 
-<div class="profile">
-<div class="stat">
-<small>Jugador</small>
-<strong id="playerName">Jugador</strong>
-</div>
+      <div class="progress-item">
+        <span class="muted small">TU PERFIL</span>
+        <strong id="playerName">Jugador</strong>
+        <span class="muted" id="playerStatus">Conectando...</span>
+      </div>
 
-<div class="stat">
-<small>Puntos</small>
-<strong id="profilePoints">0</strong>
-</div>
+      <div class="progress-item">
+        <span class="muted small">PUNTOS</span>
+        <strong id="playerPoints">0</strong>
+        <span class="muted">Puntos acumulados</span>
+      </div>
 
-<div class="stat">
-<small>Tokens</small>
-<strong id="profileTokens">0</strong>
-</div>
+      <div class="progress-item">
+        <span class="muted small">PARTIDAS</span>
+        <strong id="playerGames">0</strong>
+        <span class="muted">Jugadas</span>
+      </div>
 
-<div class="stat">
-<small>Mesa</small>
-<strong id="profileTable">—</strong>
-</div>
-</div>
-</div>
+      <div class="progress-item">
+        <span class="muted small">RANKING</span>
+        <strong id="playerRank">—</strong>
+        <span class="muted">Posición</span>
+      </div>
+
+    </div>
+  </div>
 </section>
 
-<section id="juegos">
-<div class="container">
-<div class="section-title">
-<h2>🎮 Juegos</h2>
-<p>Elegí tu desafío.</p>
-</div>
+<section id="juegos" class="section">
+  <div class="container">
 
-<div id="gamesGrid" class="grid">
-<div class="loading">Cargando juegos...</div>
-</div>
-</div>
+    <h2 class="section-title">🎮 Juegos</h2>
+    <p class="section-subtitle">
+      Elegí una experiencia y empezá a sumar puntos.
+    </p>
+
+    <div class="grid grid-3">
+
+      <article class="card game-card">
+        <div class="game-icon">🎯</div>
+        <span class="badge">PARTIDA</span>
+        <h3>Juego Pool & Beach</h3>
+        <p>
+          Registrá tu partida y sumá puntos a tu perfil.
+        </p>
+        <button class="btn btn-primary" onclick="startGame('pool')">
+          Jugar ahora
+        </button>
+      </article>
+
+      <article class="card game-card">
+        <div class="game-icon">🎲</div>
+        <span class="badge">DADOS</span>
+        <h3>Dados</h3>
+        <p>
+          Iniciá una partida de dados desde tu mesa.
+        </p>
+        <button class="btn btn-secondary" onclick="startDiceGame()">
+          Jugar dados
+        </button>
+      </article>
+
+      <article class="card game-card">
+        <div class="game-icon">🧠</div>
+        <span class="badge">TRIVIA</span>
+        <h3>Trivia Express</h3>
+        <p>
+          Contestá preguntas, acertá y conseguí puntos.
+        </p>
+        <button class="btn btn-gold" onclick="openTrivia()">
+          Empezar trivia
+        </button>
+      </article>
+
+    </div>
+
+    <div id="gameMessage" class="notice hidden" style="margin-top:18px;"></div>
+
+  </div>
 </section>
 
-<section id="trivia">
-<div class="container">
-<div class="section-title">
-<h2>🧠 Trivia Express</h2>
-<p>Respondé correctamente y ganá puntos.</p>
-</div>
+<section id="trivia" class="section">
+  <div class="container">
 
-<div class="card trivia-box">
+    <h2 class="section-title">🧠 Trivia Express</h2>
+    <p class="section-subtitle">
+      Poné a prueba tus conocimientos.
+    </p>
 
-<div id="triviaStart">
-<div class="game-icon">🧠</div>
+    <div class="card game-board">
 
-<h3>Trivia Express</h3>
+      <div id="triviaStart">
+        <div class="notice">
+          La trivia utiliza preguntas administradas desde Supabase.
+          Tu partida se inicia de forma segura mediante RPC.
+        </div>
 
-<p>
-Comenzá una partida y respondé preguntas.
-Las preguntas se obtienen de forma segura desde Supabase.
-</p>
+        <button
+          class="btn btn-gold"
+          style="margin-top:15px;"
+          onclick="openTrivia()">
+          🧠 Iniciar Trivia
+        </button>
+      </div>
 
-<button class="btn btn-primary" style="margin-top:15px" onclick="startTrivia()">
-▶️ Comenzar Trivia
-</button>
-</div>
+      <div id="triviaGame" class="hidden">
 
-<div id="triviaGame" style="display:none">
+        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;">
+          <span class="badge" id="triviaProgress">Pregunta</span>
+          <span class="badge" id="triviaScore">0 puntos</span>
+        </div>
 
-<div id="triviaQuestion" class="trivia-question"></div>
+        <div class="question" id="triviaQuestion">
+          Cargando pregunta...
+        </div>
 
-<div id="triviaAnswers" class="answers"></div>
+        <div class="answers" id="triviaAnswers"></div>
 
-<div id="triviaResult" style="margin-top:15px"></div>
+        <div id="triviaFeedback" class="notice hidden" style="margin-top:15px;"></div>
 
-<button
-id="triviaNext"
-class="btn btn-secondary"
-style="display:none;margin-top:15px"
-onclick="nextTriviaQuestion()">
-Siguiente
-</button>
+        <button
+          id="triviaNext"
+          class="btn btn-primary hidden"
+          style="margin-top:15px;"
+          onclick="nextTriviaQuestion()">
+          Siguiente
+        </button>
 
-</div>
+      </div>
 
-</div>
-</div>
+    </div>
+
+  </div>
 </section>
 
-<section id="duelos">
-<div class="container">
+<section id="duelo" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>⚔️ Duelo 1 vs 1</h2>
-<p>Creá un duelo o unite a otro jugador.</p>
-</div>
+    <h2 class="section-title">⚔️ Duelo 1 vs 1</h2>
+    <p class="section-subtitle">
+      Desafiá a otro jugador y competí por puntos.
+    </p>
 
-<div class="duel-layout">
+    <div class="grid grid-2">
 
-<div class="card">
+      <div class="card">
 
-<div class="game-icon">⚔️</div>
+        <h3>Crear duelo</h3>
+        <p class="muted">
+          Creá un duelo y esperá que otro jugador se una.
+        </p>
 
-<h3>Crear duelo</h3>
+        <button
+          class="btn btn-primary"
+          style="margin-top:16px;"
+          onclick="createDuel()">
+          ⚔️ Crear duelo
+        </button>
 
-<p>
-Esperá a otro jugador y competí con una puntuación real registrada en Supabase.
-</p>
+        <div id="duelCreateMessage" class="notice hidden" style="margin-top:15px;"></div>
 
-<button class="btn btn-primary" style="margin-top:15px" onclick="createDuel()">
-⚔️ Crear duelo
-</button>
+      </div>
 
-</div>
+      <div class="card">
 
-<div class="card">
+        <h3>Duelo disponible</h3>
+        <div id="waitingDuels" style="margin-top:15px;">
+          <div class="empty">Buscando duelos...</div>
+        </div>
 
-<h3>Duelo activo</h3>
+        <button
+          class="btn btn-secondary"
+          style="margin-top:12px;"
+          onclick="loadWaitingDuels()">
+          🔄 Actualizar
+        </button>
 
-<div id="activeDuelPanel" style="display:none">
+      </div>
 
-<div id="activeDuelInfo" class="duel-status"></div>
+    </div>
 
-<input
-id="duelScore"
-class="score-input"
-type="number"
-min="0"
-max="100000"
-placeholder="Tu puntuación">
+    <div id="activeDuel" class="card hidden" style="margin-top:18px;">
 
-<button
-class="btn btn-green"
-style="margin-top:10px"
-onclick="submitDuel()">
-Registrar puntuación
-</button>
+      <div style="display:flex;justify-content:space-between;gap:10px;align-items:center;">
+        <div>
+          <span class="badge">DUELO ACTIVO</span>
+          <h3 id="duelTitle" style="margin-top:8px;">Duelo</h3>
+        </div>
 
-</div>
+        <span class="badge" id="duelStatus">Esperando</span>
+      </div>
 
-<div id="noActiveDuel" class="empty">
-No tenés un duelo activo.
-</div>
+      <div class="duel-status" style="margin-top:20px;">
 
-</div>
+        <div class="player">
+          <div class="muted">Jugador 1</div>
+          <strong id="duelPlayer1">—</strong>
+          <div class="player-score" id="duelScore1">0</div>
+        </div>
 
-</div>
+        <div class="vs">VS</div>
 
-<div class="card" style="margin-top:18px">
+        <div class="player">
+          <div class="muted">Jugador 2</div>
+          <strong id="duelPlayer2">—</strong>
+          <div class="player-score" id="duelScore2">0</div>
+        </div>
 
-<h3>Duelo disponibles</h3>
+      </div>
 
-<div id="duelList" class="duel-list">
-<div class="loading">Buscando duelos...</div>
-</div>
+      <div class="grid grid-2" style="margin-top:20px;">
 
-</div>
+        <div class="field">
+          <label for="duelScoreInput">Tu resultado</label>
+          <input
+            id="duelScoreInput"
+            type="number"
+            min="0"
+            max="100000"
+            placeholder="Ingresá tu puntaje">
+        </div>
 
-</div>
+        <div style="display:flex;align-items:end;">
+          <button
+            class="btn btn-primary"
+            style="width:100%;"
+            onclick="submitDuel()">
+            Enviar resultado
+          </button>
+        </div>
+
+      </div>
+
+      <div id="duelMessage" class="notice hidden" style="margin-top:15px;"></div>
+
+    </div>
+
+  </div>
 </section>
 
-<section id="torneos">
-<div class="container">
+<section id="torneos" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>🏆 Torneos</h2>
-<p>Inscribite, competí y avanzá hasta la final.</p>
-</div>
+    <h2 class="section-title">🏆 Torneos</h2>
+    <p class="section-subtitle">
+      Inscribite y competí dentro del cuadro oficial.
+    </p>
 
-<div id="tournamentsGrid" class="grid">
-<div class="loading">Cargando torneos...</div>
-</div>
+    <div class="card">
 
-<div class="tournament-layout" style="margin-top:18px">
+      <div id="tournamentsList">
+        <div class="empty">Cargando torneos...</div>
+      </div>
 
-<div class="card">
+    </div>
 
-<h3>📋 Competencia</h3>
+    <div id="tournamentDetail" class="card hidden" style="margin-top:18px;">
 
-<div id="myMatches" style="margin-top:15px">
-<div class="empty">Seleccioná un torneo para ver sus partidos.</div>
-</div>
+      <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+        <div>
+          <span class="badge">TORNEO</span>
+          <h3 id="tournamentTitle" style="margin-top:7px;">—</h3>
+        </div>
 
-</div>
+        <button class="btn btn-dark" onclick="closeTournament()">
+          Cerrar
+        </button>
+      </div>
 
-<div class="card">
+      <div class="grid grid-2" style="margin-top:18px;">
 
-<h3>🥇 Tabla del torneo</h3>
+        <div>
+          <h4>Clasificación</h4>
+          <div id="tournamentStandings" style="margin-top:10px;"></div>
+        </div>
 
-<div id="tournamentStandings" class="ranking" style="margin-top:15px">
-<div class="empty">Seleccioná un torneo para ver la tabla.</div>
-</div>
+        <div>
+          <h4>Partidas</h4>
+          <div id="tournamentMatches" style="margin-top:10px;"></div>
+        </div>
 
-</div>
+      </div>
 
-</div>
+    </div>
 
-</div>
+  </div>
 </section>
 
-<section id="ranking">
-<div class="container">
+<section id="ranking" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>🥇 Ranking</h2>
-<p>Los mejores jugadores de Pool & Beach.</p>
-</div>
+    <h2 class="section-title">🥇 Ranking</h2>
+    <p class="section-subtitle">
+      Los jugadores con mejor rendimiento aparecen acá.
+    </p>
 
-<div class="card">
+    <div class="card">
 
-<div id="rankingList" class="ranking">
-<div class="loading">Cargando ranking...</div>
-</div>
+      <div id="rankingList">
+        <div class="empty">Cargando ranking...</div>
+      </div>
 
-</div>
+    </div>
 
-</div>
+  </div>
 </section>
 
-<section id="premios">
-<div class="container">
+<section id="premios" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>🎁 Premios</h2>
-<p>Usá tus tokens para canjear premios.</p>
-</div>
+    <h2 class="section-title">🎁 Premios</h2>
+    <p class="section-subtitle">
+      Usá tus puntos para canjear premios disponibles.
+    </p>
 
-<div id="prizesGrid" class="prize-grid">
-<div class="loading">Cargando premios...</div>
-</div>
+    <div class="grid grid-3" id="prizesList">
+      <div class="empty">Cargando premios...</div>
+    </div>
 
-</div>
+  </div>
 </section>
 
-<section id="mesa">
-<div class="container">
+<section id="mesa" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>🪑 Tu mesa</h2>
-<p>El QR identifica la mesa desde donde estás jugando.</p>
-</div>
+    <h2 class="section-title">🪑 Tu mesa</h2>
+    <p class="section-subtitle">
+      Si ingresaste mediante el QR de una mesa, el sistema intentará
+      identificarla automáticamente.
+    </p>
 
-<div class="card">
+    <div class="card">
 
-<div class="table-box">
+      <div id="tableStatus" class="notice">
+        Detectando mesa...
+      </div>
 
-<div>
-<div class="table-code" id="tableNumber">Sin mesa</div>
+      <div id="tableInfo" class="hidden" style="margin-top:15px;">
 
-<p style="color:var(--muted);margin-top:8px">
-Escaneá el QR de tu mesa para vincular tu sesión.
-</p>
+        <div class="grid grid-3">
 
-<div id="tableStatus" class="duel-status">
-No se detectó una mesa.
-</div>
-</div>
+          <div class="progress-item">
+            <span class="muted small">MESA</span>
+            <strong id="tableNumber">—</strong>
+          </div>
 
-<div id="qrContainer" class="qr" style="display:none">
-<img id="qrImage" width="180" height="180" alt="QR de mesa">
-</div>
+          <div class="progress-item">
+            <span class="muted small">ESTADO</span>
+            <strong id="tableState">—</strong>
+          </div>
 
-</div>
+          <div class="progress-item">
+            <span class="muted small">CÓDIGO</span>
+            <span class="table-code" id="tableCode">—</span>
+          </div>
 
-</div>
+        </div>
 
-</div>
+      </div>
+
+    </div>
+
+  </div>
 </section>
 
-<section id="mapa">
-<div class="container">
+<section id="mapa" class="section">
+  <div class="container">
 
-<div class="section-title">
-<h2>🗺️ Mapa</h2>
-<p>Encontranos en Puerto Pirámides.</p>
-</div>
+    <h2 class="section-title">📍 Cómo llegar</h2>
+    <p class="section-subtitle">
+      Encontrá Pool & Beach en Puerto Pirámides.
+    </p>
 
-<div class="card map-card">
+    <div class="card map-wrap">
 
-<div class="map-wrap">
-<img
-src="Mapa-guia.svg"
-alt="Mapa guía de Pool & Beach en Puerto Pirámides"
-loading="lazy"
-onerror="this.style.display='none';document.getElementById('mapFallback').style.display='block';">
-</div>
+      <img
+        src="Mapa-guia.svg"
+        alt="Mapa guía de Pool & Beach en Puerto Pirámides"
+        loading="lazy">
 
-<div id="mapFallback" class="map-note" style="display:none">
-Mapa no disponible. Colocá <strong>Mapa-guia.svg</strong> en la raíz del proyecto junto a index.html.
-</div>
+    </div>
 
-</div>
-
-</div>
+  </div>
 </section>
 
 </main>
 
-<div id="toast"></div>
-
 <footer>
-<div class="container">
-<strong>POOL & BEACH</strong><br>
-Puerto Pirámides · Juegos · Torneos · Premios
-</div>
+  <div class="container">
+
+    <div style="display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;">
+
+      <div>
+        <strong>POOL & BEACH GAMES</strong>
+        <div class="small">
+          Puerto Pirámides · Chubut · Argentina
+        </div>
+      </div>
+
+      <div class="small">
+        Juegos · Duelos · Torneos · Trivia · Ranking · Premios
+      </div>
+
+    </div>
+
+  </div>
 </footer>
 
+<div id="toast" class="toast"></div>
+
+<div id="modal" class="modal">
+  <div class="modal-box card">
+
+    <button class="close" onclick="closeModal()">×</button>
+
+    <div id="modalContent"></div>
+
+  </div>
+</div>
+
 <script>
+"use strict";
 
-const SUPABASE_URL="https://nmpakeovqkdajtswjpgm.supabase.co";
+/* =========================================================
+   CONFIGURACIÓN SUPABASE
+   ========================================================= */
 
-const SUPABASE_KEY="sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
 
-const db=supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
+const SUPABASE_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-let currentUser=null;
-let currentTable=null;
-let currentTriviaSession=null;
-let currentTriviaQuestion=null;
-let currentDuel=null;
-let currentTournament=null;
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
 
-const $=id=>document.getElementById(id);
+/* =========================================================
+   ESTADO GLOBAL
+   ========================================================= */
+
+let currentUser = null;
+let currentProfile = null;
+let currentTable = null;
+
+let currentTrivia = null;
+let currentTriviaQuestion = null;
+
+let currentDuel = null;
+
+let currentTournament = null;
+
+let realtimeChannels = [];
+
+let pollingTimer = null;
+
+/* =========================================================
+   UTILIDADES
+   ========================================================= */
+
+function $(id){
+  return document.getElementById(id);
+}
+
+function showToast(message){
+  const toast = $("toast");
+
+  if(!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(()=>{
+    toast.classList.remove("show");
+  },3200);
+}
+
+function showMessage(id,message,type=""){
+  const element = $(id);
+
+  if(!element) return;
+
+  element.textContent = message;
+  element.classList.remove("hidden","success","error");
+
+  if(type){
+    element.classList.add(type);
+  }
+}
+
+function hide(id){
+  const element = $(id);
+
+  if(element){
+    element.classList.add("hidden");
+  }
+}
+
+function show(id){
+  const element = $(id);
+
+  if(element){
+    element.classList.remove("hidden");
+  }
+}
 
 function escapeHtml(value){
-return String(value??"")
-.replace(/&/g,"&amp;")
-.replace(/</g,"&lt;")
-.replace(/>/g,"&gt;")
-.replace(/"/g,"&quot;")
-.replace(/'/g,"&#039;");
-}
+  if(value === null || value === undefined){
+    return "";
+  }
 
-function toast(message){
-const el=$("toast");
-el.textContent=message;
-el.classList.add("show");
-
-clearTimeout(window.__toastTimer);
-
-window.__toastTimer=setTimeout(()=>{
-el.classList.remove("show");
-},3000);
-}
-
-function scrollToId(id){
-const el=$(id);
-if(el)el.scrollIntoView({behavior:"smooth"});
-}
-
-function rpcError(error,fallback){
-console.error(error);
-toast(error?.message||fallback);
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 
 function formatDate(value){
-if(!value)return"—";
+  if(!value) return "—";
 
-try{
-return new Date(value).toLocaleString("es-AR",{
-dateStyle:"short",
-timeStyle:"short"
-});
-}catch{
-return String(value);
+  try{
+    return new Date(value).toLocaleString(
+      "es-AR",
+      {
+        dateStyle:"short",
+        timeStyle:"short"
+      }
+    );
+  }catch{
+    return value;
+  }
 }
+
+function formatNumber(value){
+  const number = Number(value || 0);
+
+  return number.toLocaleString("es-AR");
 }
+
+/* =========================================================
+   AUTENTICACIÓN ANÓNIMA
+   ========================================================= */
 
 async function ensureAuth(){
 
-const{
-data:{session}
-}=await db.auth.getSession();
+  try{
 
-if(session?.user){
-currentUser=session.user;
-return currentUser;
+    const {
+      data:{
+        session
+      },
+      error
+    } = await supabaseClient.auth.getSession();
+
+    if(error){
+      throw error;
+    }
+
+    if(session?.user){
+
+      currentUser = session.user;
+
+      return currentUser;
+    }
+
+    const {
+      data,
+      error:signInError
+    } = await supabaseClient.auth.signInAnonymously();
+
+    if(signInError){
+      throw signInError;
+    }
+
+    currentUser = data.user;
+
+    return currentUser;
+
+  }catch(error){
+
+    console.error("Auth:",error);
+
+    $("playerStatus").textContent =
+      "No se pudo conectar";
+
+    showToast(
+      "No se pudo iniciar la sesión de jugador."
+    );
+
+    return null;
+  }
 }
 
-const{
-data,
-error
-}=await db.auth.signInAnonymously();
-
-if(error){
-console.error(error);
-toast("No se pudo iniciar la sesión.");
-return null;
-}
-
-currentUser=data.user;
-
-return currentUser;
-}
-
-async function loadTable(){
-
-const params=new URLSearchParams(location.search);
-
-const mesaParam=
-params.get("mesa")||
-params.get("table")||
-params.get("table_number")||
-params.get("qr");
-
-if(!mesaParam){
-$("tableStatus").textContent="No se detectó una mesa.";
-return;
-}
-
-let tableNumber=String(mesaParam).trim();
-
-try{
-
-const{
-data:legacy,
-error:legacyError
-}=await db
-.from("mesas")
-.select("id,numero,qr_token")
-.eq("qr_token",tableNumber)
-.maybeSingle();
-
-if(!legacyError&&legacy){
-
-tableNumber=String(
-legacy.numero??tableNumber
-);
-
-}
-
-}catch(error){
-console.warn("Resolución de QR legacy:",error);
-}
-
-let query=db
-.from("tables_pool")
-.select("*")
-.eq("active",true);
-
-const numericNumber=Number(tableNumber);
-
-if(Number.isFinite(numericNumber)){
-query=query.eq("table_number",numericNumber);
-}else{
-query=query.or(
-`code.eq.${tableNumber},qr_token.eq.${tableNumber}`
-);
-}
-
-const{
-data,
-error
-}=await query.maybeSingle();
-
-if(error||!data){
-
-$("tableNumber").textContent=`Mesa ${escapeHtml(tableNumber)}`;
-
-$("tableStatus").textContent=
-"QR detectado, pero la mesa todavía no está configurada en el sistema.";
-
-return;
-}
-
-currentTable=data;
-
-const number=
-data.table_number||
-data.numero||
-tableNumber;
-
-$("tableNumber").textContent=`Mesa ${number}`;
-
-$("profileTable").textContent=number;
-
-$("headerTable").textContent=number;
-
-$("tableStatus").innerHTML=
-`<strong>✅ Mesa ${escapeHtml(number)} vinculada</strong><br>Tu actividad quedará asociada a esta mesa.`;
-
-const qrUrl=
-`${location.origin}${location.pathname}?mesa=${encodeURIComponent(number)}`;
-
-$("qrImage").src=
-"https://api.qrserver.com/v1/create-qr-code/?size=180x180&data="+
-encodeURIComponent(qrUrl);
-
-$("qrContainer").style.display="inline-flex";
-
-}
+/* =========================================================
+   PERFIL
+   ========================================================= */
 
 async function loadProfile(){
 
-if(!currentUser)return;
+  if(!currentUser) return;
 
-let{
-data,
-error
-}=await db
-.from("profiles")
-.select("*")
-.eq("id",currentUser.id)
-.maybeSingle();
+  try{
 
-if(error){
-console.warn("Perfil:",error);
-return;
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_or_create_profile"
+    );
+
+    if(error){
+      throw error;
+    }
+
+    currentProfile = data;
+
+    if(Array.isArray(data)){
+      currentProfile = data[0];
+    }
+
+    if(!currentProfile){
+      return;
+    }
+
+    $("playerName").textContent =
+      currentProfile.display_name ||
+      "Jugador";
+
+    $("playerStatus").textContent =
+      "Jugador conectado";
+
+    $("playerPoints").textContent =
+      formatNumber(currentProfile.points);
+
+    $("playerGames").textContent =
+      formatNumber(
+        currentProfile.games_played ||
+        currentProfile.total_games ||
+        0
+      );
+
+  }catch(error){
+
+    console.error("Profile:",error);
+
+    $("playerName").textContent =
+      "Jugador";
+
+    $("playerStatus").textContent =
+      "Sesión activa";
+  }
 }
 
-if(!data){
+/* =========================================================
+   DASHBOARD
+   ========================================================= */
 
-const displayName=
-"Jugador "+currentUser.id.slice(0,5).toUpperCase();
+async function loadDashboard(){
 
-const{
-data:newProfile,
-error:createError
-}=await db
-.from("profiles")
-.insert({
-id:currentUser.id,
-display_name:displayName
-})
-.select("*")
-.single();
+  if(!currentUser) return;
 
-if(createError){
-console.warn("Creación de perfil:",createError);
-return;
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_player_dashboard"
+    );
+
+    if(error){
+      throw error;
+    }
+
+    let dashboard = data;
+
+    if(Array.isArray(data)){
+      dashboard = data[0];
+    }
+
+    if(!dashboard){
+      return;
+    }
+
+    if(
+      dashboard.points !== undefined
+    ){
+      $("playerPoints").textContent =
+        formatNumber(dashboard.points);
+    }
+
+    if(
+      dashboard.games_played !== undefined
+    ){
+      $("playerGames").textContent =
+        formatNumber(dashboard.games_played);
+    }
+
+    if(
+      dashboard.ranking_position !== undefined
+    ){
+      $("playerRank").textContent =
+        dashboard.ranking_position || "—";
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Dashboard no disponible:",
+      error
+    );
+  }
 }
 
-data=newProfile;
+/* =========================================================
+   JUEGOS
+   ========================================================= */
 
+async function startGame(type){
+
+  if(!currentUser){
+
+    showToast(
+      "Conectando jugador..."
+    );
+
+    await ensureAuth();
+  }
+
+  if(!currentUser){
+    return;
+  }
+
+  try{
+
+    const gameId =
+      await resolveGameId(
+        type === "pool"
+          ? "pool"
+          : type
+      );
+
+    if(!gameId){
+      throw new Error(
+        "No se encontró el juego."
+      );
+    }
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "play_game",
+      {
+        p_game_id:gameId,
+        p_table_id:currentTable?.id || null,
+        p_metadata:{
+          source:"public_index",
+          type
+        }
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    showMessage(
+      "gameMessage",
+      "Partida iniciada correctamente. ¡A jugar!",
+      "success"
+    );
+
+    showToast(
+      "Partida iniciada."
+    );
+
+    await loadProfile();
+    await loadDashboard();
+
+  }catch(error){
+
+    console.error(
+      "Start game:",
+      error
+    );
+
+    showMessage(
+      "gameMessage",
+      error.message ||
+      "No se pudo iniciar la partida.",
+      "error"
+    );
+  }
 }
 
-const name=
-data.display_name||
-data.nombre||
-"Jugador";
+async function resolveGameId(gameType){
 
-const points=
-Number(data.points??data.puntos??0);
+  const {
+    data,
+    error
+  } = await supabaseClient
+    .from("games")
+    .select("id,name,slug,game_type,active")
+    .eq("active",true);
 
-const tokens=
-Number(data.tokens??data.token_balance??0);
+  if(error){
+    throw error;
+  }
 
-$("playerName").textContent=name;
+  const games = data || [];
 
-$("profilePoints").textContent=points;
+  const normalized =
+    String(gameType || "")
+      .toLowerCase();
 
-$("profileTokens").textContent=tokens;
+  const game =
+    games.find(g =>
+      String(g.slug || "")
+        .toLowerCase()
+        .includes(normalized)
+      ||
+      String(g.game_type || "")
+        .toLowerCase()
+        .includes(normalized)
+      ||
+      String(g.name || "")
+        .toLowerCase()
+        .includes(normalized)
+    );
 
-$("headerPoints").textContent=points;
-
-$("headerTokens").textContent=tokens;
-
+  return game?.id || null;
 }
 
-async function loadGames(){
+async function startDiceGame(){
 
-const grid=$("gamesGrid");
+  try{
 
-const{
-data,
-error
-}=await db
-.from("games")
-.select("*")
-.eq("active",true)
-.order("name");
+    const gameId =
+      await resolveGameId("dice");
 
-if(error){
+    if(!gameId){
+      throw new Error(
+        "El juego de dados no está configurado."
+      );
+    }
 
-console.warn(error);
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "start_dice_game",
+      {
+        p_game_id:gameId,
+        p_table_id:currentTable?.id || null
+      }
+    );
 
-grid.innerHTML=
-'<div class="card"><h3>⚠️ Juegos</h3><p>No se pudieron cargar los juegos.</p></div>';
+    if(error){
+      throw error;
+    }
 
-return;
+    showToast(
+      "Partida de dados iniciada."
+    );
+
+    showMessage(
+      "gameMessage",
+      "¡Partida de dados iniciada!",
+      "success"
+    );
+
+    await loadProfile();
+    await loadDashboard();
+
+  }catch(error){
+
+    console.error(
+      "Dice:",
+      error
+    );
+
+    showMessage(
+      "gameMessage",
+      error.message ||
+      "No se pudo iniciar dados.",
+      "error"
+    );
+  }
 }
 
-if(!data?.length){
+/* =========================================================
+   TRIVIA
+   ========================================================= */
 
-grid.innerHTML=
-'<div class="empty">Todavía no hay juegos configurados.</div>';
+async function openTrivia(){
 
-return;
-}
+  if(!currentUser){
+    await ensureAuth();
+  }
 
-grid.innerHTML=data.map(game=>{
+  if(!currentUser){
+    return;
+  }
 
-const name=
-game.name||
-game.nombre||
-"Juego";
+  try{
 
-const description=
-game.description||
-game.descripcion||
-"Jugá y ganá puntos.";
+    const gameId =
+      await resolveGameId("trivia");
 
-const points=
-Number(game.points_reward??game.reward_points??game.points??0);
+    if(!gameId){
+      throw new Error(
+        "No se encontró el juego de trivia."
+      );
+    }
 
-const tokens=
-Number(game.tokens_reward??game.reward_tokens??game.tokens??0);
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "start_trivia_game",
+      {
+        p_game_id:gameId,
+        p_table_id:currentTable?.id || null
+      }
+    );
 
-const icon=
-game.icon||
-game.emoji||
-"🎮";
+    if(error){
+      throw error;
+    }
 
-return`
+    currentTrivia = data;
 
-<article class="card">
+    if(Array.isArray(data)){
+      currentTrivia = data[0];
+    }
 
-<div class="game-icon">${escapeHtml(icon)}</div>
+    if(!currentTrivia){
+      throw new Error(
+        "No se recibió la partida de trivia."
+      );
+    }
 
-<h3>${escapeHtml(name)}</h3>
+    hide("triviaStart");
+    show("triviaGame");
 
-<p>${escapeHtml(description)}</p>
+    renderTriviaQuestion();
 
-<div class="reward">
-<span>⭐ ${points} pts</span>
-<span>🪙 ${tokens} tokens</span>
-</div>
+    document
+      .getElementById("trivia")
+      ?.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
 
-<button
-class="btn btn-primary"
-onclick="playSimpleGame('${escapeHtml(game.id)}')">
-Jugar
-</button>
+  }catch(error){
 
-</article>
+    console.error(
+      "Trivia:",
+      error
+    );
 
-`;
-
-}).join("");
-
-}
-
-async function playSimpleGame(gameId){
-
-const{
-data,
-error
-}=await db.rpc(
-"play_game",
-{
-p_game_id:gameId,
-p_table_id:currentTable?.id??null,
-p_metadata:{source:"public_index"}
-}
-);
-
-if(error){
-rpcError(error,"No se pudo registrar la partida.");
-return;
-}
-
-toast(
-`🎉 +${Number(data?.points_awarded??0)} puntos · +${Number(data?.tokens_awarded??0)} tokens`
-);
-
-await loadProfile();
-
-}
-
-async function findGameByName(name){
-
-const{
-data,
-error
-}=await db
-.from("games")
-.select("*")
-.eq("active",true)
-.ilike("name",name)
-.maybeSingle();
-
-if(error)console.warn(error);
-
-return data;
-
-}
-
-async function startTrivia(){
-
-if(!currentTable){
-toast("Primero vinculá la mesa mediante el QR.");
-return;
-}
-
-const game=
-await findGameByName("Trivia Express");
-
-if(!game){
-toast("Trivia Express todavía no está configurada.");
-return;
-}
-
-const{
-data,
-error
-}=await db.rpc(
-"start_trivia_game",
-{
-p_game_id:game.id,
-p_table_id:currentTable.id
-}
-);
-
-if(error){
-rpcError(error,"No se pudo iniciar la Trivia.");
-return;
-}
-
-currentTriviaSession=
-data?.session_id||
-data?.id;
-
-currentTriviaQuestion={
-question:data?.question,
-options:data?.options||[]
-};
-
-$("triviaStart").style.display="none";
-
-$("triviaGame").style.display="block";
-
-$("triviaResult").innerHTML="";
-
-$("triviaNext").style.display="none";
-
-renderTriviaQuestion();
-
+    showToast(
+      error.message ||
+      "No se pudo iniciar la trivia."
+    );
+  }
 }
 
 function renderTriviaQuestion(){
 
-const question=
-currentTriviaQuestion?.question||
-"Pregunta";
+  if(!currentTrivia){
+    return;
+  }
 
-$("triviaQuestion").textContent=question;
+  const question =
+    currentTrivia.question ||
+    currentTrivia.current_question ||
+    currentTrivia.question_text ||
+    currentTrivia;
 
-const options=
-currentTriviaQuestion?.options||
-[];
+  currentTriviaQuestion =
+    question;
 
-$("triviaAnswers").innerHTML=
-options.map((option,index)=>`
+  const questionText =
+    question.text ||
+    question.question ||
+    question.question_text ||
+    currentTrivia.question_text ||
+    "Pregunta";
 
-<button
-class="answer"
-onclick="answerTrivia(${index})">
-${escapeHtml(option)}
-</button>
+  $("triviaQuestion").textContent =
+    questionText;
 
-`).join("");
+  const answers =
+    question.answers ||
+    question.options ||
+    currentTrivia.answers ||
+    currentTrivia.options ||
+    [];
 
+  const container =
+    $("triviaAnswers");
+
+  container.innerHTML = "";
+
+  answers.forEach((answer,index)=>{
+
+    const button =
+      document.createElement("button");
+
+    button.className =
+      "answer";
+
+    button.textContent =
+      typeof answer === "object"
+        ? (
+            answer.text ||
+            answer.label ||
+            answer.answer ||
+            ""
+          )
+        : answer;
+
+    button.onclick = () =>
+      answerTrivia(index);
+
+    container.appendChild(button);
+  });
+
+  const number =
+    currentTrivia.question_number ||
+    currentTrivia.current_question_number ||
+    currentTrivia.question_index + 1 ||
+    1;
+
+  const total =
+    currentTrivia.total_questions ||
+    currentTrivia.questions_count ||
+    "?";
+
+  $("triviaProgress").textContent =
+    `Pregunta ${number}/${total}`;
+
+  $("triviaScore").textContent =
+    `${formatNumber(currentTrivia.score || 0)} puntos`;
+
+  hide("triviaFeedback");
+  hide("triviaNext");
 }
 
-async function answerTrivia(index){
+async function answerTrivia(answerIndex){
 
-if(!currentTriviaSession)return;
+  if(!currentTrivia){
+    return;
+  }
 
-const buttons=
-document.querySelectorAll("#triviaAnswers .answer");
+  const sessionId =
+    currentTrivia.session_id ||
+    currentTrivia.id;
 
-buttons.forEach(button=>{
-button.disabled=true;
-});
+  if(!sessionId){
+    showToast(
+      "La sesión de trivia no es válida."
+    );
 
-const{
-data,
-error
-}=await db.rpc(
-"answer_trivia",
-{
-p_session_id:currentTriviaSession,
-p_answer_index:index
+    return;
+  }
+
+  const buttons =
+    document.querySelectorAll(
+      "#triviaAnswers .answer"
+    );
+
+  buttons.forEach(button=>{
+    button.disabled = true;
+  });
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "answer_trivia",
+      {
+        p_session_id:sessionId,
+        p_answer_index:answerIndex
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    const result =
+      Array.isArray(data)
+        ? data[0]
+        : data;
+
+    currentTrivia = {
+      ...currentTrivia,
+      ...(result || {})
+    };
+
+    const correct =
+      result?.correct ??
+      result?.is_correct ??
+      false;
+
+    buttons.forEach(
+      (button,index)=>{
+        if(
+          index === answerIndex &&
+          correct
+        ){
+          button.classList.add(
+            "correct"
+          );
+        }
+
+        if(
+          index === answerIndex &&
+          !correct
+        ){
+          button.classList.add(
+            "wrong"
+          );
+        }
+      }
+    );
+
+    showMessage(
+      "triviaFeedback",
+      correct
+        ? "✅ ¡Correcto! Sumaste puntos."
+        : "❌ Incorrecto.",
+      correct
+        ? "success"
+        : "error"
+    );
+
+    $("triviaScore").textContent =
+      `${formatNumber(result?.score || currentTrivia.score || 0)} puntos`;
+
+    if(
+      result?.finished ||
+      result?.completed ||
+      result?.game_over
+    ){
+
+      $("triviaNext").textContent =
+        "Finalizar";
+
+      $("triviaNext").onclick =
+        finishTrivia;
+
+    }else{
+
+      $("triviaNext").textContent =
+        "Siguiente";
+
+      $("triviaNext").onclick =
+        nextTriviaQuestion;
+    }
+
+    show("triviaNext");
+
+    await loadProfile();
+    await loadDashboard();
+
+  }catch(error){
+
+    console.error(
+      "Answer trivia:",
+      error
+    );
+
+    buttons.forEach(button=>{
+      button.disabled = false;
+    });
+
+    showMessage(
+      "triviaFeedback",
+      error.message ||
+      "No se pudo registrar la respuesta.",
+      "error"
+    );
+  }
 }
-);
 
-if(error){
+async function nextTriviaQuestion(){
 
-rpcError(error,"No se pudo registrar la respuesta.");
+  if(!currentTrivia){
+    return;
+  }
 
-buttons.forEach(button=>{
-button.disabled=false;
-});
+  try{
 
-return;
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "start_trivia_game",
+      {
+        p_game_id:
+          currentTrivia.game_id ||
+          await resolveGameId("trivia"),
+        p_table_id:
+          currentTable?.id || null
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    /*
+      La RPC inicia una sesión segura.
+      Si el backend devuelve la siguiente pregunta
+      en la sesión existente, se utiliza esa respuesta.
+    */
+
+    if(data){
+
+      currentTrivia = data;
+
+      if(Array.isArray(data)){
+        currentTrivia = data[0];
+      }
+
+      renderTriviaQuestion();
+    }
+
+  }catch(error){
+
+    console.error(
+      "Next trivia:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "No se pudo cargar la siguiente pregunta."
+    );
+  }
 }
 
-const correct=
-data?.correct===true||
-data?.is_correct===true;
+async function finishTrivia(){
 
-buttons.forEach((button,i)=>{
+  hide("triviaGame");
+  show("triviaStart");
 
-if(i===index){
-button.classList.add(
-correct?"correct":"wrong"
-);
+  currentTrivia = null;
+
+  showToast(
+    "Trivia finalizada."
+  );
+
+  await loadProfile();
+  await loadDashboard();
 }
 
-});
-
-$("triviaResult").innerHTML=
-correct
-?`<strong style="color:var(--green)">✅ ¡Correcto!</strong>`
-:`<strong style="color:var(--red)">❌ Incorrecto</strong>`;
-
-$("triviaNext").style.display="inline-block";
-
-await loadProfile();
-
-}
-
-function nextTriviaQuestion(){
-
-currentTriviaSession=null;
-
-currentTriviaQuestion=null;
-
-$("triviaGame").style.display="none";
-
-$("triviaStart").style.display="block";
-
-$("triviaResult").innerHTML="";
-
-$("triviaNext").style.display="none";
-
-}
+/* =========================================================
+   DUELOS
+   ========================================================= */
 
 async function createDuel(){
 
-const game=
-await findGameByName("Duelo 1 vs 1");
+  if(!currentUser){
+    await ensureAuth();
+  }
 
-if(!game){
-toast("El juego de duelo no está configurado.");
-return;
+  if(!currentUser){
+    return;
+  }
+
+  try{
+
+    const gameId =
+      await resolveGameId("duel");
+
+    if(!gameId){
+      throw new Error(
+        "No se encontró el juego de duelo."
+      );
+    }
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "create_duel",
+      {
+        p_game_id:gameId,
+        p_table_id:currentTable?.id || null
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    currentDuel =
+      Array.isArray(data)
+        ? data[0]
+        : data;
+
+    showMessage(
+      "duelCreateMessage",
+      "Duelo creado. Esperando rival...",
+      "success"
+    );
+
+    show("activeDuel");
+
+    renderDuel();
+
+    await loadWaitingDuels();
+
+  }catch(error){
+
+    console.error(
+      "Create duel:",
+      error
+    );
+
+    showMessage(
+      "duelCreateMessage",
+      error.message ||
+      "No se pudo crear el duelo.",
+      "error"
+    );
+  }
 }
 
-const{
-data,
-error
-}=await db.rpc(
-"create_duel",
-{
-p_game_id:game.id,
-p_table_id:currentTable?.id??null
-}
-);
+async function loadWaitingDuels(){
 
-if(error){
-rpcError(error,"No se pudo crear el duelo.");
-return;
-}
+  if(!currentUser){
+    return;
+  }
 
-currentDuel=data;
+  try{
 
-$("activeDuelPanel").style.display="block";
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_waiting_duels",
+      {
+        p_table_id:
+          currentTable?.id || null
+      }
+    );
 
-$("noActiveDuel").style.display="none";
+    if(error){
+      throw error;
+    }
 
-$("activeDuelInfo").innerHTML=
-`<strong>⏳ Duelo creado</strong><br>
-Esperando que otro jugador se una.`;
+    const duels =
+      data || [];
 
-toast("⚔️ Duelo creado.");
+    const container =
+      $("waitingDuels");
 
-await loadDuels();
+    if(!duels.length){
 
-}
+      container.innerHTML =
+        '<div class="empty">No hay duelos esperando rival.</div>';
 
-async function loadDuels(){
+      return;
+    }
 
-const list=$("duelList");
+    container.innerHTML =
+      duels.map(duel=>`
 
-const{
-data,
-error
-}=await db.rpc(
-"get_waiting_duels",
-{
-p_table_id:currentTable?.id??null
-}
-);
+        <div class="card" style="padding:15px;margin-bottom:10px;">
 
-if(error){
+          <strong>
+            ${escapeHtml(
+              duel.player_name ||
+              duel.display_name ||
+              "Jugador"
+            )}
+          </strong>
 
-console.warn(error);
+          <div class="muted small">
+            Duelo disponible
+          </div>
 
-list.innerHTML=
-'<div class="empty">No hay duelos disponibles.</div>';
+          <button
+            class="btn btn-secondary"
+            style="margin-top:10px;width:100%;"
+            onclick="joinDuel('${duel.id}')">
+            ⚔️ Unirme
+          </button>
 
-return;
-}
+        </div>
 
-if(!data?.length){
+      `).join("");
 
-list.innerHTML=
-'<div class="empty">No hay duelos esperando rival.</div>';
+  }catch(error){
 
-return;
-}
+    console.error(
+      "Waiting duels:",
+      error
+    );
 
-list.innerHTML=
-data.map(duel=>{
-
-const id=
-duel.duel_id||
-duel.id;
-
-const player=
-duel.player1_name||
-duel.player_name||
-"Jugador";
-
-return`
-
-<div class="duel-item">
-
-<div>
-<strong>⚔️ ${escapeHtml(player)}</strong>
-<br>
-<small style="color:var(--muted)">
-Esperando rival
-</small>
-</div>
-
-<button
-class="btn btn-green"
-onclick="joinDuel('${escapeHtml(id)}')">
-Unirme
-</button>
-
-</div>
-
-`;
-
-}).join("");
-
+    $("waitingDuels").innerHTML =
+      '<div class="empty">No se pudieron cargar los duelos.</div>';
+  }
 }
 
 async function joinDuel(duelId){
 
-const{
-data,
-error
-}=await db.rpc(
-"join_duel",
-{
-p_duel_id:duelId
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "join_duel",
+      {
+        p_duel_id:duelId
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    currentDuel =
+      Array.isArray(data)
+        ? data[0]
+        : data;
+
+    show(
+      "activeDuel"
+    );
+
+    renderDuel();
+
+    showToast(
+      "Te uniste al duelo."
+    );
+
+    await loadWaitingDuels();
+
+  }catch(error){
+
+    console.error(
+      "Join duel:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "No se pudo unir al duelo."
+    );
+  }
 }
-);
 
-if(error){
+async function loadActiveDuel(){
 
-rpcError(
-error,
-"No se pudo unir al duelo."
-);
+  if(!currentUser){
+    return;
+  }
 
-return;
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_my_active_duel"
+    );
+
+    if(error){
+      throw error;
+    }
+
+    currentDuel =
+      Array.isArray(data)
+        ? data[0]
+        : data;
+
+    if(currentDuel){
+
+      show("activeDuel");
+
+      renderDuel();
+
+    }
+
+  }catch(error){
+
+    console.warn(
+      "Active duel:",
+      error
+    );
+  }
 }
 
-currentDuel=data;
+function renderDuel(){
 
-$("activeDuelPanel").style.display="block";
+  if(!currentDuel){
+    return;
+  }
 
-$("noActiveDuel").style.display="none";
+  $("duelTitle").textContent =
+    currentDuel.name ||
+    "Duelo 1 vs 1";
 
-$("activeDuelInfo").innerHTML=
-"<strong>⚔️ Duelo activo</strong><br>Ya podés ingresar tu puntuación cuando termine la partida.";
+  $("duelStatus").textContent =
+    currentDuel.status ||
+    "Activo";
 
-toast("⚔️ ¡Te uniste al duelo!");
+  $("duelPlayer1").textContent =
+    currentDuel.player1_name ||
+    currentDuel.player_1_name ||
+    "Jugador 1";
 
-await loadDuels();
+  $("duelPlayer2").textContent =
+    currentDuel.player2_name ||
+    currentDuel.player_2_name ||
+    "Esperando rival";
 
+  $("duelScore1").textContent =
+    formatNumber(
+      currentDuel.player1_score ||
+      currentDuel.score1 ||
+      0
+    );
+
+  $("duelScore2").textContent =
+    formatNumber(
+      currentDuel.player2_score ||
+      currentDuel.score2 ||
+      0
+    );
 }
 
 async function submitDuel(){
 
-if(!currentDuel){
+  if(!currentDuel){
+    showToast(
+      "No hay un duelo activo."
+    );
 
-toast("No hay un duelo activo.");
+    return;
+  }
 
-return;
+  const score =
+    Number(
+      $("duelScoreInput").value
+    );
 
+  if(
+    !Number.isFinite(score) ||
+    score < 0
+  ){
+
+    showMessage(
+      "duelMessage",
+      "Ingresá un resultado válido.",
+      "error"
+    );
+
+    return;
+  }
+
+  const duelId =
+    currentDuel.duel_id ||
+    currentDuel.id;
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "submit_duel_score",
+      {
+        p_duel_id:duelId,
+        p_score:Math.floor(score)
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    currentDuel =
+      Array.isArray(data)
+        ? data[0]
+        : {
+            ...currentDuel,
+            ...(data || {})
+          };
+
+    renderDuel();
+
+    $("duelScoreInput").value = "";
+
+    showMessage(
+      "duelMessage",
+      "Resultado enviado correctamente.",
+      "success"
+    );
+
+    await loadProfile();
+    await loadDashboard();
+
+  }catch(error){
+
+    console.error(
+      "Submit duel:",
+      error
+    );
+
+    showMessage(
+      "duelMessage",
+      error.message ||
+      "No se pudo enviar el resultado.",
+      "error"
+    );
+  }
 }
 
-const score=
-Number($("duelScore").value);
-
-if(
-!Number.isFinite(score)||
-score<0
-){
-
-toast("Ingresá una puntuación válida.");
-
-return;
-
-}
-
-const duelId=
-currentDuel.duel_id||
-currentDuel.id;
-
-const{
-data,
-error
-}=await db.rpc(
-"submit_duel_score",
-{
-p_duel_id:duelId,
-p_score:score
-}
-);
-
-if(error){
-
-rpcError(
-error,
-"No se pudo guardar la puntuación."
-);
-
-return;
-
-}
-
-$("activeDuelInfo").innerHTML=
-data?.status==="completed"||
-data?.winner
-?
-`<strong>🏁 Duelo terminado</strong><br>
-${escapeHtml(
-data?.message||
-"El resultado fue registrado."
-)}`
-:
-`<strong>✅ Puntuación registrada</strong><br>
-Esperando el resultado del rival.`;
-
-$("duelScore").value="";
-
-toast("✅ Puntuación registrada.");
-
-await loadProfile();
-
-await loadDuels();
-
-}
+/* =========================================================
+   TORNEOS
+   ========================================================= */
 
 async function loadTournaments(){
 
-const grid=$("tournamentsGrid");
+  try{
 
-const{
-data,
-error
-}=await db
-.from("tournaments")
-.select("*")
-.order("starts_at",{ascending:true});
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("tournaments")
+      .select(`
+        id,
+        name,
+        game_type,
+        starts_at,
+        entry_tokens,
+        max_players,
+        status
+      `)
+      .in(
+        "status",
+        ["open","active"]
+      )
+      .order(
+        "starts_at",
+        {ascending:true}
+      );
 
-if(error){
+    if(error){
+      throw error;
+    }
 
-grid.innerHTML=
-'<div class="card"><h3>⚠️ Torneos</h3><p>No se pudieron cargar los torneos.</p></div>';
+    const tournaments =
+      data || [];
 
-return;
+    const container =
+      $("tournamentsList");
 
+    if(!tournaments.length){
+
+      container.innerHTML =
+        '<div class="empty">No hay torneos abiertos actualmente.</div>';
+
+      $("heroTournaments").textContent =
+        "0";
+
+      return;
+    }
+
+    $("heroTournaments").textContent =
+      tournaments.length;
+
+    const counts =
+      await loadTournamentCounts();
+
+    container.innerHTML =
+      tournaments.map(tournament=>{
+
+        const count =
+          counts[tournament.id] || 0;
+
+        return `
+
+          <div class="tournament-row">
+
+            <div>
+              <strong>
+                ${escapeHtml(
+                  tournament.name
+                )}
+              </strong>
+
+              <div class="muted small">
+                ${escapeHtml(
+                  tournament.game_type ||
+                  "Competencia"
+                )}
+              </div>
+            </div>
+
+            <div>
+              <span class="badge">
+                ${escapeHtml(
+                  tournament.status
+                )}
+              </span>
+            </div>
+
+            <div class="muted small">
+              👥 ${count}/${tournament.max_players || "∞"}
+            </div>
+
+            <div style="display:flex;gap:7px;flex-wrap:wrap;">
+
+              <button
+                class="btn btn-primary"
+                onclick="joinTournament('${tournament.id}')">
+                Inscribirme
+              </button>
+
+              <button
+                class="btn btn-dark"
+                onclick="openTournament('${tournament.id}')">
+                Ver
+              </button>
+
+            </div>
+
+          </div>
+
+        `;
+      }).join("");
+
+  }catch(error){
+
+    console.error(
+      "Tournaments:",
+      error
+    );
+
+    $("tournamentsList").innerHTML =
+      '<div class="empty">No se pudieron cargar los torneos.</div>';
+  }
 }
 
-if(!data?.length){
+async function loadTournamentCounts(){
 
-grid.innerHTML=
-'<div class="empty">No hay torneos disponibles.</div>';
+  try{
 
-return;
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_tournament_counts"
+    );
 
-}
+    if(error){
+      throw error;
+    }
 
-let counts=new Map();
+    const result = {};
 
-try{
+    (data || []).forEach(row=>{
+      result[row.tournament_id] =
+        Number(row.player_count || 0);
+    });
 
-const{
-data:countRows,
-error:countError
-}=await db.rpc(
-"get_tournament_counts"
-);
+    return result;
 
-if(!countError){
+  }catch(error){
 
-(countRows||[]).forEach(row=>{
+    console.warn(
+      "Tournament counts:",
+      error
+    );
 
-counts.set(
-String(row.tournament_id),
-Number(row.player_count||0)
-);
-
-});
-
-}
-
-}catch(error){
-
-console.warn(
-"Conteos de torneos:",
-error
-);
-
-}
-
-grid.innerHTML=
-data.map(t=>{
-
-const id=t.id;
-
-const name=
-t.name||
-t.nombre||
-"Torneo";
-
-const status=
-t.status||
-t.estado||
-"open";
-
-const max=
-t.max_players||
-t.maxPlayers||
-16;
-
-const entry=
-t.entry_tokens||
-t.inscription_tokens||
-0;
-
-const starts=
-t.starts_at||
-t.fecha_inicio;
-
-const registered=
-counts.has(String(id))
-?counts.get(String(id))
-:0;
-
-const isOpen=
-String(status).toLowerCase()==="open"&&
-registered<Number(max||0);
-
-return`
-
-<article class="card tournament-card">
-
-<div class="tournament-status">
-${escapeHtml(status)}
-</div>
-
-<div class="game-icon">🏆</div>
-
-<h3>${escapeHtml(name)}</h3>
-
-<p>
-Competencia Pool & Beach.
-Avanzá ronda por ronda hasta la final.
-</p>
-
-<div class="tournament-info">
-
-<div class="info-box">
-<small>Jugadores</small>
-<strong>${registered} / ${max}</strong>
-</div>
-
-<div class="info-box">
-<small>Entrada</small>
-<strong>🪙 ${entry}</strong>
-</div>
-
-<div class="info-box">
-<small>Inicio</small>
-<strong>${formatDate(starts)}</strong>
-</div>
-
-</div>
-
-<div style="display:flex;flex-wrap:wrap;gap:7px">
-
-${isOpen
-?`
-<button
-class="btn btn-primary"
-onclick="joinTournament('${escapeHtml(id)}')">
-🏆 Inscribirme
-</button>
-`
-:""}
-
-<button
-class="btn btn-secondary"
-onclick="selectTournament('${escapeHtml(id)}')">
-📋 Ver competencia
-</button>
-
-</div>
-
-</article>
-
-`;
-
-}).join("");
-
+    return {};
+  }
 }
 
 async function joinTournament(tournamentId){
 
-const{
-data,
-error
-}=await db.rpc(
-"join_tournament",
-{
-p_tournament_id:tournamentId
-}
-);
+  if(!currentUser){
+    await ensureAuth();
+  }
 
-if(error){
+  try{
 
-rpcError(
-error,
-"No se pudo realizar la inscripción."
-);
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "join_tournament",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
 
-return;
+    if(error){
+      throw error;
+    }
 
-}
+    showToast(
+      "¡Inscripción realizada!"
+    );
 
-toast("🏆 ¡Inscripción realizada!");
+    await loadTournaments();
 
-await loadProfile();
+    await openTournament(
+      tournamentId
+    );
 
-await selectTournament(tournamentId);
+  }catch(error){
 
-}
+    console.error(
+      "Join tournament:",
+      error
+    );
 
-async function selectTournament(tournamentId){
-
-currentTournament=tournamentId;
-
-await Promise.allSettled([
-loadTournamentMatches(tournamentId),
-loadTournamentStandings(tournamentId)
-]);
-
-scrollToId("torneos");
-
-}
-
-async function loadTournamentMatches(tournamentId){
-
-const container=$("myMatches");
-
-const{
-data,
-error
-}=await db.rpc(
-"get_tournament_matches",
-{
-p_tournament_id:tournamentId
-}
-);
-
-if(error){
-
-console.warn(error);
-
-container.innerHTML=
-'<div class="empty">No se pudieron cargar los partidos.</div>';
-
-return;
-
+    showToast(
+      error.message ||
+      "No se pudo realizar la inscripción."
+    );
+  }
 }
 
-if(!data?.length){
+async function openTournament(tournamentId){
 
-container.innerHTML=
-'<div class="empty">Todavía no hay partidos generados. La competencia comienza cuando el torneo tenga su cuadro habilitado.</div>';
+  try{
 
-return;
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("tournaments")
+      .select("*")
+      .eq("id",tournamentId)
+      .single();
 
+    if(error){
+      throw error;
+    }
+
+    currentTournament =
+      data;
+
+    $("tournamentTitle").textContent =
+      data.name;
+
+    show("tournamentDetail");
+
+    await loadTournamentStandings(
+      tournamentId
+    );
+
+    await loadTournamentMatches(
+      tournamentId
+    );
+
+    $("tournamentDetail")
+      .scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+      });
+
+  }catch(error){
+
+    console.error(
+      "Tournament detail:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "No se pudo abrir el torneo."
+    );
+  }
 }
 
-container.innerHTML=
-data.map(m=>{
-
-const id=m.id??m.match_id;
-
-const p1=
-m.player1_name||
-m.player_1_name||
-"Jugador 1";
-
-const p2=
-m.player2_name||
-m.player_2_name||
-"Jugador 2";
-
-const s1=
-m.player1_score??
-m.score1??
-"—";
-
-const s2=
-m.player2_score??
-m.score2??
-"—";
-
-const round=
-m.round||
-m.round_number||
-"Ronda";
-
-const status=
-m.status||
-"pending";
-
-const can=
-[
-"pending",
-"active"
-].includes(
-String(status).toLowerCase()
-);
-
-return`
-
-<div class="match">
-
-<div class="match-header">
-<span>${escapeHtml(round)}</span>
-<span>${escapeHtml(status)}</span>
-</div>
-
-<div class="player-row">
-<span>${escapeHtml(p1)}</span>
-<strong>${escapeHtml(s1)}</strong>
-</div>
-
-<div class="player-row">
-<span>${escapeHtml(p2)}</span>
-<strong>${escapeHtml(s2)}</strong>
-</div>
-
-${can
-?`
-<div style="margin-top:10px">
-
-<input
-id="tournamentScore_${escapeHtml(id)}"
-class="score-input"
-type="number"
-min="0"
-placeholder="Tu puntuación">
-
-<button
-class="btn btn-green"
-style="margin-top:8px"
-onclick="submitTournamentScore('${escapeHtml(id)}')">
-Registrar resultado
-</button>
-
-</div>
-`
-:""}
-
-</div>
-
-`;
-
-}).join("");
-
+function closeTournament(){
+  hide("tournamentDetail");
+  currentTournament = null;
 }
 
-async function submitTournamentScore(matchId){
-
-const input=
-$(`tournamentScore_${matchId}`);
-
-if(!input)return;
-
-const score=
-Number(input.value);
-
-if(
-!Number.isFinite(score)||
-score<0
+async function loadTournamentStandings(
+  tournamentId
 ){
 
-toast("Ingresá una puntuación válida.");
+  try{
 
-return;
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_tournament_standings",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
 
+    if(error){
+      throw error;
+    }
+
+    const rows =
+      data || [];
+
+    const container =
+      $("tournamentStandings");
+
+    if(!rows.length){
+
+      container.innerHTML =
+        '<div class="empty">Todavía no hay participantes.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      rows.map(row=>`
+
+        <div class="ranking-row">
+
+          <div class="rank">
+            #${escapeHtml(
+              row.ranking_position
+            )}
+          </div>
+
+          <div>
+            <strong>
+              ${escapeHtml(
+                row.display_name ||
+                "Jugador"
+              )}
+            </strong>
+          </div>
+
+          <div>
+            ${formatNumber(
+              row.score || 0
+            )} pts
+          </div>
+
+          <div class="muted small">
+            ${escapeHtml(
+              row.status || ""
+            )}
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }catch(error){
+
+    console.error(
+      "Standings:",
+      error
+    );
+
+    $("tournamentStandings").innerHTML =
+      '<div class="empty">No se pudo cargar la clasificación.</div>';
+  }
 }
 
-const{
-data,
-error
-}=await db.rpc(
-"submit_tournament_score",
-{
-p_match_id:matchId,
-p_score:score
+async function loadTournamentMatches(
+  tournamentId
+){
+
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_tournament_matches",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    const matches =
+      data || [];
+
+    const container =
+      $("tournamentMatches");
+
+    if(!matches.length){
+
+      container.innerHTML =
+        '<div class="empty">Todavía no hay partidas generadas.</div>';
+
+      return;
+    }
+
+    container.innerHTML =
+      matches.map(match=>`
+
+        <div class="card" style="padding:14px;margin-bottom:10px;">
+
+          <div class="muted small">
+            Ronda ${escapeHtml(
+              match.round
+            )}
+            · Partido ${escapeHtml(
+              match.match_number
+            )}
+          </div>
+
+          <div style="display:flex;justify-content:space-between;margin-top:8px;">
+
+            <strong>
+              ${escapeHtml(
+                match.player1_name ||
+                "Jugador 1"
+              )}
+            </strong>
+
+            <strong>
+              ${formatNumber(
+                match.player1_score || 0
+              )}
+            </strong>
+
+          </div>
+
+          <div style="display:flex;justify-content:space-between;margin-top:5px;">
+
+            <strong>
+              ${escapeHtml(
+                match.player2_name ||
+                "Jugador 2"
+              )}
+            </strong>
+
+            <strong>
+              ${formatNumber(
+                match.player2_score || 0
+              )}
+            </strong>
+
+          </div>
+
+          <div class="muted small" style="margin-top:8px;">
+            ${escapeHtml(
+              match.status || ""
+            )}
+          </div>
+
+        </div>
+
+      `).join("");
+
+  }catch(error){
+
+    console.error(
+      "Matches:",
+      error
+    );
+
+    $("tournamentMatches").innerHTML =
+      '<div class="empty">No se pudieron cargar las partidas.</div>';
+  }
 }
-);
 
-if(error){
-
-rpcError(
-error,
-"No se pudo registrar el resultado."
-);
-
-return;
-
-}
-
-toast("🏆 Resultado registrado.");
-
-await Promise.allSettled([
-loadTournamentMatches(currentTournament),
-loadTournamentStandings(currentTournament),
-loadProfile()
-]);
-
-}
-
-async function loadTournamentStandings(tournamentId){
-
-const container=
-$("tournamentStandings");
-
-const{
-data,
-error
-}=await db.rpc(
-"get_tournament_standings",
-{
-p_tournament_id:tournamentId
-}
-);
-
-if(error){
-
-console.warn(error);
-
-container.innerHTML=
-'<div class="empty">No se pudo cargar la tabla.</div>';
-
-return;
-
-}
-
-if(!data?.length){
-
-container.innerHTML=
-'<div class="empty">Todavía no hay jugadores en la tabla.</div>';
-
-return;
-
-}
-
-container.innerHTML=
-data.map((r,i)=>{
-
-const pos=
-Number(
-r.ranking_position??i+1
-);
-
-const name=
-r.display_name||
-r.player_name||
-r.nombre||
-"Jugador";
-
-const score=
-Number(
-r.score||
-r.points||
-r.puntos||
-0
-);
-
-const status=
-r.status||
-"registered";
-
-return`
-
-<div class="rank-row">
-
-<div class="rank-number">
-${pos}
-</div>
-
-<div class="rank-name">
-${escapeHtml(name)}
-</div>
-
-<div class="rank-points">
-⭐ ${score} puntos
-</div>
-
-<div class="rank-tokens">
-${escapeHtml(status)}
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
+/* =========================================================
+   RANKING PÚBLICO
+   ========================================================= */
 
 async function loadRanking(){
 
-const container=
-$("rankingList");
+  try{
 
-try{
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "get_public_ranking"
+    );
 
-const{
-data,
-error
-}=await db.rpc(
-"get_public_ranking"
-);
+    if(error){
+      throw error;
+    }
 
-if(error)throw error;
+    const rows =
+      data || [];
 
-renderRanking(data||[]);
+    const container =
+      $("rankingList");
 
-}catch(error){
+    if(!rows.length){
 
-console.warn(
-"Ranking RPC:",
-error
-);
+      container.innerHTML =
+        '<div class="empty">Todavía no hay jugadores en el ranking.</div>';
 
-try{
+      return;
+    }
 
-const{
-data,
-error
-}=await db
-.from("profiles")
-.select("*")
-.order("points",{ascending:false})
-.limit(20);
+    $("heroPlayers").textContent =
+      rows.length;
 
-if(error)throw error;
+    let totalPoints = 0;
 
-renderRanking(data||[]);
+    rows.forEach(row=>{
+      totalPoints +=
+        Number(
+          row.points ||
+          row.score ||
+          0
+        );
+    });
 
-}catch(error2){
+    $("heroPoints").textContent =
+      formatNumber(totalPoints);
 
-console.warn(error2);
+    container.innerHTML =
+      rows.map((row,index)=>`
 
-container.innerHTML=
-'<div class="empty">El ranking se mostrará cuando haya jugadores registrados.</div>';
+        <div class="ranking-row">
 
+          <div class="rank">
+            #${escapeHtml(
+              row.ranking_position ||
+              row.rank ||
+              index + 1
+            )}
+          </div>
+
+          <div>
+            <strong>
+              ${escapeHtml(
+                row.display_name ||
+                row.name ||
+                "Jugador"
+              )}
+            </strong>
+          </div>
+
+          <div>
+            ${formatNumber(
+              row.points ||
+              row.score ||
+              0
+            )} pts
+          </div>
+
+          <div class="badge">
+            ${index === 0
+              ? "🥇"
+              : index === 1
+                ? "🥈"
+                : index === 2
+                  ? "🥉"
+                  : "Jugador"}
+          </div>
+
+        </div>
+
+      `).join("");
+
+    const myIndex =
+      rows.findIndex(row =>
+        row.user_id === currentUser?.id ||
+        row.player_id === currentUser?.id ||
+        row.profile_id === currentUser?.id
+      );
+
+    if(myIndex >= 0){
+      $("playerRank").textContent =
+        myIndex + 1;
+    }
+
+  }catch(error){
+
+    console.error(
+      "Ranking:",
+      error
+    );
+
+    $("rankingList").innerHTML =
+      '<div class="empty">No se pudo cargar el ranking.</div>';
+  }
 }
 
-}
-
-}
-
-function renderRanking(data){
-
-const c=$("rankingList");
-
-if(!data?.length){
-
-c.innerHTML=
-'<div class="empty">Todavía no hay jugadores en el ranking.</div>';
-
-return;
-
-}
-
-c.innerHTML=
-data.map((r,i)=>{
-
-const name=
-r.display_name||
-r.player_name||
-r.nombre||
-"Jugador";
-
-const points=
-Number(
-r.points||
-r.puntos||
-0
-);
-
-const tokens=
-Number(
-r.tokens||
-r.token_balance||
-0
-);
-
-let medal=i+1;
-
-if(i===0)medal="🥇";
-if(i===1)medal="🥈";
-if(i===2)medal="🥉";
-
-return`
-
-<div class="rank-row">
-
-<div class="rank-number">
-${medal}
-</div>
-
-<div class="rank-name">
-${escapeHtml(name)}
-</div>
-
-<div class="rank-points">
-⭐ ${points} pts
-</div>
-
-<div class="rank-tokens">
-🪙 ${tokens}
-</div>
-
-</div>
-
-`;
-
-}).join("");
-
-}
+/* =========================================================
+   PREMIOS
+   ========================================================= */
 
 async function loadPrizes(){
 
-const grid=$("prizesGrid");
+  try{
 
-const{
-data,
-error
-}=await db
-.from("prizes")
-.select("*")
-.order(
-"token_cost",
-{
-ascending:true
-}
-);
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("prizes")
+      .select("*")
+      .eq("active",true)
+      .order(
+        "points_cost",
+        {ascending:true}
+      );
 
-if(error){
+    if(error){
+      throw error;
+    }
 
-console.warn(error);
+    const prizes =
+      data || [];
 
-grid.innerHTML=
-'<div class="empty">No se pudieron cargar los premios.</div>';
+    const container =
+      $("prizesList");
 
-return;
+    if(!prizes.length){
 
-}
+      container.innerHTML =
+        '<div class="card empty">No hay premios disponibles actualmente.</div>';
 
-if(!data?.length){
+      return;
+    }
 
-grid.innerHTML=
-'<div class="empty">Todavía no hay premios cargados.</div>';
+    container.innerHTML =
+      prizes.map(prize=>`
 
-return;
+        <article class="card">
 
-}
+          <div class="prize">
 
-grid.innerHTML=
-data.map(p=>{
+            <div class="prize-icon">
+              🎁
+            </div>
 
-const id=p.id;
+            <div>
+              <h3>
+                ${escapeHtml(
+                  prize.name ||
+                  prize.title ||
+                  "Premio"
+                )}
+              </h3>
 
-const name=
-p.name||
-p.nombre||
-"Premio";
+              <div class="muted">
+                ${escapeHtml(
+                  prize.description ||
+                  ""
+                )}
+              </div>
+            </div>
 
-const desc=
-p.description||
-p.descripcion||
-"";
+          </div>
 
-const cost=
-p.cost_tokens||
-p.token_cost||
-p.tokens||
-0;
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px;">
 
-const icon=
-p.icon||
-p.emoji||
-"🎁";
+            <strong style="color:var(--gold);">
+              ${formatNumber(
+                prize.points_cost ||
+                prize.cost_points ||
+                0
+              )} puntos
+            </strong>
 
-return`
+            <button
+              class="btn btn-gold"
+              onclick="redeemPrize('${prize.id}')">
+              Canjear
+            </button>
 
-<article class="prize">
+          </div>
 
-<div class="prize-icon">
-${escapeHtml(icon)}
-</div>
+        </article>
 
-<h3>
-${escapeHtml(name)}
-</h3>
+      `).join("");
 
-<p style="color:var(--muted);margin:8px 0 14px">
-${escapeHtml(desc)}
-</p>
+  }catch(error){
 
-<div class="reward">
-<span>🪙 ${cost} tokens</span>
-</div>
+    console.error(
+      "Prizes:",
+      error
+    );
 
-<button
-class="btn btn-yellow"
-onclick="redeemPrize('${escapeHtml(id)}')">
-Canjear
-</button>
-
-</article>
-
-`;
-
-}).join("");
-
+    $("prizesList").innerHTML =
+      '<div class="card empty">No se pudieron cargar los premios.</div>';
+  }
 }
 
 async function redeemPrize(prizeId){
 
-if(!confirm("¿Querés canjear este premio?"))
-return;
+  if(!currentUser){
+    await ensureAuth();
+  }
 
-const{
-data,
-error
-}=await db.rpc(
-"redeem_prize",
-{
-p_prize_id:prizeId
+  try{
+
+    const {
+      data,
+      error
+    } = await supabaseClient.rpc(
+      "redeem_prize",
+      {
+        p_prize_id:prizeId
+      }
+    );
+
+    if(error){
+      throw error;
+    }
+
+    showToast(
+      "¡Premio canjeado correctamente!"
+    );
+
+    await loadProfile();
+    await loadDashboard();
+    await loadPrizes();
+
+  }catch(error){
+
+    console.error(
+      "Redeem:",
+      error
+    );
+
+    showToast(
+      error.message ||
+      "No se pudo canjear el premio."
+    );
+  }
 }
-);
 
-if(error){
+/* =========================================================
+   QR / MESA
+   ========================================================= */
 
-rpcError(
-error,
-"No se pudo realizar el canje."
-);
+async function resolveTable(){
 
-return;
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
 
+  const qrToken =
+    params.get("qr") ||
+    params.get("token") ||
+    params.get("mesa");
+
+  if(!qrToken){
+
+    $("tableStatus").textContent =
+      "No se detectó un QR de mesa. Podés seguir usando el sistema igualmente.";
+
+    return;
+  }
+
+  try{
+
+    /*
+      El QR público puede apuntar a la tabla
+      legacy "mesas". Se obtiene el número de mesa
+      y luego se resuelve contra tables_pool.
+    */
+
+    let tableNumber = null;
+
+    const legacy =
+      await supabaseClient
+        .from("mesas")
+        .select("numero,numero_mesa,nombre,qr_token")
+        .eq("qr_token",qrToken)
+        .maybeSingle();
+
+    if(!legacy.error && legacy.data){
+
+      tableNumber =
+        legacy.data.numero ??
+        legacy.data.numero_mesa;
+    }
+
+    if(
+      tableNumber === null &&
+      !isNaN(Number(qrToken))
+    ){
+      tableNumber =
+        Number(qrToken);
+    }
+
+    if(tableNumber === null){
+
+      $("tableStatus").textContent =
+        "No se pudo identificar la mesa.";
+
+      return;
+    }
+
+    const {
+      data,
+      error
+    } = await supabaseClient
+      .from("tables_pool")
+      .select("*")
+      .eq("table_number",tableNumber)
+      .eq("active",true)
+      .maybeSingle();
+
+    if(error){
+      throw error;
+    }
+
+    if(!data){
+
+      $("tableStatus").textContent =
+        `Mesa ${tableNumber} detectada, pero todavía no está configurada en Games.`;
+
+      return;
+    }
+
+    currentTable =
+      data;
+
+    $("tableStatus").textContent =
+      `Mesa ${tableNumber} conectada correctamente.`;
+
+    $("tableNumber").textContent =
+      data.table_number ??
+      tableNumber;
+
+    $("tableState").textContent =
+      data.status ||
+      "Activa";
+
+    $("tableCode").textContent =
+      data.id;
+
+    show("tableInfo");
+
+  }catch(error){
+
+    console.error(
+      "Table:",
+      error
+    );
+
+    $("tableStatus").textContent =
+      "No se pudo conectar la mesa.";
+  }
 }
 
-toast(
-"🎁 ¡Premio canjeado correctamente!"
-);
-
-await loadProfile();
-
-await loadPrizes();
-
-}
+/* =========================================================
+   REALTIME
+   ========================================================= */
 
 function setupRealtime(){
 
-try{
+  cleanupRealtime();
 
-db.channel("pool-beach-live")
+  const duelChannel =
+    supabaseClient
+      .channel("public-duel-matches")
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"duel_matches"
+        },
+        async ()=>{
+          await loadActiveDuel();
+          await loadWaitingDuels();
+        }
+      )
+      .subscribe();
 
-.on(
-"postgres_changes",
-{
-event:"*",
-schema:"public",
-table:"duel_matches"
-},
-loadDuels
-)
+  const tournamentChannel =
+    supabaseClient
+      .channel("public-tournament-matches")
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"tournament_matches"
+        },
+        async ()=>{
+          if(currentTournament){
+            await loadTournamentStandings(
+              currentTournament.id
+            );
 
-.on(
-"postgres_changes",
-{
-event:"*",
-schema:"public",
-table:"tournament_matches"
-},
-async()=>{
-if(currentTournament){
+            await loadTournamentMatches(
+              currentTournament.id
+            );
+          }
 
-await loadTournamentMatches(
-currentTournament
-);
+          await loadTournaments();
+        }
+      )
+      .subscribe();
 
-await loadTournamentStandings(
-currentTournament
-);
-
+  realtimeChannels.push(
+    duelChannel,
+    tournamentChannel
+  );
 }
+
+function cleanupRealtime(){
+
+  realtimeChannels.forEach(
+    channel=>{
+      try{
+        supabaseClient.removeChannel(
+          channel
+        );
+      }catch{}
+    }
+  );
+
+  realtimeChannels = [];
 }
-)
 
-.subscribe();
+/* =========================================================
+   POLLING DE RESPALDO
+   ========================================================= */
 
-}catch(error){
+function setupPolling(){
 
-console.warn(
-"Realtime:",
-error
-);
+  clearInterval(
+    pollingTimer
+  );
 
+  pollingTimer =
+    setInterval(async ()=>{
+
+      try{
+
+        await loadActiveDuel();
+        await loadWaitingDuels();
+        await loadTournaments();
+        await loadRanking();
+
+      }catch(error){
+
+        console.warn(
+          "Polling:",
+          error
+        );
+      }
+
+    },15000);
 }
 
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+function openModal(content){
+
+  $("modalContent").innerHTML =
+    content;
+
+  $("modal").classList.add(
+    "show"
+  );
 }
+
+function closeModal(){
+
+  $("modal").classList.remove(
+    "show"
+  );
+}
+
+/* =========================================================
+   CARGA INICIAL
+   ========================================================= */
 
 async function init(){
 
-await ensureAuth();
+  try{
 
-if(!currentUser)return;
+    const user =
+      await ensureAuth();
 
-await Promise.allSettled([
-loadTable(),
-loadProfile(),
-loadGames(),
-loadDuels(),
-loadTournaments(),
-loadRanking(),
-loadPrizes()
-]);
+    if(!user){
+      return;
+    }
 
-setupRealtime();
+    await Promise.allSettled([
+      loadProfile(),
+      loadDashboard(),
+      loadRanking(),
+      loadPrizes(),
+      loadTournaments(),
+      loadWaitingDuels(),
+      loadActiveDuel(),
+      resolveTable()
+    ]);
 
+    setupRealtime();
+    setupPolling();
+
+    $("playerStatus").textContent =
+      "Conectado";
+
+  }catch(error){
+
+    console.error(
+      "Init:",
+      error
+    );
+
+    $("playerStatus").textContent =
+      "Conectado parcialmente";
+  }
 }
 
-setInterval(async()=>{
+/* =========================================================
+   EVENTOS
+   ========================================================= */
 
-try{
-
-await Promise.allSettled([
-loadDuels(),
-loadRanking()
-]);
-
-if(currentTournament){
-
-await Promise.allSettled([
-loadTournamentMatches(currentTournament),
-loadTournamentStandings(currentTournament)
-]);
-
-}
-
-}catch(error){
-
-console.warn(error);
-
-}
-
-},15000);
-
-Object.assign(
-window,
-{
-startTrivia,
-answerTrivia,
-nextTriviaQuestion,
-createDuel,
-joinDuel,
-submitDuel,
-loadDuels,
-joinTournament,
-selectTournament,
-submitTournamentScore,
-redeemPrize,
-playSimpleGame,
-scrollToId
-}
+window.addEventListener(
+  "beforeunload",
+  ()=>{
+    cleanupRealtime();
+    clearInterval(
+      pollingTimer
+    );
+  }
 );
 
-init();
+supabaseClient.auth.onAuthStateChange(
+  (event,session)=>{
+
+    if(session?.user){
+
+      currentUser =
+        session.user;
+
+      $("playerStatus").textContent =
+        "Conectado";
+    }
+
+  }
+);
+
+document.addEventListener(
+  "DOMContentLoaded",
+  init
+);
+
+/* =========================================================
+   EXPONER FUNCIONES
+   ========================================================= */
+
+window.startGame =
+  startGame;
+
+window.startDiceGame =
+  startDiceGame;
+
+window.openTrivia =
+  openTrivia;
+
+window.answerTrivia =
+  answerTrivia;
+
+window.nextTriviaQuestion =
+  nextTriviaQuestion;
+
+window.finishTrivia =
+  finishTrivia;
+
+window.createDuel =
+  createDuel;
+
+window.joinDuel =
+  joinDuel;
+
+window.submitDuel =
+  submitDuel;
+
+window.loadWaitingDuels =
+  loadWaitingDuels;
+
+window.joinTournament =
+  joinTournament;
+
+window.openTournament =
+  openTournament;
+
+window.closeTournament =
+  closeTournament;
+
+window.redeemPrize =
+  redeemPrize;
+
+window.closeModal =
+  closeModal;
 
 </script>
 
