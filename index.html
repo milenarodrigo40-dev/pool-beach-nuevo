@@ -1,873 +1,1417 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pool & Beach — Juegos</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool & Beach Games | Puerto Pirámides</title>
+<meta name="description"
+content="Pool & Beach Games Puerto Pirámides. Jugá, sumá puntos, ganá fichas, competí en torneos y canjeá premios desde tu celular.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{
---bg:#06131e;
---card:#0c2333;
---card2:#123149;
---line:#24536a;
---sky:#62dcff;
---gold:#ffd166;
---green:#67e7a2;
---red:#ff7182;
---txt:#f5fbff;
---muted:#9ab5c5
+  --bg:#06131e;
+  --card:#0c2333;
+  --card2:#123149;
+  --line:#24536a;
+  --sky:#62dcff;
+  --gold:#ffd166;
+  --green:#67e7a2;
+  --red:#ff7182;
+  --txt:#f5fbff;
+  --muted:#9ab5c5;
 }
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+}
+html{
+  scroll-behavior:smooth;
+}
 body{
-margin:0;
-background:radial-gradient(circle at 20% 0,#16415a 0,#06131e 45%,#03080d 100%);
-color:var(--txt);
-font:15px system-ui,-apple-system,Segoe UI,sans-serif
+  margin:0;
+  background:
+    radial-gradient(circle at 20% 0,#16415a 0,#06131e 45%,#03080d 100%);
+  color:var(--txt);
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+button,
+input,
+select{
+  font:inherit;
 }
 .app{
-max-width:920px;
-margin:auto;
-padding:15px 14px 90px
+  max-width:920px;
+  margin:auto;
+  padding:15px 14px 90px;
 }
+/* HEADER */
 .top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:14px
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:14px;
 }
 .brand{
-font-size:21px;
-font-weight:950
+  font-size:21px;
+  font-weight:950;
+  letter-spacing:.4px;
 }
 .brand span{
-color:var(--sky)
+  color:var(--sky);
 }
 .badge{
-font-size:10px;
-border:1px solid var(--line);
-padding:7px 10px;
-border-radius:99px;
-color:var(--sky)
+  font-size:10px;
+  border:1px solid var(--line);
+  padding:7px 10px;
+  border-radius:99px;
+  color:var(--sky);
+  white-space:nowrap;
 }
+/* HERO */
 .hero{
-padding:21px;
-border:1px solid var(--line);
-border-radius:23px;
-background:linear-gradient(145deg,#103a54,#0a1c2b);
-box-shadow:0 18px 45px #0006
+  padding:23px;
+  border:1px solid var(--line);
+  border-radius:23px;
+  background:linear-gradient(145deg,#103a54,#0a1c2b);
+  box-shadow:0 18px 45px #0006;
 }
 .hero h1{
-margin:0 0 5px;
-font-size:27px
+  margin:0 0 7px;
+  font-size:clamp(25px,6vw,38px);
+  line-height:1.05;
 }
 .hero p{
-margin:0;
-color:var(--muted);
-line-height:1.45
+  margin:0;
+  color:var(--muted);
+  line-height:1.5;
 }
 .stats{
-display:grid;
-grid-template-columns:repeat(4,1fr);
-gap:9px;
-margin-top:15px
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:9px;
+  margin-top:17px;
 }
 .stat{
-background:#061722aa;
-border:1px solid #1d4357;
-border-radius:14px;
-padding:10px
+  background:#061722aa;
+  border:1px solid #1d4357;
+  border-radius:14px;
+  padding:11px;
 }
 .stat small{
-display:block;
-color:var(--muted);
-font-size:10px
+  display:block;
+  color:var(--muted);
+  font-size:10px;
 }
 .stat b{
-font-size:20px;
-color:var(--gold)
+  display:block;
+  margin-top:3px;
+  font-size:21px;
+  color:var(--gold);
 }
+/* NAVEGACIÓN */
 .tabs{
-display:flex;
-gap:8px;
-overflow:auto;
-margin:15px 0
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding-bottom:3px;
+  margin:15px 0;
+  scrollbar-width:none;
 }
-.tab,.btn{
-border-radius:13px;
-padding:11px 13px;
-border:1px solid var(--line);
-font-weight:900;
-cursor:pointer
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+.tab,
+.btn{
+  border-radius:13px;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  font-weight:900;
+  cursor:pointer;
+  text-decoration:none;
 }
 .tab{
-background:#0b2130;
-color:var(--txt);
-white-space:nowrap
+  background:#0b2130;
+  color:var(--txt);
+  white-space:nowrap;
 }
 .tab.active{
-background:var(--sky);
-color:#052031
+  background:var(--sky);
+  color:#052031;
 }
-.btn{
-background:var(--sky);
-color:#052031;
-border:0
+.tab.admin{
+  background:#15364b;
 }
-.btn.gold{
-background:var(--gold)
-}
-.btn.dark{
-background:#15364b;
-color:var(--txt);
-border:1px solid #2a5870
-}
-.btn.red{
-background:var(--red);
-color:#2b0710
-}
+/* SECCIONES */
 .view{
-display:none
+  display:none;
 }
 .view.active{
-display:block
+  display:block;
 }
 .grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:11px
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:11px;
 }
 .card{
-background:linear-gradient(155deg,var(--card2),var(--card));
-border:1px solid var(--line);
-border-radius:19px;
-padding:16px
+  background:linear-gradient(155deg,var(--card2),var(--card));
+  border:1px solid var(--line);
+  border-radius:19px;
+  padding:17px;
 }
 .game{
-min-height:145px;
-cursor:pointer
+  min-height:150px;
+  cursor:pointer;
+  transition:.15s ease;
+}
+.game:hover{
+  transform:translateY(-2px);
+  border-color:var(--sky);
 }
 .icon{
-font-size:29px
+  font-size:30px;
 }
 .game h3{
-margin:8px 0 4px
+  margin:8px 0 4px;
 }
 .muted{
-color:var(--muted);
-font-size:12px;
-line-height:1.45
+  color:var(--muted);
+  font-size:12px;
+  line-height:1.5;
 }
 .hidden{
-display:none!important
+  display:none!important;
 }
 .center{
-text-align:center
+  text-align:center;
 }
 .question{
-font-size:20px;
-font-weight:900;
-text-align:center;
-margin:18px 0
+  font-size:20px;
+  font-weight:900;
+  text-align:center;
+  margin:18px 0;
 }
 .row{
-display:flex;
-gap:9px;
-flex-wrap:wrap
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
 }
 .row>*{
-flex:1;
-min-width:130px
+  flex:1;
+  min-width:130px;
 }
+/* BOTONES */
+.btn{
+  background:var(--sky);
+  color:#052031;
+  border:0;
+}
+.btn.gold{
+  background:var(--gold);
+}
+.btn.dark{
+  background:#15364b;
+  color:var(--txt);
+  border:1px solid #2a5870;
+}
+.btn.red{
+  background:var(--red);
+  color:#2b0710;
+}
+/* TABLAS */
 .table{
-width:100%;
-border-collapse:collapse;
-font-size:12px
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
 }
-.table th,.table td{
-padding:9px 6px;
-border-bottom:1px solid #193c4f;
-text-align:left
+.table th,
+.table td{
+  padding:10px 6px;
+  border-bottom:1px solid #193c4f;
+  text-align:left;
 }
 .rank{
-color:var(--gold);
-font-weight:900
+  color:var(--gold);
+  font-weight:900;
 }
+/* AVISOS */
 .notice{
-padding:12px;
-border-radius:13px;
-background:#102a3b;
-border:1px solid #26536b;
-margin:9px 0;
-font-size:12px
+  padding:12px;
+  border-radius:13px;
+  background:#102a3b;
+  border:1px solid #26536b;
+  margin:9px 0;
+  font-size:12px;
 }
+/* FORMULARIOS */
+.input,
+select{
+  width:100%;
+  padding:11px;
+  border-radius:11px;
+  background:#071925;
+  border:1px solid #2a5267;
+  color:var(--txt);
+  margin:5px 0 9px;
+}
+label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:8px;
+}
+/* QR */
 .qr{
-max-width:230px;
-width:100%;
-background:white;
-padding:10px;
-border-radius:12px;
-margin:12px auto;
-display:block
+  max-width:230px;
+  width:100%;
+  background:white;
+  padding:10px;
+  border-radius:12px;
+  margin:12px auto;
+  display:block;
 }
-.input,select{
-width:100%;
-padding:11px;
-border-radius:11px;
-background:#071925;
-border:1px solid #2a5267;
-color:var(--txt);
-margin:5px 0 9px
-}
+/* FOOTER */
 .footer{
-position:fixed;
-bottom:0;
-left:0;
-right:0;
-text-align:center;
-padding:9px;
-background:#06121eee;
-border-top:1px solid #173548;
-color:#7894a5;
-font-size:10px
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  text-align:center;
+  padding:9px;
+  background:#06121eee;
+  border-top:1px solid #173548;
+  color:#7894a5;
+  font-size:10px;
 }
+/* RESPONSIVE */
 @media(max-width:600px){
-.stats{
-grid-template-columns:repeat(2,1fr)
-}
-.grid{
-grid-template-columns:1fr 1fr
-}
-.hero h1{
-font-size:23px
-}
+  .app{
+    padding:12px 11px 90px;
+  }
+  .hero{
+    padding:19px;
+  }
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+  .hero h1{
+    font-size:24px;
+  }
+  .brand{
+    font-size:18px;
+  }
+  .tab,
+  .btn{
+    padding:10px 11px;
+  }
 }
 </style>
 </head>
 <body>
 <div class="app">
-<div class="top">
-<div class="brand">POOL <span>&</span> BEACH</div>
-<div class="badge" id="connection">CONECTANDO...</div>
-</div>
-<section class="hero">
-<h1>🎱 Jugá. Sumá. Competí.</h1>
-<p>
-Escaneaste una mesa de Pool & Beach.
-Jugá desde el celular, sin instalar ninguna aplicación.
-</p>
-<div class="stats">
-<div class="stat">
-<small>Mesa</small>
-<b id="mesa">—</b>
-</div>
-<div class="stat">
-<small>Fichas</small>
-<b id="tokens">0</b>
-</div>
-<div class="stat">
-<small>Puntos</small>
-<b id="points">0</b>
-</div>
-<div class="stat">
-<small>Nivel</small>
-<b id="level">1</b>
-</div>
-</div>
-</section>
-<nav class="tabs">
-<button class="tab active" onclick="show('games',this)">
-🎮 Juegos
-</button>
-<button class="tab" onclick="show('ranking',this)">
-🏆 Ranking
-</button>
-<button class="tab" onclick="show('prizes',this)">
-🎁 Premios
-</button>
-<button class="tab" onclick="show('tournaments',this)">
-🥇 Torneos
-</button>
-<button class="tab" onclick="show('qr',this)">
-📱 QR
-</button>
-<a class="tab" href="admin.html">
-⚙️ Admin
-</a>
-</nav>
-<section id="games" class="view active">
-<div class="grid" id="gamesGrid"></div>
-<div id="gamebox"
-class="card hidden"
-style="margin-top:12px">
-</div>
-</section>
-<section id="ranking" class="view">
-<div class="card">
-<h2>🏆 Ranking</h2>
-<div class="muted">
-Los mejores jugadores de Pool & Beach.
-</div>
-<div id="rankingList"></div>
-</div>
-</section>
-<section id="prizes" class="view">
-<div class="card">
-<h2>🎁 Premios</h2>
-<div id="prizeList"></div>
-</div>
-</section>
-<section id="tournaments" class="view">
-<div class="card">
-<h2>🥇 Torneos</h2>
-<div id="tourList"></div>
-</div>
-</section>
-<section id="qr" class="view">
-<div class="card center">
-<h2>📱 QR por mesa</h2>
-<p class="muted">
-Cada mesa puede tener su propio acceso.
-</p>
-<label>Mesa</label>
-<select id="tableSelect" onchange="makeQR()"></select>
-<img id="qrimg"
-class="qr"
-alt="QR de mesa">
-<div class="badge" id="qrtext"></div>
-</div>
-</section>
+  <!-- HEADER -->
+  <div class="top">
+    <div class="brand">
+      POOL <span>&</span> BEACH
+    </div>
+    <div class="badge" id="connection">
+      CONECTANDO...
+    </div>
+  </div>
+  <!-- HERO -->
+  <section class="hero">
+    <h1>🎱 Jugá. Sumá. Competí.</h1>
+    <p>
+      Escaneaste una mesa de Pool & Beach.
+      Jugá desde tu celular, sin instalar ninguna aplicación.
+    </p>
+    <div class="stats">
+      <div class="stat">
+        <small>Mesa</small>
+        <b id="mesa">—</b>
+      </div>
+      <div class="stat">
+        <small>Fichas</small>
+        <b id="tokens">0</b>
+      </div>
+      <div class="stat">
+        <small>Puntos</small>
+        <b id="points">0</b>
+      </div>
+      <div class="stat">
+        <small>Nivel</small>
+        <b id="level">1</b>
+      </div>
+    </div>
+  </section>
+  <!-- NAVEGACIÓN -->
+  <nav class="tabs">
+    <button
+      class="tab active"
+      onclick="show('games',this)">
+      🎮 Juegos
+    </button>
+    <button
+      class="tab"
+      onclick="show('ranking',this)">
+      🏆 Ranking
+    </button>
+    <button
+      class="tab"
+      onclick="show('prizes',this)">
+      🎁 Premios
+    </button>
+    <button
+      class="tab"
+      onclick="show('tournaments',this)">
+      🥇 Torneos
+    </button>
+    <button
+      class="tab"
+      onclick="show('qr',this)">
+      📱 QR
+    </button>
+    <a
+      class="tab admin"
+      href="admin.html">
+      ⚙️ Admin
+    </a>
+  </nav>
+  <!-- JUEGOS -->
+  <section id="games" class="view active">
+    <div
+      class="grid"
+      id="gamesGrid">
+    </div>
+    <div
+      id="gamebox"
+      class="card hidden"
+      style="margin-top:12px">
+    </div>
+  </section>
+  <!-- RANKING -->
+  <section id="ranking" class="view">
+    <div class="card">
+      <h2>🏆 Ranking</h2>
+      <div class="muted">
+        Los mejores jugadores de Pool & Beach.
+      </div>
+      <div id="rankingList">
+        <div class="notice">
+          Cargando ranking...
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- PREMIOS -->
+  <section id="prizes" class="view">
+    <div class="card">
+      <h2>🎁 Premios</h2>
+      <div class="muted">
+        Usá tus fichas para canjear premios.
+      </div>
+      <div id="prizeList">
+        <div class="notice">
+          Cargando premios...
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- TORNEOS -->
+  <section id="tournaments" class="view">
+    <div class="card">
+      <h2>🥇 Torneos</h2>
+      <div class="muted">
+        Participá y competí con otros jugadores.
+      </div>
+      <div id="tourList">
+        <div class="notice">
+          Cargando torneos...
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- QR -->
+  <section id="qr" class="view">
+    <div class="card center">
+      <h2>📱 QR por mesa</h2>
+      <p class="muted">
+        Cada mesa puede tener su propio acceso.
+      </p>
+      <label for="tableSelect">
+        Seleccioná la mesa
+      </label>
+      <select
+        id="tableSelect"
+        onchange="makeQR()">
+      </select>
+      <img
+        id="qrimg"
+        class="qr"
+        alt="Código QR de mesa">
+      <div
+        class="badge"
+        id="qrtext">
+      </div>
+    </div>
+  </section>
 </div>
 <div class="footer">
-Pool & Beach · sistema online
+  Pool & Beach · Puerto Pirámides · sistema online
 </div>
 <script>
-const SB_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
-const SB_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
-const db=window.supabase.createClient(SB_URL,SB_KEY);
-let profile=null;
-let games=[];
-let mesaId=null;
-const $=id=>document.getElementById(id);
-function show(id,el){
-document.querySelectorAll('.view')
-.forEach(x=>x.classList.remove('active'));
-$(id).classList.add('active');
-document.querySelectorAll('.tab')
-.forEach(x=>x.classList.remove('active'));
-el.classList.add('active');
-if(id==='ranking')loadRanking();
-if(id==='prizes')loadPrizes();
-if(id==='tournaments')loadTours();
-if(id==='qr')loadTables();
+/* =========================================================
+   SUPABASE
+========================================================= */
+const SB_URL =
+  'https://nmpakeovqkdajtswjpgm.supabase.co';
+const SB_KEY =
+  'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
+const db =
+  window.supabase.createClient(
+    SB_URL,
+    SB_KEY
+  );
+/* =========================================================
+   VARIABLES
+========================================================= */
+let profile = null;
+let games = [];
+let mesaId = null;
+const $ = id =>
+  document.getElementById(id);
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+function show(id, el){
+  document
+    .querySelectorAll('.view')
+    .forEach(x =>
+      x.classList.remove('active')
+    );
+  const section = $(id);
+  if(section){
+    section.classList.add('active');
+  }
+  document
+    .querySelectorAll('.tab')
+    .forEach(x =>
+      x.classList.remove('active')
+    );
+  if(el){
+    el.classList.add('active');
+  }
+  if(id === 'ranking'){
+    loadRanking();
+  }
+  if(id === 'prizes'){
+    loadPrizes();
+  }
+  if(id === 'tournaments'){
+    loadTours();
+  }
+  if(id === 'qr'){
+    loadTables();
+  }
 }
+/* =========================================================
+   INICIO
+========================================================= */
 async function init(){
-try{
-const mesaNum=
-new URLSearchParams(location.search)
-.get('mesa')||'1';
-$('mesa').textContent=mesaNum;
-const {data:mesa}=await db
-.from('tables_pool')
-.select('*')
-.eq('table_number',+mesaNum)
-.maybeSingle();
-mesaId=mesa?.id||null;
-let {
-data:{session}
-}=await db.auth.getSession();
-if(!session){
-let r=await db.auth.signInAnonymously();
-session=r.data?.session;
+  try{
+    const params =
+      new URLSearchParams(location.search);
+    const mesaNum =
+      params.get('mesa') || '1';
+    $('mesa').textContent =
+      mesaNum;
+    /* BUSCAR MESA */
+    const mesaResponse =
+      await db
+        .from('tables_pool')
+        .select('*')
+        .eq('table_number', Number(mesaNum))
+        .maybeSingle();
+    mesaId =
+      mesaResponse.data?.id || null;
+    /* SESIÓN ANÓNIMA */
+    let {
+      data: {
+        session
+      }
+    } =
+      await db.auth.getSession();
+    if(!session){
+      const auth =
+        await db.auth.signInAnonymously();
+      if(auth.error){
+        throw auth.error;
+      }
+      session =
+        auth.data?.session;
+    }
+    if(!session){
+      throw new Error(
+        'No se pudo iniciar la sesión del jugador.'
+      );
+    }
+    /* PERFIL */
+    const profileResponse =
+      await db.rpc(
+        'get_or_create_profile'
+      );
+    if(profileResponse.error){
+      throw profileResponse.error;
+    }
+    profile =
+      typeof profileResponse.data === 'string'
+        ? JSON.parse(profileResponse.data)
+        : profileResponse.data;
+    $('connection').textContent =
+      '● ONLINE';
+    /* CARGAS INICIALES */
+    await loadGames();
+    updateHeader();
+    await loadRanking();
+    await loadPrizes();
+    await loadTours();
+    await loadTables();
+  }
+  catch(error){
+    console.error(error);
+    $('connection').textContent =
+      'ERROR';
+    $('gamebox').classList.remove('hidden');
+    $('gamebox').innerHTML = `
+      <h3>⚠️ No se pudo conectar</h3>
+      <p class="muted">
+        ${escapeHTML(error.message)}
+      </p>
+    `;
+  }
 }
-if(!session)
-throw new Error('No se pudo iniciar sesión');
-let r=await db.rpc('get_or_create_profile');
-if(r.error)
-throw r.error;
-profile=
-typeof r.data==='string'
-?JSON.parse(r.data)
-:r.data;
-$('connection').textContent='● ONLINE';
-await loadGames();
-updateHeader();
-await loadRanking();
-await loadPrizes();
-await loadTours();
-await loadTables();
-}catch(e){
-console.error(e);
-$('connection').textContent='ERROR';
-$('gamebox').classList.remove('hidden');
-$('gamebox').innerHTML=
-'<b>No se pudo conectar.</b>'+
-'<p class="muted">'+e.message+'</p>';
+/* =========================================================
+   SEGURIDAD HTML
+========================================================= */
+function escapeHTML(value){
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
+    .replaceAll("'","&#039;");
 }
-}
+/* =========================================================
+   CABECERA DEL JUGADOR
+========================================================= */
 function updateHeader(){
-if(!profile)return;
-$('tokens').textContent=profile.tokens;
-$('points').textContent=profile.points;
-$('level').textContent=
-Math.floor(profile.points/100)+1;
+  if(!profile){
+    return;
+  }
+  $('tokens').textContent =
+    Number(profile.tokens || 0);
+  $('points').textContent =
+    Number(profile.points || 0);
+  $('level').textContent =
+    Math.floor(
+      Number(profile.points || 0) / 100
+    ) + 1;
 }
+/* =========================================================
+   JUEGOS
+========================================================= */
 async function loadGames(){
-let r=await db
-.from('games')
-.select('*')
-.eq('active',true)
-.order('created_at');
-games=r.data||[];
-$('gamesGrid').innerHTML=
-games.map(g=>`
-<div class="card game"
-onclick="play('${g.id}')">
-<div class="icon">
-${g.icon||'🎮'}
-</div>
-<h3>
-${g.name}
-</h3>
-<div class="muted">
-${g.description||''}
-</div>
-<div style="
-margin-top:10px;
-color:var(--sky);
-font-size:12px;
-font-weight:900">
-JUGAR →
-</div>
-</div>
-`).join('');
+  const response =
+    await db
+      .from('games')
+      .select('*')
+      .eq('active',true)
+      .order('created_at');
+  if(response.error){
+    throw response.error;
+  }
+  games =
+    response.data || [];
+  if(!games.length){
+    $('gamesGrid').innerHTML = `
+      <div class="card">
+        <h3>🎮 Juegos</h3>
+        <p class="muted">
+          Todavía no hay juegos activos.
+        </p>
+      </div>
+    `;
+    return;
+  }
+  $('gamesGrid').innerHTML =
+    games.map(game => `
+      <div
+        class="card game"
+        onclick="play('${escapeHTML(game.id)}')">
+        <div class="icon">
+          ${escapeHTML(game.icon || '🎮')}
+        </div>
+        <h3>
+          ${escapeHTML(game.name)}
+        </h3>
+        <div class="muted">
+          ${escapeHTML(game.description || '')}
+        </div>
+        <div
+          style="
+            margin-top:10px;
+            color:var(--sky);
+            font-size:12px;
+            font-weight:900;
+          ">
+          JUGAR →
+        </div>
+      </div>
+    `).join('');
 }
+/* =========================================================
+   EJECUTAR JUEGO
+========================================================= */
 async function play(id){
-let g=games.find(x=>x.id===id);
-if(!g)return;
-let task=
-g.name==='Trivia Express'
-?triviaTask()
-:g.name==='Dados Beach'
-?diceTask()
-:g.name==='Duelo 1 vs 1'
-?duelTask()
-:g.name==='Misión del día'
-?missionTask()
-:g.name==='Desafío de Pool'
-?poolTask()
-:retoTask();
-$('gamebox').classList.remove('hidden');
-$('gamebox').innerHTML=
-'<h2>'+g.icon+' '+g.name+'</h2>'+task;
+  const game =
+    games.find(
+      item => String(item.id) === String(id)
+    );
+  if(!game){
+    return;
+  }
+  let task;
+  if(game.name === 'Trivia Express'){
+    task = triviaTask();
+  }
+  else if(game.name === 'Dados Beach'){
+    task = diceTask();
+  }
+  else if(game.name === 'Duelo 1 vs 1'){
+    task = duelTask();
+  }
+  else if(game.name === 'Misión del día'){
+    task = missionTask();
+  }
+  else if(game.name === 'Desafío de Pool'){
+    task = poolTask();
+  }
+  else{
+    task = retoTask();
+  }
+  $('gamebox').classList.remove('hidden');
+  $('gamebox').innerHTML = `
+    <h2>
+      ${escapeHTML(game.icon || '🎮')}
+      ${escapeHTML(game.name)}
+    </h2>
+    ${task}
+  `;
+  $('gamebox').scrollIntoView({
+    behavior:'smooth',
+    block:'nearest'
+  });
 }
-async function action(gameId,extra={}){
-if(!profile)return;
-try{
-const {data,error}=await db.rpc(
-'play_game',
-{
-p_game_id:gameId,
-p_table_id:mesaId,
-p_metadata:extra
+/* =========================================================
+   REGISTRAR PARTIDA
+========================================================= */
+async function action(
+  gameId,
+  extra = {}
+){
+  if(!profile){
+    alert('Esperá a que el jugador se conecte.');
+    return;
+  }
+  try{
+    const response =
+      await db.rpc(
+        'play_game',
+        {
+          p_game_id:gameId,
+          p_table_id:mesaId,
+          p_metadata:extra
+        }
+      );
+    if(response.error){
+      throw response.error;
+    }
+    const result =
+      typeof response.data === 'string'
+        ? JSON.parse(response.data)
+        : response.data;
+    profile = {
+      ...profile,
+      points:
+        result.points ??
+        profile.points,
+      tokens:
+        result.tokens ??
+        profile.tokens,
+      streak:
+        result.streak ??
+        profile.streak
+    };
+    updateHeader();
+    await loadRanking();
+    alert(
+      '¡Partida registrada!\\n\\n' +
+      'Puntos: +' +
+      (result.points_awarded ?? 0) +
+      '\\nFichas: +' +
+      (result.tokens_awarded ?? 0)
+    );
+  }
+  catch(error){
+    console.error(error);
+    alert(
+      'No se pudo registrar la partida:\\n' +
+      error.message
+    );
+  }
 }
-);
-if(error)throw error;
-const result=
-typeof data==='string'
-?JSON.parse(data)
-:data;
-profile={
-...profile,
-points:result.points,
-tokens:result.tokens,
-streak:result.streak
-};
-updateHeader();
-await loadRanking();
-alert(
-'¡Ganaste '+
-(result.points_awarded??0)+
-' puntos y '+
-(result.tokens_awarded??0)+
-' fichas!'
-);
-}catch(e){
-console.error(e);
-alert(
-'No se pudo registrar la partida: '+
-e.message
-);
-}
-}
+/* =========================================================
+   RETO POOL & BEACH
+========================================================= */
 function retoTask(){
-let a=[
-'Meté una bola difícil 🎱',
-'Hacé una combinación',
-'Tiro con banda',
-'Desafiá al ganador',
-'Conseguí 3 bolas seguidas'
-];
-let x=a[
-Math.floor(Math.random()*a.length)
-];
-let g=games.find(
-x=>x.name==='Reto Pool & Beach'
-);
-return `
-<div class="question">
-${x}
-</div>
-<button
-class="btn gold"
-onclick="action('${g?.id}')">
-✅ ¡Lo hice!
-</button>
-`;
+  const challenges = [
+    'Meté una bola difícil 🎱',
+    'Hacé una combinación',
+    'Tiro con banda',
+    'Desafiá al ganador',
+    'Conseguí 3 bolas seguidas'
+  ];
+  const challenge =
+    challenges[
+      Math.floor(
+        Math.random() *
+        challenges.length
+      )
+    ];
+  const game =
+    games.find(
+      item =>
+        item.name === 'Reto Pool & Beach'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  return `
+    <div class="question">
+      ${challenge}
+    </div>
+    <button
+      class="btn gold"
+      onclick="action('${escapeHTML(game.id)}')">
+      ✅ ¡Lo hice!
+    </button>
+  `;
 }
+/* =========================================================
+   DESAFÍO DE POOL
+========================================================= */
 function poolTask(){
-let a=[
-'Embocá la bola 8',
-'Embocá 2 bolas seguidas',
-'Hacé un tiro con banda',
-'Hacé una combinación'
-];
-let x=a[
-Math.floor(Math.random()*a.length)
-];
-let g=games.find(
-x=>x.name==='Desafío de Pool'
-);
-return `
-<div class="question">
-${x}
-</div>
-<button
-class="btn"
-onclick="action('${g?.id}')">
-🎱 Desafío logrado
-</button>
-`;
+  const challenges = [
+    'Embocá la bola 8',
+    'Embocá 2 bolas seguidas',
+    'Hacé un tiro con banda',
+    'Hacé una combinación'
+  ];
+  const challenge =
+    challenges[
+      Math.floor(
+        Math.random() *
+        challenges.length
+      )
+    ];
+  const game =
+    games.find(
+      item =>
+        item.name === 'Desafío de Pool'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  return `
+    <div class="question">
+      ${challenge}
+    </div>
+    <button
+      class="btn"
+      onclick="action('${escapeHTML(game.id)}')">
+      🎱 Desafío logrado
+    </button>
+  `;
 }
+/* =========================================================
+   DADOS BEACH
+========================================================= */
 function diceTask(){
-let n=
-Math.floor(Math.random()*6)+1;
-let g=games.find(
-x=>x.name==='Dados Beach'
-);
-return `
-<div
-class="question"
-style="font-size:55px">
-${n} 🎲
-</div>
-<button
-class="btn gold"
-onclick="action('${g?.id}',{roll:${n}})">
-Cobrar tirada
-</button>
-`;
+  const number =
+    Math.floor(Math.random() * 6) + 1;
+  const game =
+    games.find(
+      item =>
+        item.name === 'Dados Beach'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  return `
+    <div
+      class="question"
+      style="font-size:55px">
+      ${number} 🎲
+    </div>
+    <button
+      class="btn gold"
+      onclick="action(
+        '${escapeHTML(game.id)}',
+        {roll:${number}}
+      )">
+      Cobrar tirada
+    </button>
+  `;
 }
+/* =========================================================
+   MISIÓN DEL DÍA
+========================================================= */
 function missionTask(){
-let g=games.find(
-x=>x.name==='Misión del día'
-);
-return `
-<div class="question">
-⭐ Completá una misión especial del local
-</div>
-<p class="muted">
-El personal puede validar el desafío
-antes del premio.
-</p>
-<button
-class="btn gold"
-onclick="action('${g?.id}')">
-Completar misión
-</button>
-`;
+  const game =
+    games.find(
+      item =>
+        item.name === 'Misión del día'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  return `
+    <div class="question">
+      ⭐ Completá una misión especial del local
+    </div>
+    <p class="muted">
+      El personal puede validar el desafío
+      antes de entregar el premio.
+    </p>
+    <button
+      class="btn gold"
+      onclick="action('${escapeHTML(game.id)}')">
+      Completar misión
+    </button>
+  `;
 }
+/* =========================================================
+   DUELO
+========================================================= */
 function duelTask(){
-let g=games.find(
-x=>x.name==='Duelo 1 vs 1'
-);
-return `
-<div class="question">
-👥 Jugador ganador de la ronda
-</div>
-<div class="row">
-<button
-class="btn"
-onclick="action('${g?.id}',{winner:1})">
-JUGADOR 1
-</button>
-<button
-class="btn"
-onclick="action('${g?.id}',{winner:2})">
-JUGADOR 2
-</button>
-</div>
-`;
+  const game =
+    games.find(
+      item =>
+        item.name === 'Duelo 1 vs 1'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  return `
+    <div class="question">
+      👥 Jugador ganador de la ronda
+    </div>
+    <div class="row">
+      <button
+        class="btn"
+        onclick="action(
+          '${escapeHTML(game.id)}',
+          {winner:1}
+        )">
+        JUGADOR 1
+      </button>
+      <button
+        class="btn"
+        onclick="action(
+          '${escapeHTML(game.id)}',
+          {winner:2}
+        )">
+        JUGADOR 2
+      </button>
+    </div>
+  `;
 }
+/* =========================================================
+   TRIVIA
+========================================================= */
 function triviaTask(){
-let q=[
-['¿Qué número es la bola negra?','8'],
-['¿Cuántas bolas numeradas hay en bola 8?','15'],
-['¿Quién ganó el Mundial 2022?','Argentina']
-][
-Math.floor(Math.random()*3)
-];
-let g=games.find(
-x=>x.name==='Trivia Express'
-);
-let opts=[
-q[1],
-q[1]==='Argentina'
-?'Brasil'
-:q[1]==='8'
-?'9'
-:'16',
-'7',
-'10'
-].sort(()=>Math.random()-.5);
-return `
-<div class="question">
-${q[0]}
-</div>
-${opts.map(o=>`
-<button
-class="btn dark"
-style="width:100%;margin:4px 0"
-onclick="triviaAnswer(
-'${o}',
-'${q[1]}',
-'${g?.id}'
-)">
-${o}
-</button>
-`).join('')}
-`;
+  const questions = [
+    [
+      '¿Qué número es la bola negra?',
+      '8'
+    ],
+    [
+      '¿Cuántas bolas numeradas hay en bola 8?',
+      '15'
+    ],
+    [
+      '¿Quién ganó el Mundial 2022?',
+      'Argentina'
+    ]
+  ];
+  const question =
+    questions[
+      Math.floor(
+        Math.random() *
+        questions.length
+      )
+    ];
+  const game =
+    games.find(
+      item =>
+        item.name === 'Trivia Express'
+    );
+  if(!game){
+    return `
+      <div class="notice">
+        Este juego todavía no está configurado.
+      </div>
+    `;
+  }
+  let options = [
+    question[1],
+    question[1] === 'Argentina'
+      ? 'Brasil'
+      : question[1] === '8'
+        ? '9'
+        : '16',
+    '7',
+    '10'
+  ];
+  options =
+    options.sort(
+      () => Math.random() - .5
+    );
+  return `
+    <div class="question">
+      ${escapeHTML(question[0])}
+    </div>
+    ${options.map(option => `
+      <button
+        class="btn dark"
+        style="
+          width:100%;
+          margin:4px 0;
+        "
+        onclick="triviaAnswer(
+          '${escapeHTML(option)}',
+          '${escapeHTML(question[1])}',
+          '${escapeHTML(game.id)}'
+        )">
+        ${escapeHTML(option)}
+      </button>
+    `).join('')}
+  `;
 }
-function triviaAnswer(o,c,id){
-if(o===c){
-action(
-id,
-{answer:o}
-);
-}else{
-alert(
-'Incorrecto. ¡Probá otra vez!'
-);
+function triviaAnswer(
+  answer,
+  correct,
+  gameId
+){
+  if(answer === correct){
+    action(
+      gameId,
+      {
+        answer:answer
+      }
+    );
+  }
+  else{
+    alert(
+      '❌ Incorrecto. ¡Probá otra vez!'
+    );
+  }
 }
-}
+/* =========================================================
+   RANKING
+========================================================= */
 async function loadRanking(){
-let r=await db
-.from('ranking')
-.select('*')
-.order('position')
-.limit(20);
-let a=r.data||[];
-$('rankingList').innerHTML=
-a.length
-?
-'<table class="table">'+
-'<tr>'+
-'<th>#</th>'+
-'<th>Jugador</th>'+
-'<th>Puntos</th>'+
-'<th>Fichas</th>'+
-'</tr>'+
-a.map(x=>`
-<tr>
-<td class="rank">
-${x.position}
-</td>
-<td>
-${x.display_name}
-</td>
-<td>
-${x.points}
-</td>
-<td>
-${x.tokens}
-</td>
-</tr>
-`).join('')+
-'</table>'
-:
-'<div class="notice">
-Todavía no hay jugadores en el ranking.
-</div>';
+  try{
+    const response =
+      await db
+        .from('ranking')
+        .select('*')
+        .order('position')
+        .limit(20);
+    if(response.error){
+      throw response.error;
+    }
+    const ranking =
+      response.data || [];
+    if(!ranking.length){
+      $('rankingList').innerHTML = `
+        <div class="notice">
+          Todavía no hay jugadores en el ranking.
+        </div>
+      `;
+      return;
+    }
+    $('rankingList').innerHTML = `
+      <table class="table">
+        <tr>
+          <th>#</th>
+          <th>Jugador</th>
+          <th>Puntos</th>
+          <th>Fichas</th>
+        </tr>
+        ${ranking.map(player => `
+          <tr>
+            <td class="rank">
+              ${escapeHTML(player.position)}
+            </td>
+            <td>
+              ${escapeHTML(player.display_name)}
+            </td>
+            <td>
+              ${escapeHTML(player.points)}
+            </td>
+            <td>
+              ${escapeHTML(player.tokens)}
+            </td>
+          </tr>
+        `).join('')}
+      </table>
+    `;
+  }
+  catch(error){
+    console.error(error);
+    $('rankingList').innerHTML = `
+      <div class="notice">
+        No se pudo cargar el ranking.
+      </div>
+    `;
+  }
 }
+/* =========================================================
+   PREMIOS
+========================================================= */
 async function loadPrizes(){
-let r=await db
-.from('prizes')
-.select('*')
-.eq('active',true)
-.order('token_cost');
-$('prizeList').innerHTML=
-(r.data||[]).map(p=>`
-<div class="notice">
-<b>
-🎁 ${p.name}
-</b>
-<br>
-<span class="muted">
-${p.description||''}
-</span>
-<br>
-<span class="badge">
-${p.token_cost} fichas
-</span>
-<button
-class="btn dark"
-style="float:right;padding:7px 10px"
-onclick="redeem(
-'${p.id}',
-${p.token_cost},
-'${p.name.replace(/'/g,"\\'")}'
-)">
-Canjear
-</button>
-<div style="clear:both"></div>
-</div>
-`).join('');
+  try{
+    const response =
+      await db
+        .from('prizes')
+        .select('*')
+        .eq('active',true)
+        .order('token_cost');
+    if(response.error){
+      throw response.error;
+    }
+    const prizes =
+      response.data || [];
+    if(!prizes.length){
+      $('prizeList').innerHTML = `
+        <div class="notice">
+          Todavía no hay premios disponibles.
+        </div>
+      `;
+      return;
+    }
+    $('prizeList').innerHTML =
+      prizes.map(prize => `
+        <div class="notice">
+          <b>
+            🎁 ${escapeHTML(prize.name)}
+          </b>
+          <br>
+          <span class="muted">
+            ${escapeHTML(prize.description || '')}
+          </span>
+          <br>
+          <span class="badge">
+            ${escapeHTML(prize.token_cost)} fichas
+          </span>
+          <button
+            class="btn dark"
+            style="
+              float:right;
+              padding:7px 10px;
+            "
+            onclick="redeem(
+              '${escapeHTML(prize.id)}',
+              ${Number(prize.token_cost)},
+              '${escapeHTML(prize.name).replaceAll("'","\\'")}'
+            )">
+            Canjear
+          </button>
+          <div style="clear:both"></div>
+        </div>
+      `).join('');
+  }
+  catch(error){
+    console.error(error);
+    $('prizeList').innerHTML = `
+      <div class="notice">
+        No se pudieron cargar los premios.
+      </div>
+    `;
+  }
 }
-async function redeem(id,cost,name){
-try{
-const {data,error}=await db.rpc(
-'redeem_prize',
-{
-p_prize_id:id
+/* =========================================================
+   CANJEAR PREMIO
+========================================================= */
+async function redeem(
+  id,
+  cost,
+  name
+){
+  if(!profile){
+    alert('Esperá a que el jugador se conecte.');
+    return;
+  }
+  if(
+    Number(profile.tokens || 0) <
+    Number(cost)
+  ){
+    alert(
+      'No tenés suficientes fichas para este premio.'
+    );
+    return;
+  }
+  try{
+    const response =
+      await db.rpc(
+        'redeem_prize',
+        {
+          p_prize_id:id
+        }
+      );
+    if(response.error){
+      throw response.error;
+    }
+    const result =
+      typeof response.data === 'string'
+        ? JSON.parse(response.data)
+        : response.data;
+    profile = {
+      ...profile,
+      tokens:
+        result.remaining
+    };
+    updateHeader();
+    await loadPrizes();
+    alert(
+      '🎁 Canje solicitado: ' +
+      name +
+      '\\n\\n' +
+      'Mostrá esta pantalla al personal.'
+    );
+  }
+  catch(error){
+    console.error(error);
+    alert(
+      'No se pudo canjear el premio:\\n' +
+      error.message
+    );
+  }
 }
-);
-if(error)throw error;
-const result=
-typeof data==='string'
-?JSON.parse(data)
-:data;
-profile={
-...profile,
-tokens:result.remaining
-};
-updateHeader();
-await loadPrizes();
-alert(
-'Canje solicitado: '+
-name+
-'\nMostrá esta pantalla al personal.'
-);
-}catch(e){
-console.error(e);
-alert(
-'No se pudo canjear el premio: '+
-e.message
-);
-}
-}
+/* =========================================================
+   TORNEOS
+========================================================= */
 async function loadTours(){
-let r=await db
-.from('tournaments')
-.select('*')
-.in('status',['open','in_progress'])
-.order('starts_at');
-$('tourList').innerHTML=
-(r.data||[]).length
-?
-(r.data||[]).map(t=>`
-<div class="notice">
-<b>
-🥇 ${t.name}
-</b>
-<br>
-🎱 ${t.game_type}
-·
-🎟️ ${t.entry_tokens} fichas
-·
-👥 ${t.max_players||'sin límite'}
-<br>
-<button
-class="btn"
-style="margin-top:8px"
-onclick="join(
-'${t.id}',
-${t.entry_tokens}
-)">
-Inscribirme
-</button>
-</div>
-`).join('')
-:
-'<div class="notice">
-No hay torneos abiertos actualmente.
-</div>';
+  try{
+    const response =
+      await db
+        .from('tournaments')
+        .select('*')
+        .in(
+          'status',
+          ['open','in_progress']
+        )
+        .order('starts_at');
+    if(response.error){
+      throw response.error;
+    }
+    const tournaments =
+      response.data || [];
+    if(!tournaments.length){
+      $('tourList').innerHTML = `
+        <div class="notice">
+          No hay torneos abiertos actualmente.
+        </div>
+      `;
+      return;
+    }
+    $('tourList').innerHTML =
+      tournaments.map(tournament => `
+        <div class="notice">
+          <b>
+            🥇 ${escapeHTML(tournament.name)}
+          </b>
+          <br>
+          🎱 ${escapeHTML(tournament.game_type || '')}
+          · 🎟️
+          ${escapeHTML(tournament.entry_tokens || 0)}
+          fichas
+          · 👥
+          ${escapeHTML(tournament.max_players || 'Sin límite')}
+          <br>
+          <button
+            class="btn"
+            style="margin-top:8px"
+            onclick="join(
+              '${escapeHTML(tournament.id)}'
+            )">
+            Inscribirme
+          </button>
+        </div>
+      `).join('');
+  }
+  catch(error){
+    console.error(error);
+    $('tourList').innerHTML = `
+      <div class="notice">
+        No se pudieron cargar los torneos.
+      </div>
+    `;
+  }
 }
-async function join(id,cost){
-try{
-const {data,error}=await db.rpc(
-'join_tournament',
-{
-p_tournament_id:id
+/* =========================================================
+   INSCRIPCIÓN TORNEO
+========================================================= */
+async function join(id){
+  if(!profile){
+    alert('Esperá a que el jugador se conecte.');
+    return;
+  }
+  try{
+    const response =
+      await db.rpc(
+        'join_tournament',
+        {
+          p_tournament_id:id
+        }
+      );
+    if(response.error){
+      throw response.error;
+    }
+    const result =
+      typeof response.data === 'string'
+        ? JSON.parse(response.data)
+        : response.data;
+    profile = {
+      ...profile,
+      tokens:
+        result.remaining
+    };
+    updateHeader();
+    await loadTours();
+    alert(
+      '🏆 ¡Inscripción registrada!'
+    );
+  }
+  catch(error){
+    console.error(error);
+    alert(
+      'No se pudo realizar la inscripción:\\n' +
+      error.message
+    );
+  }
 }
-);
-if(error)throw error;
-const result=
-typeof data==='string'
-?JSON.parse(data)
-:data;
-profile={
-...profile,
-tokens:result.remaining
-};
-updateHeader();
-await loadTours();
-alert(
-'¡Inscripción registrada!'
-);
-}catch(e){
-console.error(e);
-alert(
-'No se pudo realizar la inscripción: '+
-e.message
-);
-}
-}
+/* =========================================================
+   MESAS / QR
+========================================================= */
 async function loadTables(){
-let r=await db
-.from('tables_pool')
-.select('*')
-.eq('active',true)
-.order('table_number');
-let a=r.data||[];
-$('tableSelect').innerHTML=
-a.map(t=>`
-<option value="${t.table_number}">
-Mesa ${t.table_number}
-</option>
-`).join('');
-$('tableSelect').value=
-new URLSearchParams(location.search)
-.get('mesa')
-||
-a[0]?.table_number
-||
-1;
-makeQR();
+  try{
+    const response =
+      await db
+        .from('tables_pool')
+        .select('*')
+        .eq('active',true)
+        .order('table_number');
+    if(response.error){
+      throw response.error;
+    }
+    const tables =
+      response.data || [];
+    const select =
+      $('tableSelect');
+    if(!tables.length){
+      select.innerHTML = `
+        <option value="1">
+          Mesa 1
+        </option>
+      `;
+      makeQR();
+      return;
+    }
+    select.innerHTML =
+      tables.map(table => `
+        <option
+          value="${escapeHTML(table.table_number)}">
+          Mesa ${escapeHTML(table.table_number)}
+        </option>
+      `).join('');
+    const currentMesa =
+      new URLSearchParams(
+        location.search
+      ).get('mesa');
+    select.value =
+      currentMesa ||
+      tables[0]?.table_number ||
+      '1';
+    makeQR();
+  }
+  catch(error){
+    console.error(error);
+    $('tableSelect').innerHTML = `
+      <option value="1">
+        Mesa 1
+      </option>
+    `;
+    makeQR();
+  }
 }
+/* =========================================================
+   GENERAR QR
+========================================================= */
 function makeQR(){
-let n=
-$('tableSelect').value||'1';
-let url=
-location.origin+
-location.pathname+
-'?mesa='+
-encodeURIComponent(n);
-$('qrimg').src=
-'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data='+
-encodeURIComponent(url);
-$('qrtext').textContent=
-'Mesa '+n+' · '+url;
+  const number =
+    $('tableSelect').value || '1';
+  const url =
+    location.origin +
+    location.pathname +
+    '?mesa=' +
+    encodeURIComponent(number);
+  $('qrimg').src =
+    'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=' +
+    encodeURIComponent(url);
+  $('qrtext').textContent =
+    'Mesa ' +
+    number +
+    ' · ' +
+    url;
 }
+/* =========================================================
+   ARRANQUE
+========================================================= */
 init();
 </script>
 </body>
