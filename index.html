@@ -37,7 +37,6 @@ body{
 }
 
 button,input,select,textarea{font:inherit}
-
 button{cursor:pointer}
 
 .app{
@@ -203,7 +202,6 @@ button{cursor:pointer}
 }
 
 .view{display:none}
-
 .view.active{display:block}
 
 .grid{
@@ -221,7 +219,6 @@ button{cursor:pointer}
 }
 
 .card h2{margin:0 0 8px}
-
 .card h3{margin:7px 0 5px}
 
 .game{
@@ -244,9 +241,7 @@ button{cursor:pointer}
 }
 
 .small{font-size:11px}
-
 .hidden{display:none!important}
-
 .center{text-align:center}
 
 .question{
@@ -361,9 +356,7 @@ textarea{
   text-align:left
 }
 
-.choice:hover{
-  border-color:var(--sky)
-}
+.choice:hover{border-color:var(--sky)}
 
 .choice.correct{
   border-color:var(--green);
@@ -396,6 +389,21 @@ textarea{
   color:var(--gold)
 }
 
+.code-box{
+  padding:15px;
+  text-align:center;
+  border:1px dashed var(--sky);
+  border-radius:14px;
+  background:#071b27
+}
+
+.code-box strong{
+  display:block;
+  font-size:22px;
+  color:var(--gold);
+  word-break:break-all
+}
+
 .qr{
   max-width:220px;
   width:100%;
@@ -414,7 +422,6 @@ textarea{
 }
 
 .admin-actions{justify-content:flex-start}
-
 .admin-actions>*{flex:0 1 auto}
 
 .toast{
@@ -459,11 +466,8 @@ hr{
   }
 
   .grid{grid-template-columns:1fr}
-
   .top{align-items:flex-start}
-
   .brand{font-size:19px}
-
   .badge{font-size:9px}
 
   .tabs{
@@ -478,8 +482,10 @@ hr{
     align-items:stretch
   }
 
-  .player-input-row .btn{
-    width:100%
+  .player-input-row .btn{width:100%}
+
+  .duel-score{
+    grid-template-columns:1fr;
   }
 }
 </style>
@@ -532,6 +538,7 @@ hr{
 
       <button
         class="btn"
+        id="startPlayerBtn"
         type="button"
         onclick="startPlayer()">
         🎮 Comenzar
@@ -601,7 +608,7 @@ hr{
   <div class="card">
     <h2>🎮 Juegos</h2>
     <p class="muted">
-      Elegí un desafío. Cada partida válida registra la recompensa en Supabase.
+      Elegí un desafío. Las recompensas se procesan de forma segura en Supabase.
     </p>
   </div>
 
@@ -619,7 +626,9 @@ hr{
       Los mejores jugadores según los puntos acumulados.
     </p>
 
-    <div id="rankingList"></div>
+    <div id="rankingList">
+      <div class="notice">Cargando ranking...</div>
+    </div>
   </div>
 
 </section>
@@ -640,13 +649,17 @@ hr{
 <section id="tournaments" class="view">
 
   <div class="card">
+
     <h2>🏆 Torneos interactivos</h2>
 
     <p class="muted">
-      Consultá los torneos abiertos e inscribite directamente desde tu jugador.
+      Inscribite y consultá partidos y posiciones directamente desde el celular.
     </p>
 
     <div id="tourList" class="grid"></div>
+
+    <div id="tournamentDetail" class="card hidden" style="margin-top:12px"></div>
+
   </div>
 
 </section>
@@ -721,7 +734,7 @@ hr{
           placeholder="Horario, preferencia de mesa, etc."></textarea>
       </div>
 
-      <button class="btn" type="submit">
+      <button class="btn" id="reservationBtn" type="submit">
         📩 Enviar reserva
       </button>
 
@@ -860,20 +873,29 @@ const SUPABASE_KEY =
 const sb =
   window.supabase.createClient(
     SUPABASE_URL,
-    SUPABASE_KEY
+    SUPABASE_KEY,
+    {
+      auth:{
+        persistSession:true,
+        autoRefreshToken:true,
+        detectSessionInUrl:true
+      }
+    }
   );
 
 let currentMesa = null;
+let currentTablePoolId = null;
 let currentUser = null;
 let currentProfile = null;
 let games = [];
-let triviaQuestions = [];
 let currentTrivia = null;
 
-let duel = {
-  p1:0,
-  p2:0,
-  finished:false
+let duelState = {
+  id:null,
+  gameId:null,
+  score:0,
+  created:false,
+  polling:null
 };
 
 const $ = id => document.getElementById(id);
@@ -913,10 +935,65 @@ function toast(message){
 
   clearTimeout(window.__toastTimer);
 
-  window.__toastTimer = setTimeout(
-    () => el.classList.add('hidden'),
-    3500
-  );
+  window.__toastTimer =
+    setTimeout(
+      () => el.classList.add('hidden'),
+      3500
+    );
+
+}
+
+function setBusy(button,busy,text){
+
+  if(!button) return;
+
+  if(busy){
+
+    button.dataset.originalText =
+      button.textContent;
+
+    button.disabled = true;
+    button.textContent =
+      text || 'Procesando...';
+
+  }else{
+
+    button.disabled = false;
+
+    if(button.dataset.originalText){
+
+      button.textContent =
+        button.dataset.originalText;
+
+      delete button.dataset.originalText;
+
+    }
+
+  }
+
+}
+
+function normalizeRpcResult(data){
+
+  if(Array.isArray(data))
+    return data[0] || null;
+
+  return data || null;
+
+}
+
+async function rpc(name,params={}){
+
+  const {
+    data,
+    error
+  } =
+    await sb.rpc(name,params);
+
+  if(error)
+    throw error;
+
+  return normalizeRpcResult(data);
 
 }
 
@@ -982,20 +1059,15 @@ async function init(){
       new URLSearchParams(location.search);
 
     const mesaParam =
-      params.get('mesa');
+      params.get('mesa') ||
+      params.get('table') ||
+      params.get('qr') ||
+      params.get('token');
 
     if(mesaParam)
       await loadMesa(mesaParam);
 
-    if(currentMesa){
-
-      $('mesa').textContent =
-        currentMesa.numero;
-
-    }
-
     await loadGames();
-    await loadTrivia();
     await loadRanking();
     await loadPrizes();
     await loadTournaments();
@@ -1034,6 +1106,14 @@ async function init(){
 
 }
 
+/*
+ * QR / MESA
+ *
+ * El QR histórico utiliza la tabla "mesas".
+ * La partida se vincula después con "tables_pool"
+ * mediante el número de mesa.
+ */
+
 async function loadMesa(token){
 
   const {
@@ -1062,24 +1142,116 @@ async function loadMesa(token){
 
   if(!data){
 
-    $('mesaBadge').textContent =
-      'QR no válido';
+    /*
+     * Permite también que un QR lleve directamente
+     * el número de mesa.
+     */
 
-    return;
+    const numeric =
+      Number(token);
+
+    if(Number.isInteger(numeric)){
+
+      const {
+        data:numberMesa
+      } =
+        await sb
+          .from('mesas')
+          .select(
+            'id,numero,nombre,servicio,activa,qr_token'
+          )
+          .eq('numero',numeric)
+          .eq('activa',true)
+          .maybeSingle();
+
+      if(numberMesa){
+
+        currentMesa =
+          numberMesa;
+
+      }
+
+    }
+
+    if(!currentMesa){
+
+      $('mesaBadge').textContent =
+        'QR no válido';
+
+      return;
+
+    }
+
+  }else{
+
+    currentMesa = data;
 
   }
 
-  currentMesa = data;
-
   $('mesa').textContent =
-    data.numero;
+    currentMesa.numero;
 
   $('mesaBadge').textContent =
-    `Mesa ${data.numero}${
-      data.servicio
-        ? ' · ' + data.servicio
+    `Mesa ${currentMesa.numero}${
+      currentMesa.servicio
+        ? ' · ' + currentMesa.servicio
         : ''
     }`;
+
+  await resolveTablePool();
+
+}
+
+async function resolveTablePool(){
+
+  currentTablePoolId = null;
+
+  if(!currentMesa?.numero)
+    return null;
+
+  const {
+    data,
+    error
+  } =
+    await sb
+      .from('tables_pool')
+      .select(
+        'id,table_number,active'
+      )
+      .eq(
+        'table_number',
+        currentMesa.numero
+      )
+      .eq(
+        'active',
+        true
+      )
+      .maybeSingle();
+
+  if(error){
+
+    console.warn(
+      'No se pudo resolver tables_pool:',
+      error.message
+    );
+
+    return null;
+
+  }
+
+  currentTablePoolId =
+    data?.id || null;
+
+  return currentTablePoolId;
+
+}
+
+async function getTablePoolId(){
+
+  if(currentTablePoolId)
+    return currentTablePoolId;
+
+  return await resolveTablePool();
 
 }
 
@@ -1139,10 +1311,7 @@ async function ensureAnonymousPlayer(name){
         .from('profiles')
         .insert({
           id:currentUser.id,
-          display_name:name,
-          points:0,
-          tokens:0,
-          streak:0
+          display_name:name
         })
         .select(
           'id,display_name,role,points,tokens,streak'
@@ -1152,11 +1321,18 @@ async function ensureAnonymousPlayer(name){
     if(createError)
       throw createError;
 
-    currentProfile = created;
+    currentProfile =
+      created;
 
   }else{
 
-    currentProfile = data;
+    currentProfile =
+      data;
+
+    /*
+     * Solo se modifica el nombre propio.
+     * Nunca se envían puntos, fichas, rol ni racha.
+     */
 
     const {
       error:updateError
@@ -1166,12 +1342,16 @@ async function ensureAnonymousPlayer(name){
         .update({
           display_name:name
         })
-        .eq('id',currentUser.id);
+        .eq(
+          'id',
+          currentUser.id
+        );
 
     if(updateError)
       console.warn(updateError);
 
-    currentProfile.display_name = name;
+    currentProfile.display_name =
+      name;
 
   }
 
@@ -1179,7 +1359,8 @@ async function ensureAnonymousPlayer(name){
 
 async function startPlayer(){
 
-  const input = $('playerName');
+  const input =
+    $('playerName');
 
   const name =
     input?.value?.trim();
@@ -1196,7 +1377,16 @@ async function startPlayer(){
 
   }
 
+  const button =
+    $('startPlayerBtn');
+
   try{
+
+    setBusy(
+      button,
+      true,
+      'Iniciando...'
+    );
 
     await ensureAnonymousPlayer(name);
     await refreshPlayer();
@@ -1223,8 +1413,13 @@ async function startPlayer(){
     console.error(error);
 
     toast(
-      'No se pudo iniciar el jugador. Verificá Anonymous Sign-Ins en Supabase.'
+      error.message ||
+      'No se pudo iniciar el jugador.'
     );
+
+  }finally{
+
+    setBusy(button,false);
 
   }
 
@@ -1258,9 +1453,7 @@ async function refreshPlayer(){
   if(!error && data){
 
     currentProfile =
-      Array.isArray(data)
-        ? data[0]
-        : data;
+      normalizeRpcResult(data);
 
   }else{
 
@@ -1270,7 +1463,10 @@ async function refreshPlayer(){
         .select(
           'id,display_name,role,points,tokens,streak'
         )
-        .eq('id',currentUser.id)
+        .eq(
+          'id',
+          currentUser.id
+        )
         .maybeSingle();
 
     if(fallback.error){
@@ -1333,6 +1529,10 @@ function updateHeader(){
 
 }
 
+/* =========================
+   JUEGOS
+========================= */
+
 async function loadGames(){
 
   const {
@@ -1344,7 +1544,10 @@ async function loadGames(){
       .select(
         'id,name,description,icon,points_reward,tokens_reward,active'
       )
-      .eq('active',true)
+      .eq(
+        'active',
+        true
+      )
       .order('name');
 
   if(error){
@@ -1355,7 +1558,8 @@ async function loadGames(){
 
   }else{
 
-    games = data || [];
+    games =
+      data || [];
 
   }
 
@@ -1408,7 +1612,10 @@ function renderGames(){
   const databaseGames =
     new Map(
       games.map(
-        game => [game.name,game]
+        game => [
+          String(game.name || '').trim(),
+          game
+        ]
       )
     );
 
@@ -1420,6 +1627,7 @@ function renderGames(){
           databaseGames.get(game.key);
 
         return `
+
           <div
             class="card game"
             role="button"
@@ -1477,7 +1685,9 @@ function renderGames(){
 function findGame(name){
 
   return games.find(
-    game => game.name === name
+    game =>
+      String(game.name || '').trim() ===
+      String(name).trim()
   );
 
 }
@@ -1542,6 +1752,8 @@ function openGame(name){
 
 function closeGame(){
 
+  stopDuelPolling();
+
   $('gamebox')
     .classList
     .add('hidden');
@@ -1550,41 +1762,7 @@ function closeGame(){
 
 }
 
-async function getTablePoolId(){
-
-  if(!currentMesa)
-    return null;
-
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from('tables_pool')
-      .select('id')
-      .eq(
-        'table_number',
-        currentMesa.numero
-      )
-      .eq(
-        'active',
-        true
-      )
-      .maybeSingle();
-
-  if(error){
-
-    console.warn(error);
-
-    return null;
-
-  }
-
-  return data?.id || null;
-
-}
-
-async function action(gameName,metadata={}){
+async function playGame(gameName,metadata={}){
 
   if(!currentUser){
 
@@ -1614,24 +1792,55 @@ async function action(gameName,metadata={}){
   const tableId =
     await getTablePoolId();
 
-  const {
-    data,
-    error
-  } =
-    await sb.rpc(
-      'registrar_partida',
-      {
-        p_game_id:game.id,
-        p_table_id:tableId,
-        p_metadata:{
-          ...metadata,
-          mesa_numero:
-            currentMesa?.numero || null
-        }
-      }
+  if(!tableId){
+
+    toast(
+      'No se pudo identificar la mesa. Escaneá nuevamente el QR.'
     );
 
-  if(error){
+    return false;
+
+  }
+
+  try{
+
+    const result =
+      await rpc(
+        'play_game',
+        {
+          p_game_id:game.id,
+          p_table_id:tableId,
+          p_metadata:{
+            ...metadata,
+            mesa_numero:
+              currentMesa?.numero || null
+          }
+        }
+      );
+
+    const points =
+      Number(
+        result?.points_awarded ??
+        result?.points ??
+        0
+      );
+
+    const tokens =
+      Number(
+        result?.tokens_awarded ??
+        result?.tokens ??
+        0
+      );
+
+    toast(
+      `¡Ganaste ${points} puntos y ${tokens} fichas! 🎉`
+    );
+
+    await refreshPlayer();
+
+    return true;
+
+  }catch(error){
 
     console.error(error);
 
@@ -1643,20 +1852,6 @@ async function action(gameName,metadata={}){
     return false;
 
   }
-
-  const points =
-    data?.points_awarded || 0;
-
-  const tokens =
-    data?.tokens_awarded || 0;
-
-  toast(
-    `¡Ganaste ${points} puntos y ${tokens} fichas! 🎉`
-  );
-
-  await refreshPlayer();
-
-  return true;
 
 }
 
@@ -1686,7 +1881,8 @@ function retoTask(){
     <button
       class="btn gold"
       type="button"
-      onclick="action(
+      onclick="actionOnce(
+        this,
         'Reto Pool & Beach',
         {challenge:${JSON.stringify(challenge)}}
       )">
@@ -1722,7 +1918,8 @@ function poolTask(){
     <button
       class="btn"
       type="button"
-      onclick="action(
+      onclick="actionOnce(
+        this,
         'Desafío de Pool',
         {challenge:${JSON.stringify(challenge)}}
       )">
@@ -1747,13 +1944,14 @@ function diceTask(){
     </div>
 
     <p class="muted center">
-      El resultado se registra como parte de la partida.
+      El resultado se registra de forma validada por Supabase.
     </p>
 
     <button
       class="btn gold"
       type="button"
-      onclick="action(
+      onclick="actionOnce(
+        this,
         'Dados Beach',
         {roll:${number}}
       )">
@@ -1779,7 +1977,11 @@ function missionTask(){
     <button
       class="btn gold"
       type="button"
-      onclick="action('Misión del día')">
+      onclick="actionOnce(
+        this,
+        'Misión del día',
+        {}
+      )">
       ✅ Completar misión
     </button>
 
@@ -1787,132 +1989,211 @@ function missionTask(){
 
 }
 
-async function loadTrivia(){
+async function actionOnce(button,gameName,metadata){
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from('trivia_questions')
-      .select(
-        'id,question,options,correct_index,active'
-      )
-      .eq('active',true)
-      .order('created_at');
+  setBusy(
+    button,
+    true,
+    'Registrando...'
+  );
 
-  if(error){
+  try{
 
-    console.error(error);
+    await playGame(
+      gameName,
+      metadata
+    );
 
-    triviaQuestions = [];
+  }finally{
+
+    setBusy(button,false);
+
+  }
+
+}
+
+/* =========================
+   TRIVIA
+========================= */
+
+function triviaTask(){
+
+  currentTrivia = null;
+
+  return `
+
+    <div class="question">
+      🧠 Trivia Express
+    </div>
+
+    <p class="muted center">
+      Iniciá una ronda. La pregunta correcta se obtiene desde Supabase.
+    </p>
+
+    <button
+      class="btn gold"
+      type="button"
+      onclick="startTrivia(this)">
+      🧠 Iniciar trivia
+    </button>
+
+    <div id="triviaArea" style="margin-top:12px"></div>
+
+  `;
+
+}
+
+async function startTrivia(button){
+
+  if(!currentUser){
+
+    toast(
+      'Primero iniciá tu jugador.'
+    );
+
+    focusPlayer();
 
     return;
 
   }
 
-  triviaQuestions =
-    (data || [])
-      .map(row => {
+  const game =
+    findGame('Trivia Express');
 
-        let options =
-          Array.isArray(row.options)
-            ? row.options
-            : [];
+  if(!game){
 
-        if(
-          row.options &&
-          typeof row.options === 'object' &&
-          !Array.isArray(row.options)
-        ){
+    toast(
+      'Trivia Express no está configurado.'
+    );
 
-          options =
-            Object.values(row.options);
-
-        }
-
-        return {
-          id:row.id,
-          q:row.question,
-          o:options,
-          correctIndex:
-            Number(row.correct_index)
-        };
-
-      })
-      .filter(
-        row =>
-          row.q &&
-          row.o.length > 1
-      );
-
-}
-
-function triviaTask(){
-
-  if(!triviaQuestions.length){
-
-    return `
-
-      <div class="notice">
-        🧠 Todavía no hay preguntas activas cargadas.
-      </div>
-
-      <button
-        class="btn secondary"
-        type="button"
-        onclick="loadTrivia()">
-        Actualizar preguntas
-      </button>
-
-    `;
+    return;
 
   }
 
-  currentTrivia =
-    triviaQuestions[
-      Math.floor(
-        Math.random()*triviaQuestions.length
-      )
-    ];
+  const tableId =
+    await getTablePoolId();
 
-  const options =
-    currentTrivia.o.map(
-      (text,index) => ({
-        text,
-        index
-      })
+  if(!tableId){
+
+    toast(
+      'No se pudo identificar la mesa.'
     );
 
-  options.sort(
-    () => Math.random()-.5
+    return;
+
+  }
+
+  setBusy(
+    button,
+    true,
+    'Cargando pregunta...'
   );
 
-  return `
+  try{
+
+    const result =
+      await rpc(
+        'start_trivia_game',
+        {
+          p_game_id:game.id,
+          p_table_id:tableId
+        }
+      );
+
+    /*
+     * La función puede devolver distintas claves según
+     * la versión del backend. Se normalizan acá.
+     */
+
+    const sessionId =
+      result?.session_id ||
+      result?.trivia_session_id ||
+      result?.id;
+
+    const questionId =
+      result?.question_id ||
+      result?.trivia_question_id;
+
+    const question =
+      result?.question ||
+      result?.q;
+
+    let options =
+      result?.options;
+
+    if(
+      options &&
+      typeof options === 'object' &&
+      !Array.isArray(options)
+    ){
+
+      options =
+        Object.values(options);
+
+    }
+
+    if(!sessionId || !question || !Array.isArray(options)){
+
+      throw new Error(
+        'Supabase no devolvió una pregunta de trivia válida.'
+      );
+
+    }
+
+    currentTrivia = {
+      sessionId,
+      questionId,
+      question,
+      options
+    };
+
+    renderTriviaQuestion();
+
+  }catch(error){
+
+    console.error(error);
+
+    $('triviaArea').innerHTML =
+      `<div class="notice dangerText">
+        ${esc(error.message || 'No se pudo iniciar la trivia.')}
+      </div>`;
+
+  }finally{
+
+    setBusy(button,false);
+
+  }
+
+}
+
+function renderTriviaQuestion(){
+
+  const area =
+    $('triviaArea');
+
+  if(!area || !currentTrivia)
+    return;
+
+  area.innerHTML = `
 
     <div class="question">
-      🧠 ${esc(currentTrivia.q)}
+      ${esc(currentTrivia.question)}
     </div>
 
-    <div>
-
-      ${
-        options
-          .map(option => `
-
+    ${
+      currentTrivia.options
+        .map(
+          (option,index) => `
             <button
               class="choice"
               type="button"
-              data-index="${option.index}"
-              onclick="triviaAnswer(${option.index},this)">
-              ${esc(option.text)}
+              onclick="answerTrivia(${index},this)">
+              ${esc(option)}
             </button>
-
-          `)
-          .join('')
-      }
-
-    </div>
+          `
+        )
+        .join('')
+    }
 
     <div id="triviaMsg" class="notice hidden"></div>
 
@@ -1920,117 +2201,152 @@ function triviaTask(){
 
 }
 
-async function triviaAnswer(
-  index,
-  button
-){
+async function answerTrivia(index,button){
 
   if(!currentTrivia)
     return;
 
   const buttons =
     document.querySelectorAll(
-      '#gamebox .choice'
+      '#triviaArea .choice'
     );
 
   buttons.forEach(
     btn => btn.disabled = true
   );
 
-  const correct =
-    index ===
-    currentTrivia.correctIndex;
+  try{
 
-  if(correct){
+    const result =
+      await rpc(
+        'answer_trivia',
+        {
+          p_session_id:
+            currentTrivia.sessionId,
+          p_answer_index:
+            Number(index)
+        }
+      );
 
-    button.classList.add('correct');
+    const correct =
+      Boolean(
+        result?.correct ??
+        result?.is_correct ??
+        result?.answered_correctly
+      );
 
-    const msg =
-      $('triviaMsg');
+    if(correct){
 
-    if(msg){
+      button.classList.add('correct');
 
-      msg.classList.remove('hidden');
-      msg.classList.add('ok');
-      msg.textContent =
-        '¡Correcto! 🎉 Registrando partida...';
+      const msg =
+        $('triviaMsg');
+
+      if(msg){
+
+        msg.classList.remove('hidden');
+        msg.classList.add('ok');
+
+        msg.textContent =
+          `¡Correcto! +${
+            result?.points_awarded ||
+            result?.points ||
+            0
+          } puntos 🎉`;
+
+      }
+
+      await refreshPlayer();
+
+    }else{
+
+      button.classList.add('wrong');
+
+      const msg =
+        $('triviaMsg');
+
+      if(msg){
+
+        msg.classList.remove('hidden');
+        msg.classList.add('dangerText');
+
+        msg.textContent =
+          'Respuesta incorrecta. ¡Probá otra ronda!';
+
+      }
 
     }
 
-    await action(
-      'Trivia Express',
-      {
-        trivia_question_id:
-          currentTrivia.id,
-        answer_index:index
-      }
+    currentTrivia = null;
+
+    setTimeout(
+      () => {
+
+        const area =
+          $('triviaArea');
+
+        if(area){
+
+          area.insertAdjacentHTML(
+            'beforeend',
+            `
+              <button
+                class="btn secondary"
+                type="button"
+                onclick="openGame('Trivia Express')">
+                🔄 Nueva pregunta
+              </button>
+            `
+          );
+
+        }
+
+      },
+      400
     );
 
-  }else{
+  }catch(error){
 
-    button.classList.add('wrong');
+    console.error(error);
 
-    const msg =
-      $('triviaMsg');
-
-    if(msg){
-
-      msg.classList.remove('hidden');
-      msg.classList.add('dangerText');
-      msg.textContent =
-        'Respuesta incorrecta.';
-
-    }
+    buttons.forEach(
+      btn => btn.disabled = false
+    );
 
     toast(
-      'Incorrecto. ¡Probá otra pregunta!'
+      error.message ||
+      'No se pudo registrar la respuesta.'
     );
 
   }
 
-  currentTrivia = null;
-
 }
+
+/* =========================
+   DUELO 1 VS 1
+========================= */
 
 function duelTask(){
 
-  duel = {
-    p1:0,
-    p2:0,
-    finished:false
+  stopDuelPolling();
+
+  duelState = {
+    id:null,
+    gameId:null,
+    score:0,
+    created:false,
+    polling:null
   };
 
   return `
 
-    <div class="duel-score">
-
-      <div class="player">
-
-        <b>JUGADOR 1</b>
-
-        <br>
-
-        <strong id="d1">0</strong>
-
-      </div>
-
-      <div>VS</div>
-
-      <div class="player">
-
-        <b>JUGADOR 2</b>
-
-        <br>
-
-        <strong id="d2">0</strong>
-
-      </div>
-
+    <div class="question">
+      👥 Duelo 1 vs 1
     </div>
 
     <p class="muted center">
-      Sumá una victoria por ronda.
-      El primero en llegar a 3 gana el duelo.
+      Creá un duelo y compartí el código con el segundo jugador,
+      o ingresá un código existente para unirte.
     </p>
 
     <div class="row">
@@ -2038,168 +2354,695 @@ function duelTask(){
       <button
         class="btn"
         type="button"
-        onclick="duelPoint(1)">
-        🎱 Punto Jugador 1
+        onclick="createDuel(this)">
+        ⚔️ Crear duelo
       </button>
 
       <button
         class="btn gold"
         type="button"
-        onclick="duelPoint(2)">
-        🎱 Punto Jugador 2
+        onclick="showJoinDuel()">
+        🔗 Unirme a un duelo
       </button>
 
     </div>
 
-    <div id="duelMsg" class="notice">
-      Duelo listo.
+    <div
+      id="duelCreateArea"
+      style="margin-top:12px">
     </div>
 
   `;
 
 }
 
-async function duelPoint(player){
+async function createDuel(button){
 
-  if(duel.finished)
+  if(!currentUser){
+
+    toast(
+      'Primero iniciá tu jugador.'
+    );
+
+    focusPlayer();
+
     return;
 
-  if(player === 1)
-    duel.p1++;
-  else
-    duel.p2++;
+  }
 
-  $('d1').textContent =
-    duel.p1;
+  const game =
+    findGame('Duelo 1 vs 1');
 
-  $('d2').textContent =
-    duel.p2;
+  if(!game){
 
-  if(
-    duel.p1 >= 3 ||
-    duel.p2 >= 3
-  ){
-
-    duel.finished = true;
-
-    const winner =
-      duel.p1 >= 3 ? 1 : 2;
-
-    $('duelMsg').innerHTML =
-      `<b>🏆 Ganó el Jugador ${winner}.</b>
-       Registrando la partida...`;
-
-    await action(
-      'Duelo 1 vs 1',
-      {
-        winner,
-        p1:duel.p1,
-        p2:duel.p2
-      }
+    toast(
+      'Duelo 1 vs 1 no está configurado.'
     );
 
     return;
 
   }
 
-  $('duelMsg').textContent =
-    `Ronda registrada: ventaja para Jugador ${player}.`;
+  const tableId =
+    await getTablePoolId();
+
+  if(!tableId){
+
+    toast(
+      'No se pudo identificar la mesa.'
+    );
+
+    return;
+
+  }
+
+  setBusy(
+    button,
+    true,
+    'Creando...'
+  );
+
+  try{
+
+    const result =
+      await rpc(
+        'create_duel',
+        {
+          p_game_id:game.id,
+          p_table_id:tableId
+        }
+      );
+
+    const duelId =
+      result?.duel_id ||
+      result?.id;
+
+    if(!duelId)
+      throw new Error(
+        'Supabase no devolvió el identificador del duelo.'
+      );
+
+    duelState.id =
+      duelId;
+
+    duelState.gameId =
+      game.id;
+
+    duelState.created =
+      true;
+
+    renderDuelCreated();
+
+    startDuelPolling();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      error.message ||
+      'No se pudo crear el duelo.'
+    );
+
+  }finally{
+
+    setBusy(button,false);
+
+  }
 
 }
 
-async function loadRanking(){
+function renderDuelCreated(){
+
+  const area =
+    $('duelCreateArea');
+
+  if(!area)
+    return;
+
+  const url =
+    `${location.origin}${location.pathname}?duelo=${encodeURIComponent(duelState.id)}`;
+
+  area.innerHTML = `
+
+    <div class="code-box">
+
+      <div class="muted">
+        CÓDIGO DEL DUELO
+      </div>
+
+      <strong>
+        ${esc(duelState.id)}
+      </strong>
+
+      <p class="muted">
+        Compartí este código con el otro jugador.
+      </p>
+
+      <button
+        class="btn secondary"
+        type="button"
+        onclick="copyText(${JSON.stringify(duelState.id)})">
+        📋 Copiar código
+      </button>
+
+      <button
+        class="btn secondary"
+        type="button"
+        onclick="copyText(${JSON.stringify(url)})">
+        🔗 Copiar enlace
+      </button>
+
+    </div>
+
+    <div id="duelLive" style="margin-top:12px">
+
+      <div class="notice">
+        Esperando al segundo jugador...
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+function showJoinDuel(){
+
+  const area =
+    $('duelCreateArea');
+
+  if(!area)
+    return;
+
+  area.innerHTML = `
+
+    <div class="field">
+
+      <label for="duelCode">
+        Código del duelo
+      </label>
+
+      <input
+        class="input"
+        id="duelCode"
+        placeholder="Pegá el código del duelo">
+
+    </div>
+
+    <button
+      class="btn"
+      type="button"
+      onclick="joinDuel(this)">
+      🔗 Unirme
+    </button>
+
+  `;
+
+}
+
+async function joinDuel(button){
+
+  if(!currentUser){
+
+    toast(
+      'Primero iniciá tu jugador.'
+    );
+
+    focusPlayer();
+
+    return;
+
+  }
+
+  const input =
+    $('duelCode');
+
+  const duelId =
+    input?.value?.trim();
+
+  if(!duelId){
+
+    toast(
+      'Ingresá el código del duelo.'
+    );
+
+    return;
+
+  }
+
+  setBusy(
+    button,
+    true,
+    'Uniendo...'
+  );
+
+  try{
+
+    const result =
+      await rpc(
+        'join_duel',
+        {
+          p_duel_id:duelId
+        }
+      );
+
+    duelState.id =
+      result?.duel_id ||
+      result?.id ||
+      duelId;
+
+    duelState.gameId =
+      result?.game_id ||
+      findGame('Duelo 1 vs 1')?.id ||
+      null;
+
+    duelState.created =
+      false;
+
+    renderJoinedDuel();
+
+    startDuelPolling();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      error.message ||
+      'No se pudo unir al duelo.'
+    );
+
+  }finally{
+
+    setBusy(button,false);
+
+  }
+
+}
+
+function renderJoinedDuel(){
+
+  const area =
+    $('duelCreateArea');
+
+  if(!area)
+    return;
+
+  area.innerHTML = `
+
+    <div class="notice ok">
+      ✅ Unido al duelo correctamente.
+    </div>
+
+    <div id="duelLive">
+
+      <div class="duel-score">
+
+        <div class="player">
+          <b>MI PUNTAJE</b>
+          <br>
+          <strong id="myDuelScore">0</strong>
+        </div>
+
+        <div>VS</div>
+
+        <div class="player">
+          <b>OPONENTE</b>
+          <br>
+          <strong id="opponentDuelScore">0</strong>
+        </div>
+
+      </div>
+
+      <div class="row">
+
+        <button
+          class="btn"
+          type="button"
+          onclick="submitDuelScore(1,this)">
+          +1 punto
+        </button>
+
+        <button
+          class="btn gold"
+          type="button"
+          onclick="submitDuelScore(3,this)">
+          🏆 Marcar 3 puntos
+        </button>
+
+      </div>
+
+      <div
+        id="duelMsg"
+        class="notice">
+        Duelo activo.
+      </div>
+
+    </div>
+
+  `;
+
+}
+
+async function submitDuelScore(score,button){
+
+  if(!duelState.id)
+    return;
+
+  setBusy(
+    button,
+    true,
+    'Enviando...'
+  );
+
+  try{
+
+    const result =
+      await rpc(
+        'submit_duel_score',
+        {
+          p_duel_id:
+            duelState.id,
+          p_score:
+            Number(score)
+        }
+      );
+
+    duelState.score =
+      Number(
+        result?.score ??
+        result?.my_score ??
+        duelState.score + Number(score)
+      );
+
+    const myScore =
+      $('myDuelScore');
+
+    if(myScore)
+      myScore.textContent =
+        duelState.score;
+
+    toast(
+      'Puntaje enviado.'
+    );
+
+    await pollDuel();
+
+  }catch(error){
+
+    console.error(error);
+
+    toast(
+      error.message ||
+      'No se pudo enviar el puntaje.'
+    );
+
+  }finally{
+
+    setBusy(button,false);
+
+  }
+
+}
+
+function startDuelPolling(){
+
+  stopDuelPolling();
+
+  pollDuel();
+
+  duelState.polling =
+    setInterval(
+      pollDuel,
+      2500
+    );
+
+}
+
+function stopDuelPolling(){
+
+  if(duelState.polling){
+
+    clearInterval(
+      duelState.polling
+    );
+
+    duelState.polling =
+      null;
+
+  }
+
+}
+
+async function pollDuel(){
+
+  if(!duelState.id)
+    return;
 
   const {
     data,
     error
   } =
     await sb
-      .from('ranking_jugadores')
-      .select(
-        'display_name,points,tokens,streak,partidas,posicion'
+      .from('duel_matches')
+      .select('*')
+      .eq(
+        'id',
+        duelState.id
       )
-      .order('posicion')
-      .limit(20);
+      .maybeSingle();
 
   if(error){
 
-    console.error(error);
-
-    $('rankingList').innerHTML =
-      `<div class="notice dangerText">
-        No se pudo cargar el ranking.
-      </div>`;
+    /*
+     * El polling es auxiliar. No rompe la partida
+     * si RLS todavía está procesando el estado.
+     */
 
     return;
 
   }
 
-  $('rankingList').innerHTML =
-    data?.length
-      ? `
+  if(!data)
+    return;
 
-        <div style="overflow:auto">
+  const myId =
+    currentUser?.id;
 
-          <table class="table">
+  const myIsP1 =
+    data.player1_id === myId;
 
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Jugador</th>
-                <th>Puntos</th>
-                <th>Fichas</th>
-                <th>Racha</th>
-                <th>Partidas</th>
-              </tr>
-            </thead>
+  const myScore =
+    myIsP1
+      ? Number(data.player1_score || 0)
+      : Number(data.player2_score || 0);
 
-            <tbody>
+  const opponentScore =
+    myIsP1
+      ? Number(data.player2_score || 0)
+      : Number(data.player1_score || 0);
 
-              ${
-                data.map(row => `
+  const myScoreEl =
+    $('myDuelScore');
 
-                  <tr>
+  const opponentScoreEl =
+    $('opponentDuelScore');
 
-                    <td class="rank">
-                      ${row.posicion ?? '—'}
-                    </td>
+  if(myScoreEl)
+    myScoreEl.textContent =
+      myScore;
 
-                    <td>
-                      ${esc(
-                        row.display_name ||
-                        'Jugador'
-                      )}
-                    </td>
+  if(opponentScoreEl)
+    opponentScoreEl.textContent =
+      opponentScore;
 
-                    <td>${row.points || 0}</td>
+  const msg =
+    $('duelMsg') ||
+    $('duelLive');
 
-                    <td>${row.tokens || 0}</td>
+  const status =
+    String(
+      data.status || ''
+    ).toLowerCase();
 
-                    <td>${row.streak || 0}</td>
+  if(
+    status === 'finished' ||
+    status === 'completed'
+  ){
 
-                    <td>${row.partidas || 0}</td>
+    stopDuelPolling();
 
-                  </tr>
+    if(msg){
 
-                `).join('')
-              }
+      msg.className =
+        'notice ok';
 
-            </tbody>
+      msg.textContent =
+        data.winner_id === myId
+          ? '🏆 ¡Ganaste el duelo!'
+          : '⚔️ El duelo terminó.';
 
-          </table>
+    }
 
-        </div>
+    await refreshPlayer();
 
-      `
-      : `
-        <div class="notice">
-          Todavía no hay jugadores en el ranking.
-        </div>
-      `;
+  }
 
 }
 
+function copyText(text){
+
+  if(
+    navigator.clipboard &&
+    navigator.clipboard.writeText
+  ){
+
+    navigator.clipboard.writeText(text)
+      .then(
+        () => toast('Copiado.')
+      )
+      .catch(
+        () => toast(text)
+      );
+
+  }else{
+
+    toast(text);
+
+  }
+
+}
+
+/* =========================
+   RANKING
+========================= */
+
+async function loadRanking(){
+
+  const box =
+    $('rankingList');
+
+  if(!box)
+    return;
+
+  box.innerHTML =
+    `<div class="notice">Cargando ranking...</div>`;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await sb.rpc(
+        'get_public_ranking'
+      );
+
+    if(error)
+      throw error;
+
+    const rows =
+      data || [];
+
+    box.innerHTML =
+      rows.length
+        ? `
+
+          <div style="overflow:auto">
+
+            <table class="table">
+
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Jugador</th>
+                  <th>Puntos</th>
+                  <th>Fichas</th>
+                  <th>Racha</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                ${
+                  rows
+                    .slice(0,20)
+                    .map(
+                      (row,index) => `
+
+                        <tr>
+
+                          <td class="rank">
+                            ${index + 1}
+                          </td>
+
+                          <td>
+                            ${esc(
+                              row.display_name ||
+                              'Jugador'
+                            )}
+                          </td>
+
+                          <td>
+                            ${row.points || 0}
+                          </td>
+
+                          <td>
+                            ${row.tokens || 0}
+                          </td>
+
+                          <td>
+                            ${row.streak || 0}
+                          </td>
+
+                        </tr>
+
+                      `
+                    )
+                    .join('')
+                }
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        `
+        : `
+          <div class="notice">
+            Todavía no hay jugadores en el ranking.
+          </div>
+        `;
+
+  }catch(error){
+
+    console.error(error);
+
+    box.innerHTML =
+      `<div class="notice dangerText">
+        No se pudo cargar el ranking.
+      </div>`;
+
+  }
+
+}
+
+/* =========================
+   PREMIOS
+========================= */
+
 async function loadPrizes(){
+
+  const box =
+    $('prizeList');
+
+  if(!box)
+    return;
+
+  box.innerHTML =
+    `<div class="notice">Cargando premios...</div>`;
 
   const {
     data,
@@ -2210,14 +3053,19 @@ async function loadPrizes(){
       .select(
         'id,name,description,token_cost,stock,active'
       )
-      .eq('active',true)
-      .order('token_cost');
+      .eq(
+        'active',
+        true
+      )
+      .order(
+        'token_cost'
+      );
 
   if(error){
 
     console.error(error);
 
-    $('prizeList').innerHTML =
+    box.innerHTML =
       `<div class="notice dangerText">
         No se pudieron cargar los premios.
       </div>`;
@@ -2226,53 +3074,55 @@ async function loadPrizes(){
 
   }
 
-  $('prizeList').innerHTML =
+  box.innerHTML =
     data?.length
-      ? data.map(prize => `
+      ? data.map(
+          prize => `
 
-          <div class="card">
+            <div class="card">
 
-            <h3>
-              🎁 ${esc(prize.name)}
-            </h3>
+              <h3>
+                🎁 ${esc(prize.name)}
+              </h3>
 
-            <p class="muted">
-              ${esc(prize.description || '')}
-            </p>
+              <p class="muted">
+                ${esc(prize.description || '')}
+              </p>
 
-            <p>
-              <b>
-                ${money(prize.token_cost)} fichas
-              </b>
+              <p>
+                <b>
+                  ${money(prize.token_cost)} fichas
+                </b>
 
-              ${
-                prize.stock !== null
-                  ? ` · stock: ${prize.stock}`
-                  : ''
-              }
-            </p>
+                ${
+                  prize.stock !== null
+                    ? ` · stock: ${prize.stock}`
+                    : ''
+                }
+              </p>
 
-            <button
-              class="btn gold"
-              type="button"
-              ${
-                prize.stock === 0
-                  ? 'disabled'
-                  : ''
-              }
-              onclick="redeem('${prize.id}')">
+              <button
+                class="btn gold"
+                type="button"
+                ${
+                  prize.stock === 0
+                    ? 'disabled'
+                    : ''
+                }
+                onclick="redeem('${prize.id}',this)">
 
-              ${
-                prize.stock === 0
-                  ? 'Agotado'
-                  : 'Canjear'
-              }
+                ${
+                  prize.stock === 0
+                    ? 'Agotado'
+                    : 'Canjear'
+                }
 
-            </button>
+              </button>
 
-          </div>
+            </div>
 
-        `).join('')
+          `
+        ).join('')
       : `
         <div class="notice">
           Todavía no hay premios activos.
@@ -2281,7 +3131,7 @@ async function loadPrizes(){
 
 }
 
-async function redeem(id){
+async function redeem(id,button){
 
   if(!currentUser){
 
@@ -2298,163 +3148,223 @@ async function redeem(id){
   if(!confirm('¿Querés canjear este premio?'))
     return;
 
-  const {
-    data,
-    error
-  } =
-    await sb.rpc(
-      'canjear_premio',
-      {
-        p_prize_id:id
-      }
+  setBusy(
+    button,
+    true,
+    'Canjeando...'
+  );
+
+  try{
+
+    const result =
+      await rpc(
+        'redeem_prize',
+        {
+          p_prize_id:id
+        }
+      );
+
+    toast(
+      `Canje solicitado. Te quedan ${
+        result?.tokens_remaining ??
+        result?.remaining_tokens ??
+        '—'
+      } fichas.`
     );
 
-  if(error){
+    await refreshPlayer();
+    await loadPrizes();
+
+  }catch(error){
 
     console.error(error);
 
     toast(
-      error.message
+      error.message ||
+      'No se pudo realizar el canje.'
     );
 
-    return;
+  }finally{
+
+    setBusy(button,false);
 
   }
 
-  const result =
-    Array.isArray(data)
-      ? data[0]
-      : data;
-
-  toast(
-    `Canje solicitado. Te quedan ${
-      result?.tokens_remaining ??
-      '—'
-    } fichas.`
-  );
-
-  await refreshPlayer();
-  await loadPrizes();
-
 }
+
+/* =========================
+   TORNEOS
+========================= */
 
 async function loadTournaments(){
 
-  const {
-    data,
-    error
-  } =
-    await sb
-      .from('tournaments')
-      .select(
-        'id,name,game_type,starts_at,entry_tokens,max_players,status'
-      )
-      .eq('status','open')
-      .order(
-        'starts_at',
-        {ascending:true}
+  const box =
+    $('tourList');
+
+  if(!box)
+    return;
+
+  box.innerHTML =
+    `<div class="notice">Cargando torneos...</div>`;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await sb
+        .from('tournaments')
+        .select(
+          'id,name,game_type,starts_at,entry_tokens,max_players,status'
+        )
+        .eq(
+          'status',
+          'open'
+        )
+        .order(
+          'starts_at',
+          {ascending:true}
+        );
+
+    if(error)
+      throw error;
+
+    const tournaments =
+      data || [];
+
+    /*
+     * IMPORTANTE:
+     * no se consulta tournament_players directamente.
+     * Los conteos salen del RPC público.
+     */
+
+    const {
+      data:countRows,
+      error:countError
+    } =
+      await sb.rpc(
+        'get_tournament_counts'
       );
 
-  if(error){
+    if(countError)
+      console.warn(countError);
+
+    const counts = {};
+
+    (countRows || []).forEach(
+      row => {
+
+        counts[
+          row.tournament_id
+        ] =
+          Number(
+            row.player_count || 0
+          );
+
+      }
+    );
+
+    box.innerHTML =
+      tournaments.length
+        ? tournaments.map(
+            tournament => {
+
+              const count =
+                counts[tournament.id] || 0;
+
+              return `
+
+                <div class="card">
+
+                  <h3>
+                    🏆 ${esc(tournament.name)}
+                  </h3>
+
+                  <p>
+                    ${esc(
+                      tournament.game_type ||
+                      'Competencia Pool & Beach'
+                    )}
+                  </p>
+
+                  <p class="muted">
+
+                    ${
+                      tournament.starts_at
+                        ? new Date(
+                            tournament.starts_at
+                          ).toLocaleString('es-AR')
+                        : 'Fecha a confirmar'
+                    }
+
+                    <br>
+
+                    🎟️ ${
+                      money(
+                        tournament.entry_tokens
+                      )
+                    } fichas
+
+                    ·
+
+                    👥 ${
+                      count
+                    }/${
+                      tournament.max_players || '∞'
+                    }
+
+                  </p>
+
+                  <div class="row">
+
+                    <button
+                      class="btn"
+                      type="button"
+                      onclick="joinTournament(
+                        '${tournament.id}',
+                        this
+                      )">
+                      Inscribirme
+                    </button>
+
+                    <button
+                      class="btn secondary"
+                      type="button"
+                      onclick="showTournament(
+                        '${tournament.id}'
+                      )">
+                      Ver competencia
+                    </button>
+
+                  </div>
+
+                </div>
+
+              `;
+
+            }
+          ).join('')
+        : `
+          <div class="notice">
+            No hay torneos abiertos en este momento.
+          </div>
+        `;
+
+  }catch(error){
 
     console.error(error);
 
-    $('tourList').innerHTML =
+    box.innerHTML =
       `<div class="notice dangerText">
         No se pudieron cargar los torneos.
       </div>`;
 
-    return;
-
   }
-
-  const counts = {};
-
-  if(data?.length){
-
-    const {
-      data:players,
-      error:playersError
-    } =
-      await sb
-        .from('tournament_players')
-        .select('tournament_id');
-
-    if(!playersError){
-
-      (players || []).forEach(item => {
-
-        counts[item.tournament_id] =
-          (counts[item.tournament_id] || 0) + 1;
-
-      });
-
-    }
-
-  }
-
-  $('tourList').innerHTML =
-    data?.length
-      ? data.map(tournament => `
-
-          <div class="card">
-
-            <h3>
-              🏆 ${esc(tournament.name)}
-            </h3>
-
-            <p>
-              ${esc(
-                tournament.game_type ||
-                'Competencia Pool & Beach'
-              )}
-            </p>
-
-            <p class="muted">
-
-              ${
-                tournament.starts_at
-                  ? new Date(
-                      tournament.starts_at
-                    ).toLocaleString('es-AR')
-                  : 'Fecha a confirmar'
-              }
-
-              <br>
-
-              🎟️ ${
-                money(tournament.entry_tokens)
-              } fichas
-
-              ·
-
-              👥 ${
-                counts[tournament.id] || 0
-              }/${
-                tournament.max_players || '∞'
-              }
-
-            </p>
-
-            <button
-              class="btn"
-              type="button"
-              onclick="joinTournament('${tournament.id}')">
-              Inscribirme
-            </button>
-
-          </div>
-
-        `).join('')
-      : `
-        <div class="notice">
-          No hay torneos abiertos en este momento.
-        </div>
-      `;
 
 }
 
-async function joinTournament(id){
+async function joinTournament(id,button){
 
   if(!currentUser){
 
@@ -2468,37 +3378,290 @@ async function joinTournament(id){
 
   }
 
-  const {
-    data,
-    error
-  } =
-    await sb.rpc(
-      'inscribirme_torneo',
+  setBusy(
+    button,
+    true,
+    'Inscribiendo...'
+  );
+
+  try{
+
+    await rpc(
+      'join_tournament',
       {
         p_tournament_id:id
       }
     );
 
-  if(error){
+    toast(
+      '¡Inscripción realizada! 🏆'
+    );
+
+    await refreshPlayer();
+    await loadTournaments();
+
+    await showTournament(id);
+
+  }catch(error){
 
     console.error(error);
 
     toast(
-      error.message
+      error.message ||
+      'No se pudo realizar la inscripción.'
     );
 
-    return;
+  }finally{
+
+    setBusy(button,false);
 
   }
 
-  toast(
-    '¡Inscripción realizada! 🏆'
-  );
+}
 
-  await refreshPlayer();
-  await loadTournaments();
+async function showTournament(id){
+
+  const detail =
+    $('tournamentDetail');
+
+  if(!detail)
+    return;
+
+  detail.classList.remove('hidden');
+
+  detail.innerHTML =
+    `<div class="notice">
+      Cargando competencia...
+    </div>`;
+
+  try{
+
+    const [
+      matchesResult,
+      standingsResult
+    ] =
+      await Promise.all([
+        sb.rpc(
+          'get_tournament_matches',
+          {
+            p_tournament_id:id
+          }
+        ),
+        sb.rpc(
+          'get_tournament_standings',
+          {
+            p_tournament_id:id
+          }
+        )
+      ]);
+
+    if(matchesResult.error)
+      throw matchesResult.error;
+
+    if(standingsResult.error)
+      throw standingsResult.error;
+
+    const matches =
+      matchesResult.data || [];
+
+    const standings =
+      standingsResult.data || [];
+
+    detail.innerHTML = `
+
+      <div class="row">
+
+        <h3 style="flex:1">
+          🏆 Competencia
+        </h3>
+
+        <button
+          class="btn secondary"
+          type="button"
+          onclick="$('tournamentDetail').classList.add('hidden')">
+          Cerrar
+        </button>
+
+      </div>
+
+      <h3>📊 Tabla de posiciones</h3>
+
+      ${
+        standings.length
+          ? `
+
+            <div style="overflow:auto">
+
+              <table class="table">
+
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Jugador</th>
+                    <th>Puntos</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  ${
+                    standings.map(
+                      row => `
+
+                        <tr>
+
+                          <td class="rank">
+                            ${row.ranking_position ?? '—'}
+                          </td>
+
+                          <td>
+                            ${esc(
+                              row.display_name ||
+                              'Jugador'
+                            )}
+                          </td>
+
+                          <td>
+                            ${row.score || 0}
+                          </td>
+
+                          <td>
+                            ${esc(
+                              row.status || '—'
+                            )}
+                          </td>
+
+                        </tr>
+
+                      `
+                    ).join('')
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          `
+          : `
+            <div class="notice">
+              Todavía no hay posiciones.
+            </div>
+          `
+      }
+
+      <h3>⚔️ Partidos</h3>
+
+      ${
+        matches.length
+          ? `
+
+            <div style="overflow:auto">
+
+              <table class="table">
+
+                <thead>
+                  <tr>
+                    <th>Ronda</th>
+                    <th>Jugador 1</th>
+                    <th>Resultado</th>
+                    <th>Jugador 2</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+
+                  ${
+                    matches.map(
+                      row => `
+
+                        <tr>
+
+                          <td>
+                            ${row.round ?? '—'}
+                          </td>
+
+                          <td>
+                            ${esc(
+                              row.player1_name ||
+                              '—'
+                            )}
+                          </td>
+
+                          <td>
+                            ${
+                              row.player1_score ??
+                              0
+                            }
+                            -
+                            ${
+                              row.player2_score ??
+                              0
+                            }
+                          </td>
+
+                          <td>
+                            ${esc(
+                              row.player2_name ||
+                              '—'
+                            )}
+                          </td>
+
+                          <td>
+                            <span class="badge">
+                              ${esc(
+                                row.status ||
+                                '—'
+                              )}
+                            </span>
+                          </td>
+
+                        </tr>
+
+                      `
+                    ).join('')
+                  }
+
+                </tbody>
+
+              </table>
+
+            </div>
+
+          `
+          : `
+            <div class="notice">
+              Todavía no hay partidos generados.
+            </div>
+          `
+      }
+
+    `;
+
+    detail.scrollIntoView({
+      behavior:'smooth',
+      block:'nearest'
+    });
+
+  }catch(error){
+
+    console.error(error);
+
+    detail.innerHTML =
+      `<div class="notice dangerText">
+        No se pudo cargar la competencia.
+      </div>`;
+
+  }
 
 }
+
+/* =========================
+   RESERVAS
+========================= */
 
 async function submitReservation(event){
 
@@ -2507,10 +3670,15 @@ async function submitReservation(event){
   const msg =
     $('reservationMsg');
 
+  const button =
+    $('reservationBtn');
+
   msg.className =
     'notice';
 
-  msg.classList.remove('hidden');
+  msg.classList.remove(
+    'hidden'
+  );
 
   const payload = {
 
@@ -2542,35 +3710,60 @@ async function submitReservation(event){
 
   };
 
-  const {
-    error
-  } =
-    await sb
-      .from('reservas')
-      .insert(payload);
+  setBusy(
+    button,
+    true,
+    'Enviando...'
+  );
 
-  if(error){
+  try{
+
+    const {
+      error
+    } =
+      await sb
+        .from('reservas')
+        .insert(payload);
+
+    if(error)
+      throw error;
+
+    msg.classList.add('ok');
+
+    msg.textContent =
+      '¡Reserva enviada! El local recibió la solicitud.';
+
+    $('reservationForm').reset();
+
+  }catch(error){
 
     console.error(error);
 
-    msg.classList.add('dangerText');
+    msg.classList.add(
+      'dangerText'
+    );
 
     msg.textContent =
       'No se pudo enviar la reserva: ' +
-      error.message;
+      (
+        error.message ||
+        'Error desconocido.'
+      );
 
-    return;
+  }finally{
+
+    setBusy(
+      button,
+      false
+    );
 
   }
 
-  msg.classList.add('ok');
-
-  msg.textContent =
-    '¡Reserva enviada! El local recibió la solicitud.';
-
-  $('reservationForm').reset();
-
 }
+
+/* =========================
+   QR
+========================= */
 
 async function getPublicMesas(){
 
@@ -2583,8 +3776,13 @@ async function getPublicMesas(){
       .select(
         'id,numero,nombre,servicio,activa,qr_token'
       )
-      .eq('activa',true)
-      .order('numero');
+      .eq(
+        'activa',
+        true
+      )
+      .order(
+        'numero'
+      );
 
   if(error){
 
@@ -2606,7 +3804,8 @@ function qrUrl(token){
 
 async function renderQrs(target='qrs'){
 
-  const box = $(target);
+  const box =
+    $(target);
 
   if(!box)
     return;
@@ -2626,54 +3825,65 @@ async function renderQrs(target='qrs'){
   }
 
   box.innerHTML =
-    list.map(mesa => {
+    list.map(
+      mesa => {
 
-      const url =
-        qrUrl(mesa.qr_token);
+        const url =
+          qrUrl(
+            mesa.qr_token
+          );
 
-      const qr =
-        `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
+        const qr =
+          `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(url)}`;
 
-      return `
+        return `
 
-        <div class="card center">
+          <div class="card center">
 
-          <h3>
-            🎱 ${
-              esc(
-                mesa.nombre ||
-                'Mesa ' + mesa.numero
-              )
-            }
-          </h3>
+            <h3>
+              🎱 ${
+                esc(
+                  mesa.nombre ||
+                  'Mesa ' + mesa.numero
+                )
+              }
+            </h3>
 
-          <div class="small muted">
-            ${esc(mesa.servicio || '')}
+            <div class="small muted">
+              ${esc(
+                mesa.servicio || ''
+              )}
+            </div>
+
+            <img
+              class="qr"
+              src="${esc(qr)}"
+              alt="QR Mesa ${esc(mesa.numero)}"
+              loading="lazy">
+
+            <button
+              class="btn secondary"
+              type="button"
+              onclick="window.open(
+                ${JSON.stringify(url)},
+                '_blank',
+                'noopener,noreferrer'
+              )">
+              Abrir mesa
+            </button>
+
           </div>
 
-          <img
-            class="qr"
-            src="${esc(qr)}"
-            alt="QR Mesa ${esc(mesa.numero)}">
+        `;
 
-          <button
-            class="btn secondary"
-            type="button"
-            onclick="window.open(
-              ${JSON.stringify(url)},
-              '_blank',
-              'noopener,noreferrer'
-            )">
-            Abrir mesa
-          </button>
-
-        </div>
-
-      `;
-
-    }).join('');
+      }
+    ).join('');
 
 }
+
+/* =========================
+   ADMIN
+========================= */
 
 async function adminLogin(){
 
@@ -2683,37 +3893,46 @@ async function adminLogin(){
   const password =
     $('adminPassword').value;
 
+  const msg =
+    $('adminMsg');
+
   if(!email || !password){
 
-    $('adminMsg').textContent =
+    msg.textContent =
       'Completá email y contraseña.';
 
     return;
 
   }
 
-  const {
-    data,
-    error
-  } =
-    await sb.auth.signInWithPassword({
-      email,
-      password
-    });
+  try{
 
-  if(error){
+    const {
+      data,
+      error
+    } =
+      await sb.auth.signInWithPassword({
+        email,
+        password
+      });
 
-    $('adminMsg').textContent =
-      error.message;
+    if(error)
+      throw error;
 
-    return;
+    currentUser =
+      data.user;
+
+    await checkAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    msg.textContent =
+      error.message ||
+      'No se pudo iniciar sesión.';
 
   }
-
-  currentUser =
-    data.user;
-
-  await checkAdmin();
 
 }
 
@@ -2743,7 +3962,10 @@ async function checkAdmin(){
       .select(
         'display_name,role'
       )
-      .eq('id',currentUser.id)
+      .eq(
+        'id',
+        currentUser.id
+      )
       .maybeSingle();
 
   if(error || !data){
@@ -2755,7 +3977,12 @@ async function checkAdmin(){
 
   }
 
-  if(!['admin','staff'].includes(data.role)){
+  if(
+    !['admin','staff']
+      .includes(
+        data.role
+      )
+  ){
 
     $('adminMsg').textContent =
       'Este usuario no tiene permisos de admin/staff.';
@@ -2794,12 +4021,20 @@ async function loadAdmin(){
   $('adminReservations').innerHTML =
     reservations.error
       ? `<div class="notice dangerText">
-          ${esc(reservations.error.message)}
+          ${esc(
+            reservations.error.message
+          )}
         </div>`
       : renderAdminRows(
           reservations.data,
           'reserva'
         );
+
+  /*
+   * Pedidos puede no existir en todas las instalaciones.
+   * Si no existe, se muestra vacío en lugar de romper
+   * todo el panel.
+   */
 
   const orders =
     await sb
@@ -2813,8 +4048,8 @@ async function loadAdmin(){
 
   $('adminOrders').innerHTML =
     orders.error
-      ? `<div class="notice dangerText">
-          ${esc(orders.error.message)}
+      ? `<div class="notice">
+          Sin pedidos disponibles.
         </div>`
       : renderAdminRows(
           orders.data,
@@ -2836,14 +4071,18 @@ async function loadAdmin(){
   $('adminRedemptions').innerHTML =
     redemptions.error
       ? `<div class="notice dangerText">
-          ${esc(redemptions.error.message)}
+          ${esc(
+            redemptions.error.message
+          )}
         </div>`
       : renderAdminRows(
           redemptions.data,
           'canje'
         );
 
-  await renderQrs('adminQrs');
+  await renderQrs(
+    'adminQrs'
+  );
 
 }
 
@@ -2876,82 +4115,91 @@ function renderAdminRows(rows,type){
         <tbody>
 
           ${
-            rows.map(row => {
+            rows.map(
+              row => {
 
-              let detail = '';
+                let detail = '';
 
-              if(type === 'reserva'){
+                if(type === 'reserva'){
 
-                detail =
-                  `${esc(row.nombre)}
-                   · ${esc(row.servicio || '')}
-                   · ${esc(row.fecha || '')}
-                   ${esc(row.hora || '')}`;
+                  detail =
+                    `${esc(row.nombre)}
+                     · ${esc(row.servicio || '')}
+                     · ${esc(row.fecha || '')}
+                     ${esc(row.hora || '')}`;
+
+                }
+
+                if(type === 'pedido'){
+
+                  detail =
+                    `${esc(
+                      row.nombre_cliente ||
+                      'Cliente'
+                    )}
+                    · $${money(row.total)}
+                    · ${esc(
+                      row.tipo_entrega ||
+                      row.tipo ||
+                      ''
+                    )}`;
+
+                }
+
+                if(type === 'canje'){
+
+                  detail =
+                    `${esc(
+                      row.profiles?.display_name ||
+                      'Jugador'
+                    )}
+                    · ${esc(
+                      row.prizes?.name ||
+                      'Premio'
+                    )}
+                    · ${
+                      row.token_cost ||
+                      0
+                    } fichas`;
+
+                }
+
+                const status =
+                  row.estado ||
+                  row.status ||
+                  '—';
+
+                const date =
+                  row.created_at
+                    ? new Date(
+                        row.created_at
+                      ).toLocaleString('es-AR')
+                    : '—';
+
+                return `
+
+                  <tr>
+
+                    <td>
+                      ${date}
+                    </td>
+
+                    <td>
+                      ${detail}
+                    </td>
+
+                    <td>
+                      <span class="badge">
+                        ${esc(status)}
+                      </span>
+                    </td>
+
+                  </tr>
+
+                `;
 
               }
-
-              if(type === 'pedido'){
-
-                detail =
-                  `${esc(
-                    row.nombre_cliente ||
-                    'Cliente'
-                  )}
-                  · $${money(row.total)}
-                  · ${esc(
-                    row.tipo_entrega ||
-                    row.tipo ||
-                    ''
-                  )}`;
-
-              }
-
-              if(type === 'canje'){
-
-                detail =
-                  `${esc(
-                    row.profiles?.display_name ||
-                    'Jugador'
-                  )}
-                  · ${esc(
-                    row.prizes?.name ||
-                    'Premio'
-                  )}
-                  · ${row.token_cost || 0} fichas`;
-
-              }
-
-              const status =
-                row.estado ||
-                row.status ||
-                '—';
-
-              const date =
-                row.created_at
-                  ? new Date(
-                      row.created_at
-                    ).toLocaleString('es-AR')
-                  : '—';
-
-              return `
-
-                <tr>
-
-                  <td>${date}</td>
-
-                  <td>${detail}</td>
-
-                  <td>
-                    <span class="badge">
-                      ${esc(status)}
-                    </span>
-                  </td>
-
-                </tr>
-
-              `;
-
-            }).join('')
+            ).join('')
           }
 
         </tbody>
@@ -2968,12 +4216,19 @@ async function adminLogout(){
 
   await sb.auth.signOut();
 
-  currentUser = null;
-  currentProfile = null;
+  currentUser =
+    null;
+
+  currentProfile =
+    null;
 
   location.reload();
 
 }
+
+/* =========================
+   AUTH
+========================= */
 
 sb.auth.onAuthStateChange(
   (event,session) => {
@@ -2985,18 +4240,94 @@ sb.auth.onAuthStateChange(
 
       setTimeout(
         () => {
+
           refreshPlayer();
           checkAdmin();
+
         },
         0
       );
+
+    }else{
+
+      currentUser =
+        null;
+
+      currentProfile =
+        null;
 
     }
 
   }
 );
 
-init();
+/* =========================
+   AUTO DUEL DESDE QR/ENLACE
+========================= */
+
+async function loadDuelFromUrl(){
+
+  const params =
+    new URLSearchParams(
+      location.search
+    );
+
+  const duelId =
+    params.get('duelo') ||
+    params.get('duel');
+
+  if(!duelId)
+    return;
+
+  showView('games');
+
+  const box =
+    $('gamebox');
+
+  if(!box)
+    return;
+
+  box.classList.remove(
+    'hidden'
+  );
+
+  box.innerHTML = `
+
+    <div class="card">
+
+      <h2>
+        👥 Duelo recibido
+      </h2>
+
+      <p class="muted">
+        Este enlace pertenece a un duelo.
+        Iniciá tu jugador para poder unirte.
+      </p>
+
+      <button
+        class="btn gold"
+        type="button"
+        onclick="openGame('Duelo 1 vs 1');setTimeout(()=>{ $('duelCode').value=${JSON.stringify(duelId)} },100)">
+        🔗 Unirme al duelo
+      </button>
+
+    </div>
+
+  `;
+
+}
+
+/* =========================
+   INICIO
+========================= */
+
+(async function(){
+
+  await init();
+
+  await loadDuelFromUrl();
+
+})();
 
 </script>
 
