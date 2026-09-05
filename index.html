@@ -2,411 +2,281 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 
-<title>Pool & Beach | Puerto Pirámides</title>
+<title>Pool & Beach | Fase Final de Integración</title>
 
-<meta
-  name="description"
-  content="Pool & Beach Puerto Pirámides. Pool, PlayStation, truco, dados, simuladores, torneos, fútbol, comidas, bebidas y reservas."
->
+<meta name="description" content="Pool & Beach Puerto Pirámides - juegos, puntos, tokens, premios, torneos y reservas.">
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
+:root{
+  --bg:#07151b;
+  --card:#0d242d;
+  --card2:#12323d;
+  --text:#f4fbfd;
+  --muted:#9eb5bd;
+  --accent:#70d6ff;
+  --accent2:#8ff0d0;
+  --danger:#ff7676;
+  --ok:#75e6a5;
+  --line:#21424d;
 }
 
-html{
-  scroll-behavior:smooth;
+*{
+  box-sizing:border-box;
 }
 
 body{
+  margin:0;
+  background:linear-gradient(180deg,#061218,#0a1d25 50%,#061218);
+  color:var(--text);
   font-family:Arial,Helvetica,sans-serif;
-  background:#07151c;
-  color:#fff;
-  line-height:1.5;
 }
 
 a{
-  color:inherit;
-  text-decoration:none;
+  color:var(--accent);
 }
 
-img{
-  max-width:100%;
-  display:block;
+button,
+input,
+select{
+  font:inherit;
 }
 
-.container{
-  width:min(1150px,92%);
-  margin:auto;
+button{
+  cursor:pointer;
+  border:0;
+  border-radius:12px;
+  padding:12px 16px;
+  font-weight:700;
+  background:var(--accent);
+  color:#06202a;
 }
 
-/* HEADER */
-
-header{
-  position:sticky;
-  top:0;
-  z-index:1000;
-  background:rgba(3,15,21,.95);
-  border-bottom:1px solid rgba(255,255,255,.1);
-  backdrop-filter:blur(10px);
+button.secondary{
+  background:#1b3944;
+  color:var(--text);
 }
 
-.nav{
-  min-height:70px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-}
-
-.logo{
-  font-size:25px;
-  font-weight:900;
-  color:#7de7ff;
-}
-
-.logo span{
+button.danger{
+  background:#6d252d;
   color:#fff;
 }
 
-nav{
-  display:flex;
-  gap:18px;
-  flex-wrap:wrap;
-  justify-content:flex-end;
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:18px;
 }
-
-nav a{
-  font-weight:bold;
-  font-size:14px;
-  color:#ddd;
-}
-
-nav a:hover{
-  color:#7de7ff;
-}
-
-/* HERO */
 
 .hero{
-  min-height:620px;
-  display:flex;
-  align-items:center;
-  background:
-    linear-gradient(rgba(0,0,0,.58),rgba(0,0,0,.72)),
-    radial-gradient(circle at 50% 20%,#175d73,#061117 65%);
+  padding:28px 0 10px;
   text-align:center;
-}
-
-.hero-content{
-  width:min(850px,92%);
-  margin:auto;
-}
-
-.badge{
-  display:inline-block;
-  padding:8px 16px;
-  border:1px solid #72ddf5;
-  border-radius:30px;
-  color:#72ddf5;
-  margin-bottom:20px;
-  font-weight:bold;
 }
 
 .hero h1{
-  font-size:clamp(45px,9vw,90px);
-  line-height:.95;
-  margin-bottom:22px;
-}
-
-.hero h1 span{
-  color:#72ddf5;
+  font-size:clamp(30px,7vw,54px);
+  margin:0 0 8px;
 }
 
 .hero p{
-  font-size:clamp(18px,3vw,25px);
-  color:#ddd;
-  margin-bottom:30px;
+  color:var(--muted);
+  margin:0;
 }
 
-.buttons{
-  display:flex;
-  justify-content:center;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.btn{
+.pill{
   display:inline-block;
-  padding:14px 22px;
-  border-radius:12px;
-  font-weight:900;
-  border:1px solid #72ddf5;
-  cursor:pointer;
-  background:#72ddf5;
-  color:#061117;
+  background:#123640;
+  border:1px solid var(--line);
+  padding:7px 11px;
+  border-radius:999px;
+  color:var(--accent2);
+  font-size:13px;
+  margin:5px;
 }
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-
-.btn.secondary{
-  background:transparent;
-  color:#fff;
-}
-
-/* SECCIONES */
-
-section{
-  padding:75px 0;
-}
-
-.section-title{
-  text-align:center;
-  margin-bottom:40px;
-}
-
-.section-title h2{
-  font-size:clamp(30px,6vw,48px);
-  margin-bottom:8px;
-}
-
-.section-title p{
-  color:#aab8bd;
-}
-
-/* TARJETAS */
 
 .grid{
   display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:20px;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:14px;
 }
 
 .card{
-  background:#0c2029;
-  border:1px solid rgba(255,255,255,.09);
+  background:rgba(13,36,45,.94);
+  border:1px solid var(--line);
   border-radius:18px;
-  padding:25px;
-  box-shadow:0 12px 30px rgba(0,0,0,.2);
+  padding:18px;
+  box-shadow:0 12px 30px #0004;
 }
 
-.card .icon{
-  font-size:40px;
-  margin-bottom:15px;
-}
-
+.card h2,
 .card h3{
-  margin-bottom:8px;
-  font-size:23px;
+  margin-top:0;
 }
 
-.card p{
-  color:#b7c4c8;
+.stat{
+  font-size:34px;
+  font-weight:800;
 }
 
-.dark{
-  background:#061117;
+.muted{
+  color:var(--muted);
 }
 
-.highlight{
-  background:
-    linear-gradient(
-      135deg,
-      rgba(15,78,95,.7),
-      rgba(5,20,26,.95)
-    );
+.section{
+  margin:26px 0;
 }
 
-/* INFORMACION */
-
-.info-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:25px;
+.hidden{
+  display:none!important;
 }
 
-.info{
-  padding:30px;
-  border-radius:18px;
-  background:#0c2029;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.info h3{
-  color:#72ddf5;
-  margin-bottom:10px;
-}
-
-.info p{
-  color:#c2cdd0;
-}
-
-/* MAPA / FOTO */
-
-.gallery{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-}
-
-.gallery-item{
-  background:#0c2029;
-  border-radius:16px;
-  overflow:hidden;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.gallery-item img{
-  width:100%;
-  height:300px;
-  object-fit:contain;
-  background:#061117;
-}
-
-.gallery-caption{
-  padding:15px;
-  text-align:center;
-}
-
-.gallery-caption strong{
-  display:block;
-  font-size:18px;
-}
-
-.gallery-caption small{
-  color:#8fa3a9;
-  display:block;
-  margin-top:3px;
-}
-
-/* FORMULARIO */
-
-form{
-  max-width:800px;
-  margin:auto;
-  background:#0c2029;
-  padding:28px;
-  border-radius:20px;
-  border:1px solid rgba(255,255,255,.08);
-}
-
-.form-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:15px;
+.row{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
 }
 
 .field{
   display:flex;
   flex-direction:column;
-  gap:7px;
+  gap:6px;
+  margin:8px 0;
 }
 
-.field.full{
-  grid-column:1/-1;
-}
-
-label{
-  font-weight:bold;
-  color:#d9e4e7;
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  border:1px solid #29444e;
-  background:#061117;
-  color:#fff;
-  padding:13px;
+.field input,
+.field select{
+  background:#081a21;
+  color:var(--text);
+  border:1px solid var(--line);
   border-radius:10px;
-  font-size:16px;
+  padding:11px;
+  width:100%;
 }
 
-textarea{
-  min-height:110px;
-  resize:vertical;
+.table{
+  width:100%;
+  border-collapse:collapse;
 }
 
-.form-actions{
-  margin-top:20px;
+.table th,
+.table td{
+  padding:10px;
+  border-bottom:1px solid var(--line);
+  text-align:left;
+  font-size:14px;
 }
 
-#mensajeReserva{
-  margin-top:15px;
+.qr{
+  background:#fff;
+  padding:12px;
+  border-radius:12px;
+  display:inline-block;
+}
+
+.mesa-card{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.toast{
+  position:fixed;
+  right:14px;
+  bottom:14px;
+  background:#102f39;
+  border:1px solid var(--line);
+  padding:14px 16px;
+  border-radius:12px;
+  max-width:360px;
+  z-index:50;
+}
+
+.notice{
+  padding:12px;
+  border-radius:12px;
+  background:#102f39;
+  border:1px solid var(--line);
+  margin:10px 0;
+}
+
+.ok{
+  color:var(--ok);
+}
+
+.dangerText{
+  color:var(--danger);
+}
+
+.map{
+  width:100%;
+  border-radius:16px;
+  border:1px solid var(--line);
+  display:block;
+  background:#fff;
+  min-height:220px;
+  object-fit:contain;
+}
+
+.small{
+  font-size:12px;
+}
+
+.footer{
   text-align:center;
-  font-weight:bold;
+  color:var(--muted);
+  padding:30px 0;
 }
 
-.success{
-  color:#69f0ae;
+.nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  background:#061218ee;
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);
 }
 
-.error{
-  color:#ff7777;
+.nav .wrap{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding-top:10px;
+  padding-bottom:10px;
 }
 
-/* FOOTER */
-
-footer{
-  background:#030b0f;
-  border-top:1px solid rgba(255,255,255,.08);
-  padding:40px 0;
-  text-align:center;
+.brand{
+  font-weight:900;
 }
 
-footer .logo{
-  margin-bottom:10px;
+.anchor{
+  scroll-margin-top:70px;
 }
 
-.footer-text{
-  color:#8fa0a5;
+.badge{
+  background:#193e4b;
+  border:1px solid var(--line);
+  padding:5px 8px;
+  border-radius:8px;
+  font-size:12px;
 }
 
-/* MOVIL */
-
-@media(max-width:800px){
-
-  .nav{
+@media(max-width:700px){
+  .nav .wrap{
     flex-direction:column;
-    padding:14px 0;
+    gap:8px;
   }
 
-  nav{
+  .nav .row{
     justify-content:center;
   }
 
-  .hero{
-    min-height:560px;
-  }
-
-  .grid,
-  .gallery,
-  .info-grid{
-    grid-template-columns:1fr;
-  }
-
-  .form-grid{
-    grid-template-columns:1fr;
-  }
-
-  .field.full{
-    grid-column:auto;
-  }
-
-  .gallery-item img{
-    height:auto;
-    max-height:500px;
-    object-fit:contain;
+  .nav a{
+    font-size:12px;
   }
 }
 </style>
@@ -414,526 +284,538 @@ footer .logo{
 
 <body>
 
-<header>
+<div class="nav">
+  <div class="wrap">
 
-  <div class="container nav">
+    <div class="brand">
+      🎱 Pool & Beach
+    </div>
 
-    <a href="#" class="logo">
-      POOL <span>&</span> BEACH
-    </a>
-
-    <nav>
-      <a href="#juegos">Juegos</a>
-      <a href="#galeria">Mapa</a>
+    <div class="row">
+      <a href="#jugador">Jugador</a>
+      <a href="#premios">Premios</a>
       <a href="#torneos">Torneos</a>
-      <a href="#futbol">Fútbol</a>
-      <a href="#reservas">Reservas</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
+      <a href="#estadisticas">Estadísticas</a>
+      <a href="#mapa">Mapa</a>
+      <a href="#admin">Panel</a>
+    </div>
 
   </div>
+</div>
 
-</header>
-
-<main>
-
-<!-- HERO -->
+<main class="wrap">
 
 <section class="hero">
 
-  <div class="hero-content">
+  <span class="pill">
+    PUERTO PIRÁMIDES
+  </span>
 
-    <div class="badge">
-      PUERTO PIRÁMIDES
-    </div>
+  <span class="pill" id="mesaBadge">
+    Mesa no seleccionada
+  </span>
 
-    <h1>
-      POOL <span>&</span> BEACH
-    </h1>
+  <h1>
+    Pool & Beach Games
+  </h1>
 
-    <p>
-      Juegos, amigos, fútbol, torneos, comida y diversión
-      en un solo lugar.
-    </p>
-
-    <div class="buttons">
-
-      <a class="btn" href="#reservas">
-        RESERVAR
-      </a>
-
-      <a class="btn secondary" href="#juegos">
-        VER EXPERIENCIAS
-      </a>
-
-    </div>
-
-  </div>
+  <p>
+    Escaneá el QR de tu mesa, identificáte y empezá a sumar puntos y tokens.
+  </p>
 
 </section>
 
-<!-- JUEGOS -->
 
-<section id="juegos">
+<!-- ========================================= -->
+<!-- JUGADOR -->
+<!-- ========================================= -->
 
-  <div class="container">
+<section id="jugador" class="section anchor">
 
-    <div class="section-title">
+  <div class="card">
 
-      <h2>Experiencias</h2>
+    <h2>
+      🎮 Tu jugador
+    </h2>
 
-      <p>
-        Elegí cómo querés disfrutar Pool & Beach.
-      </p>
+    <div id="authBox">
 
-    </div>
+      <div class="field">
 
-    <div class="grid">
+        <label>
+          ¿Cómo querés aparecer?
+        </label>
 
-      <div class="card">
-
-        <div class="icon">🎱</div>
-
-        <h3>Pool</h3>
-
-        <p>
-          Mesas de pool para jugar con amigos y competir.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🎮</div>
-
-        <h3>PlayStation</h3>
-
-        <p>
-          Partidas, desafíos y torneos de videojuegos.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🃏</div>
-
-        <h3>Truco</h3>
-
-        <p>
-          Juntadas y torneos de truco.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🎲</div>
-
-        <h3>Dados</h3>
-
-        <p>
-          Juegos de dados y desafíos entre amigos.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🏎️</div>
-
-        <h3>Simuladores</h3>
-
-        <p>
-          Viví la experiencia de competir como si estuvieras en pista.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🏆</div>
-
-        <h3>Torneos</h3>
-
-        <p>
-          Competí, sumá puntos y buscá tu lugar en el ranking.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- MAPA -->
-
-<section id="galeria" class="dark">
-
-  <div class="container">
-
-    <div class="section-title">
-
-      <h2>Mapa de guía</h2>
-
-      <p>
-        Encontrá Pool & Beach en Puerto Pirámides.
-      </p>
-
-    </div>
-
-    <div class="gallery">
-
-      <div class="gallery-item">
-
-        <img
-          src="https://nmpakeovqkdajtswjpgm.supabase.co/storage/v1/object/public/Galeria/mapa/1788504177994-mrcgp3.jpeg"
-          alt="Mapa de guía Pool & Beach"
+        <input
+          id="playerName"
+          maxlength="40"
+          placeholder="Tu nombre o apodo"
         >
 
-        <div class="gallery-caption">
-
-          <strong>
-            Mapa de guía Pool & Beach
-          </strong>
-
-          <small>
-            Puerto Pirámides
-          </small>
-
-        </div>
-
       </div>
 
-    </div>
-
-  </div>
-
-</section>
-
-<!-- TORNEOS -->
-
-<section id="torneos" class="highlight">
-
-  <div class="container">
-
-    <div class="section-title">
-
-      <h2>Torneos & Ranking</h2>
-
-      <p>
-        Competí y convertite en el mejor jugador de Pool & Beach.
-      </p>
-
-    </div>
-
-    <div class="grid">
-
-      <div class="card">
-
-        <div class="icon">🏆</div>
-
-        <h3>Torneos</h3>
-
-        <p>
-          Próximamente vas a poder consultar los torneos,
-          fechas, inscripciones y premios.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🥇</div>
-
-        <h3>Ranking</h3>
-
-        <p>
-          Sumá puntos en tus partidas y escalá posiciones.
-        </p>
-
-      </div>
-
-      <div class="card">
-
-        <div class="icon">🎁</div>
-
-        <h3>Premios</h3>
-
-        <p>
-          Los mejores jugadores podrán competir por premios.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- FUTBOL -->
-
-<section id="futbol">
-
-  <div class="container">
-
-    <div class="section-title">
-
-      <h2>⚽ Fútbol</h2>
-
-      <p>
-        Vení a disfrutar los partidos con nosotros.
-      </p>
-
-    </div>
-
-    <div class="info-grid">
-
-      <div class="info">
-
-        <h3>
-          Partidos en pantalla
-        </h3>
-
-        <p>
-          Disfrutá los grandes partidos junto a amigos,
-          comida y bebidas.
-        </p>
-
-      </div>
-
-      <div class="info">
-
-        <h3>
-          Eventos especiales
-        </h3>
-
-        <p>
-          Cuando haya partidos importantes,
-          vas a poder consultar horarios y promociones.
-        </p>
-
-      </div>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- RESERVAS -->
-
-<section id="reservas" class="dark">
-
-  <div class="container">
-
-    <div class="section-title">
-
-      <h2>Reservá tu lugar</h2>
-
-      <p>
-        Completá el formulario y enviá tu solicitud.
-      </p>
-
-    </div>
-
-    <form id="formReserva">
-
-      <div class="form-grid">
-
-        <div class="field">
-
-          <label for="nombre">
-            Nombre
-          </label>
-
-          <input
-            id="nombre"
-            type="text"
-            required
-            placeholder="Tu nombre"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label for="telefono">
-            Teléfono
-          </label>
-
-          <input
-            id="telefono"
-            type="tel"
-            required
-            placeholder="Tu teléfono"
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label for="fecha">
-            Fecha
-          </label>
-
-          <input
-            id="fecha"
-            type="date"
-            required
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label for="hora">
-            Hora
-          </label>
-
-          <input
-            id="hora"
-            type="time"
-            required
-          >
-
-        </div>
-
-        <div class="field">
-
-          <label for="servicio">
-            Servicio
-          </label>
-
-          <select id="servicio" required>
-
-            <option value="">
-              Seleccionar
-            </option>
-
-            <option value="Pool">
-              Pool
-            </option>
-
-            <option value="PlayStation">
-              PlayStation
-            </option>
-
-            <option value="Truco">
-              Truco
-            </option>
-
-            <option value="Dados">
-              Dados
-            </option>
-
-            <option value="Simulador">
-              Simulador
-            </option>
-
-            <option value="Evento">
-              Evento
-            </option>
-
-          </select>
-
-        </div>
-
-        <div class="field">
-
-          <label for="personas">
-            Cantidad de personas
-          </label>
-
-          <input
-            id="personas"
-            type="number"
-            min="1"
-            value="2"
-            required
-          >
-
-        </div>
-
-        <div class="field full">
-
-          <label for="notas">
-            Notas
-          </label>
-
-          <textarea
-            id="notas"
-            placeholder="¿Querés agregar algo?"
-          ></textarea>
-
-        </div>
-
-      </div>
-
-      <div class="form-actions">
+      <div class="row">
+
+        <button onclick="startPlayer()">
+          Entrar como jugador
+        </button>
 
         <button
-          class="btn"
-          type="submit"
-          style="width:100%;"
+          class="secondary"
+          onclick="refreshPlayer()"
         >
-          ENVIAR RESERVA
+          Actualizar
         </button>
 
       </div>
 
-      <div id="mensajeReserva"></div>
+      <div
+        id="authMsg"
+        class="notice small"
+      >
+        El sistema utiliza una sesión anónima de Supabase.
+        No necesitás crear una cuenta para jugar.
+      </div>
 
-    </form>
+    </div>
+
+
+    <div
+      id="playerStats"
+      class="hidden"
+    >
+
+      <div class="grid">
+
+        <div class="card">
+          <div class="muted">
+            Jugador
+          </div>
+
+          <div
+            id="sName"
+            class="stat"
+            style="font-size:25px"
+          >
+            —
+          </div>
+        </div>
+
+
+        <div class="card">
+
+          <div class="muted">
+            Puntos
+          </div>
+
+          <div
+            id="sPoints"
+            class="stat"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="muted">
+            Tokens
+          </div>
+
+          <div
+            id="sTokens"
+            class="stat"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="muted">
+            Posición
+          </div>
+
+          <div
+            id="sRank"
+            class="stat"
+          >
+            —
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="muted">
+            Racha
+          </div>
+
+          <div
+            id="sStreak"
+            class="stat"
+          >
+            0
+          </div>
+
+        </div>
+
+
+        <div class="card">
+
+          <div class="muted">
+            Partidas
+          </div>
+
+          <div
+            id="sGames"
+            class="stat"
+          >
+            0
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
 </section>
 
-<!-- CONTACTO -->
 
-<section id="contacto">
+<!-- ========================================= -->
+<!-- PARTIDAS -->
+<!-- ========================================= -->
 
-  <div class="container">
+<section class="section">
 
-    <div class="section-title">
+  <div class="card">
 
-      <h2>Pool & Beach</h2>
+    <h2>
+      🏁 Registrar una partida
+    </h2>
 
-      <p>
-        Puerto Pirámides
+    <div class="field">
+
+      <label>
+        Juego
+      </label>
+
+      <select id="gameSelect">
+        <option>
+          Cargando juegos...
+        </option>
+      </select>
+
+    </div>
+
+    <div class="row">
+
+      <button onclick="registerGame()">
+        Registrar partida y cobrar recompensa
+      </button>
+
+    </div>
+
+    <div
+      id="gameMsg"
+      class="notice"
+    >
+      Seleccioná un juego.
+      Los puntos y tokens salen de la recompensa configurada en Supabase.
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- PREMIOS -->
+<!-- ========================================= -->
+
+<section
+  id="premios"
+  class="section anchor"
+>
+
+  <div class="card">
+
+    <h2>
+      🎁 Premios
+    </h2>
+
+    <div
+      id="prizes"
+      class="grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- TORNEOS -->
+<!-- ========================================= -->
+
+<section
+  id="torneos"
+  class="section anchor"
+>
+
+  <div class="card">
+
+    <h2>
+      🏆 Torneos interactivos
+    </h2>
+
+    <div
+      id="tournaments"
+      class="grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- ESTADISTICAS -->
+<!-- ========================================= -->
+
+<section
+  id="estadisticas"
+  class="section anchor"
+>
+
+  <div class="card">
+
+    <h2>
+      📊 Ranking y estadísticas
+    </h2>
+
+    <div
+      id="ranking"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- MAPA -->
+<!-- ========================================= -->
+
+<section
+  id="mapa"
+  class="section anchor"
+>
+
+  <div class="card">
+
+    <h2>
+      🗺️ Mapa / guía
+    </h2>
+
+    <p class="muted">
+      Encontrá fácilmente Pool & Beach en Puerto Pirámides.
+    </p>
+
+    <img
+      class="map"
+      src="Mapa-guia.png"
+      alt="Mapa guía de Pool & Beach"
+      onerror="
+        this.insertAdjacentHTML(
+          'afterend',
+          '<div class=&quot;notice dangerText&quot;>No se encontró Mapa-guia.png. Verificá que el nombre sea exactamente ese y que esté en la misma carpeta que index.html.</div>'
+        )
+      "
+    >
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- QR -->
+<!-- ========================================= -->
+
+<section class="section">
+
+  <div class="card">
+
+    <h2>
+      📱 QR individuales por mesa
+    </h2>
+
+    <p class="muted">
+      Cada QR abre esta misma página con la mesa seleccionada automáticamente.
+    </p>
+
+    <div
+      id="qrs"
+      class="grid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ========================================= -->
+<!-- ADMIN -->
+<!-- ========================================= -->
+
+<section
+  id="admin"
+  class="section anchor"
+>
+
+  <div class="card">
+
+    <h2>
+      🔐 Panel de control
+    </h2>
+
+    <div id="adminLogin">
+
+      <p class="muted">
+        Acceso exclusivo para usuarios con rol admin o staff.
       </p>
 
-    </div>
+      <div class="grid">
 
-    <div class="info-grid">
+        <div class="field">
 
-      <div class="info">
+          <label>
+            Email
+          </label>
 
-        <h3>
-          📍 Ubicación
-        </h3>
+          <input
+            id="adminEmail"
+            type="email"
+            autocomplete="username"
+          >
 
-        <p>
-          Puerto Pirámides, Chubut, Argentina.
-        </p>
+        </div>
+
+        <div class="field">
+
+          <label>
+            Contraseña
+          </label>
+
+          <input
+            id="adminPassword"
+            type="password"
+            autocomplete="current-password"
+          >
+
+        </div>
 
       </div>
 
-      <div class="info">
+      <button onclick="adminLogin()">
+        Iniciar sesión
+      </button>
+
+      <div
+        id="adminMsg"
+        class="notice small"
+      ></div>
+
+    </div>
+
+
+    <div
+      id="adminPanel"
+      class="hidden"
+    >
+
+      <div class="row">
+
+        <span
+          id="adminWho"
+          class="badge"
+        ></span>
+
+        <button
+          class="secondary"
+          onclick="loadAdmin()"
+        >
+          Actualizar panel
+        </button>
+
+        <button
+          class="danger"
+          onclick="adminLogout()"
+        >
+          Cerrar sesión
+        </button>
+
+      </div>
+
+
+      <div class="section">
 
         <h3>
-          🕐 Horarios
+          🔔 Nuevas reservas
         </h3>
 
-        <p>
-          Local: 12:00 a 15:00 y 19:00 a 03:30.
-          <br><br>
-          Cocina: 12:00 a 15:00 y 20:00 a 01:00.
-        </p>
+        <div
+          id="adminReservations"
+        ></div>
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          🛎️ Nuevos pedidos
+        </h3>
+
+        <div
+          id="adminOrders"
+        ></div>
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          🎁 Canjes pendientes
+        </h3>
+
+        <div
+          id="adminRedemptions"
+        ></div>
+
+      </div>
+
+
+      <div class="section">
+
+        <h3>
+          📱 QRs de mesas
+        </h3>
+
+        <div
+          id="adminQrs"
+          class="grid"
+        ></div>
 
       </div>
 
@@ -943,185 +825,1459 @@ footer .logo{
 
 </section>
 
-</main>
 
-<!-- FOOTER -->
+<div
+  id="toast"
+  class="toast hidden"
+></div>
 
-<footer>
 
-  <div class="container">
+<footer class="footer">
 
-    <div class="logo">
-      POOL <span>&</span> BEACH
-    </div>
-
-    <div class="footer-text">
-      Puerto Pirámides · Juegos · Torneos · Fútbol · Gastronomía
-    </div>
-
-    <br>
-
-    <div class="footer-text">
-      © 2026 Pool & Beach
-    </div>
-
-  </div>
+  Pool & Beach · Puerto Pirámides
+  · Sistema de juegos y fidelización
 
 </footer>
 
-<!-- RESERVAS: ÚNICO JAVASCRIPT DE LA PÁGINA -->
+</main>
+
 
 <script>
 
-document.addEventListener(
-  "DOMContentLoaded",
-  function(){
+/* =========================================
+   SUPABASE
+========================================= */
 
-    const form =
-      document.getElementById("formReserva");
+const SUPABASE_URL =
+'https://nmpakeovqkdajtswjpgm.supabase.co';
 
-    const mensaje =
-      document.getElementById("mensajeReserva");
+const SUPABASE_KEY =
+'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-    const fecha =
-      document.getElementById("fecha");
+const sb =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 
-    /* FECHA MÍNIMA */
+/* =========================================
+   VARIABLES
+========================================= */
 
-    if(fecha){
+let currentMesa = null;
+let currentUser = null;
+let currentProfile = null;
 
-      fecha.min =
-        new Date()
-        .toISOString()
-        .split("T")[0];
+
+/* =========================================
+   HELPERS
+========================================= */
+
+const $ = id =>
+  document.getElementById(id);
+
+
+function toast(msg){
+
+  $('toast').textContent = msg;
+
+  $('toast').classList.remove('hidden');
+
+  setTimeout(
+    () => $('toast').classList.add('hidden'),
+    3500
+  );
+
+}
+
+
+function esc(s){
+
+  return String(s ?? '')
+    .replace(
+      /[&<>"']/g,
+      m => ({
+        '&':'&amp;',
+        '<':'&lt;',
+        '>':'&gt;',
+        '"':'&quot;',
+        "'":'&#39;'
+      }[m])
+    );
+
+}
+
+
+function money(v){
+
+  return Number(v || 0)
+    .toLocaleString(
+      'es-AR',
+      {
+        maximumFractionDigits:0
+      }
+    );
+
+}
+
+
+/* =========================================
+   INICIO
+========================================= */
+
+async function init(){
+
+  const p =
+    new URLSearchParams(location.search)
+      .get('mesa');
+
+  if(p){
+
+    await loadMesa(p);
+
+  }
+
+  await loadGames();
+
+  await loadPrizes();
+
+  await loadTournaments();
+
+  await loadRanking();
+
+  await renderQrs();
+
+  const {
+    data:{session}
+  } =
+  await sb.auth.getSession();
+
+  if(session){
+
+    currentUser =
+      session.user;
+
+    await refreshPlayer();
+
+  }
+
+}
+
+
+/* =========================================
+   MESA DESDE QR
+========================================= */
+
+async function loadMesa(token){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('mesas')
+    .select(
+      'id,numero,nombre,servicio,activa,qr_token'
+    )
+    .eq('qr_token',token)
+    .eq('activa',true)
+    .maybeSingle();
+
+
+  if(error || !data){
+
+    $('mesaBadge').textContent =
+      'QR no válido';
+
+    return;
+
+  }
+
+
+  currentMesa = data;
+
+  $('mesaBadge').textContent =
+    `Mesa ${data.numero} · ${data.servicio || ''}`;
+
+}
+
+
+/* =========================================
+   CREAR JUGADOR
+========================================= */
+
+async function startPlayer(){
+
+  const name =
+    $('playerName')
+      .value
+      .trim();
+
+
+  if(!name){
+
+    $('authMsg').textContent =
+      'Escribí un nombre o apodo.';
+
+    return;
+
+  }
+
+
+  let session =
+    (
+      await sb.auth.getSession()
+    ).data.session;
+
+
+  if(!session){
+
+    const {
+      data,
+      error
+    } =
+    await sb.auth.signInAnonymously({
+
+      options:{
+        data:{
+          display_name:name
+        }
+      }
+
+    });
+
+
+    if(error){
+
+      $('authMsg').innerHTML =
+        'No se pudo iniciar el jugador. ' +
+        'En Supabase activá <b>Anonymous Sign-Ins</b> ' +
+        'en Authentication → Sign In / Providers → Anonymous.';
+
+      console.error(error);
+
+      return;
 
     }
 
 
-    /* RESERVAS */
+    session =
+      data.session;
 
-    if(form){
+  }
 
-      form.addEventListener(
-        "submit",
-        async function(e){
+  else{
 
-          e.preventDefault();
+    const {error} =
+      await sb
+        .from('profiles')
+        .update({
+          display_name:name
+        })
+        .eq(
+          'id',
+          session.user.id
+        );
 
-          mensaje.className = "";
+    if(error){
 
-          mensaje.textContent =
-            "Enviando reserva...";
+      console.error(error);
 
+    }
 
-          try{
-
-            if(!window.supabaseClient){
-
-              throw new Error(
-                "Supabase no está conectado."
-              );
-
-            }
-
-
-            const reserva = {
-
-              nombre:
-                document
-                .getElementById("nombre")
-                .value
-                .trim(),
-
-              telefono:
-                document
-                .getElementById("telefono")
-                .value
-                .trim(),
-
-              fecha:
-                document
-                .getElementById("fecha")
-                .value,
-
-              hora:
-                document
-                .getElementById("hora")
-                .value,
-
-              servicio:
-                document
-                .getElementById("servicio")
-                .value,
-
-              cantidad_personas:
-                Number(
-                  document
-                  .getElementById("personas")
-                  .value
-                ),
-
-              notas:
-                document
-                .getElementById("notas")
-                .value
-                .trim()
-
-            };
+  }
 
 
-            const resultado =
-              await window.supabaseClient
-              .from("reservas")
-              .insert([reserva]);
+  currentUser =
+    session.user;
+
+  await refreshPlayer();
+
+  toast(
+    'Jugador listo 🎮'
+  );
+
+}
 
 
-            if(resultado.error){
+/* =========================================
+   DATOS DEL JUGADOR
+========================================= */
 
-              console.error(
-                resultado.error
-              );
+async function refreshPlayer(){
 
-              throw resultado.error;
+  if(!currentUser){
 
-            }
+    const x =
+      await sb.auth.getSession();
 
+    currentUser =
+      x.data.session?.user || null;
 
-            mensaje.className =
-              "success";
-
-            mensaje.textContent =
-              "✅ Reserva enviada correctamente. ¡Gracias!";
-
-
-            form.reset();
+  }
 
 
-            document
-              .getElementById("personas")
-              .value = 2;
+  if(!currentUser){
+
+    return;
+
+  }
 
 
-          }catch(error){
+  const {
+    data,
+    error
+  } =
+  await sb.rpc(
+    'mi_resumen_jugador'
+  );
 
-            console.error(error);
 
-            mensaje.className =
-              "error";
+  if(error){
 
-            mensaje.textContent =
-              "❌ No se pudo enviar la reserva. Intentá nuevamente.";
+    console.error(error);
 
-          }
+    return;
 
-        }
+  }
+
+
+  currentProfile =
+    data;
+
+
+  $('authBox')
+    .classList
+    .add('hidden');
+
+
+  $('playerStats')
+    .classList
+    .remove('hidden');
+
+
+  $('sName').textContent =
+    data.display_name ||
+    'Jugador';
+
+
+  $('sPoints').textContent =
+    data.points || 0;
+
+
+  $('sTokens').textContent =
+    data.tokens || 0;
+
+
+  $('sRank').textContent =
+    data.posicion
+      ? `#${data.posicion}`
+      : '—';
+
+
+  $('sStreak').textContent =
+    data.streak || 0;
+
+
+  $('sGames').textContent =
+    data.partidas || 0;
+
+}
+
+
+/* =========================================
+   JUEGOS
+========================================= */
+
+async function loadGames(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('games')
+    .select(
+      'id,name,description,icon,points_reward,tokens_reward'
+    )
+    .eq(
+      'active',
+      true
+    )
+    .order('name');
+
+
+  if(error){
+
+    $('gameSelect').innerHTML =
+      '<option>Error al cargar juegos</option>';
+
+    console.error(error);
+
+    return;
+
+  }
+
+
+  $('gameSelect').innerHTML =
+    data
+      .map(
+        g =>
+        `<option value="${g.id}">
+          ${esc(g.icon || '🎮')}
+          ${esc(g.name)}
+          · +${g.points_reward || 0} pts
+          / +${g.tokens_reward || 0} tokens
+        </option>`
+      )
+      .join('');
+
+}
+
+
+/* =========================================
+   ID DE MESA
+========================================= */
+
+async function tablePoolId(){
+
+  if(!currentMesa){
+
+    return null;
+
+  }
+
+
+  const {
+    data
+  } =
+  await sb
+    .from('tables_pool')
+    .select('id')
+    .eq(
+      'table_number',
+      currentMesa.numero
+    )
+    .maybeSingle();
+
+
+  return data?.id || null;
+
+}
+
+
+/* =========================================
+   REGISTRAR PARTIDA
+========================================= */
+
+async function registerGame(){
+
+  if(!currentUser){
+
+    $('gameMsg').textContent =
+      'Primero entrá como jugador.';
+
+    return;
+
+  }
+
+
+  const gid =
+    $('gameSelect').value;
+
+
+  if(!gid){
+
+    return;
+
+  }
+
+
+  const tid =
+    await tablePoolId();
+
+
+  const {
+    data,
+    error
+  } =
+  await sb.rpc(
+    'registrar_partida',
+    {
+      p_game_id:gid,
+      p_table_id:tid,
+      p_metadata:{
+        mesa_numero:
+          currentMesa?.numero || null
+      }
+    }
+  );
+
+
+  if(error){
+
+    $('gameMsg').innerHTML =
+      `<span class="dangerText">
+        ${esc(error.message)}
+      </span>`;
+
+    return;
+
+  }
+
+
+  $('gameMsg').innerHTML =
+    `<span class="ok">
+      Partida registrada:
+      +${data.points_awarded} puntos
+      y
+      +${data.tokens_awarded} tokens.
+    </span>`;
+
+
+  await refreshPlayer();
+
+  await loadRanking();
+
+}
+
+
+/* =========================================
+   PREMIOS
+========================================= */
+
+async function loadPrizes(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('prizes')
+    .select(
+      'id,name,description,token_cost,stock'
+    )
+    .eq(
+      'active',
+      true
+    )
+    .order(
+      'token_cost'
+    );
+
+
+  if(error){
+
+    $('prizes').innerHTML =
+      '<div class="notice">No se pudieron cargar los premios.</div>';
+
+    return;
+
+  }
+
+
+  $('prizes').innerHTML =
+    data.length
+
+      ? data
+        .map(
+          p =>
+          `<div class="card">
+
+            <h3>
+              🎁 ${esc(p.name)}
+            </h3>
+
+            <p class="muted">
+              ${esc(p.description || '')}
+            </p>
+
+            <p>
+              <b>
+                ${money(p.token_cost)} tokens
+              </b>
+
+              ${
+                p.stock !== null
+                  ? ` · stock: ${p.stock}`
+                  : ''
+              }
+
+            </p>
+
+            <button
+              onclick="redeem('${p.id}')"
+            >
+              Canjear
+            </button>
+
+          </div>`
+        )
+        .join('')
+
+      :
+
+      '<div class="notice">Todavía no hay premios activos.</div>';
+
+}
+
+
+/* =========================================
+   CANJEAR PREMIO
+========================================= */
+
+async function redeem(id){
+
+  if(!currentUser){
+
+    toast(
+      'Primero entrá como jugador.'
+    );
+
+    return;
+
+  }
+
+
+  if(
+    !confirm(
+      '¿Querés canjear este premio?'
+    )
+  ){
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+  await sb.rpc(
+    'canjear_premio',
+    {
+      p_prize_id:id
+    }
+  );
+
+
+  if(error){
+
+    toast(
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  toast(
+    `Canje solicitado: ${data.prize}. ` +
+    `Te quedan ${data.tokens_remaining} tokens.`
+  );
+
+
+  await refreshPlayer();
+
+  await loadPrizes();
+
+}
+
+
+/* =========================================
+   TORNEOS
+========================================= */
+
+async function loadTournaments(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('tournaments')
+    .select(
+      'id,name,game_type,starts_at,entry_tokens,max_players,status'
+    )
+    .eq(
+      'status',
+      'open'
+    )
+    .order(
+      'starts_at',
+      {
+        ascending:true
+      }
+    );
+
+
+  if(error){
+
+    $('tournaments').innerHTML =
+      '<div class="notice">No se pudieron cargar los torneos.</div>';
+
+    return;
+
+  }
+
+
+  let counts = {};
+
+
+  if(data.length){
+
+    const {
+      data:ps
+    } =
+    await sb
+      .from('tournament_players')
+      .select(
+        'tournament_id'
       );
+
+
+    (ps || [])
+      .forEach(
+        x =>
+          counts[x.tournament_id] =
+            (
+              counts[x.tournament_id] || 0
+            ) + 1
+      );
+
+  }
+
+
+  $('tournaments').innerHTML =
+    data.length
+
+      ?
+
+      data
+        .map(
+          t =>
+          `<div class="card">
+
+            <h3>
+              🏆 ${esc(t.name)}
+            </h3>
+
+            <p>
+              ${esc(t.game_type || '')}
+            </p>
+
+            <p class="muted">
+
+              ${
+                t.starts_at
+                  ? new Date(
+                      t.starts_at
+                    ).toLocaleString(
+                      'es-AR'
+                    )
+                  : 'Fecha a confirmar'
+              }
+
+              · inscripción:
+              ${t.entry_tokens || 0}
+              tokens
+
+              ·
+              ${counts[t.id] || 0}/
+              ${t.max_players || '∞'}
+
+            </p>
+
+            <button
+              onclick="joinTournament('${t.id}')"
+            >
+              Inscribirme
+            </button>
+
+          </div>`
+        )
+        .join('')
+
+      :
+
+      '<div class="notice">No hay torneos abiertos en este momento.</div>';
+
+}
+
+
+/* =========================================
+   INSCRIPCION TORNEO
+========================================= */
+
+async function joinTournament(id){
+
+  if(!currentUser){
+
+    toast(
+      'Primero entrá como jugador.'
+    );
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+  await sb.rpc(
+    'inscribirme_torneo',
+    {
+      p_tournament_id:id
+    }
+  );
+
+
+  if(error){
+
+    toast(
+      error.message
+    );
+
+    return;
+
+  }
+
+
+  toast(
+    '¡Inscripción realizada! 🏆'
+  );
+
+
+  await loadTournaments();
+
+}
+
+
+/* =========================================
+   RANKING
+========================================= */
+
+async function loadRanking(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('ranking_jugadores')
+    .select(
+      'display_name,points,tokens,streak,partidas,posicion'
+    )
+    .order(
+      'posicion'
+    )
+    .limit(20);
+
+
+  if(error){
+
+    $('ranking').innerHTML =
+      '<div class="notice">No se pudo cargar el ranking.</div>';
+
+    return;
+
+  }
+
+
+  $('ranking').innerHTML =
+
+    `<table class="table">
+
+      <thead>
+
+        <tr>
+          <th>#</th>
+          <th>Jugador</th>
+          <th>Puntos</th>
+          <th>Tokens</th>
+          <th>Racha</th>
+          <th>Partidas</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${
+          (data || [])
+            .map(
+              r =>
+              `<tr>
+
+                <td>
+                  ${r.posicion}
+                </td>
+
+                <td>
+                  ${esc(r.display_name)}
+                </td>
+
+                <td>
+                  ${r.points}
+                </td>
+
+                <td>
+                  ${r.tokens}
+                </td>
+
+                <td>
+                  ${r.streak}
+                </td>
+
+                <td>
+                  ${r.partidas}
+                </td>
+
+              </tr>`
+            )
+            .join('')
+        }
+
+      </tbody>
+
+    </table>`;
+
+}
+
+
+/* =========================================
+   MESAS
+========================================= */
+
+async function getPublicMesaData(){
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('mesas')
+    .select(
+      'numero,nombre,servicio,activa,qr_token'
+    )
+    .eq(
+      'activa',
+      true
+    )
+    .order(
+      'numero'
+    );
+
+
+  return error
+    ? []
+    : data || [];
+
+}
+
+
+/* =========================================
+   URL QR
+========================================= */
+
+function qrUrl(token){
+
+  return `${location.origin}${location.pathname}?mesa=${encodeURIComponent(token)}`;
+
+}
+
+
+/* =========================================
+   CREAR QR
+========================================= */
+
+async function renderQrs(target='qrs'){
+
+  const list =
+    await getPublicMesaData();
+
+
+  const box =
+    $(target);
+
+
+  if(!box){
+
+    return;
+
+  }
+
+
+  box.innerHTML =
+    list
+      .map(
+        m =>
+        `<div class="card mesa-card">
+
+          <h3>
+            🎱
+            ${esc(
+              m.nombre ||
+              'Mesa ' + m.numero
+            )}
+          </h3>
+
+          <div class="small muted">
+            ${esc(
+              m.servicio || ''
+            )}
+          </div>
+
+          <div
+            id="qr-${m.numero}"
+            class="qr"
+          ></div>
+
+          <div class="small">
+            ${esc(
+              qrUrl(m.qr_token)
+            )}
+          </div>
+
+          <button
+            class="secondary"
+            onclick="
+              window.open(
+                '${qrUrl(m.qr_token)}',
+                '_blank'
+              )
+            "
+          >
+            Abrir mesa
+          </button>
+
+        </div>`
+      )
+      .join('');
+
+
+  list.forEach(
+    m =>
+      new QRCode(
+        $(`qr-${m.numero}`),
+        {
+          text:
+            qrUrl(m.qr_token),
+
+          width:180,
+
+          height:180
+        }
+      )
+  );
+
+}
+
+
+/* =========================================
+   LOGIN ADMIN
+========================================= */
+
+async function adminLogin(){
+
+  const email =
+    $('adminEmail')
+      .value
+      .trim();
+
+  const password =
+    $('adminPassword')
+      .value;
+
+
+  const {
+    data,
+    error
+  } =
+  await sb.auth.signInWithPassword(
+    {
+      email,
+      password
+    }
+  );
+
+
+  if(error){
+
+    $('adminMsg').textContent =
+      error.message;
+
+    return;
+
+  }
+
+
+  currentUser =
+    data.user;
+
+
+  await checkAdmin();
+
+}
+
+
+/* =========================================
+   COMPROBAR ADMIN
+========================================= */
+
+async function checkAdmin(){
+
+  if(!currentUser){
+
+    return;
+
+  }
+
+
+  const {
+    data,
+    error
+  } =
+  await sb
+    .from('profiles')
+    .select(
+      'display_name,role'
+    )
+    .eq(
+      'id',
+      currentUser.id
+    )
+    .single();
+
+
+  if(
+    error ||
+    !data ||
+    ![
+      'admin',
+      'staff'
+    ].includes(data.role)
+  ){
+
+    $('adminMsg').textContent =
+      'Este usuario no tiene permisos de admin/staff.';
+
+    return;
+
+  }
+
+
+  $('adminLogin')
+    .classList
+    .add('hidden');
+
+
+  $('adminPanel')
+    .classList
+    .remove('hidden');
+
+
+  $('adminWho').textContent =
+    `${data.display_name} · ${data.role}`;
+
+
+  await loadAdmin();
+
+}
+
+
+/* =========================================
+   PANEL ADMIN
+========================================= */
+
+async function loadAdmin(){
+
+  const r =
+    await sb
+      .from('reservas')
+      .select('*')
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      )
+      .limit(30);
+
+
+  $('adminReservations').innerHTML =
+    r.error
+
+      ?
+
+      `<div class="notice dangerText">
+        ${esc(r.error.message)}
+      </div>`
+
+      :
+
+      renderAdminRows(
+        r.data,
+        'reserva'
+      );
+
+
+  const p =
+    await sb
+      .from('pedidos')
+      .select('*')
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      )
+      .limit(30);
+
+
+  $('adminOrders').innerHTML =
+    p.error
+
+      ?
+
+      `<div class="notice dangerText">
+        ${esc(p.error.message)}
+      </div>`
+
+      :
+
+      renderAdminRows(
+        p.data,
+        'pedido'
+      );
+
+
+  const x =
+    await sb
+      .from('prize_redemptions')
+      .select(
+        'id,token_cost,status,created_at,prize_id,user_id,prizes(name),profiles(display_name)'
+      )
+      .order(
+        'created_at',
+        {
+          ascending:false
+        }
+      )
+      .limit(30);
+
+
+  $('adminRedemptions').innerHTML =
+    x.error
+
+      ?
+
+      `<div class="notice dangerText">
+        ${esc(x.error.message)}
+      </div>`
+
+      :
+
+      renderAdminRows(
+        x.data,
+        'canje'
+      );
+
+
+  await renderQrs(
+    'adminQrs'
+  );
+
+}
+
+
+/* =========================================
+   FILAS ADMIN
+========================================= */
+
+function renderAdminRows(
+  rows,
+  type
+){
+
+  if(!rows?.length){
+
+    return `
+      <div class="notice">
+        No hay registros.
+      </div>
+    `;
+
+  }
+
+
+  return `
+
+    <table class="table">
+
+      <thead>
+
+        <tr>
+          <th>Fecha</th>
+          <th>Detalle</th>
+          <th>Estado</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${
+          rows
+            .map(
+              x => {
+
+                let detail = '';
+
+                let status =
+                  x.estado ||
+                  x.status ||
+                  '';
+
+
+                if(
+                  type === 'reserva'
+                ){
+
+                  detail =
+                    `${esc(x.nombre)}
+                     · ${esc(x.servicio || '')}
+                     · ${esc(x.fecha)}
+                     ${esc(x.hora)}`;
+
+                }
+
+
+                if(
+                  type === 'pedido'
+                ){
+
+                  detail =
+                    `${esc(
+                      x.nombre_cliente ||
+                      'Cliente'
+                    )}
+                    · $${money(x.total)}
+                    · ${esc(
+                      x.tipo_entrega ||
+                      x.tipo ||
+                      ''
+                    )}`;
+
+                }
+
+
+                if(
+                  type === 'canje'
+                ){
+
+                  detail =
+                    `${esc(
+                      x.profiles?.display_name ||
+                      'Jugador'
+                    )}
+                    · ${esc(
+                      x.prizes?.name ||
+                      'Premio'
+                    )}
+                    · ${x.token_cost}
+                    tokens`;
+
+                }
+
+
+                return `
+
+                  <tr>
+
+                    <td>
+                      ${new Date(
+                        x.created_at
+                      ).toLocaleString(
+                        'es-AR'
+                      )}
+                    </td>
+
+                    <td>
+                      ${detail}
+                    </td>
+
+                    <td>
+                      <span class="badge">
+                        ${esc(status)}
+                      </span>
+                    </td>
+
+                  </tr>
+
+                `;
+
+              }
+            )
+            .join('')
+        }
+
+      </tbody>
+
+    </table>
+
+  `;
+
+}
+
+
+/* =========================================
+   CERRAR SESION
+========================================= */
+
+async function adminLogout(){
+
+  await sb.auth.signOut();
+
+  location.reload();
+
+}
+
+
+/* =========================================
+   CAMBIOS DE SESION
+========================================= */
+
+sb.auth.onAuthStateChange(
+  async(
+    event,
+    session
+  ) => {
+
+    if(session){
+
+      currentUser =
+        session.user;
+
+      await refreshPlayer();
+
+      await checkAdmin();
 
     }
 
   }
 );
+
+
+/* =========================================
+   ARRANCAR
+========================================= */
+
+init();
 
 </script>
 
