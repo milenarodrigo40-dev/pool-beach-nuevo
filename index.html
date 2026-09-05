@@ -212,7 +212,6 @@ body{
   margin:12px auto;
   display:block
 }
-.input,
 select{
   width:100%;
   padding:11px;
@@ -365,9 +364,6 @@ window.supabase.createClient(
 let profile = null;
 let games = [];
 let mesaId = null;
-/* =========================================
-   UTILIDAD DOM
-========================================= */
 const $ = id =>
 document.getElementById(id);
 /* =========================================
@@ -439,8 +435,7 @@ throw new Error(
 'No se pudo iniciar sesión anónima.'
 );
 /* =========================================
-   PERFIL
-   CREACIÓN SEGURA MEDIANTE RPC
+   PERFIL SEGURO
 ========================================= */
 const profileResult =
 await db.rpc(
@@ -611,11 +606,6 @@ const result =
 typeof data === 'string'
 ? JSON.parse(data)
 : (data || {});
-/*
-  La recompensa real la calcula Supabase.
-  Aceptamos las distintas claves posibles para
-  mantener compatibilidad con la función SQL.
-*/
 const points =
 result.points ??
 result.points_total ??
@@ -638,11 +628,6 @@ streak
 };
 updateHeader();
 await loadRanking();
-/*
-  El RPC seguro puede devolver las cantidades
-  otorgadas. Si no las devuelve, mostramos
-  las recompensas configuradas en el juego.
-*/
 const game =
 games.find(x => x.id === gameId);
 const awardedPoints =
@@ -1040,7 +1025,6 @@ $('prizeList').innerHTML =
 }
 /* =========================================
    CANJEAR PREMIO
-   RPC SEGURA
 ========================================= */
 async function redeem(
 id,
@@ -1153,7 +1137,6 @@ Inscribirme
 }
 /* =========================================
    INSCRIPCIÓN TORNEO
-   RPC SEGURA
 ========================================= */
 async function join(id){
 if(!confirm(
