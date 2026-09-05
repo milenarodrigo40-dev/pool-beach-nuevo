@@ -2,1441 +2,2253 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de Administración | Pool & Beach</title>
-<meta name="description"
-content="Panel de administración de Pool & Beach Games Puerto Pirámides">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+<title>Pool & Beach | Panel de Administración</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 :root{
-  --bg:#06111f;
-  --panel:#0d1d30;
-  --panel2:#122840;
-  --line:rgba(255,255,255,.09);
-  --text:#f4f8ff;
-  --muted:#9fb2c8;
-  --cyan:#53d8ff;
+  --bg:#061321;
+  --bg2:#0b1d30;
+  --card:#102a42;
+  --card2:#143752;
+  --text:#f5fbff;
+  --muted:#9bb4c7;
+  --cyan:#35d9ff;
   --gold:#ffd166;
-  --green:#55e6a5;
-  --red:#ff6b7a;
-  --blue:#5b8cff;
-  --shadow:0 18px 45px rgba(0,0,0,.28);
-  --radius:18px;
+  --green:#45e08a;
+  --red:#ff647c;
+  --border:rgba(255,255,255,.09);
+  --shadow:0 12px 35px rgba(0,0,0,.28);
 }
-*{
-  box-sizing:border-box;
-}
-html{
-  scroll-behavior:smooth;
-}
+
+*{box-sizing:border-box}
+
+html{scroll-behavior:smooth}
+
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(circle at top right,rgba(83,216,255,.12),transparent 30%),
-    radial-gradient(circle at bottom left,rgba(255,209,102,.08),transparent 28%),
-    var(--bg);
+    radial-gradient(circle at top,#123b58 0,#061321 45%);
   color:var(--text);
   min-height:100vh;
 }
-button,
-input,
-select,
-textarea{
+
+button,input,select,textarea{
   font:inherit;
 }
-button{
-  cursor:pointer;
+
+button{cursor:pointer}
+
+.hidden{display:none!important}
+
+.container{
+  width:min(1200px,calc(100% - 28px));
+  margin:auto;
 }
-.hidden{
-  display:none!important;
-}
+
+/* LOGIN */
+
 .login-screen{
   min-height:100vh;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  display:grid;
+  place-items:center;
   padding:20px;
 }
+
 .login-card{
-  width:min(430px,100%);
-  background:rgba(13,29,48,.94);
-  border:1px solid var(--line);
-  border-radius:24px;
-  padding:30px;
+  width:min(440px,100%);
+  background:linear-gradient(145deg,var(--card),var(--bg2));
+  border:1px solid var(--border);
+  border-radius:28px;
+  padding:28px 22px;
   box-shadow:var(--shadow);
 }
+
 .logo{
+  font-size:26px;
+  font-weight:900;
   text-align:center;
-  margin-bottom:24px;
 }
-.logo .ball{
-  font-size:48px;
-}
-.logo h1{
-  margin:8px 0 4px;
-  font-size:28px;
-}
-.logo p{
+
+.logo span{color:var(--cyan)}
+
+.login-subtitle{
+  text-align:center;
   color:var(--muted);
-  margin:0;
+  margin:8px 0 25px;
 }
-.field{
-  margin-bottom:16px;
+
+.form-group{
+  margin-bottom:13px;
 }
-.field label{
+
+.form-group label{
   display:block;
-  font-size:13px;
   color:var(--muted);
-  margin-bottom:7px;
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:6px;
 }
-.field input,
-.field select,
-.field textarea{
+
+input,select,textarea{
   width:100%;
-  background:#081728;
+  padding:13px 14px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:rgba(0,0,0,.22);
   color:var(--text);
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:12px 13px;
   outline:none;
 }
-.field textarea{
+
+textarea{
   min-height:100px;
   resize:vertical;
 }
-.field input:focus,
-.field select:focus,
-.field textarea:focus{
+
+input:focus,
+select:focus,
+textarea:focus{
   border-color:var(--cyan);
 }
-.btn{
-  border:0;
-  border-radius:12px;
-  padding:11px 15px;
-  font-weight:700;
-  transition:.2s;
-}
-.btn:hover{
-  transform:translateY(-1px);
-}
-.btn-primary{
-  background:var(--cyan);
-  color:#03111d;
-}
-.btn-secondary{
-  background:#1a3550;
-  color:#fff;
-}
-.btn-gold{
-  background:var(--gold);
-  color:#17110a;
-}
-.btn-danger{
-  background:var(--red);
-  color:#23070c;
-}
-.btn-success{
-  background:var(--green);
-  color:#03170e;
-}
-.btn-small{
-  padding:8px 10px;
-  font-size:12px;
-}
-.login-card .btn{
+
+.primary{
   width:100%;
-  margin-top:5px;
+  border:0;
+  border-radius:14px;
+  padding:13px 15px;
+  background:linear-gradient(135deg,var(--cyan),#72ecff);
+  color:#00151e;
+  font-weight:900;
 }
-.error{
-  background:rgba(255,107,122,.12);
-  color:#ffb5bd;
-  border:1px solid rgba(255,107,122,.25);
-  padding:11px;
+
+.primary:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.secondary{
+  border:1px solid var(--border);
   border-radius:12px;
-  font-size:13px;
-  margin-bottom:15px;
+  padding:10px 13px;
+  background:rgba(255,255,255,.05);
+  color:var(--text);
+  font-weight:800;
 }
-.app{
-  display:none;
-  min-height:100vh;
+
+.danger{
+  border-color:rgba(255,100,124,.25);
+  color:var(--red);
+  background:rgba(255,100,124,.08);
 }
-.topbar{
+
+.success{
+  border-color:rgba(69,224,138,.25);
+  color:var(--green);
+  background:rgba(69,224,138,.08);
+}
+
+/* APP */
+
+header{
   position:sticky;
   top:0;
-  z-index:20;
-  background:rgba(6,17,31,.94);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid var(--line);
+  z-index:50;
+  background:rgba(6,19,33,.92);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--border);
 }
-.topbar-inner{
-  max-width:1400px;
-  margin:auto;
-  padding:14px 18px;
+
+.header-inner{
+  min-height:68px;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:15px;
+  gap:12px;
 }
-.brand{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight:800;
+
+.header-title{
+  font-size:18px;
+  font-weight:900;
 }
-.brand span{
+
+.header-title span{
   color:var(--cyan);
 }
-.user-area{
+
+.user-info{
   display:flex;
   align-items:center;
-  gap:10px;
+  gap:8px;
 }
-.user-email{
-  color:var(--muted);
-  font-size:12px;
-  display:none;
+
+.role-badge{
+  padding:7px 10px;
+  border-radius:999px;
+  color:var(--gold);
+  background:rgba(255,209,102,.1);
+  border:1px solid rgba(255,209,102,.2);
+  font-size:11px;
+  font-weight:900;
 }
-.layout{
-  max-width:1400px;
-  margin:auto;
-  display:grid;
-  grid-template-columns:230px 1fr;
-  min-height:calc(100vh - 65px);
-}
-.sidebar{
-  border-right:1px solid var(--line);
-  padding:20px 14px;
-}
+
+/* NAV */
+
 .nav{
   display:flex;
-  flex-direction:column;
   gap:7px;
-  position:sticky;
-  top:85px;
+  overflow-x:auto;
+  padding:12px 0;
+  scrollbar-width:none;
 }
+
+.nav::-webkit-scrollbar{display:none}
+
 .nav button{
-  width:100%;
-  text-align:left;
-  background:transparent;
+  white-space:nowrap;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
   color:var(--muted);
-  border:1px solid transparent;
-  padding:12px 13px;
-  border-radius:12px;
+  border-radius:999px;
+  padding:10px 13px;
+  font-weight:800;
 }
-.nav button:hover,
-.nav button.active{
-  background:var(--panel2);
-  color:var(--text);
-  border-color:var(--line);
+
+.nav button.active,
+.nav button:hover{
+  background:var(--cyan);
+  color:#00151e;
 }
-.main{
-  padding:24px;
-  min-width:0;
-}
-.page{
+
+/* SECTIONS */
+
+.section{
   display:none;
+  padding:18px 0 40px;
 }
-.page.active{
+
+.section.active{
   display:block;
 }
-.page-title{
-  margin-bottom:20px;
+
+.section-title{
+  display:flex;
+  align-items:end;
+  justify-content:space-between;
+  gap:10px;
+  margin-bottom:15px;
 }
-.page-title h2{
-  margin:0 0 5px;
-  font-size:27px;
-}
-.page-title p{
-  color:var(--muted);
+
+.section-title h1,
+.section-title h2{
   margin:0;
 }
-.cards{
+
+.section-title p{
+  color:var(--muted);
+  font-size:13px;
+  margin:5px 0 0;
+}
+
+/* DASHBOARD */
+
+.stats{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:14px;
-  margin-bottom:20px;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
 }
-.card{
-  background:linear-gradient(145deg,var(--panel),#0a1929);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:18px;
-  box-shadow:0 8px 25px rgba(0,0,0,.12);
+
+.stat{
+  background:linear-gradient(145deg,var(--card),var(--bg2));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:17px;
+  box-shadow:var(--shadow);
 }
+
+.stat-icon{font-size:20px}
+
+.stat-value{
+  font-size:27px;
+  font-weight:900;
+  margin-top:5px;
+}
+
 .stat-label{
   color:var(--muted);
   font-size:12px;
-  margin-bottom:9px;
 }
-.stat-value{
-  font-size:29px;
-  font-weight:800;
+
+/* CARDS */
+
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:13px;
 }
-.stat-icon{
-  font-size:22px;
-  margin-bottom:8px;
+
+.card{
+  background:linear-gradient(145deg,var(--card),var(--bg2));
+  border:1px solid var(--border);
+  border-radius:21px;
+  padding:17px;
+  box-shadow:var(--shadow);
 }
-.section{
-  background:rgba(13,29,48,.86);
-  border:1px solid var(--line);
-  border-radius:var(--radius);
-  padding:18px;
-  margin-bottom:18px;
+
+.card h3{
+  margin:0 0 8px;
 }
-.section-header{
+
+.muted{
+  color:var(--muted);
+}
+
+.toolbar{
   display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:15px;
-}
-.section-header h3{
-  margin:0;
-}
-.actions{
-  display:flex;
-  flex-wrap:wrap;
   gap:8px;
+  flex-wrap:wrap;
+  margin-bottom:13px;
 }
+
+.toolbar>*{
+  flex:1 1 150px;
+}
+
+/* TABLE */
+
 .table-wrap{
-  width:100%;
-  overflow-x:auto;
+  overflow:auto;
 }
+
 table{
   width:100%;
   border-collapse:collapse;
   min-width:650px;
 }
-th,
-td{
-  padding:11px 10px;
+
+th,td{
   text-align:left;
-  border-bottom:1px solid var(--line);
+  padding:12px 10px;
+  border-bottom:1px solid var(--border);
   font-size:13px;
 }
+
 th{
-  color:var(--muted);
-  font-weight:600;
-}
-.badge{
-  display:inline-flex;
-  align-items:center;
-  border-radius:999px;
-  padding:5px 9px;
+  color:var(--cyan);
   font-size:11px;
-  font-weight:700;
-  background:#19314a;
-  color:#cfe6fa;
+  text-transform:uppercase;
 }
-.badge-green{
-  background:rgba(85,230,165,.12);
+
+td{
+  color:#eaf7ff;
+}
+
+.status{
+  display:inline-block;
+  border-radius:999px;
+  padding:5px 8px;
+  font-size:10px;
+  font-weight:900;
+}
+
+.status.active,
+.status.open,
+.status.success{
   color:var(--green);
+  background:rgba(69,224,138,.1);
 }
-.badge-red{
-  background:rgba(255,107,122,.12);
-  color:#ff9ca7;
+
+.status.inactive,
+.status.closed{
+  color:var(--red);
+  background:rgba(255,100,124,.1);
 }
-.badge-gold{
-  background:rgba(255,209,102,.12);
-  color:var(--gold);
-}
-.badge-blue{
-  background:rgba(91,140,255,.12);
-  color:#a9c2ff;
-}
-.empty{
-  text-align:center;
-  color:var(--muted);
-  padding:25px 10px;
-}
-.loading{
-  text-align:center;
-  color:var(--muted);
-  padding:25px;
-}
-.grid-2{
+
+/* FORMS */
+
+.form-grid{
   display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:18px;
+  gap:10px;
 }
-.grid-3{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:15px;
-}
-.game-card{
-  background:#0a1a2b;
-  border:1px solid var(--line);
-  border-radius:16px;
-  padding:16px;
-}
-.game-icon{
-  font-size:28px;
-}
-.game-card h4{
-  margin:8px 0 5px;
-}
-.game-card p{
-  color:var(--muted);
-  font-size:13px;
-  min-height:38px;
-}
-.game-reward{
-  color:var(--gold);
-  font-weight:700;
-  font-size:13px;
-}
-.toolbar{
+
+.form-actions{
   display:flex;
+  gap:8px;
   flex-wrap:wrap;
-  gap:9px;
-  margin-bottom:15px;
 }
-.toolbar input,
-.toolbar select{
-  background:#081728;
-  color:#fff;
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:10px 12px;
+
+.form-actions button{
+  flex:1;
+  min-width:130px;
 }
+
+/* QR */
+
 .qr-grid{
   display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:15px;
+  grid-template-columns:1fr;
+  gap:13px;
 }
+
 .qr-card{
   text-align:center;
 }
+
 .qr-card img{
-  width:170px;
-  max-width:100%;
+  width:min(240px,100%);
+  padding:10px;
   background:#fff;
-  padding:8px;
-  border-radius:12px;
+  border-radius:17px;
+  margin:10px auto;
 }
-.qr-card h4{
-  margin:10px 0 4px;
+
+.qr-link{
+  font-size:11px;
+  color:var(--cyan);
+  word-break:break-all;
 }
-.qr-card small{
+
+/* ALERT */
+
+.alert{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.04);
+  padding:12px;
+  border-radius:14px;
   color:var(--muted);
+  font-size:13px;
+  margin-bottom:13px;
 }
+
+.alert.error{
+  color:var(--red);
+  border-color:rgba(255,100,124,.2);
+  background:rgba(255,100,124,.06);
+}
+
+/* MODAL */
+
 .modal{
   position:fixed;
   inset:0;
   z-index:100;
-  background:rgba(0,0,0,.7);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  padding:20px;
+  background:rgba(0,0,0,.72);
+  display:grid;
+  place-items:center;
+  padding:14px;
 }
-.modal.open{
-  display:flex;
-}
-.modal-card{
-  width:min(650px,100%);
+
+.modal-box{
+  width:min(620px,100%);
   max-height:90vh;
   overflow:auto;
-  background:#0c1d30;
-  border:1px solid var(--line);
-  border-radius:20px;
+  background:#0b2136;
+  border:1px solid var(--border);
+  border-radius:25px;
   padding:20px;
+  box-shadow:0 20px 70px rgba(0,0,0,.5);
 }
+
 .modal-header{
   display:flex;
-  justify-content:space-between;
   align-items:center;
+  justify-content:space-between;
   gap:10px;
-  margin-bottom:18px;
-}
-.modal-header h3{
-  margin:0;
-}
-.close{
-  border:0;
-  background:#18314b;
-  color:#fff;
-  border-radius:10px;
-  width:36px;
-  height:36px;
-}
-.form-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:9px;
-  margin-top:18px;
-}
-.toast{
-  position:fixed;
-  right:18px;
-  bottom:18px;
-  z-index:200;
-  max-width:350px;
-  background:#102941;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:13px 15px;
-  box-shadow:var(--shadow);
-  display:none;
-}
-.toast.show{
-  display:block;
-}
-.toast.success{
-  border-color:rgba(85,230,165,.35);
-}
-.toast.error{
-  border-color:rgba(255,107,122,.35);
-}
-.notice{
-  background:rgba(83,216,255,.08);
-  border:1px solid rgba(83,216,255,.18);
-  border-radius:14px;
-  padding:13px;
-  color:#c8eefe;
-  font-size:13px;
   margin-bottom:15px;
 }
-@media(max-width:1050px){
-  .cards{
-    grid-template-columns:repeat(2,minmax(0,1fr));
+
+.close{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.05);
+  color:#fff;
+  font-size:20px;
+}
+
+/* TOAST */
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  z-index:200;
+  width:min(92%,450px);
+  transform:translate(-50%,20px);
+  opacity:0;
+  pointer-events:none;
+  transition:.25s;
+  padding:14px 16px;
+  border-radius:15px;
+  background:#102b43;
+  border:1px solid var(--border);
+  box-shadow:var(--shadow);
+  text-align:center;
+  font-weight:800;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translate(-50%,0);
+}
+
+#toast.error{
+  border-color:rgba(255,100,124,.3);
+}
+
+#toast.success{
+  border-color:rgba(69,224,138,.3);
+}
+
+.loading{
+  text-align:center;
+  color:var(--muted);
+  padding:30px 10px;
+}
+
+.spinner{
+  width:30px;
+  height:30px;
+  border:3px solid rgba(255,255,255,.12);
+  border-top-color:var(--cyan);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+  margin:0 auto 12px;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+@media(min-width:700px){
+
+  .stats{
+    grid-template-columns:repeat(4,1fr);
   }
+
+  .grid.two{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .form-grid.two{
+    grid-template-columns:repeat(2,1fr);
+  }
+
   .qr-grid{
-    grid-template-columns:repeat(2,minmax(0,1fr));
+    grid-template-columns:repeat(2,1fr);
   }
 }
-@media(max-width:800px){
-  .layout{
-    grid-template-columns:1fr;
-  }
-  .sidebar{
-    border-right:0;
-    border-bottom:1px solid var(--line);
-    padding:10px;
-    overflow-x:auto;
-  }
-  .nav{
-    position:static;
-    flex-direction:row;
-    overflow-x:auto;
-  }
-  .nav button{
-    white-space:nowrap;
-  }
-  .main{
-    padding:15px;
-  }
-  .grid-2,
-  .grid-3{
-    grid-template-columns:1fr;
-  }
-  .user-email{
-    display:none;
-  }
-}
-@media(max-width:520px){
-  .cards{
-    grid-template-columns:1fr 1fr;
-    gap:9px;
-  }
-  .card{
-    padding:14px;
-  }
-  .stat-value{
-    font-size:23px;
-  }
-  .qr-grid{
-    grid-template-columns:1fr 1fr;
-  }
-  .topbar-inner{
-    padding:12px;
-  }
-  .brand{
-    font-size:14px;
+
+@media(min-width:1000px){
+
+  .grid.three{
+    grid-template-columns:repeat(3,1fr);
   }
 }
 </style>
 </head>
+
 <body>
-<!-- LOGIN -->
+
+<!-- =====================================================
+     LOGIN
+====================================================== -->
+
 <div id="loginScreen" class="login-screen">
+
   <div class="login-card">
+
     <div class="logo">
-      <div class="ball">🎱</div>
-      <h1>Pool & Beach</h1>
-      <p>Panel de Administración</p>
+      POOL <span>&</span> BEACH
     </div>
-    <div id="loginError" class="error hidden"></div>
-    <form id="loginForm">
-      <div class="field">
-        <label for="email">Correo electrónico</label>
-        <input
-          id="email"
-          type="email"
-          autocomplete="username"
-          required
-          placeholder="admin@poolandbeach.com">
-      </div>
-      <div class="field">
-        <label for="password">Contraseña</label>
-        <input
-          id="password"
-          type="password"
-          autocomplete="current-password"
-          required
-          placeholder="••••••••">
-      </div>
-      <button class="btn btn-primary" type="submit">
-        Ingresar al panel
+
+    <div class="login-subtitle">
+      Panel de Administración
+    </div>
+
+    <div id="loginError"
+         class="alert error hidden"></div>
+
+    <div class="form-group">
+      <label>Email</label>
+      <input
+        id="loginEmail"
+        type="email"
+        autocomplete="username"
+        placeholder="admin@ejemplo.com"
+      >
+    </div>
+
+    <div class="form-group">
+      <label>Contraseña</label>
+      <input
+        id="loginPassword"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Contraseña"
+      >
+    </div>
+
+    <button
+      id="loginButton"
+      class="primary"
+      onclick="login()"
+    >
+      🔐 Ingresar
+    </button>
+
+  </div>
+
+</div>
+
+<!-- =====================================================
+     ADMIN APP
+====================================================== -->
+
+<div id="adminApp" class="hidden">
+
+<header>
+
+  <div class="container header-inner">
+
+    <div class="header-title">
+      POOL <span>&</span> BEACH · ADMIN
+    </div>
+
+    <div class="user-info">
+
+      <span
+        id="roleBadge"
+        class="role-badge"
+      >
+        ADMIN
+      </span>
+
+      <button
+        class="secondary"
+        onclick="logout()"
+      >
+        Salir
       </button>
-    </form>
+
+    </div>
+
   </div>
-</div>
-<!-- APP -->
-<div id="app" class="app">
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="brand">
-        🎱 <span>Pool & Beach</span> · Admin
-      </div>
-      <div class="user-area">
-        <span id="userEmail" class="user-email"></span>
-        <button id="logoutBtn" class="btn btn-secondary btn-small">
-          Cerrar sesión
-        </button>
+
+</header>
+
+<div class="container">
+
+<nav class="nav">
+
+  <button
+    class="active"
+    data-section="dashboard"
+  >
+    📊 Dashboard
+  </button>
+
+  <button data-section="jugadores">
+    👥 Jugadores
+  </button>
+
+  <button data-section="juegos">
+    🎮 Juegos
+  </button>
+
+  <button data-section="partidas">
+    🎯 Partidas
+  </button>
+
+  <button data-section="premios">
+    🎁 Premios
+  </button>
+
+  <button data-section="torneos">
+    🏆 Torneos
+  </button>
+
+  <button data-section="mesas">
+    🎱 Mesas / QR
+  </button>
+
+  <button data-section="misiones">
+    ⭐ Misiones
+  </button>
+
+  <button data-section="duelos">
+    👥 Duelos
+  </button>
+
+  <button data-section="reservas">
+    📅 Reservas
+  </button>
+
+  <button data-section="pedidos">
+    🛒 Pedidos
+  </button>
+
+  <button data-section="promociones">
+    📣 Promociones
+  </button>
+
+</nav>
+
+<!-- =====================================================
+     DASHBOARD
+====================================================== -->
+
+<section
+  id="section-dashboard"
+  class="section active"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>Dashboard</h1>
+      <p>Control general de Pool & Beach Games</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="refreshAll()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div class="stats">
+
+    <div class="stat">
+      <div class="stat-icon">👥</div>
+      <div
+        id="countPlayers"
+        class="stat-value"
+      >0</div>
+      <div class="stat-label">Jugadores</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">🎮</div>
+      <div
+        id="countGames"
+        class="stat-value"
+      >0</div>
+      <div class="stat-label">Juegos activos</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">🎯</div>
+      <div
+        id="countPlays"
+        class="stat-value"
+      >0</div>
+      <div class="stat-label">Partidas</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-icon">🎁</div>
+      <div
+        id="countPrizes"
+        class="stat-value"
+      >0</div>
+      <div class="stat-label">Premios activos</div>
+    </div>
+
+  </div>
+
+  <div style="height:15px"></div>
+
+  <div class="grid two">
+
+    <div class="card">
+      <h3>⭐ Misiones pendientes</h3>
+      <div
+        id="dashboardMissions"
+        class="muted"
+      >
+        Cargando...
       </div>
     </div>
-  </header>
-  <div class="layout">
-    <aside class="sidebar">
-      <nav class="nav">
-        <button class="active" data-page="dashboard">
-          📊 Dashboard
-        </button>
-        <button data-page="players">
-          👥 Jugadores
-        </button>
-        <button data-page="games">
-          🎮 Juegos
-        </button>
-        <button data-page="plays">
-          🏆 Partidas
-        </button>
-        <button data-page="prizes">
-          🎁 Premios
-        </button>
-        <button data-page="tournaments">
-          🏆 Torneos
-        </button>
-        <button data-page="tables">
-          🎱 Mesas + QR
-        </button>
-        <button data-page="reservations">
-          📅 Reservas
-        </button>
-        <button data-page="orders">
-          🍔 Pedidos
-        </button>
-        <button data-page="promos">
-          🔥 Promociones
-        </button>
-      </nav>
-    </aside>
-    <main class="main">
-      <!-- DASHBOARD -->
-      <section id="page-dashboard" class="page active">
-        <div class="page-title">
-          <h2>Dashboard</h2>
-          <p>Resumen general de Pool & Beach Games.</p>
-        </div>
-        <div class="cards">
-          <div class="card">
-            <div class="stat-icon">👥</div>
-            <div class="stat-label">Jugadores</div>
-            <div id="statPlayers" class="stat-value">—</div>
-          </div>
-          <div class="card">
-            <div class="stat-icon">🎮</div>
-            <div class="stat-label">Juegos activos</div>
-            <div id="statGames" class="stat-value">—</div>
-          </div>
-          <div class="card">
-            <div class="stat-icon">🏆</div>
-            <div class="stat-label">Partidas</div>
-            <div id="statPlays" class="stat-value">—</div>
-          </div>
-          <div class="card">
-            <div class="stat-icon">🎁</div>
-            <div class="stat-label">Premios activos</div>
-            <div id="statPrizes" class="stat-value">—</div>
-          </div>
-        </div>
-        <div class="grid-2">
-          <div class="section">
-            <div class="section-header">
-              <h3>Juegos activos</h3>
-              <button class="btn btn-secondary btn-small"
-                onclick="showPage('games')">
-                Ver todos
-              </button>
-            </div>
-            <div id="dashboardGames" class="grid-2"></div>
-          </div>
-          <div class="section">
-            <div class="section-header">
-              <h3>Últimas partidas</h3>
-              <button class="btn btn-secondary btn-small"
-                onclick="showPage('plays')">
-                Ver todas
-              </button>
-            </div>
-            <div id="dashboardPlays"></div>
-          </div>
-        </div>
-      </section>
-      <!-- PLAYERS -->
-      <section id="page-players" class="page">
-        <div class="page-title">
-          <h2>Jugadores</h2>
-          <p>Perfiles, puntos, fichas y rachas.</p>
-        </div>
-        <div class="section">
-          <div class="toolbar">
-            <input
-              id="playerSearch"
-              type="search"
-              placeholder="Buscar jugador...">
-            <button class="btn btn-secondary btn-small"
-              onclick="loadPlayers()">
-              Actualizar
-            </button>
-          </div>
-          <div id="playersContent" class="table-wrap">
-            <div class="loading">Cargando jugadores...</div>
-          </div>
-        </div>
-      </section>
-      <!-- GAMES -->
-      <section id="page-games" class="page">
-        <div class="page-title">
-          <h2>Juegos</h2>
-          <p>Configuración de los juegos de Pool & Beach.</p>
-        </div>
-        <div class="notice">
-          Las recompensas se mantienen controladas por Supabase.
-          El administrador configura el juego; el jugador no puede
-          asignarse puntos o fichas desde el navegador.
-        </div>
-        <div id="gamesContent" class="grid-3"></div>
-      </section>
-      <!-- PLAYS -->
-      <section id="page-plays" class="page">
-        <div class="page-title">
-          <h2>Partidas</h2>
-          <p>Historial de partidas registradas por el sistema.</p>
-        </div>
-        <div class="section">
-          <div class="toolbar">
-            <input
-              id="playSearch"
-              type="search"
-              placeholder="Buscar jugador o juego...">
-            <button class="btn btn-secondary btn-small"
-              onclick="loadPlays()">
-              Actualizar
-            </button>
-          </div>
-          <div id="playsContent" class="table-wrap"></div>
-        </div>
-      </section>
-      <!-- PRIZES -->
-      <section id="page-prizes" class="page">
-        <div class="page-title">
-          <h2>Premios</h2>
-          <p>Premios disponibles para canjear con fichas.</p>
-        </div>
-        <div class="section">
-          <div class="section-header">
-            <h3>Catálogo</h3>
-            <button class="btn btn-gold"
-              onclick="openPrizeModal()">
-              + Nuevo premio
-            </button>
-          </div>
-          <div id="prizesContent" class="table-wrap"></div>
-        </div>
-      </section>
-      <!-- TOURNAMENTS -->
-      <section id="page-tournaments" class="page">
-        <div class="page-title">
-          <h2>Torneos</h2>
-          <p>Gestión de torneos del sistema Pool & Beach Games.</p>
-        </div>
-        <div class="section">
-          <div class="section-header">
-            <h3>Torneos actuales</h3>
-            <button class="btn btn-gold"
-              onclick="openTournamentModal()">
-              + Nuevo torneo
-            </button>
-          </div>
-          <div id="tournamentsContent" class="table-wrap"></div>
-        </div>
-      </section>
-      <!-- TABLES -->
-      <section id="page-tables" class="page">
-        <div class="page-title">
-          <h2>Mesas + QR</h2>
-          <p>Cada mesa abre directamente el sistema del jugador.</p>
-        </div>
-        <div class="notice">
-          Los QR utilizan el formato:
-          <strong>index.html?mesa=N</strong>
-        </div>
-        <div id="tablesContent" class="qr-grid"></div>
-      </section>
-      <!-- RESERVATIONS -->
-      <section id="page-reservations" class="page">
-        <div class="page-title">
-          <h2>Reservas</h2>
-          <p>Reservas registradas desde el sitio.</p>
-        </div>
-        <div class="section">
-          <div class="section-header">
-            <h3>Reservas</h3>
-            <button class="btn btn-secondary btn-small"
-              onclick="loadReservations()">
-              Actualizar
-            </button>
-          </div>
-          <div id="reservationsContent" class="table-wrap"></div>
-        </div>
-      </section>
-      <!-- ORDERS -->
-      <section id="page-orders" class="page">
-        <div class="page-title">
-          <h2>Pedidos</h2>
-          <p>Pedidos gastronómicos recibidos.</p>
-        </div>
-        <div class="section">
-          <div class="section-header">
-            <h3>Pedidos</h3>
-            <button class="btn btn-secondary btn-small"
-              onclick="loadOrders()">
-              Actualizar
-            </button>
-          </div>
-          <div id="ordersContent" class="table-wrap"></div>
-        </div>
-      </section>
-      <!-- PROMOTIONS -->
-      <section id="page-promos" class="page">
-        <div class="page-title">
-          <h2>Promociones</h2>
-          <p>Promociones gastronómicas de Pool & Beach.</p>
-        </div>
-        <div class="section">
-          <div class="section-header">
-            <h3>Promociones</h3>
-            <button class="btn btn-secondary btn-small"
-              onclick="loadPromos()">
-              Actualizar
-            </button>
-          </div>
-          <div id="promosContent" class="table-wrap"></div>
-        </div>
-      </section>
-    </main>
+
+    <div class="card">
+      <h3>👥 Duelos esperando</h3>
+      <div
+        id="dashboardDuels"
+        class="muted"
+      >
+        Cargando...
+      </div>
+    </div>
+
   </div>
+
+</section>
+
+<!-- =====================================================
+     JUGADORES
+====================================================== -->
+
+<section
+  id="section-jugadores"
+  class="section"
+>
+
+  <div class="section-title">
+    <div>
+      <h1>👥 Jugadores</h1>
+      <p>Perfiles registrados en Games</p>
+    </div>
+  </div>
+
+  <div class="card">
+
+    <div class="toolbar">
+
+      <input
+        id="playerSearch"
+        placeholder="Buscar jugador..."
+        oninput="filterPlayers()"
+      >
+
+      <button
+        class="secondary"
+        onclick="loadPlayers()"
+      >
+        🔄 Actualizar
+      </button>
+
+    </div>
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Jugador</th>
+            <th>Puntos</th>
+            <th>Tokens</th>
+            <th>Racha</th>
+            <th>Rol</th>
+            <th>Alta</th>
+          </tr>
+        </thead>
+
+        <tbody id="playersTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     JUEGOS
+====================================================== -->
+
+<section
+  id="section-juegos"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🎮 Juegos</h1>
+      <p>Configuración de los desafíos</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadGamesAdmin()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div id="gamesAdminGrid" class="grid two"></div>
+
+</section>
+
+<!-- =====================================================
+     PARTIDAS
+====================================================== -->
+
+<section
+  id="section-partidas"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🎯 Partidas</h1>
+      <p>Registro de partidas realizadas</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadPlays()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div class="table-wrap">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Jugador</th>
+            <th>Juego</th>
+            <th>Puntos</th>
+            <th>Tokens</th>
+            <th>Mesa</th>
+          </tr>
+        </thead>
+
+        <tbody id="playsTable"></tbody>
+
+      </table>
+
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     PREMIOS
+====================================================== -->
+
+<section
+  id="section-premios"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🎁 Premios</h1>
+      <p>Administrá el catálogo de premios</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="openPrizeForm()"
+    >
+      ➕ Nuevo premio
+    </button>
+
+  </div>
+
+  <div
+    id="prizesAdminGrid"
+    class="grid two"
+  ></div>
+
+</section>
+
+<!-- =====================================================
+     TORNEOS
+====================================================== -->
+
+<section
+  id="section-torneos"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🏆 Torneos</h1>
+      <p>Creación y control de torneos</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="openTournamentForm()"
+    >
+      ➕ Nuevo torneo
+    </button>
+
+  </div>
+
+  <div
+    id="tournamentsAdminGrid"
+    class="grid two"
+  ></div>
+
+</section>
+
+<!-- =====================================================
+     MESAS
+====================================================== -->
+
+<section
+  id="section-mesas"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🎱 Mesas / QR</h1>
+      <p>Un QR individual para cada mesa</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadTables()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div
+    id="tablesQRGrid"
+    class="qr-grid"
+  ></div>
+
+</section>
+
+<!-- =====================================================
+     MISIONES
+====================================================== -->
+
+<section
+  id="section-misiones"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>⭐ Misiones pendientes</h1>
+      <p>Validá las misiones realizadas por jugadores</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadPendingMissions()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div
+    id="missionsAdminGrid"
+    class="grid two"
+  ></div>
+
+</section>
+
+<!-- =====================================================
+     DUELOS
+====================================================== -->
+
+<section
+  id="section-duelos"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>👥 Duelos</h1>
+      <p>Estado de los duelos 1 vs 1</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadDuels()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div
+    id="duelsAdminGrid"
+    class="grid two"
+  ></div>
+
+</section>
+
+<!-- =====================================================
+     RESERVAS
+====================================================== -->
+
+<section
+  id="section-reservas"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>📅 Reservas</h1>
+      <p>Reservas del local</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadReservations()"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div class="table-wrap">
+      <table>
+
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Servicio</th>
+            <th>Personas</th>
+            <th>Estado</th>
+            <th>Notas</th>
+          </tr>
+        </thead>
+
+        <tbody id="reservationsTable"></tbody>
+
+      </table>
+    </div>
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     PEDIDOS
+====================================================== -->
+
+<section
+  id="section-pedidos"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>🛒 Pedidos</h1>
+      <p>Pedidos registrados</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadLegacyTable('pedidos','ordersTable')"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div
+      id="ordersTable"
+      class="table-wrap"
+    ></div>
+
+  </div>
+
+</section>
+
+<!-- =====================================================
+     PROMOCIONES
+====================================================== -->
+
+<section
+  id="section-promociones"
+  class="section"
+>
+
+  <div class="section-title">
+
+    <div>
+      <h1>📣 Promociones</h1>
+      <p>Contenido promocional</p>
+    </div>
+
+    <button
+      class="secondary"
+      onclick="loadLegacyTable('promociones','promotionsTable')"
+    >
+      🔄 Actualizar
+    </button>
+
+  </div>
+
+  <div class="card">
+
+    <div
+      id="promotionsTable"
+      class="table-wrap"
+    ></div>
+
+  </div>
+
+</section>
+
 </div>
-<!-- PRIZE MODAL -->
-<div id="prizeModal" class="modal">
-  <div class="modal-card">
+</div>
+
+<!-- =====================================================
+     MODAL
+====================================================== -->
+
+<div
+  id="modal"
+  class="modal hidden"
+  onclick="closeModalOutside(event)"
+>
+
+  <div class="modal-box">
+
     <div class="modal-header">
-      <h3>Nuevo premio</h3>
-      <button class="close" onclick="closeModal('prizeModal')">×</button>
+
+      <h2 id="modalTitle">
+        Pool & Beach
+      </h2>
+
+      <button
+        class="close"
+        onclick="closeModal()"
+      >
+        ×
+      </button>
+
     </div>
-    <form id="prizeForm">
-      <div class="field">
-        <label>Nombre</label>
-        <input id="prizeName" required>
-      </div>
-      <div class="field">
-        <label>Descripción</label>
-        <textarea id="prizeDescription"></textarea>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Costo en fichas</label>
-          <input id="prizeCost" type="number" min="0" required>
-        </div>
-        <div class="field">
-          <label>Stock</label>
-          <input id="prizeStock" type="number" min="0" value="1" required>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="button"
-          class="btn btn-secondary"
-          onclick="closeModal('prizeModal')">
-          Cancelar
-        </button>
-        <button class="btn btn-gold" type="submit">
-          Crear premio
-        </button>
-      </div>
-    </form>
+
+    <div id="modalContent"></div>
+
   </div>
+
 </div>
-<!-- TOURNAMENT MODAL -->
-<div id="tournamentModal" class="modal">
-  <div class="modal-card">
-    <div class="modal-header">
-      <h3>Nuevo torneo</h3>
-      <button class="close"
-        onclick="closeModal('tournamentModal')">×</button>
-    </div>
-    <form id="tournamentForm">
-      <div class="field">
-        <label>Nombre del torneo</label>
-        <input id="tournamentName" required>
-      </div>
-      <div class="field">
-        <label>Tipo de juego</label>
-        <select id="tournamentGameType">
-          <option value="pool">Pool</option>
-          <option value="truco">Truco</option>
-          <option value="dados">Dados</option>
-          <option value="duelo">Duelo 1 vs 1</option>
-          <option value="trivia">Trivia</option>
-        </select>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Fecha y hora</label>
-          <input id="tournamentDate"
-            type="datetime-local"
-            required>
-        </div>
-        <div class="field">
-          <label>Fichas de inscripción</label>
-          <input id="tournamentTokens"
-            type="number"
-            min="0"
-            value="0">
-        </div>
-      </div>
-      <div class="grid-2">
-        <div class="field">
-          <label>Máximo de jugadores</label>
-          <input id="tournamentMax"
-            type="number"
-            min="2"
-            value="16">
-        </div>
-        <div class="field">
-          <label>Estado</label>
-          <select id="tournamentStatus">
-            <option value="open">Abierto</option>
-            <option value="in_progress">En curso</option>
-            <option value="finished">Finalizado</option>
-            <option value="cancelled">Cancelado</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-actions">
-        <button type="button"
-          class="btn btn-secondary"
-          onclick="closeModal('tournamentModal')">
-          Cancelar
-        </button>
-        <button class="btn btn-gold" type="submit">
-          Crear torneo
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-<div id="toast" class="toast"></div>
+
+<div id="toast"></div>
+
 <script>
-/* ============================================================
-   CONFIGURACIÓN SUPABASE
-============================================================ */
+/* =========================================================
+   SUPABASE
+========================================================= */
+
 const SUPABASE_URL =
   "https://nmpakeovqkdajtswjpgm.supabase.co";
+
 const SUPABASE_KEY =
   "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
-const supabaseClient =
-  window.supabase.createClient(
+
+const {createClient} = supabase;
+
+const db =
+  createClient(
     SUPABASE_URL,
     SUPABASE_KEY
   );
-/* ============================================================
+
+/* =========================================================
    ESTADO
-============================================================ */
+========================================================= */
+
 let currentUser = null;
-let gamesCache = [];
+let currentRole = null;
+
 let playersCache = [];
-let playsCache = [];
-/* ============================================================
+let gamesCache = [];
+
+/* =========================================================
    UTILIDADES
-============================================================ */
-function $(id){
-  return document.getElementById(id);
-}
-function escapeHTML(value){
+========================================================= */
+
+function escapeHtml(value){
+
   return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
 }
-function showToast(message,type="success"){
-  const toast = $("toast");
-  toast.textContent = message;
-  toast.className = "toast show " + type;
+
+function showToast(message,type=""){
+
+  const el =
+    document.getElementById("toast");
+
+  el.textContent = message;
+  el.className = "";
+
+  if(type){
+    el.classList.add(type);
+  }
+
+  el.classList.add("show");
+
   clearTimeout(window.toastTimer);
+
   window.toastTimer =
-    setTimeout(()=>{
-      toast.className = "toast";
-    },3500);
+    setTimeout(
+      () => el.classList.remove("show"),
+      3500
+    );
+
 }
-function showError(message){
-  const box = $("loginError");
-  box.textContent = message;
-  box.classList.remove("hidden");
+
+function openModal(title,html){
+
+  document.getElementById(
+    "modalTitle"
+  ).textContent = title;
+
+  document.getElementById(
+    "modalContent"
+  ).innerHTML = html;
+
+  document.getElementById(
+    "modal"
+  ).classList.remove("hidden");
+
 }
-function hideError(){
-  $("loginError").classList.add("hidden");
+
+function closeModal(){
+
+  document.getElementById(
+    "modal"
+  ).classList.add("hidden");
+
 }
+
+function closeModalOutside(event){
+
+  if(event.target.id === "modal"){
+    closeModal();
+  }
+
+}
+
 function formatDate(value){
-  if(!value) return "—";
-  const date = new Date(value);
-  if(Number.isNaN(date.getTime())){
-    return escapeHTML(value);
+
+  if(!value){
+    return "-";
   }
-  return date.toLocaleString("es-AR",{
-    dateStyle:"short",
-    timeStyle:"short"
-  });
+
+  try{
+
+    return new Date(value)
+      .toLocaleString(
+        "es-AR",
+        {
+          dateStyle:"short",
+          timeStyle:"short"
+        }
+      );
+
+  }catch{
+    return value;
+  }
+
 }
-function formatNumber(value){
-  return Number(value || 0).toLocaleString("es-AR");
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+async function login(){
+
+  const email =
+    document
+      .getElementById("loginEmail")
+      .value
+      .trim();
+
+  const password =
+    document
+      .getElementById("loginPassword")
+      .value;
+
+  const errorBox =
+    document.getElementById("loginError");
+
+  const button =
+    document.getElementById("loginButton");
+
+  errorBox.classList.add("hidden");
+
+  if(!email || !password){
+
+    errorBox.textContent =
+      "Ingresá email y contraseña.";
+
+    errorBox.classList.remove("hidden");
+
+    return;
+  }
+
+  button.disabled = true;
+  button.textContent = "Ingresando...";
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await db.auth.signInWithPassword({
+        email,
+        password
+      });
+
+    if(error){
+      throw error;
+    }
+
+    currentUser =
+      data.user;
+
+    await verifyAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+    errorBox.textContent =
+      error.message ||
+      "No se pudo iniciar sesión.";
+
+    errorBox.classList.remove("hidden");
+
+    button.disabled = false;
+    button.textContent = "🔐 Ingresar";
+
+  }
+
 }
-function closeModal(id){
-  $(id).classList.remove("open");
-}
-/* ============================================================
-   NAVEGACIÓN
-============================================================ */
-function showPage(page){
+
+/* =========================================================
+   VERIFICAR ROL
+========================================================= */
+
+async function verifyAdmin(){
+
+  if(!currentUser){
+    throw new Error(
+      "No existe una sesión válida."
+    );
+  }
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("profiles")
+      .select(
+        "id,display_name,role"
+      )
+      .eq(
+        "id",
+        currentUser.id
+      )
+      .maybeSingle();
+
+  if(error){
+    throw error;
+  }
+
+  const role =
+    String(data?.role || "")
+      .toLowerCase();
+
+  if(
+    role !== "admin" &&
+    role !== "staff"
+  ){
+
+    await db.auth.signOut();
+
+    throw new Error(
+      "Esta cuenta no tiene permisos de administración."
+    );
+  }
+
+  currentRole = role;
+
+  document.getElementById(
+    "roleBadge"
+  ).textContent =
+    role === "admin"
+      ? "ADMIN"
+      : "STAFF";
+
   document
-    .querySelectorAll(".page")
-    .forEach(el=>{
-      el.classList.remove("active");
-    });
-  const target = $("page-" + page);
-  if(target){
-    target.classList.add("active");
+    .getElementById("loginScreen")
+    .classList.add("hidden");
+
+  document
+    .getElementById("adminApp")
+    .classList.remove("hidden");
+
+  await refreshAll();
+
+}
+
+/* =========================================================
+   SESIÓN EXISTENTE
+========================================================= */
+
+async function checkSession(){
+
+  const {
+    data
+  } =
+    await db.auth.getSession();
+
+  if(!data?.session?.user){
+    return;
   }
+
+  currentUser =
+    data.session.user;
+
+  try{
+
+    await verifyAdmin();
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+async function logout(){
+
+  await db.auth.signOut();
+
+  currentUser = null;
+  currentRole = null;
+
+  document
+    .getElementById("adminApp")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginScreen")
+    .classList.remove("hidden");
+
+}
+
+/* =========================================================
+   NAVEGACIÓN
+========================================================= */
+
+function initNavigation(){
+
   document
     .querySelectorAll(".nav button")
-    .forEach(btn=>{
-      btn.classList.toggle(
-        "active",
-        btn.dataset.page === page
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        async () => {
+
+          document
+            .querySelectorAll(".nav button")
+            .forEach(
+              b => b.classList.remove("active")
+            );
+
+          button.classList.add("active");
+
+          document
+            .querySelectorAll(".section")
+            .forEach(
+              s => s.classList.remove("active")
+            );
+
+          const id =
+            "section-" +
+            button.dataset.section;
+
+          const section =
+            document.getElementById(id);
+
+          if(section){
+            section.classList.add("active");
+          }
+
+          await loadSection(
+            button.dataset.section
+          );
+
+        }
       );
+
     });
-  if(page === "dashboard") loadDashboard();
-  if(page === "players") loadPlayers();
-  if(page === "games") loadGames();
-  if(page === "plays") loadPlays();
-  if(page === "prizes") loadPrizes();
-  if(page === "tournaments") loadTournaments();
-  if(page === "tables") loadTables();
-  if(page === "reservations") loadReservations();
-  if(page === "orders") loadOrders();
-  if(page === "promos") loadPromos();
+
 }
-document
-  .querySelectorAll(".nav button")
-  .forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      showPage(btn.dataset.page);
-    });
-  });
-/* ============================================================
-   AUTENTICACIÓN
-============================================================ */
-$("loginForm").addEventListener("submit",async(event)=>{
-  event.preventDefault();
-  hideError();
-  const email =
-    $("email").value.trim();
-  const password =
-    $("password").value;
-  if(!email || !password){
-    showError("Completá correo y contraseña.");
-    return;
-  }
-  const {data,error} =
-    await supabaseClient.auth.signInWithPassword({
-      email,
-      password
-    });
-  if(error){
-    showError(error.message);
-    return;
-  }
-  currentUser = data.user;
-  await verifyAdmin();
-});
-async function verifyAdmin(){
-  if(!currentUser){
-    logoutUI();
-    return;
-  }
-  /*
-    La autorización real debe estar también protegida
-    en Supabase/RLS. Esta comprobación evita mostrar
-    accidentalmente el panel a usuarios que no tienen
-    rol administrativo.
-  */
-  const {data,error} =
-    await supabaseClient
-      .from("profiles")
-      .select("id,display_name,role")
-      .eq("id",currentUser.id)
-      .maybeSingle();
-  if(error){
-    console.error(error);
-    /*
-      Si RLS impide consultar el perfil, no asumimos
-      que el usuario es administrador.
-    */
-    await supabaseClient.auth.signOut();
-    showError(
-      "No fue posible verificar los permisos administrativos."
-    );
-    return;
-  }
-  const role =
-    String(data?.role || "").toLowerCase();
-  const allowed =
-    role === "admin" ||
-    role === "administrator" ||
-    role === "staff";
-  if(!allowed){
-    await supabaseClient.auth.signOut();
-    showError(
-      "Esta cuenta no tiene permisos de administrador."
-    );
-    return;
-  }
-  $("loginScreen").style.display = "none";
-  $("app").style.display = "block";
-  $("userEmail").textContent =
-    currentUser.email || "";
-  await loadDashboard();
-}
-function logoutUI(){
-  currentUser = null;
-  $("app").style.display = "none";
-  $("loginScreen").style.display = "flex";
-}
-$("logoutBtn").addEventListener("click",async()=>{
-  await supabaseClient.auth.signOut();
-  logoutUI();
-});
-/* ============================================================
-   SESIÓN EXISTENTE
-============================================================ */
-async function restoreSession(){
-  const {data} =
-    await supabaseClient.auth.getSession();
-  if(data?.session?.user){
-    currentUser =
-      data.session.user;
-    await verifyAdmin();
-  }
-}
-/* ============================================================
-   DASHBOARD
-============================================================ */
-async function loadDashboard(){
+
+async function loadSection(section){
+
   try{
-    const [
-      players,
-      games,
-      plays,
-      prizes
-    ] = await Promise.all([
-      supabaseClient
-        .from("profiles")
-        .select("id",{count:"exact",head:true}),
-      supabaseClient
-        .from("games")
-        .select("id",{count:"exact",head:true})
-        .eq("active",true),
-      supabaseClient
-        .from("game_plays")
-        .select("id",{count:"exact",head:true}),
-      supabaseClient
-        .from("prizes")
-        .select("id",{count:"exact",head:true})
-        .eq("active",true)
-    ]);
-    $("statPlayers").textContent =
-      players.count ?? 0;
-    $("statGames").textContent =
-      games.count ?? 0;
-    $("statPlays").textContent =
-      plays.count ?? 0;
-    $("statPrizes").textContent =
-      prizes.count ?? 0;
-    await loadDashboardGames();
-    await loadDashboardPlays();
+
+    switch(section){
+
+      case "dashboard":
+        await loadDashboard();
+        break;
+
+      case "jugadores":
+        await loadPlayers();
+        break;
+
+      case "juegos":
+        await loadGamesAdmin();
+        break;
+
+      case "partidas":
+        await loadPlays();
+        break;
+
+      case "premios":
+        await loadPrizesAdmin();
+        break;
+
+      case "torneos":
+        await loadTournamentsAdmin();
+        break;
+
+      case "mesas":
+        await loadTables();
+        break;
+
+      case "misiones":
+        await loadPendingMissions();
+        break;
+
+      case "duelos":
+        await loadDuels();
+        break;
+
+      case "reservas":
+        await loadReservations();
+        break;
+
+      case "pedidos":
+        await loadLegacyTable(
+          "pedidos",
+          "ordersTable"
+        );
+        break;
+
+      case "promociones":
+        await loadLegacyTable(
+          "promociones",
+          "promotionsTable"
+        );
+        break;
+
+    }
+
   }catch(error){
+
     console.error(error);
+
+    showToast(
+      error.message ||
+      "No se pudo cargar la sección.",
+      "error"
+    );
+
   }
+
 }
-async function loadDashboardGames(){
-  const {data,error} =
-    await supabaseClient
-      .from("games")
-      .select("*")
-      .eq("active",true)
-      .order("created_at",{ascending:true});
-  if(error){
-    $("dashboardGames").innerHTML =
-      `<div class="empty">No se pudieron cargar los juegos.</div>`;
-    return;
-  }
-  gamesCache = data || [];
-  if(!gamesCache.length){
-    $("dashboardGames").innerHTML =
-      `<div class="empty">No hay juegos activos.</div>`;
-    return;
-  }
-  $("dashboardGames").innerHTML =
-    gamesCache.slice(0,4).map(game=>`
-      <div class="game-card">
-        <div class="game-icon">
-          ${escapeHTML(game.icon || "🎮")}
-        </div>
-        <h4>
-          ${escapeHTML(game.name)}
-        </h4>
-        <div class="game-reward">
-          +${formatNumber(game.points_reward)} puntos
-          · +${formatNumber(game.tokens_reward)} fichas
-        </div>
-      </div>
-    `).join("");
-}
-async function loadDashboardPlays(){
-  const {data,error} =
-    await supabaseClient
-      .from("game_plays")
-      .select(`
-        id,
-        user_id,
-        game_id,
-        points_awarded,
-        tokens_awarded,
-        created_at
-      `)
-      .order("created_at",{ascending:false})
-      .limit(8);
-  if(error){
-    $("dashboardPlays").innerHTML =
-      `<div class="empty">No se pudieron cargar las partidas.</div>`;
-    return;
-  }
-  if(!data?.length){
-    $("dashboardPlays").innerHTML =
-      `<div class="empty">Todavía no hay partidas.</div>`;
-    return;
-  }
-  $("dashboardPlays").innerHTML =
-    data.map(play=>`
-      <div style="
-        padding:10px 0;
-        border-bottom:1px solid var(--line);
-      ">
-        <strong>
-          +${formatNumber(play.points_awarded || 0)} puntos
-        </strong>
-        <span style="color:var(--muted);font-size:12px;">
-          · +${formatNumber(play.tokens_awarded || 0)} fichas
-          · ${formatDate(play.created_at)}
-        </span>
-      </div>
-    `).join("");
-}
-/* ============================================================
-   JUGADORES
-============================================================ */
-async function loadPlayers(){
-  $("playersContent").innerHTML =
-    `<div class="loading">Cargando jugadores...</div>`;
-  const {data,error} =
-    await supabaseClient
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+async function loadDashboard(){
+
+  const [
+    players,
+    games,
+    plays,
+    prizes
+  ] =
+  await Promise.all([
+
+    db
       .from("profiles")
-      .select(`
-        id,
-        display_name,
-        role,
-        points,
-        tokens,
-        streak,
-        created_at
-      `)
-      .order("points",{ascending:false})
-      .limit(500);
+      .select("id",{count:"exact",head:true}),
+
+    db
+      .from("games")
+      .select("id",{count:"exact",head:true})
+      .eq("active",true),
+
+    db
+      .from("game_plays")
+      .select("id",{count:"exact",head:true}),
+
+    db
+      .from("prizes")
+      .select("id",{count:"exact",head:true})
+      .eq("active",true)
+
+  ]);
+
+  document.getElementById(
+    "countPlayers"
+  ).textContent =
+    players.count || 0;
+
+  document.getElementById(
+    "countGames"
+  ).textContent =
+    games.count || 0;
+
+  document.getElementById(
+    "countPlays"
+  ).textContent =
+    plays.count || 0;
+
+  document.getElementById(
+    "countPrizes"
+  ).textContent =
+    prizes.count || 0;
+
+  try{
+
+    const missions =
+      await db.rpc(
+        "get_pending_missions"
+      );
+
+    document.getElementById(
+      "dashboardMissions"
+    ).textContent =
+      `${missions.data?.length || 0} pendiente(s)`;
+
+  }catch{
+
+    document.getElementById(
+      "dashboardMissions"
+    ).textContent =
+      "Consultar sección Misiones";
+
+  }
+
+  try{
+
+    const tables =
+      await db
+        .from("tables_pool")
+        .select("id")
+        .eq("active",true);
+
+    let total = 0;
+
+    for(const table of tables.data || []){
+
+      try{
+
+        const result =
+          await db.rpc(
+            "get_waiting_duels",
+            {
+              p_table_id:table.id
+            }
+          );
+
+        total +=
+          Array.isArray(result.data)
+            ? result.data.length
+            : 0;
+
+      }catch{}
+
+    }
+
+    document.getElementById(
+      "dashboardDuels"
+    ).textContent =
+      `${total} esperando`;
+
+  }catch{
+
+    document.getElementById(
+      "dashboardDuels"
+    ).textContent =
+      "Consultar sección Duelos";
+
+  }
+
+}
+
+/* =========================================================
+   JUGADORES
+========================================================= */
+
+async function loadPlayers(){
+
+  const tbody =
+    document.getElementById(
+      "playersTable"
+    );
+
+  tbody.innerHTML =
+    `<tr>
+      <td colspan="6">
+        Cargando...
+      </td>
+    </tr>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("profiles")
+      .select(
+        "id,display_name,points,tokens,streak,role,created_at"
+      )
+      .order(
+        "points",
+        {ascending:false}
+      );
+
   if(error){
-    console.error(error);
-    $("playersContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar los jugadores.
-      </div>`;
+    throw error;
+  }
+
+  playersCache =
+    data || [];
+
+  renderPlayers(playersCache);
+
+}
+
+function renderPlayers(players){
+
+  const tbody =
+    document.getElementById(
+      "playersTable"
+    );
+
+  if(!players.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6">
+          No hay jugadores.
+        </td>
+      </tr>`;
+
     return;
   }
-  playersCache = data || [];
-  renderPlayers();
+
+  tbody.innerHTML =
+    players.map(player => `
+
+      <tr>
+
+        <td>
+          <strong>
+            ${escapeHtml(
+              player.display_name ||
+              "Jugador"
+            )}
+          </strong>
+        </td>
+
+        <td>
+          ${Number(player.points || 0)}
+        </td>
+
+        <td>
+          ${Number(player.tokens || 0)}
+        </td>
+
+        <td>
+          🔥 ${Number(player.streak || 0)}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            player.role || "player"
+          )}
+        </td>
+
+        <td>
+          ${formatDate(player.created_at)}
+        </td>
+
+      </tr>
+
+    `).join("");
+
 }
-function renderPlayers(){
-  const query =
-    ($("playerSearch")?.value || "")
+
+function filterPlayers(){
+
+  const search =
+    document
+      .getElementById("playerSearch")
+      .value
       .trim()
       .toLowerCase();
+
   const filtered =
-    playersCache.filter(player=>{
-      const text = `
-        ${player.display_name || ""}
-        ${player.id || ""}
-      `.toLowerCase();
-      return text.includes(query);
-    });
-  if(!filtered.length){
-    $("playersContent").innerHTML =
-      `<div class="empty">No hay jugadores.</div>`;
-    return;
-  }
-  $("playersContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Jugador</th>
-          <th>Puntos</th>
-          <th>Fichas</th>
-          <th>Racha</th>
-          <th>Rol</th>
-          <th>Alta</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${filtered.map(player=>`
-          <tr>
-            <td>
-              <strong>
-                ${escapeHTML(
-                  player.display_name || "Jugador"
-                )}
-              </strong>
-            </td>
-            <td>
-              ${formatNumber(player.points)}
-            </td>
-            <td>
-              ${formatNumber(player.tokens)}
-            </td>
-            <td>
-              ${formatNumber(player.streak)}
-            </td>
-            <td>
-              <span class="badge">
-                ${escapeHTML(player.role || "player")}
-              </span>
-            </td>
-            <td>
-              ${formatDate(player.created_at)}
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
+    playersCache.filter(player =>
+      String(
+        player.display_name || ""
+      )
+      .toLowerCase()
+      .includes(search)
+    );
+
+  renderPlayers(filtered);
+
 }
-$("playerSearch").addEventListener(
-  "input",
-  renderPlayers
-);
-/* ============================================================
+
+/* =========================================================
    JUEGOS
-============================================================ */
-async function loadGames(){
-  $("gamesContent").innerHTML =
-    `<div class="loading">Cargando juegos...</div>`;
-  const {data,error} =
-    await supabaseClient
+========================================================= */
+
+async function loadGamesAdmin(){
+
+  const container =
+    document.getElementById(
+      "gamesAdminGrid"
+    );
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando juegos...
+    </div>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
       .from("games")
-      .select("*")
-      .order("created_at",{ascending:true});
+      .select(
+        "id,name,description,icon,points_reward,tokens_reward,active,created_at"
+      )
+      .order(
+        "created_at",
+        {ascending:true}
+      );
+
   if(error){
-    $("gamesContent").innerHTML =
-      `<div class="empty">No se pudieron cargar los juegos.</div>`;
-    return;
+    throw error;
   }
-  gamesCache = data || [];
+
+  gamesCache =
+    data || [];
+
   if(!gamesCache.length){
-    $("gamesContent").innerHTML =
-      `<div class="empty">No hay juegos configurados.</div>`;
+
+    container.innerHTML =
+      `<div class="card">
+        No hay juegos.
+      </div>`;
+
     return;
   }
-  $("gamesContent").innerHTML =
-    gamesCache.map(game=>`
-      <div class="game-card">
-        <div class="game-icon">
-          ${escapeHTML(game.icon || "🎮")}
+
+  container.innerHTML =
+    gamesCache.map(game => `
+
+      <div class="card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;
+        ">
+
+          <div>
+
+            <div style="
+              font-size:28px;
+              margin-bottom:7px;
+            ">
+              ${escapeHtml(
+                game.icon || "🎮"
+              )}
+            </div>
+
+            <h3>
+              ${escapeHtml(game.name)}
+            </h3>
+
+          </div>
+
+          <span class="status ${
+            game.active
+              ? "active"
+              : "inactive"
+          }">
+            ${game.active
+              ? "ACTIVO"
+              : "INACTIVO"}
+          </span>
+
         </div>
-        <h4>
-          ${escapeHTML(game.name)}
-        </h4>
-        <p>
-          ${escapeHTML(
-            game.description || "Sin descripción."
+
+        <p class="muted">
+          ${escapeHtml(
+            game.description || ""
           )}
         </p>
-        <div class="game-reward">
-          ${formatNumber(game.points_reward || 0)}
-          puntos ·
-          ${formatNumber(game.tokens_reward || 0)}
-          fichas
+
+        <div class="reward">
+
+          <strong>
+            ⭐ ${Number(game.points_reward || 0)}
+          </strong>
+
+          <strong>
+            🪙 ${Number(game.tokens_reward || 0)}
+          </strong>
+
         </div>
-        <div style="margin-top:12px;">
-          <span class="badge ${
-            game.active
-              ? "badge-green"
-              : "badge-red"
-          }">
-            ${game.active ? "ACTIVO" : "INACTIVO"}
-          </span>
-        </div>
+
+        <button
+          class="secondary"
+          style="width:100%"
+          onclick="editGame('${game.id}')"
+        >
+          ✏️ Editar
+        </button>
+
       </div>
+
     `).join("");
+
 }
-/* ============================================================
+
+function editGame(id){
+
+  const game =
+    gamesCache.find(
+      g => g.id === id
+    );
+
+  if(!game){
+    return;
+  }
+
+  openModal(
+    "🎮 Editar juego",
+    `
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          id="editGameName"
+          value="${escapeHtml(game.name)}"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Descripción</label>
+
+        <textarea
+          id="editGameDescription"
+        >${escapeHtml(game.description || "")}</textarea>
+
+      </div>
+
+      <div class="form-grid two">
+
+        <div class="form-group">
+
+          <label>Puntos</label>
+
+          <input
+            id="editGamePoints"
+            type="number"
+            min="0"
+            value="${Number(game.points_reward || 0)}"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Tokens</label>
+
+          <input
+            id="editGameTokens"
+            type="number"
+            min="0"
+            value="${Number(game.tokens_reward || 0)}"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Estado</label>
+
+        <select id="editGameActive">
+
+          <option
+            value="true"
+            ${game.active ? "selected" : ""}
+          >
+            Activo
+          </option>
+
+          <option
+            value="false"
+            ${!game.active ? "selected" : ""}
+          >
+            Inactivo
+          </option>
+
+        </select>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="saveGame('${game.id}')"
+      >
+        💾 Guardar cambios
+      </button>
+    `
+  );
+
+}
+
+async function saveGame(id){
+
+  const name =
+    document.getElementById(
+      "editGameName"
+    ).value.trim();
+
+  const description =
+    document.getElementById(
+      "editGameDescription"
+    ).value.trim();
+
+  const points =
+    Number(
+      document.getElementById(
+        "editGamePoints"
+      ).value
+    );
+
+  const tokens =
+    Number(
+      document.getElementById(
+        "editGameTokens"
+      ).value
+    );
+
+  const active =
+    document.getElementById(
+      "editGameActive"
+    ).value === "true";
+
+  if(!name){
+    showToast(
+      "El juego necesita un nombre.",
+      "error"
+    );
+    return;
+  }
+
+  const {
+    error
+  } =
+    await db
+      .from("games")
+      .update({
+        name,
+        description,
+        points_reward:points,
+        tokens_reward:tokens,
+        active
+      })
+      .eq("id",id);
+
+  if(error){
+    throw error;
+  }
+
+  closeModal();
+
+  await loadGamesAdmin();
+
+  showToast(
+    "Juego actualizado.",
+    "success"
+  );
+
+}
+
+/* =========================================================
    PARTIDAS
-============================================================ */
+========================================================= */
+
 async function loadPlays(){
-  $("playsContent").innerHTML =
-    `<div class="loading">Cargando partidas...</div>`;
-  const {data,error} =
-    await supabaseClient
+
+  const tbody =
+    document.getElementById(
+      "playsTable"
+    );
+
+  tbody.innerHTML =
+    `<tr>
+      <td colspan="6">Cargando...</td>
+    </tr>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
       .from("game_plays")
       .select(`
         id,
@@ -1445,682 +2257,1485 @@ async function loadPlays(){
         table_id,
         points_awarded,
         tokens_awarded,
-        metadata,
-        created_at
+        created_at,
+        profiles(display_name),
+        games(name),
+        tables_pool(table_number)
       `)
-      .order("created_at",{ascending:false})
-      .limit(500);
+      .order(
+        "created_at",
+        {ascending:false}
+      )
+      .limit(200);
+
   if(error){
-    $("playsContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar las partidas.
-      </div>`;
+
+    console.error(error);
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6">
+          No se pudieron cargar las partidas.
+        </td>
+      </tr>`;
+
     return;
   }
-  playsCache = data || [];
-  renderPlays();
-}
-function renderPlays(){
-  const query =
-    ($("playSearch")?.value || "")
-      .trim()
-      .toLowerCase();
-  const filtered =
-    playsCache.filter(play=>{
-      const game =
-        gamesCache.find(
-          g=>g.id === play.game_id
-        );
-      const player =
-        playersCache.find(
-          p=>p.id === play.user_id
-        );
-      const text = `
-        ${game?.name || ""}
-        ${player?.display_name || ""}
-        ${play.user_id || ""}
-      `.toLowerCase();
-      return text.includes(query);
-    });
-  if(!filtered.length){
-    $("playsContent").innerHTML =
-      `<div class="empty">No hay partidas.</div>`;
+
+  if(!data?.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6">
+          Todavía no hay partidas.
+        </td>
+      </tr>`;
+
     return;
   }
-  $("playsContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Fecha</th>
-          <th>Jugador</th>
-          <th>Juego</th>
-          <th>Mesa</th>
-          <th>Puntos</th>
-          <th>Fichas</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${filtered.map(play=>{
-          const game =
-            gamesCache.find(
-              g=>g.id === play.game_id
-            );
-          const player =
-            playersCache.find(
-              p=>p.id === play.user_id
-            );
-          return `
-            <tr>
-              <td>
-                ${formatDate(play.created_at)}
-              </td>
-              <td>
-                ${escapeHTML(
-                  player?.display_name ||
-                  play.user_id ||
-                  "—"
-                )}
-              </td>
-              <td>
-                ${escapeHTML(
-                  game?.name || play.game_id || "—"
-                )}
-              </td>
-              <td>
-                ${escapeHTML(
-                  play.table_id || "—"
-                )}
-              </td>
-              <td>
-                +${formatNumber(play.points_awarded)}
-              </td>
-              <td>
-                +${formatNumber(play.tokens_awarded)}
-              </td>
-            </tr>
-          `;
-        }).join("")}
-      </tbody>
-    </table>
-  `;
+
+  tbody.innerHTML =
+    data.map(play => `
+
+      <tr>
+
+        <td>
+          ${formatDate(play.created_at)}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            play.profiles?.display_name ||
+            "Jugador"
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(
+            play.games?.name ||
+            "Juego"
+          )}
+        </td>
+
+        <td>
+          ⭐ ${Number(
+            play.points_awarded || 0
+          )}
+        </td>
+
+        <td>
+          🪙 ${Number(
+            play.tokens_awarded || 0
+          )}
+        </td>
+
+        <td>
+          ${
+            play.tables_pool?.table_number
+              ? "Mesa " +
+                play.tables_pool.table_number
+              : "-"
+          }
+        </td>
+
+      </tr>
+
+    `).join("");
+
 }
-$("playSearch").addEventListener(
-  "input",
-  renderPlays
-);
-/* ============================================================
+
+/* =========================================================
    PREMIOS
-============================================================ */
-function openPrizeModal(){
-  $("prizeModal").classList.add("open");
-}
-async function loadPrizes(){
-  $("prizesContent").innerHTML =
-    `<div class="loading">Cargando premios...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("prizes")
-      .select("*")
-      .order("created_at",{ascending:false});
-  if(error){
-    $("prizesContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar los premios.
-      </div>`;
-    return;
-  }
-  if(!data?.length){
-    $("prizesContent").innerHTML =
-      `<div class="empty">No hay premios creados.</div>`;
-    return;
-  }
-  $("prizesContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Premio</th>
-          <th>Descripción</th>
-          <th>Costo</th>
-          <th>Stock</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(prize=>`
-          <tr>
-            <td>
-              <strong>
-                ${escapeHTML(prize.name)}
-              </strong>
-            </td>
-            <td>
-              ${escapeHTML(
-                prize.description || "—"
-              )}
-            </td>
-            <td>
-              🎟️ ${formatNumber(prize.token_cost)}
-            </td>
-            <td>
-              ${formatNumber(prize.stock)}
-            </td>
-            <td>
-              <span class="badge ${
-                prize.active
-                  ? "badge-green"
-                  : "badge-red"
-              }">
-                ${prize.active ? "ACTIVO" : "INACTIVO"}
-              </span>
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
-$("prizeForm").addEventListener(
-  "submit",
-  async(event)=>{
-    event.preventDefault();
-    const payload = {
-      name:
-        $("prizeName").value.trim(),
-      description:
-        $("prizeDescription").value.trim(),
-      token_cost:
-        Number($("prizeCost").value),
-      stock:
-        Number($("prizeStock").value),
-      active:true
-    };
-    const {error} =
-      await supabaseClient
-        .from("prizes")
-        .insert(payload);
-    if(error){
-      console.error(error);
-      showToast(
-        "No se pudo crear el premio. Verificá los permisos de Supabase.",
-        "error"
-      );
-      return;
-    }
-    closeModal("prizeModal");
-    event.target.reset();
-    showToast("Premio creado correctamente.");
-    await loadPrizes();
-  }
-);
-/* ============================================================
-   TORNEOS — TABLA NUEVA
-============================================================ */
-function openTournamentModal(){
-  $("tournamentModal").classList.add("open");
-}
-async function loadTournaments(){
-  $("tournamentsContent").innerHTML =
-    `<div class="loading">Cargando torneos...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("tournaments")
-      .select("*")
-      .order("starts_at",{ascending:true});
-  if(error){
-    $("tournamentsContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar los torneos.
-      </div>`;
-    return;
-  }
-  if(!data?.length){
-    $("tournamentsContent").innerHTML =
-      `<div class="empty">
-        Todavía no hay torneos creados.
-      </div>`;
-    return;
-  }
-  $("tournamentsContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Juego</th>
-          <th>Fecha</th>
-          <th>Entrada</th>
-          <th>Máximo</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(tournament=>`
-          <tr>
-            <td>
-              <strong>
-                ${escapeHTML(tournament.name)}
-              </strong>
-            </td>
-            <td>
-              ${escapeHTML(
-                tournament.game_type || "—"
-              )}
-            </td>
-            <td>
-              ${formatDate(tournament.starts_at)}
-            </td>
-            <td>
-              🎟️ ${formatNumber(
-                tournament.entry_tokens
-              )}
-            </td>
-            <td>
-              ${formatNumber(
-                tournament.max_players
-              )}
-            </td>
-            <td>
-              <span class="badge ${
-                tournament.status === "open"
-                  ? "badge-green"
-                  : tournament.status === "finished"
-                    ? "badge-gold"
-                    : "badge-blue"
-              }">
-                ${escapeHTML(
-                  tournament.status || "—"
-                )}
-              </span>
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
-$("tournamentForm").addEventListener(
-  "submit",
-  async(event)=>{
-    event.preventDefault();
-    const localDate =
-      $("tournamentDate").value;
-    const startsAt =
-      localDate
-        ? new Date(localDate).toISOString()
-        : null;
-    const payload = {
-      name:
-        $("tournamentName").value.trim(),
-      game_type:
-        $("tournamentGameType").value,
-      starts_at:
-        startsAt,
-      entry_tokens:
-        Number($("tournamentTokens").value || 0),
-      max_players:
-        Number($("tournamentMax").value || 16),
-      status:
-        $("tournamentStatus").value
-    };
-    const {error} =
-      await supabaseClient
-        .from("tournaments")
-        .insert(payload);
-    if(error){
-      console.error(error);
-      showToast(
-        "No se pudo crear el torneo. Verificá los permisos de Supabase.",
-        "error"
-      );
-      return;
-    }
-    closeModal("tournamentModal");
-    event.target.reset();
-    showToast(
-      "Torneo creado correctamente."
+========================================================= */
+
+async function loadPrizesAdmin(){
+
+  const container =
+    document.getElementById(
+      "prizesAdminGrid"
     );
-    await loadTournaments();
-  }
-);
-/* ============================================================
-   MESAS + QR
-============================================================ */
-async function loadTables(){
-  $("tablesContent").innerHTML =
-    `<div class="loading">Cargando mesas...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("tables_pool")
-      .select("*")
-      .order("table_number",{ascending:true});
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando premios...
+    </div>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("prizes")
+      .select(
+        "id,name,description,token_cost,active,stock,created_at"
+      )
+      .order(
+        "token_cost",
+        {ascending:true}
+      );
+
   if(error){
-    $("tablesContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar las mesas.
-      </div>`;
-    return;
+    throw error;
   }
+
   if(!data?.length){
-    $("tablesContent").innerHTML =
-      `<div class="empty">No hay mesas configuradas.</div>`;
+
+    container.innerHTML =
+      `<div class="card">
+        No hay premios.
+      </div>`;
+
     return;
   }
-  const baseURL =
-    new URL(
-      "index.html",
-      window.location.href
-    ).href;
-  $("tablesContent").innerHTML =
-    data.map(table=>{
-      const url =
-        `${baseURL}?mesa=${encodeURIComponent(
-          table.table_number
-        )}`;
-      const qr =
-        "https://api.qrserver.com/v1/create-qr-code/?size=300x300&data="
-        + encodeURIComponent(url);
-      return `
-        <div class="section qr-card">
-          <img
-            src="${escapeHTML(qr)}"
-            alt="QR Mesa ${escapeHTML(
-              table.table_number
-            )}">
-          <h4>
-            Mesa ${escapeHTML(
-              table.table_number
-            )}
-          </h4>
-          <small>
-            ${escapeHTML(
-              table.name || ""
-            )}
-          </small>
-          <div style="margin-top:10px;">
-            <span class="badge ${
-              table.active
-                ? "badge-green"
-                : "badge-red"
-            }">
-              ${table.active ? "ACTIVA" : "INACTIVA"}
-            </span>
-          </div>
-          <div style="
-            margin-top:12px;
-            word-break:break-all;
-            font-size:10px;
-            color:var(--muted);
-          ">
-            ${escapeHTML(url)}
-          </div>
-          <div class="actions"
-            style="justify-content:center;margin-top:12px;">
-            <button
-              class="btn btn-secondary btn-small"
-              onclick='window.open(${JSON.stringify(url)},"_blank")'>
-              Abrir
-            </button>
-            <button
-              class="btn btn-primary btn-small"
-              onclick='copyText(${JSON.stringify(url)})'>
-              Copiar enlace
-            </button>
-          </div>
+
+  container.innerHTML =
+    data.map(prize => `
+
+      <div class="card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;
+        ">
+
+          <h3>
+            🎁 ${escapeHtml(prize.name)}
+          </h3>
+
+          <span class="status ${
+            prize.active
+              ? "active"
+              : "inactive"
+          }">
+            ${prize.active
+              ? "ACTIVO"
+              : "INACTIVO"}
+          </span>
+
         </div>
-      `;
-    }).join("");
+
+        <p class="muted">
+          ${escapeHtml(
+            prize.description || ""
+          )}
+        </p>
+
+        <p>
+          🪙
+          <strong>
+            ${Number(prize.token_cost || 0)}
+          </strong>
+          tokens
+        </p>
+
+        <p class="muted">
+          Stock:
+          ${
+            prize.stock == null
+              ? "Sin límite"
+              : Number(prize.stock)
+          }
+        </p>
+
+        <button
+          class="secondary"
+          style="width:100%"
+          onclick="editPrize('${prize.id}')"
+        >
+          ✏️ Editar
+        </button>
+
+      </div>
+
+    `).join("");
+
 }
-async function copyText(text){
-  try{
-    await navigator.clipboard.writeText(text);
-    showToast("Enlace copiado.");
-  }catch{
+
+function openPrizeForm(){
+
+  openModal(
+    "🎁 Nuevo premio",
+    `
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          id="prizeName"
+          placeholder="Ej. Hamburguesa"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Descripción</label>
+
+        <textarea
+          id="prizeDescription"
+          placeholder="Descripción del premio"
+        ></textarea>
+
+      </div>
+
+      <div class="form-grid two">
+
+        <div class="form-group">
+
+          <label>Costo en tokens</label>
+
+          <input
+            id="prizeCost"
+            type="number"
+            min="0"
+            value="10"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Stock</label>
+
+          <input
+            id="prizeStock"
+            type="number"
+            min="0"
+            placeholder="Vacío = sin límite"
+          >
+
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="createPrize()"
+      >
+        ➕ Crear premio
+      </button>
+    `
+  );
+
+}
+
+async function createPrize(){
+
+  const name =
+    document.getElementById(
+      "prizeName"
+    ).value.trim();
+
+  const description =
+    document.getElementById(
+      "prizeDescription"
+    ).value.trim();
+
+  const token_cost =
+    Number(
+      document.getElementById(
+        "prizeCost"
+      ).value
+    );
+
+  const stockValue =
+    document.getElementById(
+      "prizeStock"
+    ).value.trim();
+
+  const stock =
+    stockValue === ""
+      ? null
+      : Number(stockValue);
+
+  if(!name){
+
     showToast(
-      "No se pudo copiar automáticamente.",
+      "Ingresá el nombre del premio.",
       "error"
     );
+
+    return;
   }
-}
-/* ============================================================
-   RESERVAS
-============================================================ */
-async function loadReservations(){
-  $("reservationsContent").innerHTML =
-    `<div class="loading">Cargando reservas...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("reservas")
-      .select("*")
-      .order("fecha",{ascending:false})
-      .limit(300);
+
+  const {
+    error
+  } =
+    await db
+      .from("prizes")
+      .insert({
+        name,
+        description,
+        token_cost,
+        stock,
+        active:true
+      });
+
   if(error){
-    $("reservationsContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar las reservas.
-      </div>`;
-    return;
+    throw error;
   }
-  if(!data?.length){
-    $("reservationsContent").innerHTML =
-      `<div class="empty">
-        No hay reservas.
-      </div>`;
-    return;
-  }
-  $("reservationsContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Nombre</th>
-          <th>Teléfono</th>
-          <th>Fecha</th>
-          <th>Hora</th>
-          <th>Servicio</th>
-          <th>Personas</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(row=>`
-          <tr>
-            <td>
-              ${escapeHTML(row.nombre)}
-            </td>
-            <td>
-              ${escapeHTML(row.telefono)}
-            </td>
-            <td>
-              ${escapeHTML(row.fecha)}
-            </td>
-            <td>
-              ${escapeHTML(row.Hora || row.hora || "—")}
-            </td>
-            <td>
-              ${escapeHTML(row.Servicio || row.servicio || "—")}
-            </td>
-            <td>
-              ${escapeHTML(
-                row.cantidad_personas ?? "—"
-              )}
-            </td>
-            <td>
-              <span class="badge">
-                ${escapeHTML(
-                  row.Estado || row.estado || "—"
-                )}
-              </span>
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
-/* ============================================================
-   PEDIDOS
-============================================================ */
-async function loadOrders(){
-  $("ordersContent").innerHTML =
-    `<div class="loading">Cargando pedidos...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("pedidos")
-      .select("*")
-      .order("created_at",{ascending:false})
-      .limit(300);
-  if(error){
-    $("ordersContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar los pedidos.
-      </div>`;
-    return;
-  }
-  if(!data?.length){
-    $("ordersContent").innerHTML =
-      `<div class="empty">
-        No hay pedidos.
-      </div>`;
-    return;
-  }
-  $("ordersContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Pedido</th>
-          <th>Cliente</th>
-          <th>Estado</th>
-          <th>Fecha</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(row=>`
-          <tr>
-            <td>
-              ${escapeHTML(
-                row.id || "—"
-              )}
-            </td>
-            <td>
-              ${escapeHTML(
-                row.nombre ||
-                row.cliente ||
-                row.telefono ||
-                "—"
-              )}
-            </td>
-            <td>
-              <span class="badge">
-                ${escapeHTML(
-                  row.estado ||
-                  row.Estado ||
-                  "—"
-                )}
-              </span>
-            </td>
-            <td>
-              ${formatDate(
-                row.created_at ||
-                row.creado_en
-              )}
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
-/* ============================================================
-   PROMOCIONES
-============================================================ */
-async function loadPromos(){
-  $("promosContent").innerHTML =
-    `<div class="loading">Cargando promociones...</div>`;
-  const {data,error} =
-    await supabaseClient
-      .from("promociones")
-      .select("*")
-      .order("id",{ascending:false})
-      .limit(300);
-  if(error){
-    $("promosContent").innerHTML =
-      `<div class="empty">
-        No se pudieron cargar las promociones.
-      </div>`;
-    return;
-  }
-  if(!data?.length){
-    $("promosContent").innerHTML =
-      `<div class="empty">
-        No hay promociones.
-      </div>`;
-    return;
-  }
-  $("promosContent").innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>Promoción</th>
-          <th>Descripción</th>
-          <th>Precio</th>
-          <th>Estado</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${data.map(row=>`
-          <tr>
-            <td>
-              <strong>
-                ${escapeHTML(
-                  row.nombre ||
-                  row.titulo ||
-                  "Promoción"
-                )}
-              </strong>
-            </td>
-            <td>
-              ${escapeHTML(
-                row.descripcion ||
-                row.detalle ||
-                "—"
-              )}
-            </td>
-            <td>
-              ${escapeHTML(
-                row.precio ||
-                row.price ||
-                "—"
-              )}
-            </td>
-            <td>
-              <span class="badge">
-                ${escapeHTML(
-                  row.estado ||
-                  "—"
-                )}
-              </span>
-            </td>
-          </tr>
-        `).join("")}
-      </tbody>
-    </table>
-  `;
-}
-/* ============================================================
-   CARGA INICIAL
-============================================================ */
-async function init(){
-  /*
-    Escuchamos cambios de autenticación.
-  */
-  supabaseClient.auth.onAuthStateChange(
-    async(event,session)=>{
-      if(event === "SIGNED_OUT"){
-        logoutUI();
-      }
-    }
+
+  closeModal();
+
+  await loadPrizesAdmin();
+
+  showToast(
+    "Premio creado.",
+    "success"
   );
-  await restoreSession();
+
 }
-init();
+
+async function editPrize(id){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("prizes")
+      .select("*")
+      .eq("id",id)
+      .single();
+
+  if(error){
+    throw error;
+  }
+
+  openModal(
+    "🎁 Editar premio",
+    `
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          id="editPrizeName"
+          value="${escapeHtml(data.name)}"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Descripción</label>
+
+        <textarea
+          id="editPrizeDescription"
+        >${escapeHtml(data.description || "")}</textarea>
+
+      </div>
+
+      <div class="form-grid two">
+
+        <div class="form-group">
+
+          <label>Costo en tokens</label>
+
+          <input
+            id="editPrizeCost"
+            type="number"
+            min="0"
+            value="${Number(data.token_cost || 0)}"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Stock</label>
+
+          <input
+            id="editPrizeStock"
+            type="number"
+            min="0"
+            value="${data.stock == null ? "" : Number(data.stock)}"
+          >
+
+        </div>
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Estado</label>
+
+        <select id="editPrizeActive">
+
+          <option
+            value="true"
+            ${data.active ? "selected" : ""}
+          >
+            Activo
+          </option>
+
+          <option
+            value="false"
+            ${!data.active ? "selected" : ""}
+          >
+            Inactivo
+          </option>
+
+        </select>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="savePrize('${id}')"
+      >
+        💾 Guardar
+      </button>
+    `
+  );
+
+}
+
+async function savePrize(id){
+
+  const name =
+    document.getElementById(
+      "editPrizeName"
+    ).value.trim();
+
+  const description =
+    document.getElementById(
+      "editPrizeDescription"
+    ).value.trim();
+
+  const token_cost =
+    Number(
+      document.getElementById(
+        "editPrizeCost"
+      ).value
+    );
+
+  const stockInput =
+    document.getElementById(
+      "editPrizeStock"
+    ).value.trim();
+
+  const stock =
+    stockInput === ""
+      ? null
+      : Number(stockInput);
+
+  const active =
+    document.getElementById(
+      "editPrizeActive"
+    ).value === "true";
+
+  const {
+    error
+  } =
+    await db
+      .from("prizes")
+      .update({
+        name,
+        description,
+        token_cost,
+        stock,
+        active
+      })
+      .eq("id",id);
+
+  if(error){
+    throw error;
+  }
+
+  closeModal();
+
+  await loadPrizesAdmin();
+
+  showToast(
+    "Premio actualizado.",
+    "success"
+  );
+
+}
+
+/* =========================================================
+   TORNEOS
+========================================================= */
+
+async function loadTournamentsAdmin(){
+
+  const container =
+    document.getElementById(
+      "tournamentsAdminGrid"
+    );
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando torneos...
+    </div>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("tournaments")
+      .select(
+        "id,name,game_type,starts_at,entry_tokens,max_players,status,created_at"
+      )
+      .order(
+        "starts_at",
+        {ascending:false}
+      );
+
+  if(error){
+    throw error;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      `<div class="card">
+        No hay torneos creados.
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map(t => `
+
+      <div class="card">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          gap:10px;
+        ">
+
+          <h3>
+            🏆 ${escapeHtml(t.name)}
+          </h3>
+
+          <span class="status">
+            ${escapeHtml(
+              t.status || ""
+            )}
+          </span>
+
+        </div>
+
+        <p class="muted">
+          🎮 ${escapeHtml(
+            t.game_type || ""
+          )}
+        </p>
+
+        <p>
+          📅 ${formatDate(t.starts_at)}
+        </p>
+
+        <p>
+          🪙 Entrada:
+          ${Number(t.entry_tokens || 0)}
+        </p>
+
+        <p>
+          👥 Máximo:
+          ${Number(t.max_players || 0)}
+        </p>
+
+        <button
+          class="secondary"
+          style="width:100%"
+          onclick="editTournament('${t.id}')"
+        >
+          ✏️ Cambiar estado
+        </button>
+
+      </div>
+
+    `).join("");
+
+}
+
+function openTournamentForm(){
+
+  openModal(
+    "🏆 Nuevo torneo",
+    `
+      <div class="form-group">
+
+        <label>Nombre</label>
+
+        <input
+          id="tournamentName"
+          placeholder="Ej. Torneo Pool & Beach"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Juego</label>
+
+        <input
+          id="tournamentGame"
+          placeholder="Ej. Pool"
+        >
+
+      </div>
+
+      <div class="form-group">
+
+        <label>Fecha y hora</label>
+
+        <input
+          id="tournamentDate"
+          type="datetime-local"
+        >
+
+      </div>
+
+      <div class="form-grid two">
+
+        <div class="form-group">
+
+          <label>Entrada en tokens</label>
+
+          <input
+            id="tournamentEntry"
+            type="number"
+            min="0"
+            value="0"
+          >
+
+        </div>
+
+        <div class="form-group">
+
+          <label>Máximo de jugadores</label>
+
+          <input
+            id="tournamentMax"
+            type="number"
+            min="2"
+            value="16"
+          >
+
+        </div>
+
+      </div>
+
+      <button
+        class="primary"
+        onclick="createTournament()"
+      >
+        ➕ Crear torneo
+      </button>
+    `
+  );
+
+}
+
+async function createTournament(){
+
+  const name =
+    document.getElementById(
+      "tournamentName"
+    ).value.trim();
+
+  const game_type =
+    document.getElementById(
+      "tournamentGame"
+    ).value.trim();
+
+  const date =
+    document.getElementById(
+      "tournamentDate"
+    ).value;
+
+  const entry_tokens =
+    Number(
+      document.getElementById(
+        "tournamentEntry"
+      ).value
+    );
+
+  const max_players =
+    Number(
+      document.getElementById(
+        "tournamentMax"
+      ).value
+    );
+
+  if(!name || !date){
+
+    showToast(
+      "Completá nombre y fecha.",
+      "error"
+    );
+
+    return;
+  }
+
+  const {
+    error
+  } =
+    await db
+      .from("tournaments")
+      .insert({
+        name,
+        game_type,
+        starts_at:new Date(date).toISOString(),
+        entry_tokens,
+        max_players,
+        status:"open"
+      });
+
+  if(error){
+    throw error;
+  }
+
+  closeModal();
+
+  await loadTournamentsAdmin();
+
+  showToast(
+    "Torneo creado.",
+    "success"
+  );
+
+}
+
+async function editTournament(id){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("tournaments")
+      .select("id,name,status")
+      .eq("id",id)
+      .single();
+
+  if(error){
+    throw error;
+  }
+
+  openModal(
+    "🏆 Estado del torneo",
+    `
+      <p>
+        <strong>
+          ${escapeHtml(data.name)}
+        </strong>
+      </p>
+
+      <select id="tournamentStatus">
+
+        <option
+          value="open"
+          ${data.status === "open" ? "selected" : ""}
+        >
+          Abierto
+        </option>
+
+        <option
+          value="in_progress"
+          ${data.status === "in_progress" ? "selected" : ""}
+        >
+          En curso
+        </option>
+
+        <option
+          value="finished"
+          ${data.status === "finished" ? "selected" : ""}
+        >
+          Finalizado
+        </option>
+
+        <option
+          value="cancelled"
+          ${data.status === "cancelled" ? "selected" : ""}
+        >
+          Cancelado
+        </option>
+
+      </select>
+
+      <div style="height:12px"></div>
+
+      <button
+        class="primary"
+        onclick="saveTournamentStatus('${id}')"
+      >
+        💾 Guardar
+      </button>
+    `
+  );
+
+}
+
+async function saveTournamentStatus(id){
+
+  const status =
+    document.getElementById(
+      "tournamentStatus"
+    ).value;
+
+  const {
+    error
+  } =
+    await db
+      .from("tournaments")
+      .update({status})
+      .eq("id",id);
+
+  if(error){
+    throw error;
+  }
+
+  closeModal();
+
+  await loadTournamentsAdmin();
+
+  showToast(
+    "Estado actualizado.",
+    "success"
+  );
+
+}
+
+/* =========================================================
+   MESAS + QR
+========================================================= */
+
+async function loadTables(){
+
+  const container =
+    document.getElementById(
+      "tablesQRGrid"
+    );
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando mesas...
+    </div>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("tables_pool")
+      .select(
+        "id,table_number,name,active"
+      )
+      .order(
+        "table_number",
+        {ascending:true}
+      );
+
+  if(error){
+    throw error;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      `<div class="card">
+        No hay mesas.
+      </div>`;
+
+    return;
+  }
+
+  const base =
+    location.origin +
+    location.pathname.replace(
+      "admin.html",
+      "index.html"
+    );
+
+  container.innerHTML =
+    data.map(table => {
+
+      const link =
+        base +
+        "?mesa=" +
+        encodeURIComponent(
+          table.table_number
+        );
+
+      const qr =
+        "https://api.qrserver.com/v1/create-qr-code/?" +
+        "size=500x500&data=" +
+        encodeURIComponent(link);
+
+      return `
+
+        <div class="card qr-card">
+
+          <h3>
+            🎱 Mesa ${Number(
+              table.table_number
+            )}
+          </h3>
+
+          <p class="muted">
+            ${escapeHtml(
+              table.name ||
+              "Mesa " +
+              table.table_number
+            )}
+          </p>
+
+          <img
+            src="${qr}"
+            alt="QR Mesa ${Number(table.table_number)}"
+          >
+
+          <div class="qr-link">
+            ${escapeHtml(link)}
+          </div>
+
+          <div style="height:10px"></div>
+
+          <button
+            class="secondary"
+            style="width:100%"
+            onclick="copyText('${escapeHtml(link)}')"
+          >
+            📋 Copiar enlace
+          </button>
+
+        </div>
+
+      `;
+
+    }).join("");
+
+}
+
+async function copyText(text){
+
+  try{
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+    showToast(
+      "Enlace copiado.",
+      "success"
+    );
+
+  }catch{
+
+    showToast(
+      "No se pudo copiar.",
+      "error"
+    );
+
+  }
+
+}
+
+/* =========================================================
+   MISIONES
+========================================================= */
+
+async function loadPendingMissions(){
+
+  const container =
+    document.getElementById(
+      "missionsAdminGrid"
+    );
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando...
+    </div>`;
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        "get_pending_missions"
+      );
+
+    if(error){
+      throw error;
+    }
+
+    if(!data?.length){
+
+      container.innerHTML =
+        `<div class="card">
+          No hay misiones pendientes.
+        </div>`;
+
+      return;
+    }
+
+    container.innerHTML =
+      data.map(mission => `
+
+        <div class="card">
+
+          <h3>
+            ⭐ Misión pendiente
+          </h3>
+
+          <p class="muted">
+            Jugador:
+            ${escapeHtml(
+              mission.display_name ||
+              mission.player_name ||
+              "Jugador"
+            )}
+          </p>
+
+          <p>
+            ${escapeHtml(
+              mission.mission ||
+              "Misión del día"
+            )}
+          </p>
+
+          <p class="muted">
+            ${formatDate(
+              mission.created_at
+            )}
+          </p>
+
+          <button
+            class="primary"
+            onclick="validateMission('${mission.session_id || mission.id}')"
+          >
+            ✅ Validar misión
+          </button>
+
+        </div>
+
+      `).join("");
+
+  }catch(error){
+
+    container.innerHTML =
+      `<div class="card">
+        No se pudieron cargar las misiones.
+      </div>`;
+
+    console.error(error);
+
+  }
+
+}
+
+async function validateMission(sessionId){
+
+  if(!confirm(
+    "¿Confirmás que la misión fue realizada?"
+  )){
+    return;
+  }
+
+  try{
+
+    const {
+      data,
+      error
+    } =
+      await db.rpc(
+        "validate_mission",
+        {
+          p_session_id:sessionId
+        }
+      );
+
+    if(error){
+      throw error;
+    }
+
+    await loadPendingMissions();
+    await loadDashboard();
+
+    showToast(
+      "Misión validada y recompensa acreditada.",
+      "success"
+    );
+
+  }catch(error){
+
+    showToast(
+      error.message ||
+      "No se pudo validar la misión.",
+      "error"
+    );
+
+  }
+
+}
+
+/* =========================================================
+   DUELOS
+========================================================= */
+
+async function loadDuels(){
+
+  const container =
+    document.getElementById(
+      "duelsAdminGrid"
+    );
+
+  container.innerHTML =
+    `<div class="card">
+      Cargando duelos...
+    </div>`;
+
+  const {
+    data:tables,
+    error
+  } =
+    await db
+      .from("tables_pool")
+      .select(
+        "id,table_number"
+      )
+      .eq("active",true);
+
+  if(error){
+    throw error;
+  }
+
+  let all = [];
+
+  for(const table of tables || []){
+
+    try{
+
+      const result =
+        await db.rpc(
+          "get_waiting_duels",
+          {
+            p_table_id:table.id
+          }
+        );
+
+      if(Array.isArray(result.data)){
+
+        all =
+          all.concat(
+            result.data.map(d => ({
+              ...d,
+              table_number:
+                table.table_number
+            }))
+          );
+
+      }
+
+    }catch(error){
+
+      console.warn(
+        "Duelo mesa",
+        table.table_number,
+        error
+      );
+
+    }
+
+  }
+
+  if(!all.length){
+
+    container.innerHTML =
+      `<div class="card">
+        No hay duelos esperando.
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    all.map(duel => `
+
+      <div class="card">
+
+        <h3>
+          👥 Duelo 1 vs 1
+        </h3>
+
+        <p>
+          🎱 Mesa:
+          ${Number(
+            duel.table_number
+          )}
+        </p>
+
+        <p class="muted">
+          Jugador:
+          ${escapeHtml(
+            duel.player1_name ||
+            "Jugador"
+          )}
+        </p>
+
+        <span class="status open">
+          ESPERANDO RIVAL
+        </span>
+
+      </div>
+
+    `).join("");
+
+}
+
+/* =========================================================
+   RESERVAS
+========================================================= */
+
+async function loadReservations(){
+
+  const tbody =
+    document.getElementById(
+      "reservationsTable"
+    );
+
+  tbody.innerHTML =
+    `<tr>
+      <td colspan="8">
+        Cargando...
+      </td>
+    </tr>`;
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from("reservas")
+      .select(
+        "id,nombre,telefono,fecha,Hora,Servicio,cantidad_personas,Estado,Notas,creado_en"
+      )
+      .order(
+        "creado_en",
+        {ascending:false}
+      )
+      .limit(200);
+
+  if(error){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="8">
+          No se pudieron cargar las reservas.
+        </td>
+      </tr>`;
+
+    console.error(error);
+
+    return;
+  }
+
+  if(!data?.length){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="8">
+          No hay reservas.
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  tbody.innerHTML =
+    data.map(row => `
+
+      <tr>
+
+        <td>
+          ${escapeHtml(row.nombre)}
+        </td>
+
+        <td>
+          ${escapeHtml(row.telefono)}
+        </td>
+
+        <td>
+          ${escapeHtml(row.fecha)}
+        </td>
+
+        <td>
+          ${escapeHtml(row.Hora)}
+        </td>
+
+        <td>
+          ${escapeHtml(row.Servicio)}
+        </td>
+
+        <td>
+          ${Number(
+            row.cantidad_personas || 0
+          )}
+        </td>
+
+        <td>
+          ${escapeHtml(row.Estado)}
+        </td>
+
+        <td>
+          ${escapeHtml(row.Notas)}
+        </td>
+
+      </tr>
+
+    `).join("");
+
+}
+
+/* =========================================================
+   TABLAS LEGACY
+========================================================= */
+
+async function loadLegacyTable(
+  tableName,
+  containerId
+){
+
+  const container =
+    document.getElementById(
+      containerId
+    );
+
+  container.innerHTML =
+    "Cargando...";
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from(tableName)
+      .select("*")
+      .limit(200);
+
+  if(error){
+
+    container.innerHTML =
+      `<div class="alert error">
+        No se pudo cargar ${escapeHtml(tableName)}.
+      </div>`;
+
+    console.error(error);
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      `<div class="alert">
+        No hay registros.
+      </div>`;
+
+    return;
+  }
+
+  const columns =
+    Object.keys(data[0]);
+
+  container.innerHTML = `
+
+    <table>
+
+      <thead>
+
+        <tr>
+
+          ${columns.map(
+            c => `<th>${escapeHtml(c)}</th>`
+          ).join("")}
+
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        ${data.map(row => `
+
+          <tr>
+
+            ${columns.map(
+              c => `
+                <td>
+                  ${escapeHtml(
+                    typeof row[c] === "object"
+                      ? JSON.stringify(row[c])
+                      : row[c]
+                  )}
+                </td>
+              `
+            ).join("")}
+
+          </tr>
+
+        `).join("")}
+
+      </tbody>
+
+    </table>
+
+  `;
+
+}
+
+/* =========================================================
+   ACTUALIZAR TODO
+========================================================= */
+
+async function refreshAll(){
+
+  try{
+
+    await Promise.all([
+      loadDashboard(),
+      loadPlayers(),
+      loadGamesAdmin(),
+      loadPlays(),
+      loadPrizesAdmin(),
+      loadTournamentsAdmin(),
+      loadTables(),
+      loadPendingMissions(),
+      loadDuels()
+    ]);
+
+  }catch(error){
+
+    console.error(error);
+
+    showToast(
+      "Algunas secciones no pudieron actualizarse.",
+      "error"
+    );
+
+  }
+
+}
+
+/* =========================================================
+   INICIO
+========================================================= */
+
+initNavigation();
+checkSession();
+
 </script>
+
 </body>
 </html>
