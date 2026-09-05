@@ -2,551 +2,392 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-
-<title>Pool & Beach | Panel de Administración</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool & Beach | Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --bg:#061321;
-  --bg2:#0b1d30;
-  --card:#102a42;
-  --card2:#143752;
-  --text:#f5fbff;
-  --muted:#9bb4c7;
-  --cyan:#35d9ff;
+  --bg:#06131e;
+  --panel:#0c2333;
+  --panel2:#102d40;
+  --line:#24536a;
+  --sky:#62dcff;
   --gold:#ffd166;
-  --green:#45e08a;
-  --red:#ff647c;
-  --border:rgba(255,255,255,.09);
-  --shadow:0 12px 35px rgba(0,0,0,.28);
+  --green:#67e7a2;
+  --red:#ff7182;
+  --txt:#f5fbff;
+  --muted:#9ab5c5;
 }
 
 *{box-sizing:border-box}
 
-html{scroll-behavior:smooth}
-
 body{
   margin:0;
-  font-family:Arial,Helvetica,sans-serif;
   background:
-    radial-gradient(circle at top,#123b58 0,#061321 45%);
-  color:var(--text);
-  min-height:100vh;
+    radial-gradient(circle at 20% 0,#16415a 0,#06131e 48%,#03080d 100%);
+  color:var(--txt);
+  font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif
 }
 
-button,input,select,textarea{
-  font:inherit;
-}
-
+button,input,select,textarea{font:inherit}
 button{cursor:pointer}
-
 .hidden{display:none!important}
 
-.container{
-  width:min(1200px,calc(100% - 28px));
+.app{
+  max-width:1180px;
   margin:auto;
+  padding:18px 14px 60px
 }
 
-/* LOGIN */
-
-.login-screen{
-  min-height:100vh;
-  display:grid;
-  place-items:center;
-  padding:20px;
-}
-
-.login-card{
-  width:min(440px,100%);
-  background:linear-gradient(145deg,var(--card),var(--bg2));
-  border:1px solid var(--border);
-  border-radius:28px;
-  padding:28px 22px;
-  box-shadow:var(--shadow);
-}
-
-.logo{
-  font-size:26px;
-  font-weight:900;
-  text-align:center;
-}
-
-.logo span{color:var(--cyan)}
-
-.login-subtitle{
-  text-align:center;
-  color:var(--muted);
-  margin:8px 0 25px;
-}
-
-.form-group{
-  margin-bottom:13px;
-}
-
-.form-group label{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-  font-weight:800;
-  margin-bottom:6px;
-}
-
-input,select,textarea{
-  width:100%;
-  padding:13px 14px;
-  border-radius:13px;
-  border:1px solid var(--border);
-  background:rgba(0,0,0,.22);
-  color:var(--text);
-  outline:none;
-}
-
-textarea{
-  min-height:100px;
-  resize:vertical;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:var(--cyan);
-}
-
-.primary{
-  width:100%;
-  border:0;
-  border-radius:14px;
-  padding:13px 15px;
-  background:linear-gradient(135deg,var(--cyan),#72ecff);
-  color:#00151e;
-  font-weight:900;
-}
-
-.primary:disabled{
-  opacity:.45;
-  cursor:not-allowed;
-}
-
-.secondary{
-  border:1px solid var(--border);
-  border-radius:12px;
-  padding:10px 13px;
-  background:rgba(255,255,255,.05);
-  color:var(--text);
-  font-weight:800;
-}
-
-.danger{
-  border-color:rgba(255,100,124,.25);
-  color:var(--red);
-  background:rgba(255,100,124,.08);
-}
-
-.success{
-  border-color:rgba(69,224,138,.25);
-  color:var(--green);
-  background:rgba(69,224,138,.08);
-}
-
-/* APP */
-
-header{
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:rgba(6,19,33,.92);
-  backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--border);
-}
-
-.header-inner{
-  min-height:68px;
+.top{
   display:flex;
-  align-items:center;
   justify-content:space-between;
+  align-items:center;
   gap:12px;
+  margin-bottom:16px
 }
 
-.header-title{
-  font-size:18px;
-  font-weight:900;
+.brand{
+  font-size:23px;
+  font-weight:950
 }
 
-.header-title span{
-  color:var(--cyan);
-}
+.brand span{color:var(--sky)}
 
-.user-info{
+.top-actions{
   display:flex;
-  align-items:center;
   gap:8px;
+  align-items:center
 }
 
-.role-badge{
-  padding:7px 10px;
-  border-radius:999px;
-  color:var(--gold);
-  background:rgba(255,209,102,.1);
-  border:1px solid rgba(255,209,102,.2);
-  font-size:11px;
-  font-weight:900;
-}
-
-/* NAV */
-
-.nav{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  padding:12px 0;
-  scrollbar-width:none;
-}
-
-.nav::-webkit-scrollbar{display:none}
-
-.nav button{
-  white-space:nowrap;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.04);
-  color:var(--muted);
-  border-radius:999px;
+.icon-btn{
+  position:relative;
+  border:1px solid var(--line);
+  background:var(--panel);
+  color:var(--txt);
+  border-radius:13px;
   padding:10px 13px;
-  font-weight:800;
+  font-weight:900
 }
 
-.nav button.active,
-.nav button:hover{
-  background:var(--cyan);
-  color:#00151e;
+.dot{
+  position:absolute;
+  right:6px;
+  top:5px;
+  width:9px;
+  height:9px;
+  background:var(--red);
+  border-radius:50%;
+  box-shadow:0 0 0 3px var(--panel)
 }
 
-/* SECTIONS */
-
-.section{
-  display:none;
-  padding:18px 0 40px;
+.status{
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:7px 10px;
+  font-size:11px;
+  color:var(--sky)
 }
 
-.section.active{
-  display:block;
+.hero{
+  padding:24px;
+  border:1px solid var(--line);
+  border-radius:24px;
+  background:linear-gradient(145deg,#103a54,#0a1c2b);
+  box-shadow:0 18px 45px #0006;
+  margin-bottom:14px
 }
 
-.section-title{
-  display:flex;
-  align-items:end;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:15px;
+.hero h1{
+  margin:0 0 5px;
+  font-size:30px
 }
 
-.section-title h1,
-.section-title h2{
+.hero p{
   margin:0;
+  color:var(--muted)
 }
 
-.section-title p{
-  color:var(--muted);
-  font-size:13px;
-  margin:5px 0 0;
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow:auto;
+  margin:14px 0;
+  padding-bottom:2px
 }
 
-/* DASHBOARD */
+.tab{
+  white-space:nowrap;
+  border:1px solid var(--line);
+  background:#0b2130;
+  color:var(--txt);
+  border-radius:13px;
+  padding:11px 14px;
+  font-weight:900
+}
 
-.stats{
+.tab.active{
+  background:var(--sky);
+  color:#052031
+}
+
+.view{display:none}
+.view.active{display:block}
+
+.cards{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.stat{
-  background:linear-gradient(145deg,var(--card),var(--bg2));
-  border:1px solid var(--border);
-  border-radius:20px;
-  padding:17px;
-  box-shadow:var(--shadow);
-}
-
-.stat-icon{font-size:20px}
-
-.stat-value{
-  font-size:27px;
-  font-weight:900;
-  margin-top:5px;
-}
-
-.stat-label{
-  color:var(--muted);
-  font-size:12px;
-}
-
-/* CARDS */
-
-.grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:13px;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px
 }
 
 .card{
-  background:linear-gradient(145deg,var(--card),var(--bg2));
-  border:1px solid var(--border);
-  border-radius:21px;
-  padding:17px;
-  box-shadow:var(--shadow);
+  background:linear-gradient(145deg,var(--panel),#091b28);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:0 10px 25px #0004
 }
 
-.card h3{
-  margin:0 0 8px;
-}
+.metric{min-height:135px}
 
-.muted{
+.metric .emoji{font-size:27px}
+
+.metric small{
+  display:block;
   color:var(--muted);
+  margin-top:7px
 }
 
-.toolbar{
+.metric b{
+  display:block;
+  font-size:30px;
+  margin-top:3px
+}
+
+.metric .sub{
+  font-size:12px;
+  color:var(--muted)
+}
+
+.section{margin-top:14px}
+
+.section h2{
+  margin:0 0 13px;
+  font-size:20px
+}
+
+.row{
   display:flex;
-  gap:8px;
+  gap:9px;
   flex-wrap:wrap;
-  margin-bottom:13px;
+  align-items:center
 }
 
-.toolbar>*{
-  flex:1 1 150px;
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:11px 14px;
+  background:var(--sky);
+  color:#052031;
+  font-weight:900
 }
 
-/* TABLE */
+.btn.gold{background:var(--gold)}
 
-.table-wrap{
-  overflow:auto;
+.btn.green{
+  background:var(--green);
+  color:#062116
 }
+
+.btn.red{
+  background:var(--red);
+  color:#2b0710
+}
+
+.btn.dark{
+  background:#15364b;
+  color:var(--txt);
+  border:1px solid var(--line)
+}
+
+.input,select,textarea{
+  width:100%;
+  padding:11px 12px;
+  border-radius:11px;
+  border:1px solid var(--line);
+  background:#061722;
+  color:var(--txt);
+  outline:none
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical
+}
+
+label{
+  display:block;
+  font-size:12px;
+  color:var(--muted);
+  margin:8px 0 5px
+}
+
+.grid2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px
+}
+
+.table-wrap{overflow:auto}
 
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:650px;
+  min-width:680px
 }
 
 th,td{
   text-align:left;
   padding:12px 10px;
-  border-bottom:1px solid var(--border);
-  font-size:13px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  vertical-align:top
 }
 
 th{
-  color:var(--cyan);
-  font-size:11px;
-  text-transform:uppercase;
+  color:var(--muted);
+  font-size:12px
 }
 
-td{
-  color:#eaf7ff;
-}
-
-.status{
+.badge{
   display:inline-block;
-  border-radius:999px;
   padding:5px 8px;
-  font-size:10px;
-  font-weight:900;
-}
-
-.status.active,
-.status.open,
-.status.success{
-  color:var(--green);
-  background:rgba(69,224,138,.1);
-}
-
-.status.inactive,
-.status.closed{
-  color:var(--red);
-  background:rgba(255,100,124,.1);
-}
-
-/* FORMS */
-
-.form-grid{
-  display:grid;
-  gap:10px;
-}
-
-.form-actions{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-}
-
-.form-actions button{
-  flex:1;
-  min-width:130px;
-}
-
-/* QR */
-
-.qr-grid{
-  display:grid;
-  grid-template-columns:1fr;
-  gap:13px;
-}
-
-.qr-card{
-  text-align:center;
-}
-
-.qr-card img{
-  width:min(240px,100%);
-  padding:10px;
-  background:#fff;
-  border-radius:17px;
-  margin:10px auto;
-}
-
-.qr-link{
+  border-radius:99px;
   font-size:11px;
-  color:var(--cyan);
-  word-break:break-all;
+  font-weight:900;
+  background:#15364b
 }
 
-/* ALERT */
+.badge.pending{
+  background:#5d4820;
+  color:#ffe4a1
+}
 
-.alert{
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.04);
+.badge.confirmed{
+  background:#12472f;
+  color:#a9f3cb
+}
+
+.badge.cancelled{
+  background:#4b1d27;
+  color:#ffb4bf
+}
+
+.notice{
   padding:12px;
-  border-radius:14px;
-  color:var(--muted);
-  font-size:13px;
-  margin-bottom:13px;
+  border:1px dashed #3e829d;
+  background:#0c2a3b;
+  border-radius:13px;
+  color:#d8f4ff;
+  font-size:13px
 }
 
-.alert.error{
-  color:var(--red);
-  border-color:rgba(255,100,124,.2);
-  background:rgba(255,100,124,.06);
+.empty{
+  padding:25px;
+  text-align:center;
+  color:var(--muted)
 }
 
-/* MODAL */
-
-.modal{
+.notification-panel{
   position:fixed;
-  inset:0;
-  z-index:100;
-  background:rgba(0,0,0,.72);
-  display:grid;
-  place-items:center;
-  padding:14px;
-}
-
-.modal-box{
-  width:min(620px,100%);
-  max-height:90vh;
+  right:14px;
+  top:68px;
+  width:min(390px,calc(100vw - 28px));
+  max-height:70vh;
   overflow:auto;
-  background:#0b2136;
-  border:1px solid var(--border);
-  border-radius:25px;
-  padding:20px;
-  box-shadow:0 20px 70px rgba(0,0,0,.5);
+  background:#081a27;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:12px;
+  box-shadow:0 20px 50px #0009;
+  z-index:100
 }
 
-.modal-header{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  margin-bottom:15px;
+.notification{
+  padding:12px;
+  border-bottom:1px solid rgba(255,255,255,.08)
 }
 
-.close{
-  width:38px;
-  height:38px;
-  border-radius:50%;
-  border:1px solid var(--border);
-  background:rgba(255,255,255,.05);
-  color:#fff;
-  font-size:20px;
+.notification:last-child{
+  border-bottom:0
 }
 
-/* TOAST */
+.notification strong{
+  display:block
+}
 
-#toast{
-  position:fixed;
-  left:50%;
-  bottom:20px;
-  z-index:200;
-  width:min(92%,450px);
-  transform:translate(-50%,20px);
-  opacity:0;
-  pointer-events:none;
-  transition:.25s;
-  padding:14px 16px;
+.notification small{
+  color:var(--muted)
+}
+
+.quick{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px
+}
+
+.quick button{
+  padding:16px;
   border-radius:15px;
-  background:#102b43;
-  border:1px solid var(--border);
-  box-shadow:var(--shadow);
+  border:1px solid var(--line);
+  background:var(--panel2);
+  color:var(--txt);
+  font-weight:900
+}
+
+.login{
+  max-width:430px;
+  margin:8vh auto
+}
+
+.login h1{text-align:center}
+
+.login .brand{
   text-align:center;
-  font-weight:800;
+  margin-bottom:25px
 }
 
-#toast.show{
-  opacity:1;
-  transform:translate(-50%,0);
-}
-
-#toast.error{
-  border-color:rgba(255,100,124,.3);
-}
-
-#toast.success{
-  border-color:rgba(69,224,138,.3);
-}
-
-.loading{
+.footer{
   text-align:center;
-  color:var(--muted);
-  padding:30px 10px;
+  color:#718c9c;
+  font-size:12px;
+  margin-top:28px
 }
 
-.spinner{
-  width:30px;
-  height:30px;
-  border:3px solid rgba(255,255,255,.12);
-  border-top-color:var(--cyan);
-  border-radius:50%;
-  animation:spin .8s linear infinite;
-  margin:0 auto 12px;
-}
-
-@keyframes spin{
-  to{transform:rotate(360deg)}
-}
-
-@media(min-width:700px){
-
-  .stats{
-    grid-template-columns:repeat(4,1fr);
+@media(max-width:850px){
+  .cards{
+    grid-template-columns:repeat(2,1fr)
   }
 
-  .grid.two{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .form-grid.two{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .qr-grid{
-    grid-template-columns:repeat(2,1fr);
+  .quick{
+    grid-template-columns:1fr 1fr
   }
 }
 
-@media(min-width:1000px){
+@media(max-width:550px){
+  .cards,
+  .grid2,
+  .quick{
+    grid-template-columns:1fr
+  }
 
-  .grid.three{
-    grid-template-columns:repeat(3,1fr);
+  .hero h1{
+    font-size:25px
+  }
+
+  .app{
+    padding:12px 10px 40px
   }
 }
 </style>
@@ -554,3186 +395,2001 @@ td{
 
 <body>
 
-<!-- =====================================================
-     LOGIN
-====================================================== -->
+<div id="loginScreen" class="login card">
 
-<div id="loginScreen" class="login-screen">
-
-  <div class="login-card">
-
-    <div class="logo">
-      POOL <span>&</span> BEACH
-    </div>
-
-    <div class="login-subtitle">
-      Panel de Administración
-    </div>
-
-    <div id="loginError"
-         class="alert error hidden"></div>
-
-    <div class="form-group">
-      <label>Email</label>
-      <input
-        id="loginEmail"
-        type="email"
-        autocomplete="username"
-        placeholder="admin@ejemplo.com"
-      >
-    </div>
-
-    <div class="form-group">
-      <label>Contraseña</label>
-      <input
-        id="loginPassword"
-        type="password"
-        autocomplete="current-password"
-        placeholder="Contraseña"
-      >
-    </div>
-
-    <button
-      id="loginButton"
-      class="primary"
-      onclick="login()"
-    >
-      🔐 Ingresar
-    </button>
-
+  <div class="brand">
+    POOL <span>&</span> BEACH
   </div>
 
+  <h1>⚙️ Administración</h1>
+
+  <p class="notice">
+    Ingresá con la cuenta de administrador para acceder al panel.
+  </p>
+
+  <form id="loginForm">
+
+    <label>Email</label>
+
+    <input
+      id="loginEmail"
+      class="input"
+      type="email"
+      autocomplete="email"
+      required
+    >
+
+    <label>Contraseña</label>
+
+    <input
+      id="loginPassword"
+      class="input"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
+
+    <button
+      class="btn"
+      style="width:100%;margin-top:12px"
+      type="submit"
+    >
+      Iniciar sesión
+    </button>
+
+    <p
+      id="loginMessage"
+      class="notice hidden"
+      style="margin-top:10px"
+    ></p>
+
+  </form>
 </div>
 
-<!-- =====================================================
-     ADMIN APP
-====================================================== -->
 
-<div id="adminApp" class="hidden">
+<div id="adminApp" class="app hidden">
 
-<header>
+  <header class="top">
 
-  <div class="container header-inner">
+    <div>
+      <div class="brand">
+        POOL <span>&</span> BEACH
+      </div>
 
-    <div class="header-title">
-      POOL <span>&</span> BEACH · ADMIN
+      <div style="color:var(--muted);font-size:12px">
+        Panel de administración
+      </div>
     </div>
 
-    <div class="user-info">
+    <div class="top-actions">
 
-      <span
-        id="roleBadge"
-        class="role-badge"
-      >
-        ADMIN
+      <span id="connection" class="status">
+        CONECTANDO...
       </span>
 
       <button
-        class="secondary"
-        onclick="logout()"
+        id="notificationButton"
+        class="icon-btn"
+        type="button"
       >
-        Salir
+        🔔
+        <span
+          id="notificationDot"
+          class="dot hidden"
+        ></span>
       </button>
-
-    </div>
-
-  </div>
-
-</header>
-
-<div class="container">
-
-<nav class="nav">
-
-  <button
-    class="active"
-    data-section="dashboard"
-  >
-    📊 Dashboard
-  </button>
-
-  <button data-section="jugadores">
-    👥 Jugadores
-  </button>
-
-  <button data-section="juegos">
-    🎮 Juegos
-  </button>
-
-  <button data-section="partidas">
-    🎯 Partidas
-  </button>
-
-  <button data-section="premios">
-    🎁 Premios
-  </button>
-
-  <button data-section="torneos">
-    🏆 Torneos
-  </button>
-
-  <button data-section="mesas">
-    🎱 Mesas / QR
-  </button>
-
-  <button data-section="misiones">
-    ⭐ Misiones
-  </button>
-
-  <button data-section="duelos">
-    👥 Duelos
-  </button>
-
-  <button data-section="reservas">
-    📅 Reservas
-  </button>
-
-  <button data-section="pedidos">
-    🛒 Pedidos
-  </button>
-
-  <button data-section="promociones">
-    📣 Promociones
-  </button>
-
-</nav>
-
-<!-- =====================================================
-     DASHBOARD
-====================================================== -->
-
-<section
-  id="section-dashboard"
-  class="section active"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>Dashboard</h1>
-      <p>Control general de Pool & Beach Games</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="refreshAll()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div class="stats">
-
-    <div class="stat">
-      <div class="stat-icon">👥</div>
-      <div
-        id="countPlayers"
-        class="stat-value"
-      >0</div>
-      <div class="stat-label">Jugadores</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-icon">🎮</div>
-      <div
-        id="countGames"
-        class="stat-value"
-      >0</div>
-      <div class="stat-label">Juegos activos</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-icon">🎯</div>
-      <div
-        id="countPlays"
-        class="stat-value"
-      >0</div>
-      <div class="stat-label">Partidas</div>
-    </div>
-
-    <div class="stat">
-      <div class="stat-icon">🎁</div>
-      <div
-        id="countPrizes"
-        class="stat-value"
-      >0</div>
-      <div class="stat-label">Premios activos</div>
-    </div>
-
-  </div>
-
-  <div style="height:15px"></div>
-
-  <div class="grid two">
-
-    <div class="card">
-      <h3>⭐ Misiones pendientes</h3>
-      <div
-        id="dashboardMissions"
-        class="muted"
-      >
-        Cargando...
-      </div>
-    </div>
-
-    <div class="card">
-      <h3>👥 Duelos esperando</h3>
-      <div
-        id="dashboardDuels"
-        class="muted"
-      >
-        Cargando...
-      </div>
-    </div>
-
-  </div>
-
-</section>
-
-<!-- =====================================================
-     JUGADORES
-====================================================== -->
-
-<section
-  id="section-jugadores"
-  class="section"
->
-
-  <div class="section-title">
-    <div>
-      <h1>👥 Jugadores</h1>
-      <p>Perfiles registrados en Games</p>
-    </div>
-  </div>
-
-  <div class="card">
-
-    <div class="toolbar">
-
-      <input
-        id="playerSearch"
-        placeholder="Buscar jugador..."
-        oninput="filterPlayers()"
-      >
 
       <button
-        class="secondary"
-        onclick="loadPlayers()"
+        id="logoutButton"
+        class="icon-btn"
+        type="button"
       >
-        🔄 Actualizar
+        Cerrar
       </button>
 
     </div>
 
-    <div class="table-wrap">
+  </header>
 
-      <table>
 
-        <thead>
-          <tr>
-            <th>Jugador</th>
-            <th>Puntos</th>
-            <th>Tokens</th>
-            <th>Racha</th>
-            <th>Rol</th>
-            <th>Alta</th>
-          </tr>
-        </thead>
-
-        <tbody id="playersTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- =====================================================
-     JUEGOS
-====================================================== -->
-
-<section
-  id="section-juegos"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🎮 Juegos</h1>
-      <p>Configuración de los desafíos</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadGamesAdmin()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div id="gamesAdminGrid" class="grid two"></div>
-
-</section>
-
-<!-- =====================================================
-     PARTIDAS
-====================================================== -->
-
-<section
-  id="section-partidas"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🎯 Partidas</h1>
-      <p>Registro de partidas realizadas</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadPlays()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div class="card">
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Fecha</th>
-            <th>Jugador</th>
-            <th>Juego</th>
-            <th>Puntos</th>
-            <th>Tokens</th>
-            <th>Mesa</th>
-          </tr>
-        </thead>
-
-        <tbody id="playsTable"></tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-
-</section>
-
-<!-- =====================================================
-     PREMIOS
-====================================================== -->
-
-<section
-  id="section-premios"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🎁 Premios</h1>
-      <p>Administrá el catálogo de premios</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="openPrizeForm()"
-    >
-      ➕ Nuevo premio
-    </button>
-
-  </div>
-
-  <div
-    id="prizesAdminGrid"
-    class="grid two"
-  ></div>
-
-</section>
-
-<!-- =====================================================
-     TORNEOS
-====================================================== -->
-
-<section
-  id="section-torneos"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🏆 Torneos</h1>
-      <p>Creación y control de torneos</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="openTournamentForm()"
-    >
-      ➕ Nuevo torneo
-    </button>
-
-  </div>
-
-  <div
-    id="tournamentsAdminGrid"
-    class="grid two"
-  ></div>
-
-</section>
-
-<!-- =====================================================
-     MESAS
-====================================================== -->
-
-<section
-  id="section-mesas"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🎱 Mesas / QR</h1>
-      <p>Un QR individual para cada mesa</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadTables()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div
-    id="tablesQRGrid"
-    class="qr-grid"
-  ></div>
-
-</section>
-
-<!-- =====================================================
-     MISIONES
-====================================================== -->
-
-<section
-  id="section-misiones"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>⭐ Misiones pendientes</h1>
-      <p>Validá las misiones realizadas por jugadores</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadPendingMissions()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div
-    id="missionsAdminGrid"
-    class="grid two"
-  ></div>
-
-</section>
-
-<!-- =====================================================
-     DUELOS
-====================================================== -->
-
-<section
-  id="section-duelos"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>👥 Duelos</h1>
-      <p>Estado de los duelos 1 vs 1</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadDuels()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div
-    id="duelsAdminGrid"
-    class="grid two"
-  ></div>
-
-</section>
-
-<!-- =====================================================
-     RESERVAS
-====================================================== -->
-
-<section
-  id="section-reservas"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>📅 Reservas</h1>
-      <p>Reservas del local</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadReservations()"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div class="card">
-
-    <div class="table-wrap">
-      <table>
-
-        <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Teléfono</th>
-            <th>Fecha</th>
-            <th>Hora</th>
-            <th>Servicio</th>
-            <th>Personas</th>
-            <th>Estado</th>
-            <th>Notas</th>
-          </tr>
-        </thead>
-
-        <tbody id="reservationsTable"></tbody>
-
-      </table>
-    </div>
-
-  </div>
-
-</section>
-
-<!-- =====================================================
-     PEDIDOS
-====================================================== -->
-
-<section
-  id="section-pedidos"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>🛒 Pedidos</h1>
-      <p>Pedidos registrados</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadLegacyTable('pedidos','ordersTable')"
-    >
-      🔄 Actualizar
-    </button>
-
-  </div>
-
-  <div class="card">
+  <div id="notificationPanel" class="notification-panel hidden">
 
     <div
-      id="ordersTable"
-      class="table-wrap"
-    ></div>
-
-  </div>
-
-</section>
-
-<!-- =====================================================
-     PROMOCIONES
-====================================================== -->
-
-<section
-  id="section-promociones"
-  class="section"
->
-
-  <div class="section-title">
-
-    <div>
-      <h1>📣 Promociones</h1>
-      <p>Contenido promocional</p>
-    </div>
-
-    <button
-      class="secondary"
-      onclick="loadLegacyTable('promociones','promotionsTable')"
+      class="row"
+      style="justify-content:space-between;margin-bottom:6px"
     >
-      🔄 Actualizar
-    </button>
 
-  </div>
-
-  <div class="card">
-
-    <div
-      id="promotionsTable"
-      class="table-wrap"
-    ></div>
-
-  </div>
-
-</section>
-
-</div>
-</div>
-
-<!-- =====================================================
-     MODAL
-====================================================== -->
-
-<div
-  id="modal"
-  class="modal hidden"
-  onclick="closeModalOutside(event)"
->
-
-  <div class="modal-box">
-
-    <div class="modal-header">
-
-      <h2 id="modalTitle">
-        Pool & Beach
-      </h2>
+      <strong>🔔 Notificaciones</strong>
 
       <button
-        class="close"
-        onclick="closeModal()"
+        class="btn dark"
+        type="button"
+        onclick="markNotificationsRead()"
       >
-        ×
+        Marcar leídas
       </button>
 
     </div>
 
-    <div id="modalContent"></div>
+    <div id="notificationsList"></div>
 
+  </div>
+
+
+  <section class="hero">
+
+    <h1>📊 Panel de control</h1>
+
+    <p>
+      Acá vas a ver reservas, pedidos, torneos y actividad reciente
+      de Pool & Beach.
+    </p>
+
+  </section>
+
+
+  <nav class="tabs">
+
+    <button
+      class="tab active"
+      data-view="dashboard"
+    >
+      🏠 Inicio
+    </button>
+
+    <button
+      class="tab"
+      data-view="reservas"
+    >
+      📅 Reservas
+    </button>
+
+    <button
+      class="tab"
+      data-view="pedidos"
+    >
+      🛒 Pedidos
+    </button>
+
+    <button
+      class="tab"
+      data-view="torneos"
+    >
+      🏆 Torneos
+    </button>
+
+    <button
+      class="tab"
+      data-view="promos"
+    >
+      🔥 Promociones
+    </button>
+
+    <button
+      class="tab"
+      data-view="mesas"
+    >
+      🎱 Mesas
+    </button>
+
+  </nav>
+
+
+  <main>
+
+    <!-- DASHBOARD -->
+
+    <section
+      id="dashboard"
+      class="view active"
+    >
+
+      <div class="cards">
+
+        <div class="card metric">
+
+          <div class="emoji">📅</div>
+
+          <small>
+            Reservas pendientes
+          </small>
+
+          <b id="metricReservas">0</b>
+
+          <div class="sub">
+            requieren atención
+          </div>
+
+        </div>
+
+
+        <div class="card metric">
+
+          <div class="emoji">🛒</div>
+
+          <small>
+            Pedidos pendientes
+          </small>
+
+          <b id="metricPedidos">0</b>
+
+          <div class="sub">
+            para preparar/contactar
+          </div>
+
+        </div>
+
+
+        <div class="card metric">
+
+          <div class="emoji">🏆</div>
+
+          <small>
+            Torneos abiertos
+          </small>
+
+          <b id="metricTorneos">0</b>
+
+          <div class="sub">
+            publicados
+          </div>
+
+        </div>
+
+
+        <div class="card metric">
+
+          <div class="emoji">🔥</div>
+
+          <small>
+            Promociones activas
+          </small>
+
+          <b id="metricPromos">0</b>
+
+          <div class="sub">
+            visibles al público
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <div class="section card">
+
+        <h2>
+          ⚡ Acciones rápidas
+        </h2>
+
+        <div class="quick">
+
+          <button
+            type="button"
+            onclick="showView('reservas')"
+          >
+            📅 Ver reservas
+          </button>
+
+          <button
+            type="button"
+            onclick="showView('pedidos')"
+          >
+            🛒 Ver pedidos
+          </button>
+
+          <button
+            type="button"
+            onclick="refreshAll()"
+          >
+            🔄 Actualizar todo
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="section card">
+
+        <h2>
+          🕒 Actividad reciente
+        </h2>
+
+        <div
+          id="recentActivity"
+          class="empty"
+        >
+          Cargando...
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- RESERVAS -->
+
+    <section
+      id="reservas"
+      class="view"
+    >
+
+      <div class="card">
+
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2 style="margin:0">
+            📅 Reservas
+          </h2>
+
+          <button
+            class="btn"
+            type="button"
+            onclick="loadReservas()"
+          >
+            🔄 Actualizar
+          </button>
+
+        </div>
+
+
+        <div
+          id="reservasMessage"
+          class="notice hidden"
+          style="margin-top:12px"
+        ></div>
+
+
+        <div
+          class="table-wrap"
+          style="margin-top:10px"
+        >
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Fecha / hora</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="reservasTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PEDIDOS -->
+
+    <section
+      id="pedidos"
+      class="view"
+    >
+
+      <div class="card">
+
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2 style="margin:0">
+            🛒 Pedidos
+          </h2>
+
+          <button
+            class="btn"
+            type="button"
+            onclick="loadPedidos()"
+          >
+            🔄 Actualizar
+          </button>
+
+        </div>
+
+
+        <div
+          class="table-wrap"
+          style="margin-top:10px"
+        >
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Tipo</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th>Acción</th>
+              </tr>
+
+            </thead>
+
+            <tbody id="pedidosTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- TORNEOS -->
+
+    <section
+      id="torneos"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>
+            🏆 Crear torneo
+          </h2>
+
+          <label>Nombre</label>
+
+          <input
+            id="tourName"
+            class="input"
+            placeholder="Ej. Torneo Bola 8"
+          >
+
+          <label>Juego</label>
+
+          <input
+            id="tourGame"
+            class="input"
+            placeholder="Ej. Pool"
+          >
+
+          <label>Fecha y hora</label>
+
+          <input
+            id="tourDate"
+            class="input"
+            type="datetime-local"
+          >
+
+          <label>
+            Máximo de participantes
+          </label>
+
+          <input
+            id="tourMax"
+            class="input"
+            type="number"
+            min="1"
+            placeholder="30"
+          >
+
+          <label>Inscripción</label>
+
+          <input
+            id="tourEntry"
+            class="input"
+            type="number"
+            min="0"
+            placeholder="50000"
+          >
+
+          <label>Premio 1°</label>
+
+          <input
+            id="tourPrize1"
+            class="input"
+            type="number"
+            min="0"
+            placeholder="1000000"
+          >
+
+          <label>Premio 2°</label>
+
+          <input
+            id="tourPrize2"
+            class="input"
+            type="number"
+            min="0"
+            placeholder="500000"
+          >
+
+          <button
+            class="btn gold"
+            style="width:100%;margin-top:12px"
+            onclick="createTournament()"
+          >
+            Crear torneo
+          </button>
+
+          <p
+            id="tourMessage"
+            class="notice hidden"
+            style="margin-top:10px"
+          ></p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            📋 Torneos
+          </h2>
+
+          <div
+            id="tournamentsList"
+            class="empty"
+          >
+            Cargando...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- PROMOCIONES -->
+
+    <section
+      id="promos"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>
+            🔥 Nueva promoción
+          </h2>
+
+          <label>Título</label>
+
+          <input
+            id="promoTitle"
+            class="input"
+            placeholder="Ej. 2 pizzas"
+          >
+
+          <label>Descripción</label>
+
+          <textarea
+            id="promoDescription"
+            class="input"
+            placeholder="Descripción de la promoción"
+          ></textarea>
+
+          <label>Precio</label>
+
+          <input
+            id="promoPrice"
+            class="input"
+            type="number"
+            min="0"
+            placeholder="25000"
+          >
+
+          <button
+            class="btn gold"
+            style="width:100%;margin-top:12px"
+            onclick="createPromo()"
+          >
+            Publicar promoción
+          </button>
+
+          <p
+            id="promoMessage"
+            class="notice hidden"
+            style="margin-top:10px"
+          ></p>
+
+        </div>
+
+
+        <div class="card">
+
+          <h2>
+            📋 Promociones activas
+          </h2>
+
+          <div
+            id="promosList"
+            class="empty"
+          >
+            Cargando...
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+
+    <!-- MESAS -->
+
+    <section
+      id="mesas"
+      class="view"
+    >
+
+      <div class="card">
+
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2 style="margin:0">
+            🎱 Mesas
+          </h2>
+
+          <button
+            class="btn"
+            onclick="loadMesas()"
+          >
+            🔄 Actualizar
+          </button>
+
+        </div>
+
+        <div
+          id="mesasList"
+          class="empty"
+          style="margin-top:10px"
+        >
+          Cargando...
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <div class="footer">
+    Pool & Beach · Panel de administración
   </div>
 
 </div>
 
-<div id="toast"></div>
 
 <script>
-/* =========================================================
-   SUPABASE
-========================================================= */
 
-const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+const SB_URL =
+  'https://nmpakeovqkdajtswjpgm.supabase.co';
 
-const SUPABASE_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
-
-const {createClient} = supabase;
+const SB_KEY =
+  'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
 const db =
-  createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
+  window.supabase.createClient(
+    SB_URL,
+    SB_KEY
   );
 
-/* =========================================================
-   ESTADO
-========================================================= */
 
-let currentUser = null;
-let currentRole = null;
+const $ =
+  id => document.getElementById(id);
 
-let playersCache = [];
-let gamesCache = [];
 
-/* =========================================================
-   UTILIDADES
-========================================================= */
+let notificationCount = 0;
+let lastReservations = [];
+let lastOrders = [];
 
-function escapeHtml(value){
 
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
+function escapeHTML(value){
+
+  return String(value ?? '')
+    .replaceAll('&','&amp;')
+    .replaceAll('<','&lt;')
+    .replaceAll('>','&gt;')
+    .replaceAll('"','&quot;')
     .replaceAll("'","&#039;");
 
 }
 
-function showToast(message,type=""){
 
-  const el =
-    document.getElementById("toast");
+function money(value){
 
-  el.textContent = message;
-  el.className = "";
-
-  if(type){
-    el.classList.add(type);
-  }
-
-  el.classList.add("show");
-
-  clearTimeout(window.toastTimer);
-
-  window.toastTimer =
-    setTimeout(
-      () => el.classList.remove("show"),
-      3500
-    );
+  return '$' +
+    Number(value || 0)
+      .toLocaleString('es-AR');
 
 }
 
-function openModal(title,html){
 
-  document.getElementById(
-    "modalTitle"
-  ).textContent = title;
+function dateText(value){
 
-  document.getElementById(
-    "modalContent"
-  ).innerHTML = html;
-
-  document.getElementById(
-    "modal"
-  ).classList.remove("hidden");
-
-}
-
-function closeModal(){
-
-  document.getElementById(
-    "modal"
-  ).classList.add("hidden");
-
-}
-
-function closeModalOutside(event){
-
-  if(event.target.id === "modal"){
-    closeModal();
-  }
-
-}
-
-function formatDate(value){
-
-  if(!value){
-    return "-";
-  }
+  if(!value) return '—';
 
   try{
 
     return new Date(value)
       .toLocaleString(
-        "es-AR",
+        'es-AR',
         {
-          dateStyle:"short",
-          timeStyle:"short"
+          dateStyle:'short',
+          timeStyle:'short'
         }
       );
 
-  }catch{
-    return value;
-  }
+  }catch(e){
 
-}
-
-/* =========================================================
-   LOGIN
-========================================================= */
-
-async function login(){
-
-  const email =
-    document
-      .getElementById("loginEmail")
-      .value
-      .trim();
-
-  const password =
-    document
-      .getElementById("loginPassword")
-      .value;
-
-  const errorBox =
-    document.getElementById("loginError");
-
-  const button =
-    document.getElementById("loginButton");
-
-  errorBox.classList.add("hidden");
-
-  if(!email || !password){
-
-    errorBox.textContent =
-      "Ingresá email y contraseña.";
-
-    errorBox.classList.remove("hidden");
-
-    return;
-  }
-
-  button.disabled = true;
-  button.textContent = "Ingresando...";
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if(error){
-      throw error;
-    }
-
-    currentUser =
-      data.user;
-
-    await verifyAdmin();
-
-  }catch(error){
-
-    console.error(error);
-
-    errorBox.textContent =
-      error.message ||
-      "No se pudo iniciar sesión.";
-
-    errorBox.classList.remove("hidden");
-
-    button.disabled = false;
-    button.textContent = "🔐 Ingresar";
+    return escapeHTML(value);
 
   }
 
 }
 
-/* =========================================================
-   VERIFICAR ROL
-========================================================= */
 
-async function verifyAdmin(){
+function showView(id){
 
-  if(!currentUser){
-    throw new Error(
-      "No existe una sesión válida."
+  document
+    .querySelectorAll('.view')
+    .forEach(v =>
+      v.classList.remove('active')
     );
+
+  const target = $(id);
+
+  if(target)
+    target.classList.add('active');
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(t =>
+      t.classList.toggle(
+        'active',
+        t.dataset.view === id
+      )
+    );
+
+  if(id === 'reservas')
+    loadReservas();
+
+  if(id === 'pedidos')
+    loadPedidos();
+
+  if(id === 'torneos')
+    loadTorneos();
+
+  if(id === 'promos')
+    loadPromos();
+
+  if(id === 'mesas')
+    loadMesas();
+
+}
+
+
+document
+  .querySelectorAll('.tab')
+  .forEach(t =>
+    t.addEventListener(
+      'click',
+      () => showView(t.dataset.view)
+    )
+  );
+
+
+$('notificationButton')
+  .addEventListener(
+    'click',
+    () =>
+      $('notificationPanel')
+        .classList
+        .toggle('hidden')
+  );
+
+
+$('logoutButton')
+  .addEventListener(
+    'click',
+    async () => {
+
+      await db.auth.signOut();
+
+      location.reload();
+
+    }
+  );
+
+
+$('loginForm')
+  .addEventListener(
+    'submit',
+    async e => {
+
+      e.preventDefault();
+
+      $('loginMessage')
+        .classList
+        .add('hidden');
+
+      const email =
+        $('loginEmail')
+          .value
+          .trim();
+
+      const password =
+        $('loginPassword')
+          .value;
+
+      const {error} =
+        await db.auth.signInWithPassword({
+          email,
+          password
+        });
+
+      if(error){
+
+        $('loginMessage')
+          .textContent =
+          '❌ No se pudo iniciar sesión. Revisá email y contraseña.';
+
+        $('loginMessage')
+          .classList
+          .remove('hidden');
+
+        return;
+
+      }
+
+      await initAdmin();
+
+    }
+  );
+
+
+async function init(){
+
+  const {
+    data:{
+      session
+    }
+  } =
+    await db.auth.getSession();
+
+  if(session){
+
+    await initAdmin();
+
+  }else{
+
+    $('loginScreen')
+      .classList
+      .remove('hidden');
+
+    $('adminApp')
+      .classList
+      .add('hidden');
+
   }
+
+}
+
+
+async function initAdmin(){
+
+  $('loginScreen')
+    .classList
+    .add('hidden');
+
+  $('adminApp')
+    .classList
+    .remove('hidden');
+
+  $('connection')
+    .textContent =
+    'CONECTADO';
+
+  await refreshAll();
+
+  subscribeRealtime();
+
+}
+
+
+async function refreshAll(){
+
+  await Promise.all([
+    loadReservas(),
+    loadPedidos(),
+    loadTorneos(),
+    loadPromos(),
+    loadMesas()
+  ]);
+
+  updateDashboard();
+
+  buildNotifications();
+
+  buildRecentActivity();
+
+}
+
+
+async function loadReservas(){
 
   const {
     data,
     error
   } =
     await db
-      .from("profiles")
-      .select(
-        "id,display_name,role"
-      )
-      .eq(
-        "id",
-        currentUser.id
-      )
-      .maybeSingle();
+      .from('reservas')
+      .select('*')
+      .order('fecha',{ascending:true})
+      .order('hora',{ascending:true})
+      .limit(100);
 
   if(error){
-    throw error;
-  }
 
-  const role =
-    String(data?.role || "")
-      .toLowerCase();
-
-  if(
-    role !== "admin" &&
-    role !== "staff"
-  ){
-
-    await db.auth.signOut();
-
-    throw new Error(
-      "Esta cuenta no tiene permisos de administración."
+    showTableError(
+      'reservasTable',
+      'No se pudieron cargar las reservas.'
     );
+
+    return;
+
   }
 
-  currentRole = role;
+  lastReservations =
+    data || [];
 
-  document.getElementById(
-    "roleBadge"
-  ).textContent =
-    role === "admin"
-      ? "ADMIN"
-      : "STAFF";
+  const tbody =
+    $('reservasTable');
 
-  document
-    .getElementById("loginScreen")
-    .classList.add("hidden");
+  if(!lastReservations.length){
 
-  document
-    .getElementById("adminApp")
-    .classList.remove("hidden");
+    tbody.innerHTML =
+      '<tr><td colspan="6" class="empty">No hay reservas.</td></tr>';
+
+    return;
+
+  }
+
+
+  tbody.innerHTML =
+    lastReservations
+      .map(r => {
+
+        const estado =
+          String(
+            r.estado ||
+            r.Estado ||
+            'pendiente'
+          ).toLowerCase();
+
+        return `
+          <tr>
+
+            <td>
+              <strong>
+                ${escapeHTML(r.fecha || '—')}
+              </strong>
+              <br>
+              ${escapeHTML(r.hora || '—')}
+            </td>
+
+            <td>
+              ${escapeHTML(r.nombre)}
+              <br>
+              <small>
+                ${escapeHTML(r.telefono)}
+              </small>
+            </td>
+
+            <td>
+              ${escapeHTML(
+                r.servicio ||
+                r.Servicio ||
+                '—'
+              )}
+            </td>
+
+            <td>
+              ${escapeHTML(
+                r.cantidad_personas ||
+                r.personas ||
+                '—'
+              )}
+            </td>
+
+            <td>
+              <span class="badge ${estado}">
+                ${escapeHTML(estado)}
+              </span>
+            </td>
+
+            <td>
+
+              <div class="row">
+
+                <button
+                  class="btn green"
+                  onclick="setReservaEstado('${r.id}','confirmada')"
+                >
+                  ✓
+                </button>
+
+                <button
+                  class="btn red"
+                  onclick="setReservaEstado('${r.id}','cancelada')"
+                >
+                  ×
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join('');
+
+}
+
+
+async function setReservaEstado(
+  id,
+  estado
+){
+
+  const {
+    error
+  } =
+    await db
+      .from('reservas')
+      .update({estado})
+      .eq('id',id);
+
+  if(error){
+
+    alert(
+      'No se pudo actualizar la reserva. Revisá las políticas de Supabase.'
+    );
+
+    return;
+
+  }
 
   await refreshAll();
 
 }
 
-/* =========================================================
-   SESIÓN EXISTENTE
-========================================================= */
 
-async function checkSession(){
-
-  const {
-    data
-  } =
-    await db.auth.getSession();
-
-  if(!data?.session?.user){
-    return;
-  }
-
-  currentUser =
-    data.session.user;
-
-  try{
-
-    await verifyAdmin();
-
-  }catch(error){
-
-    console.error(error);
-
-  }
-
-}
-
-async function logout(){
-
-  await db.auth.signOut();
-
-  currentUser = null;
-  currentRole = null;
-
-  document
-    .getElementById("adminApp")
-    .classList.add("hidden");
-
-  document
-    .getElementById("loginScreen")
-    .classList.remove("hidden");
-
-}
-
-/* =========================================================
-   NAVEGACIÓN
-========================================================= */
-
-function initNavigation(){
-
-  document
-    .querySelectorAll(".nav button")
-    .forEach(button => {
-
-      button.addEventListener(
-        "click",
-        async () => {
-
-          document
-            .querySelectorAll(".nav button")
-            .forEach(
-              b => b.classList.remove("active")
-            );
-
-          button.classList.add("active");
-
-          document
-            .querySelectorAll(".section")
-            .forEach(
-              s => s.classList.remove("active")
-            );
-
-          const id =
-            "section-" +
-            button.dataset.section;
-
-          const section =
-            document.getElementById(id);
-
-          if(section){
-            section.classList.add("active");
-          }
-
-          await loadSection(
-            button.dataset.section
-          );
-
-        }
-      );
-
-    });
-
-}
-
-async function loadSection(section){
-
-  try{
-
-    switch(section){
-
-      case "dashboard":
-        await loadDashboard();
-        break;
-
-      case "jugadores":
-        await loadPlayers();
-        break;
-
-      case "juegos":
-        await loadGamesAdmin();
-        break;
-
-      case "partidas":
-        await loadPlays();
-        break;
-
-      case "premios":
-        await loadPrizesAdmin();
-        break;
-
-      case "torneos":
-        await loadTournamentsAdmin();
-        break;
-
-      case "mesas":
-        await loadTables();
-        break;
-
-      case "misiones":
-        await loadPendingMissions();
-        break;
-
-      case "duelos":
-        await loadDuels();
-        break;
-
-      case "reservas":
-        await loadReservations();
-        break;
-
-      case "pedidos":
-        await loadLegacyTable(
-          "pedidos",
-          "ordersTable"
-        );
-        break;
-
-      case "promociones":
-        await loadLegacyTable(
-          "promociones",
-          "promotionsTable"
-        );
-        break;
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    showToast(
-      error.message ||
-      "No se pudo cargar la sección.",
-      "error"
-    );
-
-  }
-
-}
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-async function loadDashboard(){
-
-  const [
-    players,
-    games,
-    plays,
-    prizes
-  ] =
-  await Promise.all([
-
-    db
-      .from("profiles")
-      .select("id",{count:"exact",head:true}),
-
-    db
-      .from("games")
-      .select("id",{count:"exact",head:true})
-      .eq("active",true),
-
-    db
-      .from("game_plays")
-      .select("id",{count:"exact",head:true}),
-
-    db
-      .from("prizes")
-      .select("id",{count:"exact",head:true})
-      .eq("active",true)
-
-  ]);
-
-  document.getElementById(
-    "countPlayers"
-  ).textContent =
-    players.count || 0;
-
-  document.getElementById(
-    "countGames"
-  ).textContent =
-    games.count || 0;
-
-  document.getElementById(
-    "countPlays"
-  ).textContent =
-    plays.count || 0;
-
-  document.getElementById(
-    "countPrizes"
-  ).textContent =
-    prizes.count || 0;
-
-  try{
-
-    const missions =
-      await db.rpc(
-        "get_pending_missions"
-      );
-
-    document.getElementById(
-      "dashboardMissions"
-    ).textContent =
-      `${missions.data?.length || 0} pendiente(s)`;
-
-  }catch{
-
-    document.getElementById(
-      "dashboardMissions"
-    ).textContent =
-      "Consultar sección Misiones";
-
-  }
-
-  try{
-
-    const tables =
-      await db
-        .from("tables_pool")
-        .select("id")
-        .eq("active",true);
-
-    let total = 0;
-
-    for(const table of tables.data || []){
-
-      try{
-
-        const result =
-          await db.rpc(
-            "get_waiting_duels",
-            {
-              p_table_id:table.id
-            }
-          );
-
-        total +=
-          Array.isArray(result.data)
-            ? result.data.length
-            : 0;
-
-      }catch{}
-
-    }
-
-    document.getElementById(
-      "dashboardDuels"
-    ).textContent =
-      `${total} esperando`;
-
-  }catch{
-
-    document.getElementById(
-      "dashboardDuels"
-    ).textContent =
-      "Consultar sección Duelos";
-
-  }
-
-}
-
-/* =========================================================
-   JUGADORES
-========================================================= */
-
-async function loadPlayers(){
-
-  const tbody =
-    document.getElementById(
-      "playersTable"
-    );
-
-  tbody.innerHTML =
-    `<tr>
-      <td colspan="6">
-        Cargando...
-      </td>
-    </tr>`;
+async function loadPedidos(){
 
   const {
     data,
     error
   } =
     await db
-      .from("profiles")
-      .select(
-        "id,display_name,points,tokens,streak,role,created_at"
-      )
+      .from('pedidos')
+      .select('*')
       .order(
-        "points",
+        'created_at',
         {ascending:false}
-      );
+      )
+      .limit(100);
 
   if(error){
-    throw error;
-  }
 
-  playersCache =
-    data || [];
-
-  renderPlayers(playersCache);
-
-}
-
-function renderPlayers(players){
-
-  const tbody =
-    document.getElementById(
-      "playersTable"
+    showTableError(
+      'pedidosTable',
+      'No se pudieron cargar los pedidos.'
     );
 
-  if(!players.length){
+    return;
+
+  }
+
+  lastOrders =
+    data || [];
+
+  const tbody =
+    $('pedidosTable');
+
+  if(!lastOrders.length){
 
     tbody.innerHTML =
-      `<tr>
-        <td colspan="6">
-          No hay jugadores.
-        </td>
-      </tr>`;
+      '<tr><td colspan="7" class="empty">No hay pedidos.</td></tr>';
 
     return;
+
   }
 
+
   tbody.innerHTML =
-    players.map(player => `
+    lastOrders
+      .map(p => {
 
-      <tr>
+        const estado =
+          String(
+            p.estado ||
+            'pendiente'
+          ).toLowerCase();
 
-        <td>
-          <strong>
-            ${escapeHtml(
-              player.display_name ||
-              "Jugador"
-            )}
-          </strong>
-        </td>
+        return `
+          <tr>
 
-        <td>
-          ${Number(player.points || 0)}
-        </td>
+            <td>
+              ${dateText(
+                p.created_at ||
+                p.creado_en
+              )}
+            </td>
 
-        <td>
-          ${Number(player.tokens || 0)}
-        </td>
+            <td>
+              <strong>
+                ${escapeHTML(
+                  p.nombre_cliente ||
+                  p.nombre ||
+                  '—'
+                )}
+              </strong>
+            </td>
 
-        <td>
-          🔥 ${Number(player.streak || 0)}
-        </td>
+            <td>
+              ${escapeHTML(
+                p.telefono ||
+                '—'
+              )}
+            </td>
 
-        <td>
-          ${escapeHtml(
-            player.role || "player"
-          )}
-        </td>
+            <td>
+              ${escapeHTML(
+                p.tipo ||
+                '—'
+              )}
+            </td>
 
-        <td>
-          ${formatDate(player.created_at)}
-        </td>
+            <td>
+              <strong>
+                ${money(p.total)}
+              </strong>
+            </td>
 
-      </tr>
+            <td>
+              <span class="badge ${estado}">
+                ${escapeHTML(estado)}
+              </span>
+            </td>
 
-    `).join("");
+            <td>
+
+              <div class="row">
+
+                <button
+                  class="btn green"
+                  onclick="setPedidoEstado('${p.id}','confirmado')"
+                >
+                  ✓
+                </button>
+
+                <button
+                  class="btn red"
+                  onclick="setPedidoEstado('${p.id}','cancelado')"
+                >
+                  ×
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+        `;
+
+      })
+      .join('');
 
 }
 
-function filterPlayers(){
 
-  const search =
-    document
-      .getElementById("playerSearch")
-      .value
-      .trim()
-      .toLowerCase();
+async function setPedidoEstado(
+  id,
+  estado
+){
 
-  const filtered =
-    playersCache.filter(player =>
-      String(
-        player.display_name || ""
-      )
-      .toLowerCase()
-      .includes(search)
+  const {
+    error
+  } =
+    await db
+      .from('pedidos')
+      .update({estado})
+      .eq('id',id);
+
+  if(error){
+
+    alert(
+      'No se pudo actualizar el pedido. Revisá las políticas de Supabase.'
     );
 
-  renderPlayers(filtered);
+    return;
+
+  }
+
+  await refreshAll();
 
 }
 
-/* =========================================================
-   JUEGOS
-========================================================= */
 
-async function loadGamesAdmin(){
-
-  const container =
-    document.getElementById(
-      "gamesAdminGrid"
-    );
-
-  container.innerHTML =
-    `<div class="card">
-      Cargando juegos...
-    </div>`;
+async function loadTorneos(){
 
   const {
     data,
     error
   } =
     await db
-      .from("games")
-      .select(
-        "id,name,description,icon,points_reward,tokens_reward,active,created_at"
-      )
+      .from('torneos')
+      .select('*')
       .order(
-        "created_at",
+        'fecha',
         {ascending:true}
-      );
+      )
+      .limit(50);
 
   if(error){
-    throw error;
-  }
 
-  gamesCache =
-    data || [];
-
-  if(!gamesCache.length){
-
-    container.innerHTML =
-      `<div class="card">
-        No hay juegos.
-      </div>`;
+    $('tournamentsList')
+      .innerHTML =
+      '<div class="notice">No se pudieron cargar los torneos.</div>';
 
     return;
+
   }
 
-  container.innerHTML =
-    gamesCache.map(game => `
+  if(!data?.length){
 
-      <div class="card">
+    $('tournamentsList')
+      .innerHTML =
+      '<div class="empty">No hay torneos todavía.</div>';
 
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:10px;
-        ">
+    return;
 
-          <div>
+  }
 
-            <div style="
-              font-size:28px;
-              margin-bottom:7px;
-            ">
-              ${escapeHtml(
-                game.icon || "🎮"
-              )}
-            </div>
 
-            <h3>
-              ${escapeHtml(game.name)}
-            </h3>
+  $('tournamentsList')
+    .innerHTML =
+    data
+      .map(t => `
+
+        <div class="notification">
+
+          <strong>
+            🏆 ${escapeHTML(t.nombre)}
+          </strong>
+
+          <small>
+            🎮 ${escapeHTML(t.juego || 'Pool')}
+            ·
+            📅 ${escapeHTML(t.fecha || '—')}
+          </small>
+
+          <div style="margin-top:7px">
+
+            Inscripción:
+            <b>
+              ${money(t.inscripcion)}
+            </b>
+
+            · 1°
+            ${money(t.premio_primero)}
+
+            · 2°
+            ${money(t.premio_segundo)}
 
           </div>
 
-          <span class="status ${
-            game.active
-              ? "active"
-              : "inactive"
-          }">
-            ${game.active
-              ? "ACTIVO"
-              : "INACTIVO"}
-          </span>
+          <div
+            class="row"
+            style="margin-top:8px"
+          >
+
+            <span class="badge">
+              ${escapeHTML(
+                t.estado ||
+                'abierto'
+              )}
+            </span>
+
+          </div>
 
         </div>
 
-        <p class="muted">
-          ${escapeHtml(
-            game.description || ""
-          )}
-        </p>
-
-        <div class="reward">
-
-          <strong>
-            ⭐ ${Number(game.points_reward || 0)}
-          </strong>
-
-          <strong>
-            🪙 ${Number(game.tokens_reward || 0)}
-          </strong>
-
-        </div>
-
-        <button
-          class="secondary"
-          style="width:100%"
-          onclick="editGame('${game.id}')"
-        >
-          ✏️ Editar
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
-
-function editGame(id){
-
-  const game =
-    gamesCache.find(
-      g => g.id === id
-    );
-
-  if(!game){
-    return;
-  }
-
-  openModal(
-    "🎮 Editar juego",
-    `
-      <div class="form-group">
-
-        <label>Nombre</label>
-
-        <input
-          id="editGameName"
-          value="${escapeHtml(game.name)}"
-        >
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Descripción</label>
-
-        <textarea
-          id="editGameDescription"
-        >${escapeHtml(game.description || "")}</textarea>
-
-      </div>
-
-      <div class="form-grid two">
-
-        <div class="form-group">
-
-          <label>Puntos</label>
-
-          <input
-            id="editGamePoints"
-            type="number"
-            min="0"
-            value="${Number(game.points_reward || 0)}"
-          >
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Tokens</label>
-
-          <input
-            id="editGameTokens"
-            type="number"
-            min="0"
-            value="${Number(game.tokens_reward || 0)}"
-          >
-
-        </div>
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Estado</label>
-
-        <select id="editGameActive">
-
-          <option
-            value="true"
-            ${game.active ? "selected" : ""}
-          >
-            Activo
-          </option>
-
-          <option
-            value="false"
-            ${!game.active ? "selected" : ""}
-          >
-            Inactivo
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="saveGame('${game.id}')"
-      >
-        💾 Guardar cambios
-      </button>
-    `
-  );
-
-}
-
-async function saveGame(id){
-
-  const name =
-    document.getElementById(
-      "editGameName"
-    ).value.trim();
-
-  const description =
-    document.getElementById(
-      "editGameDescription"
-    ).value.trim();
-
-  const points =
-    Number(
-      document.getElementById(
-        "editGamePoints"
-      ).value
-    );
-
-  const tokens =
-    Number(
-      document.getElementById(
-        "editGameTokens"
-      ).value
-    );
-
-  const active =
-    document.getElementById(
-      "editGameActive"
-    ).value === "true";
-
-  if(!name){
-    showToast(
-      "El juego necesita un nombre.",
-      "error"
-    );
-    return;
-  }
-
-  const {
-    error
-  } =
-    await db
-      .from("games")
-      .update({
-        name,
-        description,
-        points_reward:points,
-        tokens_reward:tokens,
-        active
-      })
-      .eq("id",id);
-
-  if(error){
-    throw error;
-  }
-
-  closeModal();
-
-  await loadGamesAdmin();
-
-  showToast(
-    "Juego actualizado.",
-    "success"
-  );
-
-}
-
-/* =========================================================
-   PARTIDAS
-========================================================= */
-
-async function loadPlays(){
-
-  const tbody =
-    document.getElementById(
-      "playsTable"
-    );
-
-  tbody.innerHTML =
-    `<tr>
-      <td colspan="6">Cargando...</td>
-    </tr>`;
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("game_plays")
-      .select(`
-        id,
-        user_id,
-        game_id,
-        table_id,
-        points_awarded,
-        tokens_awarded,
-        created_at,
-        profiles(display_name),
-        games(name),
-        tables_pool(table_number)
       `)
-      .order(
-        "created_at",
-        {ascending:false}
-      )
-      .limit(200);
-
-  if(error){
-
-    console.error(error);
-
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="6">
-          No se pudieron cargar las partidas.
-        </td>
-      </tr>`;
-
-    return;
-  }
-
-  if(!data?.length){
-
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="6">
-          Todavía no hay partidas.
-        </td>
-      </tr>`;
-
-    return;
-  }
-
-  tbody.innerHTML =
-    data.map(play => `
-
-      <tr>
-
-        <td>
-          ${formatDate(play.created_at)}
-        </td>
-
-        <td>
-          ${escapeHtml(
-            play.profiles?.display_name ||
-            "Jugador"
-          )}
-        </td>
-
-        <td>
-          ${escapeHtml(
-            play.games?.name ||
-            "Juego"
-          )}
-        </td>
-
-        <td>
-          ⭐ ${Number(
-            play.points_awarded || 0
-          )}
-        </td>
-
-        <td>
-          🪙 ${Number(
-            play.tokens_awarded || 0
-          )}
-        </td>
-
-        <td>
-          ${
-            play.tables_pool?.table_number
-              ? "Mesa " +
-                play.tables_pool.table_number
-              : "-"
-          }
-        </td>
-
-      </tr>
-
-    `).join("");
+      .join('');
 
 }
 
-/* =========================================================
-   PREMIOS
-========================================================= */
-
-async function loadPrizesAdmin(){
-
-  const container =
-    document.getElementById(
-      "prizesAdminGrid"
-    );
-
-  container.innerHTML =
-    `<div class="card">
-      Cargando premios...
-    </div>`;
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("prizes")
-      .select(
-        "id,name,description,token_cost,active,stock,created_at"
-      )
-      .order(
-        "token_cost",
-        {ascending:true}
-      );
-
-  if(error){
-    throw error;
-  }
-
-  if(!data?.length){
-
-    container.innerHTML =
-      `<div class="card">
-        No hay premios.
-      </div>`;
-
-    return;
-  }
-
-  container.innerHTML =
-    data.map(prize => `
-
-      <div class="card">
-
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:10px;
-        ">
-
-          <h3>
-            🎁 ${escapeHtml(prize.name)}
-          </h3>
-
-          <span class="status ${
-            prize.active
-              ? "active"
-              : "inactive"
-          }">
-            ${prize.active
-              ? "ACTIVO"
-              : "INACTIVO"}
-          </span>
-
-        </div>
-
-        <p class="muted">
-          ${escapeHtml(
-            prize.description || ""
-          )}
-        </p>
-
-        <p>
-          🪙
-          <strong>
-            ${Number(prize.token_cost || 0)}
-          </strong>
-          tokens
-        </p>
-
-        <p class="muted">
-          Stock:
-          ${
-            prize.stock == null
-              ? "Sin límite"
-              : Number(prize.stock)
-          }
-        </p>
-
-        <button
-          class="secondary"
-          style="width:100%"
-          onclick="editPrize('${prize.id}')"
-        >
-          ✏️ Editar
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
-
-function openPrizeForm(){
-
-  openModal(
-    "🎁 Nuevo premio",
-    `
-      <div class="form-group">
-
-        <label>Nombre</label>
-
-        <input
-          id="prizeName"
-          placeholder="Ej. Hamburguesa"
-        >
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Descripción</label>
-
-        <textarea
-          id="prizeDescription"
-          placeholder="Descripción del premio"
-        ></textarea>
-
-      </div>
-
-      <div class="form-grid two">
-
-        <div class="form-group">
-
-          <label>Costo en tokens</label>
-
-          <input
-            id="prizeCost"
-            type="number"
-            min="0"
-            value="10"
-          >
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Stock</label>
-
-          <input
-            id="prizeStock"
-            type="number"
-            min="0"
-            placeholder="Vacío = sin límite"
-          >
-
-        </div>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="createPrize()"
-      >
-        ➕ Crear premio
-      </button>
-    `
-  );
-
-}
-
-async function createPrize(){
-
-  const name =
-    document.getElementById(
-      "prizeName"
-    ).value.trim();
-
-  const description =
-    document.getElementById(
-      "prizeDescription"
-    ).value.trim();
-
-  const token_cost =
-    Number(
-      document.getElementById(
-        "prizeCost"
-      ).value
-    );
-
-  const stockValue =
-    document.getElementById(
-      "prizeStock"
-    ).value.trim();
-
-  const stock =
-    stockValue === ""
-      ? null
-      : Number(stockValue);
-
-  if(!name){
-
-    showToast(
-      "Ingresá el nombre del premio.",
-      "error"
-    );
-
-    return;
-  }
-
-  const {
-    error
-  } =
-    await db
-      .from("prizes")
-      .insert({
-        name,
-        description,
-        token_cost,
-        stock,
-        active:true
-      });
-
-  if(error){
-    throw error;
-  }
-
-  closeModal();
-
-  await loadPrizesAdmin();
-
-  showToast(
-    "Premio creado.",
-    "success"
-  );
-
-}
-
-async function editPrize(id){
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("prizes")
-      .select("*")
-      .eq("id",id)
-      .single();
-
-  if(error){
-    throw error;
-  }
-
-  openModal(
-    "🎁 Editar premio",
-    `
-      <div class="form-group">
-
-        <label>Nombre</label>
-
-        <input
-          id="editPrizeName"
-          value="${escapeHtml(data.name)}"
-        >
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Descripción</label>
-
-        <textarea
-          id="editPrizeDescription"
-        >${escapeHtml(data.description || "")}</textarea>
-
-      </div>
-
-      <div class="form-grid two">
-
-        <div class="form-group">
-
-          <label>Costo en tokens</label>
-
-          <input
-            id="editPrizeCost"
-            type="number"
-            min="0"
-            value="${Number(data.token_cost || 0)}"
-          >
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Stock</label>
-
-          <input
-            id="editPrizeStock"
-            type="number"
-            min="0"
-            value="${data.stock == null ? "" : Number(data.stock)}"
-          >
-
-        </div>
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Estado</label>
-
-        <select id="editPrizeActive">
-
-          <option
-            value="true"
-            ${data.active ? "selected" : ""}
-          >
-            Activo
-          </option>
-
-          <option
-            value="false"
-            ${!data.active ? "selected" : ""}
-          >
-            Inactivo
-          </option>
-
-        </select>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="savePrize('${id}')"
-      >
-        💾 Guardar
-      </button>
-    `
-  );
-
-}
-
-async function savePrize(id){
-
-  const name =
-    document.getElementById(
-      "editPrizeName"
-    ).value.trim();
-
-  const description =
-    document.getElementById(
-      "editPrizeDescription"
-    ).value.trim();
-
-  const token_cost =
-    Number(
-      document.getElementById(
-        "editPrizeCost"
-      ).value
-    );
-
-  const stockInput =
-    document.getElementById(
-      "editPrizeStock"
-    ).value.trim();
-
-  const stock =
-    stockInput === ""
-      ? null
-      : Number(stockInput);
-
-  const active =
-    document.getElementById(
-      "editPrizeActive"
-    ).value === "true";
-
-  const {
-    error
-  } =
-    await db
-      .from("prizes")
-      .update({
-        name,
-        description,
-        token_cost,
-        stock,
-        active
-      })
-      .eq("id",id);
-
-  if(error){
-    throw error;
-  }
-
-  closeModal();
-
-  await loadPrizesAdmin();
-
-  showToast(
-    "Premio actualizado.",
-    "success"
-  );
-
-}
-
-/* =========================================================
-   TORNEOS
-========================================================= */
-
-async function loadTournamentsAdmin(){
-
-  const container =
-    document.getElementById(
-      "tournamentsAdminGrid"
-    );
-
-  container.innerHTML =
-    `<div class="card">
-      Cargando torneos...
-    </div>`;
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("tournaments")
-      .select(
-        "id,name,game_type,starts_at,entry_tokens,max_players,status,created_at"
-      )
-      .order(
-        "starts_at",
-        {ascending:false}
-      );
-
-  if(error){
-    throw error;
-  }
-
-  if(!data?.length){
-
-    container.innerHTML =
-      `<div class="card">
-        No hay torneos creados.
-      </div>`;
-
-    return;
-  }
-
-  container.innerHTML =
-    data.map(t => `
-
-      <div class="card">
-
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          gap:10px;
-        ">
-
-          <h3>
-            🏆 ${escapeHtml(t.name)}
-          </h3>
-
-          <span class="status">
-            ${escapeHtml(
-              t.status || ""
-            )}
-          </span>
-
-        </div>
-
-        <p class="muted">
-          🎮 ${escapeHtml(
-            t.game_type || ""
-          )}
-        </p>
-
-        <p>
-          📅 ${formatDate(t.starts_at)}
-        </p>
-
-        <p>
-          🪙 Entrada:
-          ${Number(t.entry_tokens || 0)}
-        </p>
-
-        <p>
-          👥 Máximo:
-          ${Number(t.max_players || 0)}
-        </p>
-
-        <button
-          class="secondary"
-          style="width:100%"
-          onclick="editTournament('${t.id}')"
-        >
-          ✏️ Cambiar estado
-        </button>
-
-      </div>
-
-    `).join("");
-
-}
-
-function openTournamentForm(){
-
-  openModal(
-    "🏆 Nuevo torneo",
-    `
-      <div class="form-group">
-
-        <label>Nombre</label>
-
-        <input
-          id="tournamentName"
-          placeholder="Ej. Torneo Pool & Beach"
-        >
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Juego</label>
-
-        <input
-          id="tournamentGame"
-          placeholder="Ej. Pool"
-        >
-
-      </div>
-
-      <div class="form-group">
-
-        <label>Fecha y hora</label>
-
-        <input
-          id="tournamentDate"
-          type="datetime-local"
-        >
-
-      </div>
-
-      <div class="form-grid two">
-
-        <div class="form-group">
-
-          <label>Entrada en tokens</label>
-
-          <input
-            id="tournamentEntry"
-            type="number"
-            min="0"
-            value="0"
-          >
-
-        </div>
-
-        <div class="form-group">
-
-          <label>Máximo de jugadores</label>
-
-          <input
-            id="tournamentMax"
-            type="number"
-            min="2"
-            value="16"
-          >
-
-        </div>
-
-      </div>
-
-      <button
-        class="primary"
-        onclick="createTournament()"
-      >
-        ➕ Crear torneo
-      </button>
-    `
-  );
-
-}
 
 async function createTournament(){
 
-  const name =
-    document.getElementById(
-      "tournamentName"
-    ).value.trim();
+  const nombre =
+    $('tourName')
+      .value
+      .trim();
 
-  const game_type =
-    document.getElementById(
-      "tournamentGame"
-    ).value.trim();
+  const juego =
+    $('tourGame')
+      .value
+      .trim() ||
+    'Pool';
 
-  const date =
-    document.getElementById(
-      "tournamentDate"
-    ).value;
+  const fecha =
+    $('tourDate')
+      .value;
 
-  const entry_tokens =
-    Number(
-      document.getElementById(
-        "tournamentEntry"
-      ).value
-    );
+  if(!nombre || !fecha){
 
-  const max_players =
-    Number(
-      document.getElementById(
-        "tournamentMax"
-      ).value
-    );
-
-  if(!name || !date){
-
-    showToast(
-      "Completá nombre y fecha.",
-      "error"
+    showMsg(
+      'tourMessage',
+      '❌ Completá nombre y fecha.'
     );
 
     return;
+
   }
+
+
+  const payload = {
+
+    nombre,
+    juego,
+    fecha,
+
+    max_participantes:
+      Number(
+        $('tourMax').value
+      ) || 30,
+
+    inscripcion:
+      Number(
+        $('tourEntry').value
+      ) || 0,
+
+    premio_primero:
+      Number(
+        $('tourPrize1').value
+      ) || 0,
+
+    premio_segundo:
+      Number(
+        $('tourPrize2').value
+      ) || 0,
+
+    estado:'abierto'
+
+  };
+
 
   const {
     error
   } =
     await db
-      .from("tournaments")
-      .insert({
-        name,
-        game_type,
-        starts_at:new Date(date).toISOString(),
-        entry_tokens,
-        max_players,
-        status:"open"
-      });
+      .from('torneos')
+      .insert(payload);
+
 
   if(error){
-    throw error;
-  }
 
-  closeModal();
-
-  await loadTournamentsAdmin();
-
-  showToast(
-    "Torneo creado.",
-    "success"
-  );
-
-}
-
-async function editTournament(id){
-
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("tournaments")
-      .select("id,name,status")
-      .eq("id",id)
-      .single();
-
-  if(error){
-    throw error;
-  }
-
-  openModal(
-    "🏆 Estado del torneo",
-    `
-      <p>
-        <strong>
-          ${escapeHtml(data.name)}
-        </strong>
-      </p>
-
-      <select id="tournamentStatus">
-
-        <option
-          value="open"
-          ${data.status === "open" ? "selected" : ""}
-        >
-          Abierto
-        </option>
-
-        <option
-          value="in_progress"
-          ${data.status === "in_progress" ? "selected" : ""}
-        >
-          En curso
-        </option>
-
-        <option
-          value="finished"
-          ${data.status === "finished" ? "selected" : ""}
-        >
-          Finalizado
-        </option>
-
-        <option
-          value="cancelled"
-          ${data.status === "cancelled" ? "selected" : ""}
-        >
-          Cancelado
-        </option>
-
-      </select>
-
-      <div style="height:12px"></div>
-
-      <button
-        class="primary"
-        onclick="saveTournamentStatus('${id}')"
-      >
-        💾 Guardar
-      </button>
-    `
-  );
-
-}
-
-async function saveTournamentStatus(id){
-
-  const status =
-    document.getElementById(
-      "tournamentStatus"
-    ).value;
-
-  const {
-    error
-  } =
-    await db
-      .from("tournaments")
-      .update({status})
-      .eq("id",id);
-
-  if(error){
-    throw error;
-  }
-
-  closeModal();
-
-  await loadTournamentsAdmin();
-
-  showToast(
-    "Estado actualizado.",
-    "success"
-  );
-
-}
-
-/* =========================================================
-   MESAS + QR
-========================================================= */
-
-async function loadTables(){
-
-  const container =
-    document.getElementById(
-      "tablesQRGrid"
+    showMsg(
+      'tourMessage',
+      '❌ No se pudo crear. Revisá que las columnas coincidan con la tabla torneos.'
     );
 
-  container.innerHTML =
-    `<div class="card">
-      Cargando mesas...
-    </div>`;
+    return;
+
+  }
+
+
+  $('tourName').value='';
+  $('tourGame').value='';
+  $('tourDate').value='';
+  $('tourMax').value='';
+  $('tourEntry').value='';
+  $('tourPrize1').value='';
+  $('tourPrize2').value='';
+
+
+  showMsg(
+    'tourMessage',
+    '✅ Torneo creado correctamente.'
+  );
+
+  await refreshAll();
+
+}
+
+
+async function loadPromos(){
 
   const {
     data,
     error
   } =
     await db
-      .from("tables_pool")
-      .select(
-        "id,table_number,name,active"
-      )
+      .from('promociones')
+      .select('*')
       .order(
-        "table_number",
+        'created_at',
+        {ascending:false}
+      )
+      .limit(50);
+
+  if(error){
+
+    $('promosList')
+      .innerHTML =
+      '<div class="notice">No se pudieron cargar las promociones.</div>';
+
+    return;
+
+  }
+
+
+  const active =
+    (data || [])
+      .filter(
+        p => p.activa !== false
+      );
+
+
+  if(!active.length){
+
+    $('promosList')
+      .innerHTML =
+      '<div class="empty">No hay promociones activas.</div>';
+
+    return;
+
+  }
+
+
+  $('promosList')
+    .innerHTML =
+    active
+      .map(p => `
+
+        <div class="notification">
+
+          <strong>
+            🔥 ${escapeHTML(p.titulo)}
+          </strong>
+
+          <small>
+            ${escapeHTML(
+              p.descripcion || ''
+            )}
+          </small>
+
+          <div style="margin-top:6px">
+
+            <b>
+              ${money(p.precio)}
+            </b>
+
+          </div>
+
+        </div>
+
+      `)
+      .join('');
+
+}
+
+
+async function createPromo(){
+
+  const titulo =
+    $('promoTitle')
+      .value
+      .trim();
+
+  const descripcion =
+    $('promoDescription')
+      .value
+      .trim();
+
+  const precio =
+    Number(
+      $('promoPrice').value
+    ) || 0;
+
+
+  if(!titulo){
+
+    showMsg(
+      'promoMessage',
+      '❌ Escribí un título.'
+    );
+
+    return;
+
+  }
+
+
+  const {
+    error
+  } =
+    await db
+      .from('promociones')
+      .insert({
+        titulo,
+        descripcion,
+        precio,
+        activa:true
+      });
+
+
+  if(error){
+
+    showMsg(
+      'promoMessage',
+      '❌ No se pudo publicar la promoción.'
+    );
+
+    return;
+
+  }
+
+
+  $('promoTitle').value='';
+  $('promoDescription').value='';
+  $('promoPrice').value='';
+
+
+  showMsg(
+    'promoMessage',
+    '✅ Promoción publicada.'
+  );
+
+  await refreshAll();
+
+}
+
+
+async function loadMesas(){
+
+  const {
+    data,
+    error
+  } =
+    await db
+      .from('tables_pool')
+      .select('*')
+      .order(
+        'table_number',
         {ascending:true}
       );
 
+
   if(error){
-    throw error;
+
+    $('mesasList')
+      .innerHTML =
+      '<div class="notice">No se pudieron cargar las mesas.</div>';
+
+    return;
+
   }
+
 
   if(!data?.length){
 
-    container.innerHTML =
-      `<div class="card">
-        No hay mesas.
-      </div>`;
+    $('mesasList')
+      .innerHTML =
+      '<div class="empty">No hay mesas cargadas.</div>';
 
     return;
-  }
-
-  const base =
-    location.origin +
-    location.pathname.replace(
-      "admin.html",
-      "index.html"
-    );
-
-  container.innerHTML =
-    data.map(table => {
-
-      const link =
-        base +
-        "?mesa=" +
-        encodeURIComponent(
-          table.table_number
-        );
-
-      const qr =
-        "https://api.qrserver.com/v1/create-qr-code/?" +
-        "size=500x500&data=" +
-        encodeURIComponent(link);
-
-      return `
-
-        <div class="card qr-card">
-
-          <h3>
-            🎱 Mesa ${Number(
-              table.table_number
-            )}
-          </h3>
-
-          <p class="muted">
-            ${escapeHtml(
-              table.name ||
-              "Mesa " +
-              table.table_number
-            )}
-          </p>
-
-          <img
-            src="${qr}"
-            alt="QR Mesa ${Number(table.table_number)}"
-          >
-
-          <div class="qr-link">
-            ${escapeHtml(link)}
-          </div>
-
-          <div style="height:10px"></div>
-
-          <button
-            class="secondary"
-            style="width:100%"
-            onclick="copyText('${escapeHtml(link)}')"
-          >
-            📋 Copiar enlace
-          </button>
-
-        </div>
-
-      `;
-
-    }).join("");
-
-}
-
-async function copyText(text){
-
-  try{
-
-    await navigator.clipboard.writeText(
-      text
-    );
-
-    showToast(
-      "Enlace copiado.",
-      "success"
-    );
-
-  }catch{
-
-    showToast(
-      "No se pudo copiar.",
-      "error"
-    );
 
   }
 
-}
 
-/* =========================================================
-   MISIONES
-========================================================= */
+  $('mesasList')
+    .innerHTML =
+    '<div class="cards">' +
 
-async function loadPendingMissions(){
-
-  const container =
-    document.getElementById(
-      "missionsAdminGrid"
-    );
-
-  container.innerHTML =
-    `<div class="card">
-      Cargando...
-    </div>`;
-
-  try{
-
-    const {
-      data,
-      error
-    } =
-      await db.rpc(
-        "get_pending_missions"
-      );
-
-    if(error){
-      throw error;
-    }
-
-    if(!data?.length){
-
-      container.innerHTML =
-        `<div class="card">
-          No hay misiones pendientes.
-        </div>`;
-
-      return;
-    }
-
-    container.innerHTML =
-      data.map(mission => `
+    data
+      .map(m => `
 
         <div class="card">
 
+          <div style="font-size:27px">
+            🎱
+          </div>
+
           <h3>
-            ⭐ Misión pendiente
+            Mesa ${escapeHTML(
+              m.table_number
+            )}
           </h3>
 
-          <p class="muted">
-            Jugador:
-            ${escapeHtml(
-              mission.display_name ||
-              mission.player_name ||
-              "Jugador"
-            )}
-          </p>
-
-          <p>
-            ${escapeHtml(
-              mission.mission ||
-              "Misión del día"
-            )}
-          </p>
-
-          <p class="muted">
-            ${formatDate(
-              mission.created_at
-            )}
-          </p>
+          <div class="muted">
+            ID:
+            ${escapeHTML(m.id)}
+          </div>
 
           <button
-            class="primary"
-            onclick="validateMission('${mission.session_id || mission.id}')"
+            class="btn"
+            style="margin-top:10px"
+            onclick="openMesaQR('${escapeHTML(m.table_number)}')"
           >
-            ✅ Validar misión
+            📱 Abrir QR
           </button>
 
         </div>
 
-      `).join("");
+      `)
+      .join('') +
 
-  }catch(error){
-
-    container.innerHTML =
-      `<div class="card">
-        No se pudieron cargar las misiones.
-      </div>`;
-
-    console.error(error);
-
-  }
+    '</div>';
 
 }
 
-async function validateMission(sessionId){
 
-  if(!confirm(
-    "¿Confirmás que la misión fue realizada?"
-  )){
-    return;
-  }
+function openMesaQR(n){
 
-  try{
+  const base =
+    location.origin + '/';
 
-    const {
-      data,
-      error
-    } =
-      await db.rpc(
-        "validate_mission",
-        {
-          p_session_id:sessionId
-        }
-      );
-
-    if(error){
-      throw error;
-    }
-
-    await loadPendingMissions();
-    await loadDashboard();
-
-    showToast(
-      "Misión validada y recompensa acreditada.",
-      "success"
-    );
-
-  }catch(error){
-
-    showToast(
-      error.message ||
-      "No se pudo validar la misión.",
-      "error"
-    );
-
-  }
+  window.open(
+    base +
+    'juegos.html?mesa=' +
+    encodeURIComponent(n),
+    '_blank'
+  );
 
 }
 
-/* =========================================================
-   DUELOS
-========================================================= */
 
-async function loadDuels(){
+function updateDashboard(){
 
-  const container =
-    document.getElementById(
-      "duelsAdminGrid"
-    );
-
-  container.innerHTML =
-    `<div class="card">
-      Cargando duelos...
-    </div>`;
-
-  const {
-    data:tables,
-    error
-  } =
-    await db
-      .from("tables_pool")
-      .select(
-        "id,table_number"
+  const pendientesR =
+    lastReservations
+      .filter(
+        r =>
+          String(
+            r.estado ||
+            r.Estado ||
+            'pendiente'
+          ).toLowerCase() ===
+          'pendiente'
       )
-      .eq("active",true);
+      .length;
 
-  if(error){
-    throw error;
-  }
 
-  let all = [];
+  const pendientesP =
+    lastOrders
+      .filter(
+        p =>
+          String(
+            p.estado ||
+            'pendiente'
+          ).toLowerCase() ===
+          'pendiente'
+      )
+      .length;
 
-  for(const table of tables || []){
 
-    try{
+  $('metricReservas')
+    .textContent =
+    pendientesR;
 
-      const result =
-        await db.rpc(
-          "get_waiting_duels",
-          {
-            p_table_id:table.id
-          }
-        );
+  $('metricPedidos')
+    .textContent =
+    pendientesP;
 
-      if(Array.isArray(result.data)){
 
-        all =
-          all.concat(
-            result.data.map(d => ({
-              ...d,
-              table_number:
-                table.table_number
-            }))
-          );
+  const tourText =
+    $('tournamentsList')
+      .querySelectorAll(
+        '.notification'
+      )
+      .length;
 
-      }
 
-    }catch(error){
+  const promoText =
+    $('promosList')
+      .querySelectorAll(
+        '.notification'
+      )
+      .length;
 
-      console.warn(
-        "Duelo mesa",
-        table.table_number,
-        error
-      );
 
-    }
+  $('metricTorneos')
+    .textContent =
+    tourText;
 
-  }
-
-  if(!all.length){
-
-    container.innerHTML =
-      `<div class="card">
-        No hay duelos esperando.
-      </div>`;
-
-    return;
-  }
-
-  container.innerHTML =
-    all.map(duel => `
-
-      <div class="card">
-
-        <h3>
-          👥 Duelo 1 vs 1
-        </h3>
-
-        <p>
-          🎱 Mesa:
-          ${Number(
-            duel.table_number
-          )}
-        </p>
-
-        <p class="muted">
-          Jugador:
-          ${escapeHtml(
-            duel.player1_name ||
-            "Jugador"
-          )}
-        </p>
-
-        <span class="status open">
-          ESPERANDO RIVAL
-        </span>
-
-      </div>
-
-    `).join("");
+  $('metricPromos')
+    .textContent =
+    promoText;
 
 }
 
-/* =========================================================
-   RESERVAS
-========================================================= */
 
-async function loadReservations(){
+function buildNotifications(){
 
-  const tbody =
-    document.getElementById(
-      "reservationsTable"
+  const items=[];
+
+
+  lastReservations
+    .filter(
+      r =>
+        String(
+          r.estado ||
+          r.Estado ||
+          'pendiente'
+        ).toLowerCase() ===
+        'pendiente'
+    )
+    .slice(0,8)
+    .forEach(
+      r =>
+        items.push({
+          icon:'📅',
+          title:'Nueva reserva pendiente',
+          text:
+            `${r.nombre || 'Cliente'} · ${r.fecha || ''} ${r.hora || ''}`
+        })
     );
 
-  tbody.innerHTML =
+
+  lastOrders
+    .filter(
+      p =>
+        String(
+          p.estado ||
+          'pendiente'
+        ).toLowerCase() ===
+        'pendiente'
+    )
+    .slice(0,8)
+    .forEach(
+      p =>
+        items.push({
+          icon:'🛒',
+          title:'Nuevo pedido pendiente',
+          text:
+            `${p.nombre_cliente || p.nombre || 'Cliente'} · ${money(p.total)}`
+        })
+    );
+
+
+  notificationCount =
+    items.length;
+
+
+  $('notificationDot')
+    .classList
+    .toggle(
+      'hidden',
+      notificationCount === 0
+    );
+
+
+  $('notificationsList')
+    .innerHTML =
+    items.length
+      ?
+      items
+        .map(
+          x => `
+
+            <div class="notification">
+
+              <strong>
+                ${x.icon}
+                ${escapeHTML(x.title)}
+              </strong>
+
+              <small>
+                ${escapeHTML(x.text)}
+              </small>
+
+            </div>
+
+          `
+        )
+        .join('')
+
+      :
+      '<div class="empty">No hay notificaciones nuevas.</div>';
+
+}
+
+
+function markNotificationsRead(){
+
+  $('notificationDot')
+    .classList
+    .add('hidden');
+
+}
+
+
+function buildRecentActivity(){
+
+  const items = [
+
+    ...lastReservations
+      .slice(0,5)
+      .map(
+        r => ({
+          time:
+            r.creado_en ||
+            r.created_at ||
+            r.fecha,
+
+          icon:'📅',
+
+          text:
+            `Reserva de ${r.nombre || 'cliente'}`
+        })
+      ),
+
+    ...lastOrders
+      .slice(0,5)
+      .map(
+        p => ({
+          time:
+            p.created_at ||
+            p.creado_en,
+
+          icon:'🛒',
+
+          text:
+            `Pedido de ${p.nombre_cliente || p.nombre || 'cliente'}`
+        })
+      )
+
+  ]
+  .sort(
+    (a,b) =>
+      String(b.time || '')
+        .localeCompare(
+          String(a.time || '')
+        )
+  )
+  .slice(0,8);
+
+
+  $('recentActivity')
+    .innerHTML =
+    items.length
+
+      ?
+
+      items
+        .map(
+          x => `
+
+            <div class="notification">
+
+              <strong>
+                ${x.icon}
+                ${escapeHTML(x.text)}
+              </strong>
+
+              <small>
+                ${dateText(x.time)}
+              </small>
+
+            </div>
+
+          `
+        )
+        .join('')
+
+      :
+
+      '<div class="empty">Todavía no hay actividad.</div>';
+
+}
+
+
+function showTableError(
+  id,
+  text
+){
+
+  $(id).innerHTML =
     `<tr>
-      <td colspan="8">
-        Cargando...
+      <td colspan="10" class="empty">
+        ${escapeHTML(text)}
       </td>
     </tr>`;
 
-  const {
-    data,
-    error
-  } =
-    await db
-      .from("reservas")
-      .select(
-        "id,nombre,telefono,fecha,Hora,Servicio,cantidad_personas,Estado,Notas,creado_en"
-      )
-      .order(
-        "creado_en",
-        {ascending:false}
-      )
-      .limit(200);
-
-  if(error){
-
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="8">
-          No se pudieron cargar las reservas.
-        </td>
-      </tr>`;
-
-    console.error(error);
-
-    return;
-  }
-
-  if(!data?.length){
-
-    tbody.innerHTML =
-      `<tr>
-        <td colspan="8">
-          No hay reservas.
-        </td>
-      </tr>`;
-
-    return;
-  }
-
-  tbody.innerHTML =
-    data.map(row => `
-
-      <tr>
-
-        <td>
-          ${escapeHtml(row.nombre)}
-        </td>
-
-        <td>
-          ${escapeHtml(row.telefono)}
-        </td>
-
-        <td>
-          ${escapeHtml(row.fecha)}
-        </td>
-
-        <td>
-          ${escapeHtml(row.Hora)}
-        </td>
-
-        <td>
-          ${escapeHtml(row.Servicio)}
-        </td>
-
-        <td>
-          ${Number(
-            row.cantidad_personas || 0
-          )}
-        </td>
-
-        <td>
-          ${escapeHtml(row.Estado)}
-        </td>
-
-        <td>
-          ${escapeHtml(row.Notas)}
-        </td>
-
-      </tr>
-
-    `).join("");
-
 }
 
-/* =========================================================
-   TABLAS LEGACY
-========================================================= */
 
-async function loadLegacyTable(
-  tableName,
-  containerId
+function showMsg(
+  id,
+  text
 ){
 
-  const container =
-    document.getElementById(
-      containerId
-    );
+  $(id)
+    .textContent =
+    text;
 
-  container.innerHTML =
-    "Cargando...";
+  $(id)
+    .classList
+    .remove('hidden');
 
-  const {
-    data,
-    error
-  } =
-    await db
-      .from(tableName)
-      .select("*")
-      .limit(200);
-
-  if(error){
-
-    container.innerHTML =
-      `<div class="alert error">
-        No se pudo cargar ${escapeHtml(tableName)}.
-      </div>`;
-
-    console.error(error);
-
-    return;
-  }
-
-  if(!data?.length){
-
-    container.innerHTML =
-      `<div class="alert">
-        No hay registros.
-      </div>`;
-
-    return;
-  }
-
-  const columns =
-    Object.keys(data[0]);
-
-  container.innerHTML = `
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          ${columns.map(
-            c => `<th>${escapeHtml(c)}</th>`
-          ).join("")}
-
-        </tr>
-
-      </thead>
-
-      <tbody>
-
-        ${data.map(row => `
-
-          <tr>
-
-            ${columns.map(
-              c => `
-                <td>
-                  ${escapeHtml(
-                    typeof row[c] === "object"
-                      ? JSON.stringify(row[c])
-                      : row[c]
-                  )}
-                </td>
-              `
-            ).join("")}
-
-          </tr>
-
-        `).join("")}
-
-      </tbody>
-
-    </table>
-
-  `;
+  setTimeout(
+    () =>
+      $(id)
+        .classList
+        .add('hidden'),
+    4500
+  );
 
 }
 
-/* =========================================================
-   ACTUALIZAR TODO
-========================================================= */
 
-async function refreshAll(){
+function subscribeRealtime(){
 
-  try{
+  db
+    .channel('admin-live')
 
-    await Promise.all([
-      loadDashboard(),
-      loadPlayers(),
-      loadGamesAdmin(),
-      loadPlays(),
-      loadPrizesAdmin(),
-      loadTournamentsAdmin(),
-      loadTables(),
-      loadPendingMissions(),
-      loadDuels()
-    ]);
+    .on(
+      'postgres_changes',
+      {
+        event:'*',
+        schema:'public',
+        table:'reservas'
+      },
+      () => refreshAll()
+    )
 
-  }catch(error){
+    .on(
+      'postgres_changes',
+      {
+        event:'*',
+        schema:'public',
+        table:'pedidos'
+      },
+      () => refreshAll()
+    )
 
-    console.error(error);
-
-    showToast(
-      "Algunas secciones no pudieron actualizarse.",
-      "error"
-    );
-
-  }
+    .subscribe();
 
 }
 
-/* =========================================================
-   INICIO
-========================================================= */
 
-initNavigation();
-checkSession();
+init();
 
 </script>
 
