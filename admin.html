@@ -3,36 +3,45 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Panel de Control | Pool & Beach</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <style>
 *{
   box-sizing:border-box;
 }
+
 body{
   margin:0;
   font-family:Arial,Helvetica,sans-serif;
   background:#f4f7f9;
   color:#17202a;
 }
+
 header{
   background:#071d2b;
   color:white;
   padding:18px;
   text-align:center;
 }
+
 header h1{
   margin:0;
   font-size:24px;
 }
+
 header p{
   margin:6px 0 0;
   opacity:.8;
 }
+
 .container{
   width:min(1100px,94%);
   margin:20px auto;
 }
+
 .login{
   max-width:430px;
   margin:50px auto;
@@ -41,6 +50,7 @@ header p{
   border-radius:16px;
   box-shadow:0 5px 20px rgba(0,0,0,.08);
 }
+
 input,
 select,
 textarea,
@@ -52,10 +62,12 @@ button{
   border:1px solid #ccd5db;
   font-size:15px;
 }
+
 textarea{
   min-height:90px;
   resize:vertical;
 }
+
 button{
   background:#087ea4;
   color:white;
@@ -63,21 +75,26 @@ button{
   cursor:pointer;
   font-weight:bold;
 }
+
 button:hover{
   opacity:.9;
 }
+
 button.danger{
   background:#d62828;
   width:auto;
   padding:9px 14px;
   margin:0;
 }
+
 button.secondary{
   background:#52616b;
 }
+
 .hidden{
   display:none!important;
 }
+
 .message{
   margin:10px 0;
   padding:12px;
@@ -85,30 +102,37 @@ button.secondary{
   background:#dff6e9;
   color:#146c43;
 }
+
 .message.error{
   background:#ffe1e1;
   color:#a61b1b;
 }
+
 nav{
   display:flex;
   flex-wrap:wrap;
   gap:8px;
   margin-bottom:20px;
 }
+
 nav button{
   width:auto;
   background:#0b3447;
   padding:10px 14px;
 }
+
 nav button.active{
   background:#087ea4;
 }
+
 .section{
   display:none;
 }
+
 .section.active{
   display:block;
 }
+
 .card{
   background:white;
   border-radius:16px;
@@ -116,14 +140,17 @@ nav button.active{
   margin-bottom:20px;
   box-shadow:0 4px 15px rgba(0,0,0,.06);
 }
+
 .card h2{
   margin-top:0;
 }
+
 .grid{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
   gap:12px;
 }
+
 .record{
   border:1px solid #dce3e7;
   border-radius:12px;
@@ -131,937 +158,2213 @@ nav button.active{
   margin:10px 0;
   background:#fafcfd;
 }
+
 .record-header{
   display:flex;
   justify-content:space-between;
   align-items:flex-start;
   gap:10px;
 }
+
 .record-title{
   font-size:17px;
   font-weight:bold;
 }
+
 .record p{
   margin:7px 0;
 }
+
 .empty{
   padding:20px;
   text-align:center;
   color:#6b7780;
 }
+
 .logout{
   background:#9b2226;
   width:auto;
   padding:10px 18px;
 }
+
 .small{
   font-size:13px;
   color:#667;
 }
+
+.delete-area{
+  margin-top:12px;
+  padding-top:10px;
+  border-top:1px solid #e1e6e9;
+  text-align:right;
+}
+
+.delete-area button{
+  background:#d62828;
+}
+
 @media(max-width:600px){
+
   .record-header{
     flex-direction:column;
   }
+
   button.danger{
     width:100%;
+  }
+
+  .delete-area{
+    text-align:stretch;
   }
 }
 </style>
 </head>
+
 <body>
+
 <header>
   <h1>Pool & Beach</h1>
   <p>Panel de Administración</p>
 </header>
+
 <div class="container">
-  <!-- LOGIN -->
-  <div id="loginBox" class="login">
-    <h2>Iniciar sesión</h2>
-    <input
-      id="email"
-      type="email"
-      placeholder="Correo electrónico"
-      autocomplete="email"
-    >
-    <input
-      id="password"
-      type="password"
-      placeholder="Contraseña"
-      autocomplete="current-password"
-    >
-    <button onclick="login()">INICIAR SESIÓN</button>
-    <div id="loginMessage"></div>
-  </div>
-  <!-- PANEL -->
-  <div id="panel" class="hidden">
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:15px;">
-      <strong>Panel de control</strong>
-      <button class="logout" onclick="logout()">Cerrar sesión</button>
-    </div>
-    <nav>
-      <button onclick="showSection('reservas',this)">Reservas</button>
-      <button onclick="showSection('mesas',this)">Mesas</button>
-      <button onclick="showSection('promociones',this)">Promociones</button>
-      <button onclick="showSection('fotos',this)">Fotos</button>
-      <button onclick="showSection('productos',this)">Productos</button>
-      <button onclick="showSection('pedidos',this)">Pedidos</button>
-      <button onclick="showSection('juegos',this)">Juegos</button>
-      <button onclick="showSection('ranking',this)">Ranking</button>
-      <button onclick="showSection('torneos',this)">Torneos</button>
-    </nav>
-    <div id="globalMessage"></div>
-    <!-- RESERVAS -->
-    <section id="reservas" class="section">
-      <div class="card">
-        <h2>Reservas</h2>
-        <button onclick="loadReservas()">Actualizar reservas</button>
-        <div id="reservasList"></div>
-      </div>
-    </section>
-    <!-- MESAS -->
-    <section id="mesas" class="section">
-      <div class="card">
-        <h2>Mesas</h2>
-        <form onsubmit="createMesa(event)">
-          <div class="grid">
-            <input id="mesaNumero" type="number" placeholder="Número de mesa" required>
-            <input id="mesaNombre" type="text" placeholder="Nombre de mesa">
-            <input id="mesaServicio" type="text" placeholder="Servicio">
-          </div>
-          <button type="submit">Agregar mesa</button>
-        </form>
-        <hr>
-        <div id="mesasList"></div>
-      </div>
-    </section>
-    <!-- PROMOCIONES -->
-    <section id="promociones" class="section">
-      <div class="card">
-        <h2>Promociones</h2>
-        <form onsubmit="createPromocion(event)">
-          <input id="promoTitulo" type="text" placeholder="Título" required>
-          <textarea id="promoDescripcion" placeholder="Descripción"></textarea>
-          <input id="promoPrecio" type="number" step="0.01" placeholder="Precio">
-          <label>
-            <input id="promoActiva" type="checkbox" checked style="width:auto;">
-            Promoción activa
-          </label>
-          <button type="submit">Agregar promoción</button>
-        </form>
-        <hr>
-        <div id="promocionesList"></div>
-      </div>
-    </section>
-    <!-- FOTOS -->
-    <section id="fotos" class="section">
-      <div class="card">
-        <h2>Fotos</h2>
-        <form onsubmit="createFoto(event)">
-          <input id="fotoTitulo" type="text" placeholder="Título" required>
-          <input id="fotoCategoria" type="text" placeholder="Categoría">
-          <input id="fotoRuta" type="text" placeholder="Ruta">
-          <input id="fotoUrl" type="url" placeholder="URL de la imagen" required>
-          <button type="submit">Agregar foto</button>
-        </form>
-        <hr>
-        <div id="fotosList"></div>
-      </div>
-    </section>
-    <!-- PRODUCTOS -->
-    <section id="productos" class="section">
-      <div class="card">
-        <h2>Productos</h2>
-        <form onsubmit="createProducto(event)">
-          <input id="productoNombre" type="text" placeholder="Nombre" required>
-          <input id="productoCategoria" type="text" placeholder="Categoría">
-          <textarea id="productoDescripcion" placeholder="Descripción"></textarea>
-          <input id="productoPrecio" type="number" step="0.01" placeholder="Precio">
-          <label>
-            <input id="productoDisponible" type="checkbox" checked style="width:auto;">
-            Disponible
-          </label>
-          <button type="submit">Agregar producto</button>
-        </form>
-        <hr>
-        <div id="productosList"></div>
-      </div>
-    </section>
-    <!-- PEDIDOS -->
-    <section id="pedidos" class="section">
-      <div class="card">
-        <h2>Pedidos</h2>
-        <button onclick="loadPedidos()">Actualizar pedidos</button>
-        <div id="pedidosList"></div>
-      </div>
-    </section>
-    <!-- JUEGOS -->
-    <section id="juegos" class="section">
-      <div class="card">
-        <h2>Juegos</h2>
-        <form onsubmit="createJuego(event)">
-          <input id="juegoNombre" type="text" placeholder="Nombre del juego" required>
-          <textarea id="juegoDescripcion" placeholder="Descripción"></textarea>
-          <input id="juegoIcono" type="text" placeholder="Icono">
-          <input id="juegoPuntos" type="number" placeholder="Puntos">
-          <input id="juegoTokens" type="number" placeholder="Tokens">
-          <label>
-            <input id="juegoActivo" type="checkbox" checked style="width:auto;">
-            Juego activo
-          </label>
-          <button type="submit">Agregar juego</button>
-        </form>
-        <hr>
-        <div id="juegosList"></div>
-      </div>
-    </section>
-    <!-- RANKING -->
-    <section id="ranking" class="section">
-      <div class="card">
-        <h2>Ranking</h2>
-        <button onclick="loadRanking()">Actualizar ranking</button>
-        <div id="rankingList"></div>
-      </div>
-    </section>
-    <!-- TORNEOS -->
-    <section id="torneos" class="section">
-      <div class="card">
-        <h2>Torneos</h2>
-        <form onsubmit="createTorneo(event)">
-          <input id="torneoNombre" type="text" placeholder="Nombre del torneo" required>
-          <input id="torneoJuego" type="text" placeholder="Juego" required>
-          <input id="torneoFecha" type="date">
-          <input id="torneoInscripcion" type="number" step="0.01" placeholder="Inscripción">
-          <input id="torneoPremio1" type="number" step="0.01" placeholder="Premio 1°">
-          <input id="torneoPremio2" type="number" step="0.01" placeholder="Premio 2°">
-          <input id="torneoMax" type="number" placeholder="Máximo de participantes">
-          <input id="torneoEstado" type="text" placeholder="Estado" value="abierto">
-          <textarea id="torneoNotas" placeholder="Notas"></textarea>
-          <button type="submit">Agregar torneo</button>
-        </form>
-        <hr>
-        <div id="torneosList"></div>
-      </div>
-    </section>
-  </div>
+
+<!-- =========================
+     LOGIN
+========================= -->
+
+<div id="loginBox" class="login">
+
+  <h2>Iniciar sesión</h2>
+
+  <input
+    id="email"
+    type="email"
+    placeholder="Correo electrónico"
+    autocomplete="email"
+  >
+
+  <input
+    id="password"
+    type="password"
+    placeholder="Contraseña"
+    autocomplete="current-password"
+  >
+
+  <button onclick="login()">INICIAR SESIÓN</button>
+
+  <div id="loginMessage"></div>
+
 </div>
+
+
+<!-- =========================
+     PANEL
+========================= -->
+
+<div id="panel" class="hidden">
+
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    margin-bottom:15px;
+  ">
+
+    <strong>Panel de control</strong>
+
+    <button class="logout" onclick="logout()">
+      Cerrar sesión
+    </button>
+
+  </div>
+
+
+  <!-- NAVEGACIÓN -->
+
+  <nav>
+
+    <button onclick="showSection('reservas',this)">
+      Reservas
+    </button>
+
+    <button onclick="showSection('mesas',this)">
+      Mesas
+    </button>
+
+    <button onclick="showSection('promociones',this)">
+      Promociones
+    </button>
+
+    <button onclick="showSection('fotos',this)">
+      Fotos
+    </button>
+
+    <button onclick="showSection('productos',this)">
+      Productos
+    </button>
+
+    <button onclick="showSection('pedidos',this)">
+      Pedidos
+    </button>
+
+    <button onclick="showSection('juegos',this)">
+      Juegos
+    </button>
+
+    <button onclick="showSection('ranking',this)">
+      Ranking
+    </button>
+
+    <button onclick="showSection('torneos',this)">
+      Torneos
+    </button>
+
+  </nav>
+
+
+  <div id="globalMessage"></div>
+
+
+  <!-- =========================
+       RESERVAS
+  ========================= -->
+
+  <section id="reservas" class="section">
+
+    <div class="card">
+
+      <h2>Reservas</h2>
+
+      <button onclick="loadReservas()">
+        Actualizar reservas
+      </button>
+
+      <div id="reservasList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       MESAS
+  ========================= -->
+
+  <section id="mesas" class="section">
+
+    <div class="card">
+
+      <h2>Mesas</h2>
+
+      <form onsubmit="createMesa(event)">
+
+        <div class="grid">
+
+          <input
+            id="mesaNumero"
+            type="number"
+            placeholder="Número de mesa"
+            required
+          >
+
+          <input
+            id="mesaNombre"
+            type="text"
+            placeholder="Nombre de mesa"
+          >
+
+          <input
+            id="mesaServicio"
+            type="text"
+            placeholder="Servicio"
+          >
+
+        </div>
+
+        <button type="submit">
+          Agregar mesa
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="mesasList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PROMOCIONES
+  ========================= -->
+
+  <section id="promociones" class="section">
+
+    <div class="card">
+
+      <h2>Promociones</h2>
+
+      <form onsubmit="createPromocion(event)">
+
+        <input
+          id="promoTitulo"
+          type="text"
+          placeholder="Título"
+          required
+        >
+
+        <textarea
+          id="promoDescripcion"
+          placeholder="Descripción"
+        ></textarea>
+
+        <input
+          id="promoPrecio"
+          type="number"
+          step="0.01"
+          placeholder="Precio"
+        >
+
+        <label>
+
+          <input
+            id="promoActiva"
+            type="checkbox"
+            checked
+            style="width:auto;"
+          >
+
+          Promoción activa
+
+        </label>
+
+        <button type="submit">
+          Agregar promoción
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="promocionesList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       FOTOS
+  ========================= -->
+
+  <section id="fotos" class="section">
+
+    <div class="card">
+
+      <h2>Fotos</h2>
+
+      <form onsubmit="createFoto(event)">
+
+        <input
+          id="fotoTitulo"
+          type="text"
+          placeholder="Título"
+          required
+        >
+
+        <input
+          id="fotoCategoria"
+          type="text"
+          placeholder="Categoría"
+        >
+
+        <input
+          id="fotoRuta"
+          type="text"
+          placeholder="Ruta"
+        >
+
+        <input
+          id="fotoUrl"
+          type="url"
+          placeholder="URL de la imagen"
+          required
+        >
+
+        <button type="submit">
+          Agregar foto
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="fotosList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PRODUCTOS
+  ========================= -->
+
+  <section id="productos" class="section">
+
+    <div class="card">
+
+      <h2>Productos</h2>
+
+      <form onsubmit="createProducto(event)">
+
+        <input
+          id="productoNombre"
+          type="text"
+          placeholder="Nombre"
+          required
+        >
+
+        <input
+          id="productoCategoria"
+          type="text"
+          placeholder="Categoría"
+        >
+
+        <textarea
+          id="productoDescripcion"
+          placeholder="Descripción"
+        ></textarea>
+
+        <input
+          id="productoPrecio"
+          type="number"
+          step="0.01"
+          placeholder="Precio"
+        >
+
+        <label>
+
+          <input
+            id="productoDisponible"
+            type="checkbox"
+            checked
+            style="width:auto;"
+          >
+
+          Disponible
+
+        </label>
+
+        <button type="submit">
+          Agregar producto
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="productosList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       PEDIDOS
+  ========================= -->
+
+  <section id="pedidos" class="section">
+
+    <div class="card">
+
+      <h2>Pedidos</h2>
+
+      <button onclick="loadPedidos()">
+        Actualizar pedidos
+      </button>
+
+      <div id="pedidosList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       JUEGOS
+  ========================= -->
+
+  <section id="juegos" class="section">
+
+    <div class="card">
+
+      <h2>Juegos</h2>
+
+      <form onsubmit="createJuego(event)">
+
+        <input
+          id="juegoNombre"
+          type="text"
+          placeholder="Nombre del juego"
+          required
+        >
+
+        <textarea
+          id="juegoDescripcion"
+          placeholder="Descripción"
+        ></textarea>
+
+        <input
+          id="juegoIcono"
+          type="text"
+          placeholder="Icono"
+        >
+
+        <input
+          id="juegoPuntos"
+          type="number"
+          placeholder="Puntos"
+          value="0"
+        >
+
+        <input
+          id="juegoTokens"
+          type="number"
+          placeholder="Tokens"
+          value="0"
+        >
+
+        <label>
+
+          <input
+            id="juegoActivo"
+            type="checkbox"
+            checked
+            style="width:auto;"
+          >
+
+          Juego activo
+
+        </label>
+
+        <button type="submit">
+          Agregar juego
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="juegosList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       RANKING
+  ========================= -->
+
+  <section id="ranking" class="section">
+
+    <div class="card">
+
+      <h2>Ranking</h2>
+
+      <button onclick="loadRanking()">
+        Actualizar ranking
+      </button>
+
+      <div id="rankingList"></div>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================
+       TORNEOS
+  ========================= -->
+
+  <section id="torneos" class="section">
+
+    <div class="card">
+
+      <h2>Torneos</h2>
+
+      <form onsubmit="createTorneo(event)">
+
+        <input
+          id="torneoNombre"
+          type="text"
+          placeholder="Nombre del torneo"
+          required
+        >
+
+        <input
+          id="torneoJuego"
+          type="text"
+          placeholder="Juego"
+          required
+        >
+
+        <input
+          id="torneoFecha"
+          type="date"
+        >
+
+        <input
+          id="torneoInscripcion"
+          type="number"
+          step="0.01"
+          placeholder="Inscripción"
+        >
+
+        <input
+          id="torneoPremio1"
+          type="number"
+          step="0.01"
+          placeholder="Premio 1°"
+        >
+
+        <input
+          id="torneoPremio2"
+          type="number"
+          step="0.01"
+          placeholder="Premio 2°"
+        >
+
+        <input
+          id="torneoMax"
+          type="number"
+          placeholder="Máximo de participantes"
+        >
+
+        <input
+          id="torneoEstado"
+          type="text"
+          placeholder="Estado"
+          value="abierto"
+        >
+
+        <textarea
+          id="torneoNotas"
+          placeholder="Notas"
+        ></textarea>
+
+        <button type="submit">
+          Agregar torneo
+        </button>
+
+      </form>
+
+      <hr>
+
+      <div id="torneosList"></div>
+
+    </div>
+
+  </section>
+
+</div>
+
+</div>
+
+
 <script>
-const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
-const SUPABASE_KEY = "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+
+const SUPABASE_URL =
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const supabaseClient =
+  window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+
+
 /* =========================
    MENSAJES
 ========================= */
+
 function showMessage(text,error=false){
-  const box=document.getElementById("globalMessage");
-  box.innerHTML=
+
+  const box =
+    document.getElementById("globalMessage");
+
+  box.innerHTML =
     `<div class="message ${error ? "error" : ""}">
       ${escapeHtml(text)}
     </div>`;
+
   setTimeout(()=>{
     box.innerHTML="";
-  },4000);
+  },5000);
+
 }
+
+
 function showLoginMessage(text,error=false){
-  const box=document.getElementById("loginMessage");
-  box.innerHTML=
+
+  const box =
+    document.getElementById("loginMessage");
+
+  box.innerHTML =
     `<div class="message ${error ? "error" : ""}">
       ${escapeHtml(text)}
     </div>`;
+
 }
+
+
 /* =========================
-   SEGURIDAD HTML
+   SEGURIDAD
 ========================= */
+
 function escapeHtml(value){
+
   if(value===null || value===undefined){
     return "";
   }
+
   return String(value)
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
     .replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;")
     .replace(/'/g,"&#039;");
+
 }
+
+
 /* =========================
    LOGIN
 ========================= */
+
 async function login(){
-  const email=document.getElementById("email").value.trim();
-  const password=document.getElementById("password").value;
+
+  const email =
+    document.getElementById("email").value.trim();
+
+  const password =
+    document.getElementById("password").value;
+
   if(!email || !password){
+
     showLoginMessage(
       "Completá correo y contraseña.",
       true
     );
+
     return;
   }
-  const {data,error}=await supabaseClient.auth.signInWithPassword({
-    email,
-    password
-  });
+
+  const {error} =
+    await supabaseClient.auth.signInWithPassword({
+      email,
+      password
+    });
+
   if(error){
+
     console.error(error);
+
     showLoginMessage(
-      "No se pudo iniciar sesión: "+error.message,
+      "No se pudo iniciar sesión: " +
+      error.message,
       true
     );
+
     return;
   }
-  showLoginMessage("Sesión iniciada correctamente.");
-  setTimeout(()=>{
-    showPanel();
-  },300);
+
+  showPanel();
+
 }
+
+
 /* =========================
    SESIÓN
 ========================= */
+
 async function showPanel(){
-  document.getElementById("loginBox").classList.add("hidden");
-  document.getElementById("panel").classList.remove("hidden");
-  const firstButton=document.querySelector("nav button");
-  showSection("reservas",firstButton);
+
+  document
+    .getElementById("loginBox")
+    .classList.add("hidden");
+
+  document
+    .getElementById("panel")
+    .classList.remove("hidden");
+
+  const firstButton =
+    document.querySelector("nav button");
+
+  showSection(
+    "reservas",
+    firstButton
+  );
+
   refreshAll();
+
 }
+
+
 async function logout(){
+
   await supabaseClient.auth.signOut();
-  document.getElementById("panel").classList.add("hidden");
-  document.getElementById("loginBox").classList.remove("hidden");
+
+  document
+    .getElementById("panel")
+    .classList.add("hidden");
+
+  document
+    .getElementById("loginBox")
+    .classList.remove("hidden");
+
 }
+
+
+async function checkSession(){
+
+  const {
+    data
+  } =
+    await supabaseClient.auth.getSession();
+
+  if(data && data.session){
+
+    showPanel();
+
+  }
+
+}
+
+
 /* =========================
    NAVEGACIÓN
 ========================= */
+
 function showSection(id,button){
-  document.querySelectorAll(".section")
+
+  document
+    .querySelectorAll(".section")
     .forEach(section=>{
       section.classList.remove("active");
     });
-  document.getElementById(id)
-    .classList.add("active");
-  document.querySelectorAll("nav button")
+
+  const section =
+    document.getElementById(id);
+
+  if(section){
+    section.classList.add("active");
+  }
+
+  document
+    .querySelectorAll("nav button")
     .forEach(btn=>{
       btn.classList.remove("active");
     });
+
   if(button){
     button.classList.add("active");
   }
+
 }
+
+
 /* =========================
-   ELIMINAR
+   ELIMINAR REGISTROS
 ========================= */
-async function deleteRecord(table,id,nombre){
-  const confirmar=confirm(
-    `¿Seguro que querés eliminar "${nombre}"?\n\nEsta acción no se puede deshacer.`
-  );
+
+async function deleteRecord(
+  table,
+  id,
+  nombre,
+  reloadFunction
+){
+
+  const confirmar =
+    confirm(
+      `¿Seguro que querés eliminar "${nombre}"?\n\nEsta acción no se puede deshacer.`
+    );
+
   if(!confirmar){
     return;
   }
-  const {error}=await supabaseClient
-    .from(table)
-    .delete()
-    .eq("id",id);
+
+  const {error} =
+    await supabaseClient
+      .from(table)
+      .delete()
+      .eq("id",id);
+
   if(error){
+
     console.error(
-      "ERROR AL ELIMINAR:",
+      "Error eliminando:",
       table,
-      id,
       error
     );
+
     showMessage(
-      "No se pudo eliminar. El registro existe pero Supabase está bloqueando la eliminación. Hay que revisar los permisos RLS.",
+      "No se pudo eliminar. " +
+      error.message,
       true
     );
+
     return;
   }
-  showMessage("Registro eliminado correctamente.");
-  refreshAll();
+
+  showMessage(
+    "Registro eliminado correctamente."
+  );
+
+  if(typeof reloadFunction === "function"){
+    await reloadFunction();
+  }
+
 }
-/* =========================
-   ACTUALIZAR TODO
-========================= */
-function refreshAll(){
-  loadReservas();
-  loadMesas();
-  loadPromociones();
-  loadFotos();
-  loadProductos();
-  loadPedidos();
-  loadJuegos();
-  loadRanking();
-  loadTorneos();
-}
+
+
 /* =========================
    RESERVAS
 ========================= */
+
 async function loadReservas(){
-  const box=document.getElementById("reservasList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("reservas")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById("reservasList");
+
+  box.innerHTML =
+    "<p>Cargando...</p>";
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("reservas")
+      .select("*")
+      .order("fecha",{ascending:false})
+      .order("hora",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar las reservas.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay reservas.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay reservas.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(r=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            Reserva de ${escapeHtml(r.nombre)}
+
+  box.innerHTML =
+    data.map(r=>`
+
+      <div class="record">
+
+        <div class="record-header">
+
+          <div>
+
+            <div class="record-title">
+              ${escapeHtml(r.nombre || "Sin nombre")}
+            </div>
+
+            <p>
+              <strong>Fecha:</strong>
+              ${escapeHtml(r.fecha || "-")}
+            </p>
+
+            <p>
+              <strong>Hora:</strong>
+              ${escapeHtml(r.hora || "-")}
+            </p>
+
+            <p>
+              <strong>Teléfono:</strong>
+              ${escapeHtml(r.telefono || "-")}
+            </p>
+
+            <p>
+              <strong>Servicio:</strong>
+              ${escapeHtml(r.servicio || "-")}
+            </p>
+
+            <p>
+              <strong>Personas:</strong>
+              ${escapeHtml(r.cantidad_personas || "-")}
+            </p>
+
+            <p>
+              <strong>Estado:</strong>
+              ${escapeHtml(r.estado || "-")}
+            </p>
+
+            <p>
+              <strong>Notas:</strong>
+              ${escapeHtml(r.notas || "-")}
+            </p>
+
           </div>
-          <p>📅 ${escapeHtml(r.fecha || "")}</p>
-          <p>🕐 ${escapeHtml(r.hora || "")}</p>
-          <p>👥 ${escapeHtml(r.cantidad_personas || "")} personas</p>
-          <p>🎯 ${escapeHtml(r.servicio || "")}</p>
-          <p>📞 ${escapeHtml(r.telefono || "")}</p>
-          <p>Estado: ${escapeHtml(r.estado || "")}</p>
-          ${
-            r.notas
-            ? `<p>📝 ${escapeHtml(r.notas)}</p>`
-            : ""
-          }
+
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('reservas',${r.id},'Reserva de ${escapeHtml(r.nombre)}')">
-          ELIMINAR
-        </button>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'reservas',
+              '${r.id}',
+              '${escapeHtml(r.nombre || "esta reserva")}',
+              loadReservas
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    MESAS
 ========================= */
+
 async function createMesa(event){
+
   event.preventDefault();
-  const numero=document.getElementById("mesaNumero").value;
-  const nombre=document.getElementById("mesaNombre").value;
-  const servicio=document.getElementById("mesaServicio").value;
-  const {error}=await supabaseClient
-    .from("mesas")
-    .insert({
-      numero:Number(numero),
-      nombre:nombre || `Mesa ${numero}`,
-      servicio:servicio || null,
-      activa:true
-    });
+
+  const numero =
+    document.getElementById("mesaNumero").value;
+
+  const nombre =
+    document.getElementById("mesaNombre").value.trim();
+
+  const servicio =
+    document.getElementById("mesaServicio").value.trim();
+
+  const {error} =
+    await supabaseClient
+      .from("mesas")
+      .insert({
+        numero:Number(numero),
+        nombre:nombre || null,
+        servicio:servicio || null,
+        activa:true
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo crear la mesa.",true);
+
+    showMessage(
+      "No se pudo crear la mesa: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  showMessage("Mesa creada correctamente.");
+
+  showMessage(
+    "Mesa agregada correctamente."
+  );
+
   loadMesas();
+
 }
+
+
 async function loadMesas(){
-  const box=document.getElementById("mesasList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("mesas")
-    .select("*")
-    .order("numero");
+
+  const box =
+    document.getElementById("mesasList");
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("mesas")
+      .select("*")
+      .order("numero",{ascending:true});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar las mesas.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay mesas.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay mesas cargadas.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(m=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            Mesa ${escapeHtml(m.numero)}
-          </div>
-          <p>${escapeHtml(m.nombre || "")}</p>
-          <p>Servicio: ${escapeHtml(m.servicio || "")}</p>
-          <p>Estado: ${m.activa ? "Activa" : "Inactiva"}</p>
+
+  box.innerHTML =
+    data.map(m=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          Mesa ${escapeHtml(m.numero)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('mesas',${m.id},'Mesa ${escapeHtml(m.numero)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Nombre:</strong>
+          ${escapeHtml(m.nombre || "-")}
+        </p>
+
+        <p>
+          <strong>Servicio:</strong>
+          ${escapeHtml(m.servicio || "-")}
+        </p>
+
+        <p>
+          <strong>Activa:</strong>
+          ${m.activa ? "Sí" : "No"}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'mesas',
+              '${m.id}',
+              'Mesa ${escapeHtml(m.numero)}',
+              loadMesas
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    PROMOCIONES
 ========================= */
+
 async function createPromocion(event){
+
   event.preventDefault();
-  const titulo=document.getElementById("promoTitulo").value;
-  const descripcion=document.getElementById("promoDescripcion").value;
-  const precio=document.getElementById("promoPrecio").value;
-  const activa=document.getElementById("promoActiva").checked;
-  const {error}=await supabaseClient
-    .from("promociones")
-    .insert({
-      titulo,
-      descripcion:descripcion || null,
-      precio:precio ? Number(precio) : null,
-      activa
-    });
+
+  const titulo =
+    document
+      .getElementById("promoTitulo")
+      .value
+      .trim();
+
+  const descripcion =
+    document
+      .getElementById("promoDescripcion")
+      .value
+      .trim();
+
+  const precioValue =
+    document
+      .getElementById("promoPrecio")
+      .value;
+
+  const activa =
+    document
+      .getElementById("promoActiva")
+      .checked;
+
+  const {error} =
+    await supabaseClient
+      .from("promociones")
+      .insert({
+        titulo,
+        descripcion:descripcion || null,
+        precio:
+          precioValue === ""
+            ? null
+            : Number(precioValue),
+        activa
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo crear la promoción.",true);
+
+    showMessage(
+      "No se pudo crear la promoción: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  document.getElementById("promoActiva").checked=true;
-  showMessage("Promoción creada correctamente.");
+
+  document
+    .getElementById("promoActiva")
+    .checked=true;
+
+  showMessage(
+    "Promoción agregada correctamente."
+  );
+
   loadPromociones();
+
 }
+
+
 async function loadPromociones(){
-  const box=document.getElementById("promocionesList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("promociones")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById(
+      "promocionesList"
+    );
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("promociones")
+      .select("*")
+      .order("created_at",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar las promociones.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay promociones.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay promociones.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(p=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            ${escapeHtml(p.titulo)}
-          </div>
-          <p>${escapeHtml(p.descripcion || "")}</p>
-          ${
-            p.precio !== null
-            ? `<p>Precio: $${escapeHtml(p.precio)}</p>`
-            : ""
-          }
-          <p>${p.activa ? "Activa" : "Inactiva"}</p>
+
+  box.innerHTML =
+    data.map(p=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          ${escapeHtml(p.titulo)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('promociones','${escapeHtml(p.id)}','${escapeHtml(p.titulo)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          ${escapeHtml(p.descripcion || "")}
+        </p>
+
+        <p>
+          <strong>Precio:</strong>
+          ${p.precio !== null
+            ? "$" + escapeHtml(p.precio)
+            : "-"
+          }
+        </p>
+
+        <p>
+          <strong>Activa:</strong>
+          ${p.activa ? "Sí" : "No"}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'promociones',
+              '${p.id}',
+              '${escapeHtml(p.titulo)}',
+              loadPromociones
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    FOTOS
 ========================= */
+
 async function createFoto(event){
+
   event.preventDefault();
-  const titulo=document.getElementById("fotoTitulo").value;
-  const categoria=document.getElementById("fotoCategoria").value;
-  const ruta=document.getElementById("fotoRuta").value;
-  const url=document.getElementById("fotoUrl").value;
-  const {error}=await supabaseClient
-    .from("galeria_fotos")
-    .insert({
-      titulo,
-      categoria:categoria || null,
-      ruta:ruta || null,
-      url
-    });
+
+  const titulo =
+    document
+      .getElementById("fotoTitulo")
+      .value
+      .trim();
+
+  const categoria =
+    document
+      .getElementById("fotoCategoria")
+      .value
+      .trim();
+
+  const ruta =
+    document
+      .getElementById("fotoRuta")
+      .value
+      .trim();
+
+  const url =
+    document
+      .getElementById("fotoUrl")
+      .value
+      .trim();
+
+  const {error} =
+    await supabaseClient
+      .from("galeria_fotos")
+      .insert({
+        titulo,
+        categoria:categoria || null,
+        ruta,
+        url
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo agregar la foto.",true);
+
+    showMessage(
+      "No se pudo agregar la foto: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  showMessage("Foto agregada correctamente.");
+
+  showMessage(
+    "Foto agregada correctamente."
+  );
+
   loadFotos();
+
 }
+
+
 async function loadFotos(){
-  const box=document.getElementById("fotosList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("galeria_fotos")
-    .select("*")
-    .order("creado_en",{ascending:false});
+
+  const box =
+    document.getElementById("fotosList");
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("galeria_fotos")
+      .select("*")
+      .order("creado_en",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar las fotos.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay fotos.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay fotos.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(f=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            ${escapeHtml(f.titulo)}
-          </div>
-          <p>Categoría: ${escapeHtml(f.categoria || "")}</p>
-          <p>
-            <a
-              href="${escapeHtml(f.url || "")}"
-              target="_blank">
-              Ver imagen
-            </a>
-          </p>
+
+  box.innerHTML =
+    data.map(f=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          ${escapeHtml(f.titulo)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('galeria_fotos','${escapeHtml(f.id)}','${escapeHtml(f.titulo)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Categoría:</strong>
+          ${escapeHtml(f.categoria || "-")}
+        </p>
+
+        <p>
+          <strong>URL:</strong>
+          ${escapeHtml(f.url || "-")}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'galeria_fotos',
+              '${f.id}',
+              '${escapeHtml(f.titulo)}',
+              loadFotos
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    PRODUCTOS
 ========================= */
+
 async function createProducto(event){
+
   event.preventDefault();
-  const nombre=document.getElementById("productoNombre").value;
-  const categoria=document.getElementById("productoCategoria").value;
-  const descripcion=document.getElementById("productoDescripcion").value;
-  const precio=document.getElementById("productoPrecio").value;
-  const disponible=document.getElementById("productoDisponible").checked;
-  const {error}=await supabaseClient
-    .from("productos")
-    .insert({
-      nombre,
-      categoria:categoria || null,
-      descripcion:descripcion || null,
-      precio:precio ? Number(precio) : 0,
-      disponible
-    });
+
+  const nombre =
+    document
+      .getElementById("productoNombre")
+      .value
+      .trim();
+
+  const categoria =
+    document
+      .getElementById("productoCategoria")
+      .value
+      .trim();
+
+  const descripcion =
+    document
+      .getElementById("productoDescripcion")
+      .value
+      .trim();
+
+  const precio =
+    document
+      .getElementById("productoPrecio")
+      .value;
+
+  const disponible =
+    document
+      .getElementById("productoDisponible")
+      .checked;
+
+  const {error} =
+    await supabaseClient
+      .from("productos")
+      .insert({
+        nombre,
+        categoria:categoria || null,
+        descripcion:descripcion || null,
+        precio:
+          precio === ""
+            ? 0
+            : Number(precio),
+        disponible
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo crear el producto.",true);
+
+    showMessage(
+      "No se pudo crear el producto: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  document.getElementById("productoDisponible").checked=true;
-  showMessage("Producto creado correctamente.");
+
+  document
+    .getElementById("productoDisponible")
+    .checked=true;
+
+  showMessage(
+    "Producto agregado correctamente."
+  );
+
   loadProductos();
+
 }
+
+
 async function loadProductos(){
-  const box=document.getElementById("productosList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("productos")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById(
+      "productosList"
+    );
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("productos")
+      .select("*")
+      .order("created_at",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar los productos.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay productos.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay productos cargados.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(p=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            ${escapeHtml(p.nombre)}
-          </div>
-          <p>Categoría: ${escapeHtml(p.categoria || "")}</p>
-          <p>${escapeHtml(p.descripcion || "")}</p>
-          <p>Precio: $${escapeHtml(p.precio || 0)}</p>
-          <p>${p.disponible ? "Disponible" : "No disponible"}</p>
+
+  box.innerHTML =
+    data.map(p=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          ${escapeHtml(p.nombre)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('productos','${escapeHtml(p.id)}','${escapeHtml(p.nombre)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Categoría:</strong>
+          ${escapeHtml(p.categoria || "-")}
+        </p>
+
+        <p>
+          <strong>Descripción:</strong>
+          ${escapeHtml(p.descripcion || "-")}
+        </p>
+
+        <p>
+          <strong>Precio:</strong>
+          $${escapeHtml(p.precio ?? 0)}
+        </p>
+
+        <p>
+          <strong>Disponible:</strong>
+          ${p.disponible ? "Sí" : "No"}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'productos',
+              '${p.id}',
+              '${escapeHtml(p.nombre)}',
+              loadProductos
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    PEDIDOS
 ========================= */
+
 async function loadPedidos(){
-  const box=document.getElementById("pedidosList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("pedidos")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById("pedidosList");
+
+  box.innerHTML =
+    "<p>Cargando...</p>";
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("pedidos")
+      .select("*")
+      .order("created_at",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar los pedidos.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay pedidos.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay pedidos.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(p=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            Pedido de ${escapeHtml(p.nombre_cliente || "Cliente")}
-          </div>
-          <p>📞 ${escapeHtml(p.telefono || "")}</p>
-          <p>Tipo: ${escapeHtml(p.tipo || "")}</p>
-          <p>Estado: ${escapeHtml(p.estado || "")}</p>
-          <p>Total: $${escapeHtml(p.total || 0)}</p>
-          ${
-            p.notas
-            ? `<p>📝 ${escapeHtml(p.notas)}</p>`
-            : ""
-          }
+
+  box.innerHTML =
+    data.map(p=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          Pedido
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('pedidos','${escapeHtml(p.id)}','Pedido de ${escapeHtml(p.nombre_cliente || "cliente")}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Cliente:</strong>
+          ${escapeHtml(p.nombre_cliente || "-")}
+        </p>
+
+        <p>
+          <strong>Teléfono:</strong>
+          ${escapeHtml(p.telefono || "-")}
+        </p>
+
+        <p>
+          <strong>Tipo:</strong>
+          ${escapeHtml(p.tipo || "-")}
+        </p>
+
+        <p>
+          <strong>Estado:</strong>
+          ${escapeHtml(p.estado || "-")}
+        </p>
+
+        <p>
+          <strong>Total:</strong>
+          $${escapeHtml(p.total ?? 0)}
+        </p>
+
+        <p>
+          <strong>Notas:</strong>
+          ${escapeHtml(p.notas || "-")}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'pedidos',
+              '${p.id}',
+              'este pedido',
+              loadPedidos
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    JUEGOS
 ========================= */
+
 async function createJuego(event){
+
   event.preventDefault();
-  const name=document.getElementById("juegoNombre").value;
-  const description=document.getElementById("juegoDescripcion").value;
-  const icon=document.getElementById("juegoIcono").value;
-  const points_reward=document.getElementById("juegoPuntos").value;
-  const tokens_reward=document.getElementById("juegoTokens").value;
-  const active=document.getElementById("juegoActivo").checked;
-  const {error}=await supabaseClient
-    .from("games")
-    .insert({
-      name,
-      description:description || null,
-      icon:icon || null,
-      points_reward:points_reward ? Number(points_reward) : 0,
-      tokens_reward:tokens_reward ? Number(tokens_reward) : 0,
-      active
-    });
+
+  const nombre =
+    document
+      .getElementById("juegoNombre")
+      .value
+      .trim();
+
+  const descripcion =
+    document
+      .getElementById("juegoDescripcion")
+      .value
+      .trim();
+
+  const icono =
+    document
+      .getElementById("juegoIcono")
+      .value
+      .trim();
+
+  const puntos =
+    document
+      .getElementById("juegoPuntos")
+      .value;
+
+  const tokens =
+    document
+      .getElementById("juegoTokens")
+      .value;
+
+  const activo =
+    document
+      .getElementById("juegoActivo")
+      .checked;
+
+  const {error} =
+    await supabaseClient
+      .from("games")
+      .insert({
+        name:nombre,
+        description:descripcion || null,
+        icon:icono || null,
+        points_reward:
+          puntos === ""
+            ? 0
+            : Number(puntos),
+        tokens_reward:
+          tokens === ""
+            ? 0
+            : Number(tokens),
+        active:activo
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo crear el juego.",true);
+
+    showMessage(
+      "No se pudo crear el juego: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  document.getElementById("juegoActivo").checked=true;
-  showMessage("Juego creado correctamente.");
+
+  document
+    .getElementById("juegoActivo")
+    .checked=true;
+
+  showMessage(
+    "Juego agregado correctamente."
+  );
+
   loadJuegos();
+
 }
+
+
 async function loadJuegos(){
-  const box=document.getElementById("juegosList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("games")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById("juegosList");
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("games")
+      .select("*")
+      .order("created_at",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar los juegos.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay juegos.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay juegos.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(g=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            ${escapeHtml(g.icon || "🎮")}
-            ${escapeHtml(g.name)}
-          </div>
-          <p>${escapeHtml(g.description || "")}</p>
-          <p>Puntos: ${escapeHtml(g.points_reward || 0)}</p>
-          <p>Tokens: ${escapeHtml(g.tokens_reward || 0)}</p>
-          <p>${g.active ? "Activo" : "Inactivo"}</p>
+
+  box.innerHTML =
+    data.map(g=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          ${escapeHtml(g.name)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('games','${escapeHtml(g.id)}','${escapeHtml(g.name)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          ${escapeHtml(g.description || "")}
+        </p>
+
+        <p>
+          <strong>Puntos:</strong>
+          ${escapeHtml(g.points_reward ?? 0)}
+        </p>
+
+        <p>
+          <strong>Tokens:</strong>
+          ${escapeHtml(g.tokens_reward ?? 0)}
+        </p>
+
+        <p>
+          <strong>Activo:</strong>
+          ${g.active ? "Sí" : "No"}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'games',
+              '${g.id}',
+              '${escapeHtml(g.name)}',
+              loadJuegos
+            )"
+          >
+            🗑 Eliminar
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    RANKING
 ========================= */
+
 async function loadRanking(){
-  const box=document.getElementById("rankingList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("profiles")
-    .select("*")
-    .order("points",{ascending:false});
+
+  const box =
+    document.getElementById("rankingList");
+
+  box.innerHTML =
+    "<p>Cargando ranking...</p>";
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("profiles")
+      .select("*")
+      .order("points",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudo cargar el ranking.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay jugadores en el ranking.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay jugadores en el ranking.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map((p,index)=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            #${index+1} — ${escapeHtml(p.display_name || "Jugador")}
-          </div>
-          <p>⭐ Puntos: ${escapeHtml(p.points || 0)}</p>
-          <p>🪙 Tokens: ${escapeHtml(p.tokens || 0)}</p>
-          <p>🔥 Racha: ${escapeHtml(p.streak || 0)}</p>
+
+  box.innerHTML =
+    data.map((p,index)=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          #${index+1}
+          ${escapeHtml(
+            p.display_name || "Jugador"
+          )}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('profiles','${escapeHtml(p.id)}','${escapeHtml(p.display_name || "Jugador")}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Puntos:</strong>
+          ${escapeHtml(p.points ?? 0)}
+        </p>
+
+        <p>
+          <strong>Tokens:</strong>
+          ${escapeHtml(p.tokens ?? 0)}
+        </p>
+
+        <p>
+          <strong>Racha:</strong>
+          ${escapeHtml(p.streak ?? 0)}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'profiles',
+              '${p.id}',
+              '${escapeHtml(p.display_name || "este jugador")}',
+              loadRanking
+            )"
+          >
+            🗑 Eliminar del ranking
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
    TORNEOS
 ========================= */
+
 async function createTorneo(event){
+
   event.preventDefault();
-  const nombre=document.getElementById("torneoNombre").value;
-  const juego=document.getElementById("torneoJuego").value;
-  const fecha=document.getElementById("torneoFecha").value;
-  const inscripcion=document.getElementById("torneoInscripcion").value;
-  const premio_primero=document.getElementById("torneoPremio1").value;
-  const premio_segundo=document.getElementById("torneoPremio2").value;
-  const max_participantes=document.getElementById("torneoMax").value;
-  const estado=document.getElementById("torneoEstado").value;
-  const notas=document.getElementById("torneoNotas").value;
-  const {error}=await supabaseClient
-    .from("torneos")
-    .insert({
-      nombre,
-      juego,
-      fecha:fecha || null,
-      inscripcion:inscripcion ? Number(inscripcion) : 0,
-      premio_primero:premio_primero ? Number(premio_primero) : 0,
-      premio_segundo:premio_segundo ? Number(premio_segundo) : 0,
-      max_participantes:max_participantes ? Number(max_participantes) : null,
-      estado:estado || "abierto",
-      notas:notas || null
-    });
+
+  const nombre =
+    document
+      .getElementById("torneoNombre")
+      .value
+      .trim();
+
+  const juego =
+    document
+      .getElementById("torneoJuego")
+      .value
+      .trim();
+
+  const fecha =
+    document
+      .getElementById("torneoFecha")
+      .value;
+
+  const inscripcion =
+    document
+      .getElementById("torneoInscripcion")
+      .value;
+
+  const premio1 =
+    document
+      .getElementById("torneoPremio1")
+      .value;
+
+  const premio2 =
+    document
+      .getElementById("torneoPremio2")
+      .value;
+
+  const max =
+    document
+      .getElementById("torneoMax")
+      .value;
+
+  const estado =
+    document
+      .getElementById("torneoEstado")
+      .value
+      .trim();
+
+  const notas =
+    document
+      .getElementById("torneoNotas")
+      .value
+      .trim();
+
+  const {error} =
+    await supabaseClient
+      .from("torneos")
+      .insert({
+
+        nombre,
+
+        juego,
+
+        fecha:
+          fecha || null,
+
+        inscripcion:
+          inscripcion === ""
+            ? 0
+            : Number(inscripcion),
+
+        premio_primero:
+          premio1 === ""
+            ? 0
+            : Number(premio1),
+
+        premio_segundo:
+          premio2 === ""
+            ? 0
+            : Number(premio2),
+
+        max_participantes:
+          max === ""
+            ? null
+            : Number(max),
+
+        estado:
+          estado || "abierto",
+
+        notas:
+          notas || null
+
+      });
+
   if(error){
-    console.error(error);
-    showMessage("No se pudo crear el torneo.",true);
+
+    showMessage(
+      "No se pudo crear el torneo: " +
+      error.message,
+      true
+    );
+
     return;
   }
+
   event.target.reset();
-  document.getElementById("torneoEstado").value="abierto";
-  showMessage("Torneo creado correctamente.");
+
+  document
+    .getElementById("torneoEstado")
+    .value="abierto";
+
+  showMessage(
+    "Torneo agregado correctamente."
+  );
+
   loadTorneos();
+
 }
+
+
 async function loadTorneos(){
-  const box=document.getElementById("torneosList");
-  box.innerHTML="Cargando...";
-  const {data,error}=await supabaseClient
-    .from("torneos")
-    .select("*")
-    .order("created_at",{ascending:false});
+
+  const box =
+    document.getElementById(
+      "torneosList"
+    );
+
+  const {
+    data,
+    error
+  } =
+    await supabaseClient
+      .from("torneos")
+      .select("*")
+      .order("created_at",{ascending:false});
+
   if(error){
-    box.innerHTML=
-      `<div class="empty">No se pudieron cargar los torneos.</div>`;
-    console.error(error);
+
+    box.innerHTML =
+      `<div class="message error">
+        ${escapeHtml(error.message)}
+      </div>`;
+
     return;
   }
-  if(!data.length){
-    box.innerHTML=
-      `<div class="empty">No hay torneos.</div>`;
+
+  if(!data || data.length===0){
+
+    box.innerHTML =
+      `<div class="empty">
+        No hay torneos.
+      </div>`;
+
     return;
   }
-  box.innerHTML=data.map(t=>`
-    <div class="record">
-      <div class="record-header">
-        <div>
-          <div class="record-title">
-            🏆 ${escapeHtml(t.nombre)}
-          </div>
-          <p>Juego: ${escapeHtml(t.juego || "")}</p>
-          <p>Fecha: ${escapeHtml(t.fecha || "")}</p>
-          <p>Inscripción: $${escapeHtml(t.inscripcion || 0)}</p>
-          <p>1° premio: $${escapeHtml(t.premio_primero || 0)}</p>
-          <p>2° premio: $${escapeHtml(t.premio_segundo || 0)}</p>
-          <p>Máximo: ${escapeHtml(t.max_participantes || "")}</p>
-          <p>Estado: ${escapeHtml(t.estado || "")}</p>
-          ${
-            t.notas
-            ? `<p>📝 ${escapeHtml(t.notas)}</p>`
-            : ""
-          }
+
+  box.innerHTML =
+    data.map(t=>`
+
+      <div class="record">
+
+        <div class="record-title">
+          ${escapeHtml(t.nombre)}
         </div>
-        <button
-          class="danger"
-          onclick="deleteRecord('torneos',${t.id},'${escapeHtml(t.nombre)}')">
-          ELIMINAR
-        </button>
+
+        <p>
+          <strong>Juego:</strong>
+          ${escapeHtml(t.juego || "-")}
+        </p>
+
+        <p>
+          <strong>Fecha:</strong>
+          ${escapeHtml(t.fecha || "-")}
+        </p>
+
+        <p>
+          <strong>Inscripción:</strong>
+          $${escapeHtml(t.inscripcion ?? 0)}
+        </p>
+
+        <p>
+          <strong>Premio 1°:</strong>
+          $${escapeHtml(t.premio_primero ?? 0)}
+        </p>
+
+        <p>
+          <strong>Premio 2°:</strong>
+          $${escapeHtml(t.premio_segundo ?? 0)}
+        </p>
+
+        <p>
+          <strong>Máximo participantes:</strong>
+          ${escapeHtml(t.max_participantes ?? "-")}
+        </p>
+
+        <p>
+          <strong>Estado:</strong>
+          ${escapeHtml(t.estado || "-")}
+        </p>
+
+        <p>
+          <strong>Notas:</strong>
+          ${escapeHtml(t.notas || "-")}
+        </p>
+
+        <div class="delete-area">
+
+          <button
+            class="danger"
+            onclick="deleteRecord(
+              'torneos',
+              '${t.id}',
+              '${escapeHtml(t.nombre)}',
+              loadTorneos
+            )"
+          >
+            🗑 Eliminar torneo
+          </button>
+
+        </div>
+
       </div>
-    </div>
-  `).join("");
+
+    `).join("");
+
 }
+
+
 /* =========================
-   COMPROBAR SESIÓN AL ABRIR
+   ACTUALIZAR TODO
 ========================= */
-supabaseClient.auth.getSession()
-.then(({data})=>{
-  if(data.session){
-    showPanel();
-  }
-});
+
+async function refreshAll(){
+
+  await Promise.all([
+    loadReservas(),
+    loadMesas(),
+    loadPromociones(),
+    loadFotos(),
+    loadProductos(),
+    loadPedidos(),
+    loadJuegos(),
+    loadRanking(),
+    loadTorneos()
+  ]);
+
+}
+
+
+/* =========================
+   INICIAR
+========================= */
+
+checkSession();
+
 </script>
+
 </body>
 </html>
