@@ -1,459 +1,727 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-
-<meta charset="utf-8">
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
-<title>Pool & Beach | Administración</title>
+<title>Pool & Beach — Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 :root{
---bg:#06131e;
---p:#0c2333;
---p2:#123149;
---line:#24536a;
---sky:#62dcff;
---gold:#ffd166;
---green:#67e7a2;
---red:#ff7182;
---txt:#f5fbff;
---muted:#9ab5c5
+  --bg:#071923;
+  --bg2:#0b2430;
+  --card:#102f3e;
+  --card2:#12394a;
+  --text:#f4fbff;
+  --muted:#9fb9c4;
+  --primary:#31d7ff;
+  --green:#42e695;
+  --yellow:#ffd166;
+  --red:#ff647c;
+  --border:rgba(255,255,255,.1);
+  --radius:18px;
+  --shadow:0 15px 40px rgba(0,0,0,.25);
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 body{
-margin:0;
-background:radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
-color:var(--txt);
-font:14px system-ui,-apple-system,Segoe UI,sans-serif
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at top right,rgba(49,215,255,.12),transparent 30%),
+    linear-gradient(180deg,var(--bg),#041018);
+  color:var(--text);
+  min-height:100vh;
 }
 
-.app{
-max-width:1180px;
-margin:auto;
-padding:14px 14px 60px
+button,input,select,textarea{
+  font:inherit;
 }
 
-.top{
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px
+button{
+  cursor:pointer;
 }
 
-.brand{
-font-size:23px;
-font-weight:950
+button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
 }
 
-.brand span{color:var(--sky)}
-
-.status,.badge{
-border:1px solid var(--line);
-border-radius:99px;
-padding:6px 10px;
-color:var(--sky);
-font-size:11px
+.container{
+  width:min(1250px,94%);
+  margin:auto;
 }
 
-.top-actions,.row{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-align-items:center
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:rgba(4,16,24,.94);
+  backdrop-filter:blur(15px);
+  border-bottom:1px solid var(--border);
 }
 
-.hero,.card{
-background:linear-gradient(145deg,var(--p2),var(--p));
-border:1px solid var(--line);
-border-radius:18px;
-padding:17px;
-box-shadow:0 10px 25px #0004
+.header{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
 }
 
-.hero{margin-top:14px}
-
-.hero h1{margin:0 0 5px}
-
-.muted,small{color:var(--muted)}
-
-.tabs{
-display:flex;
-gap:8px;
-overflow:auto;
-margin:14px 0
+.logo{
+  font-size:21px;
+  font-weight:900;
 }
 
-.tab,.btn{
-border-radius:12px;
-padding:10px 13px;
-border:1px solid var(--line);
-font-weight:900;
-cursor:pointer
+.logo span{
+  color:var(--primary);
 }
 
-.tab{
-background:#0b2130;
-color:var(--txt);
-white-space:nowrap
+.badge{
+  padding:8px 12px;
+  border-radius:999px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.06);
+  font-size:12px;
 }
 
-.tab.active{
-background:var(--sky);
-color:#052031
+main{
+  padding:25px 0 60px;
 }
 
-.btn{
-background:var(--sky);
-color:#052031;
-border:0
-}
-
-.btn.gold{background:var(--gold)}
-.btn.green{background:var(--green)}
-.btn.red{background:var(--red)}
-.btn.dark{background:#15364b;color:var(--txt)}
-
-.view{display:none}
-.view.active{display:block}
-
-.cards,.grid2,.grid3{
-display:grid;
-gap:11px
-}
-
-.cards{grid-template-columns:repeat(4,1fr)}
-.grid2{grid-template-columns:1fr 1fr}
-.grid3{grid-template-columns:repeat(3,1fr)}
-
-.metric b{
-display:block;
-font-size:30px;
-margin-top:3px
-}
-
-.metric small{display:block}
-
-.input,select,textarea{
-width:100%;
-padding:11px;
-border-radius:11px;
-background:#061722;
-color:var(--txt);
-border:1px solid var(--line);
-margin:5px 0 8px
-}
-
-label{
-display:block;
-color:var(--muted);
-font-size:12px;
-margin-top:7px
-}
-
-textarea{min-height:80px}
-
-.table-wrap{overflow:auto}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:720px
-}
-
-th,td{
-padding:10px;
-border-bottom:1px solid #234456;
-text-align:left;
-vertical-align:top
-}
-
-th{color:var(--muted)}
-
-.notice{
-padding:10px;
-border-radius:12px;
-background:#102a3b;
-border:1px solid #26536b;
-margin:7px 0
-}
-
-.empty{
-text-align:center;
-padding:20px;
-color:var(--muted)
-}
-
-.hidden{display:none!important}
-
-.thumb{
-width:100%;
-height:130px;
-object-fit:cover;
-border-radius:10px
+.card{
+  background:linear-gradient(180deg,var(--card),#0a2531);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:20px;
+  box-shadow:0 10px 30px rgba(0,0,0,.13);
 }
 
 .login{
-max-width:430px;
-margin:8vh auto
+  width:min(440px,100%);
+  margin:80px auto;
 }
 
-.gallery{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px
+h1{
+  font-size:32px;
+  margin-bottom:8px;
 }
 
-.gallery figure{margin:0}
-
-.gallery img{
-width:100%;
-aspect-ratio:1;
-object-fit:cover;
-border-radius:12px
+h2{
+  font-size:24px;
+  margin-bottom:15px;
 }
 
-.gallery figcaption{
-font-size:11px;
-color:var(--muted);
-padding-top:4px
+h3{
+  margin-bottom:7px;
 }
 
-.bracket{
-display:grid;
-gap:8px
+p{
+  color:var(--muted);
+  line-height:1.5;
 }
 
-.match{
-padding:12px;
-background:#0b2130;
-border:1px solid var(--line);
-border-radius:12px
+.form{
+  display:grid;
+  gap:12px;
 }
 
-@media(max-width:850px){
-.cards{grid-template-columns:repeat(2,1fr)}
+input,
+select,
+textarea{
+  width:100%;
+  border:1px solid var(--border);
+  background:#061923;
+  color:white;
+  padding:13px;
+  border-radius:12px;
+  outline:none;
+}
+
+textarea{
+  min-height:100px;
+  resize:vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:var(--primary);
+}
+
+.btn{
+  border:0;
+  border-radius:12px;
+  padding:12px 16px;
+  font-weight:900;
+}
+
+.primary{
+  background:var(--primary);
+  color:#03131a;
+}
+
+.green{
+  background:var(--green);
+  color:#052016;
+}
+
+.yellow{
+  background:var(--yellow);
+  color:#251b00;
+}
+
+.red{
+  background:var(--red);
+  color:white;
+}
+
+.secondary{
+  color:white;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--border);
+}
+
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:5px 0 15px;
+  scrollbar-width:none;
+}
+
+.tabs::-webkit-scrollbar{
+  display:none;
+}
+
+.tab{
+  white-space:nowrap;
+}
+
+.section{
+  display:none;
+}
+
+.section.active{
+  display:block;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.two{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+}
+
+.four{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+}
+
+.stat{
+  padding:17px;
+  border-radius:15px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+}
+
+.stat small{
+  display:block;
+  color:var(--muted);
+  margin-bottom:6px;
+}
+
+.stat strong{
+  font-size:25px;
+}
+
+.item{
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.045);
+  border-radius:15px;
+  padding:15px;
+}
+
+.item + .item{
+  margin-top:10px;
+}
+
+.item-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10px;
+}
+
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin-top:12px;
+}
+
+.status{
+  display:inline-block;
+  border-radius:999px;
+  padding:5px 9px;
+  font-size:11px;
+  font-weight:900;
+  background:rgba(49,215,255,.1);
+  color:var(--primary);
+}
+
+.status.green{
+  background:rgba(66,230,149,.1);
+  color:var(--green);
+}
+
+.status.red{
+  background:rgba(255,100,124,.1);
+  color:var(--red);
+}
+
+.status.yellow{
+  background:rgba(255,209,102,.1);
+  color:var(--yellow);
+}
+
+.table{
+  width:100%;
+  border-collapse:collapse;
+}
+
+.table th,
+.table td{
+  text-align:left;
+  padding:10px;
+  border-bottom:1px solid var(--border);
+  font-size:13px;
+}
+
+.table th{
+  color:var(--muted);
+}
+
+.photo{
+  width:100%;
+  aspect-ratio:16/10;
+  object-fit:cover;
+  border-radius:13px;
+  background:#061923;
+}
+
+.empty{
+  color:var(--muted);
+  padding:15px 0;
+}
+
+.loading{
+  color:var(--muted);
+}
+
+.notice{
+  padding:14px;
+  border-radius:13px;
+  background:rgba(49,215,255,.08);
+  border:1px solid rgba(49,215,255,.18);
+  color:var(--muted);
+  margin-bottom:15px;
+}
+
+.error{
+  padding:13px;
+  border-radius:12px;
+  background:rgba(255,100,124,.1);
+  color:#ff9bad;
+  margin-top:10px;
+}
+
+.success{
+  padding:13px;
+  border-radius:12px;
+  background:rgba(66,230,149,.1);
+  color:#8bf0bc;
+  margin-top:10px;
+}
+
+.file{
+  padding:12px;
+  background:#061923;
+  border:1px dashed var(--border);
+  border-radius:12px;
+}
+
+#toast{
+  position:fixed;
+  bottom:20px;
+  left:50%;
+  transform:translateX(-50%) translateY(100px);
+  opacity:0;
+  transition:.25s;
+  z-index:9999;
+  background:#102f3e;
+  border:1px solid var(--border);
+  padding:13px 18px;
+  border-radius:13px;
+  box-shadow:var(--shadow);
+  max-width:90%;
+  text-align:center;
+}
+
+#toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+@media(max-width:900px){
+  .grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .four{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .two{
+    grid-template-columns:1fr;
+  }
 }
 
 @media(max-width:600px){
-.cards,.grid2,.grid3,.gallery{
-grid-template-columns:1fr
-}
-.app{padding:10px}
-.hero h1{font-size:24px}
-}
+  .grid{
+    grid-template-columns:1fr;
+  }
 
+  .four{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .header{
+    align-items:flex-start;
+    padding:12px 0;
+  }
+}
 </style>
 </head>
 
 <body>
 
-<div id="loginScreen" class="login card">
+<header>
+<div class="container header">
 
-<div class="brand" style="text-align:center">
+<div class="logo">
 POOL <span>&</span> BEACH
 </div>
 
-<h2 style="text-align:center">
-⚙️ Administración
-</h2>
+<div
+id="adminStatus"
+class="badge">
+No autenticado
+</div>
 
-<p class="notice">
-Ingresá con una cuenta autorizada de administrador o staff.
+</div>
+</header>
+
+
+<main class="container">
+
+<!-- LOGIN -->
+
+<section id="loginView" class="login">
+
+<div class="card">
+
+<h1>🔐 Administración</h1>
+
+<p style="margin-bottom:20px">
+Panel de administración de Pool & Beach.
 </p>
 
-<form id="loginForm">
-
-<label>Email</label>
+<form id="loginForm" class="form">
 
 <input
 id="loginEmail"
-class="input"
 type="email"
-required
-autocomplete="email">
-
-<label>Contraseña</label>
+placeholder="Email"
+autocomplete="email"
+required>
 
 <input
 id="loginPassword"
-class="input"
 type="password"
-required
-autocomplete="current-password">
+placeholder="Contraseña"
+autocomplete="current-password"
+required>
 
-<button class="btn" style="width:100%">
-Iniciar sesión
+<button
+class="btn primary"
+type="submit">
+Ingresar
 </button>
-
-<p id="loginMessage" class="notice hidden"></p>
 
 </form>
 
-</div>
-
-<div id="adminApp" class="app hidden">
-
-<div class="top">
-
-<div>
-
-<div class="brand">
-POOL <span>&</span> BEACH
-</div>
-
-<small>
-Panel de administración
-</small>
+<div id="loginError"></div>
 
 </div>
-
-<div class="top-actions">
-
-<span id="connection" class="status">
-CONECTANDO
-</span>
-
-<a class="btn dark" href="index.html">
-Ver sitio
-</a>
-
-<button id="logout" class="btn red">
-Cerrar
-</button>
-
-</div>
-
-</div>
-
-<section class="hero">
-
-<h1>
-📊 Control total
-</h1>
-
-<p class="muted">
-Reservas, pedidos, juegos, trivia, premios, torneos, duelos, mesas y fotos.
-Los cambios se reflejan en el sitio público.
-</p>
 
 </section>
 
-<nav class="tabs">
 
-<button class="tab active" data-v="dashboard">
-🏠 Inicio
+<!-- APP -->
+
+<section id="adminView" style="display:none">
+
+<div class="notice">
+<strong>Panel administrativo.</strong>
+Todos los cambios realizados aquí se guardan directamente en Supabase.
+Las secciones que tienen Realtime se actualizan automáticamente.
+</div>
+
+
+<div class="tabs">
+
+<button
+class="btn secondary tab"
+data-section="dashboard">
+📊 Dashboard
 </button>
 
-<button class="tab" data-v="reservas">
+<button
+class="btn secondary tab"
+data-section="reservas">
 📅 Reservas
 </button>
 
-<button class="tab" data-v="pedidos">
-🛒 Pedidos
+<button
+class="btn secondary tab"
+data-section="pedidos">
+🛵 Pedidos
 </button>
 
-<button class="tab" data-v="juegos">
+<button
+class="btn secondary tab"
+data-section="mesas">
+🪑 Mesas
+</button>
+
+<button
+class="btn secondary tab"
+data-section="juegos">
 🎮 Juegos
 </button>
 
-<button class="tab" data-v="trivia">
+<button
+class="btn secondary tab"
+data-section="trivia">
 🧠 Trivia
 </button>
 
-<button class="tab" data-v="premios">
-🎁 Premios
-</button>
-
-<button class="tab" data-v="torneos">
-🏆 Torneos
-</button>
-
-<button class="tab" data-v="duelos">
+<button
+class="btn secondary tab"
+data-section="duelos">
 ⚔️ Duelos
 </button>
 
-<button class="tab" data-v="fotos">
-📸 Fotos
+<button
+class="btn secondary tab"
+data-section="torneos">
+🏆 Torneos
 </button>
 
-<button class="tab" data-v="mesas">
-🎱 Mesas
+<button
+class="btn secondary tab"
+data-section="premios">
+🎁 Premios
 </button>
 
-</nav>
-
-<main>
-
-<section id="dashboard" class="view active">
-
-<div class="cards">
-
-<div class="card metric">
-<small>Reservas pendientes</small>
-<b id="mR">0</b>
-</div>
-
-<div class="card metric">
-<small>Pedidos pendientes</small>
-<b id="mP">0</b>
-</div>
-
-<div class="card metric">
-<small>Torneos activos</small>
-<b id="mT">0</b>
-</div>
-
-<div class="card metric">
-<small>Fotos publicadas</small>
-<b id="mF">0</b>
-</div>
-
-</div>
-
-<div class="card" style="margin-top:11px">
-
-<button class="btn" onclick="refreshAll()">
-🔄 Actualizar todo ahora
+<button
+class="btn secondary tab"
+data-section="galeria">
+📸 Galería
 </button>
 
-<div id="activity" class="empty">
+<button
+id="logoutBtn"
+class="btn red">
+Salir
+</button>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<section
+id="section-dashboard"
+class="section active">
+
+<h2>📊 Dashboard</h2>
+
+<div
+id="dashboardStats"
+class="four">
+
+<div class="stat">
+<small>Mesas</small>
+<strong id="statMesas">0</strong>
+</div>
+
+<div class="stat">
+<small>Juegos</small>
+<strong id="statJuegos">0</strong>
+</div>
+
+<div class="stat">
+<small>Reservas</small>
+<strong id="statReservas">0</strong>
+</div>
+
+<div class="stat">
+<small>Pedidos</small>
+<strong id="statPedidos">0</strong>
+</div>
+
+</div>
+
+<div
+class="two"
+style="margin-top:15px">
+
+<div class="card">
+
+<h3>⚔️ Duelos</h3>
+
+<div
+id="dashboardDuels">
 Cargando...
 </div>
 
 </div>
 
+<div class="card">
+
+<h3>🏆 Torneos</h3>
+
+<div
+id="dashboardTournaments">
+Cargando...
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<section id="reservas" class="view">
 
-<div class="card">
+<!-- RESERVAS -->
+
+<section
+id="section-reservas"
+class="section">
 
 <h2>📅 Reservas</h2>
 
-<div class="table-wrap">
+<div class="card">
 
-<table>
+<div
+id="reservasList">
+<div class="loading">
+Cargando reservas...
+</div>
+</div>
 
-<thead>
-<tr>
-<th>Fecha/hora</th>
-<th>Cliente</th>
-<th>Servicio</th>
-<th>Personas</th>
-<th>Estado</th>
-<th></th>
-</tr>
-</thead>
+</div>
 
-<tbody id="reservasTable"></tbody>
+</section>
 
-</table>
+
+<!-- PEDIDOS -->
+
+<section
+id="section-pedidos"
+class="section">
+
+<h2>🛵 Pedidos</h2>
+
+<div class="card">
+
+<div
+id="pedidosList">
+<div class="loading">
+Cargando pedidos...
+</div>
+</div>
+
+</div>
+
+</section>
+
+
+<!-- MESAS -->
+
+<section
+id="section-mesas"
+class="section">
+
+<h2>🪑 Mesas</h2>
+
+<div class="two">
+
+<div class="card">
+
+<h3>Crear mesa</h3>
+
+<form
+id="mesaForm"
+class="form">
+
+<input
+id="mesaNombre"
+placeholder="Nombre de mesa"
+required>
+
+<input
+id="mesaCodigo"
+placeholder="Código QR / mesa">
+
+<input
+id="mesaDescripcion"
+placeholder="Descripción">
+
+<button
+class="btn primary"
+type="submit">
+Crear mesa
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h3>Mesas existentes</h3>
+
+<div
+id="mesasList">
+<div class="loading">
+Cargando mesas...
+</div>
+</div>
 
 </div>
 
@@ -461,88 +729,101 @@ Cargando...
 
 </section>
 
-<section id="pedidos" class="view">
+
+<!-- JUEGOS -->
+
+<section
+id="section-juegos"
+class="section">
+
+<h2>🎮 Juegos</h2>
+
+<div class="two">
 
 <div class="card">
 
-<h2>🛒 Pedidos</h2>
+<h3>Agregar / actualizar juego</h3>
 
-<div class="table-wrap">
+<form
+id="gameForm"
+class="form">
 
-<table>
+<input
+id="gameId"
+type="hidden">
 
-<thead>
-<tr>
-<th>Fecha</th>
-<th>Cliente</th>
-<th>Teléfono</th>
-<th>Tipo</th>
-<th>Total</th>
-<th>Estado</th>
-<th></th>
-</tr>
-</thead>
+<input
+id="gameName"
+placeholder="Nombre del juego"
+required>
 
-<tbody id="pedidosTable"></tbody>
+<textarea
+id="gameDescription"
+placeholder="Descripción"></textarea>
 
-</table>
+<input
+id="gameIcon"
+placeholder="Emoji / icono"
+value="🎮">
 
-</div>
+<input
+id="gameImage"
+placeholder="URL de imagen">
 
-</div>
+<input
+id="gamePoints"
+type="number"
+min="0"
+placeholder="Puntos">
 
-</section>
+<input
+id="gameTokens"
+type="number"
+min="0"
+placeholder="Tokens">
 
-<section id="juegos" class="view">
+<select id="gameActive">
 
-<div class="grid2">
+<option value="true">
+Activo
+</option>
 
-<div class="card">
+<option value="false">
+Inactivo
+</option>
 
-<h2>🎮 Nuevo juego</h2>
+</select>
 
-<label>Nombre</label>
-<input id="gName" class="input">
+<div class="actions">
 
-<label>Descripción</label>
-<textarea id="gDesc" class="input"></textarea>
-
-<div class="grid2">
-
-<div>
-<label>Icono</label>
-<input id="gIcon" class="input" value="🎮">
-</div>
-
-<div>
-<label>Puntos</label>
-<input id="gPoints" class="input" type="number" value="10">
-</div>
-
-</div>
-
-<label>Fichas</label>
-<input id="gTokens" class="input" type="number" value="5">
-
-<label>Tipo</label>
-<input id="gType" class="input" placeholder="normal / trivia / duel">
-
-<label>URL de imagen</label>
-<input id="gImage" class="input">
-
-<button class="btn gold" onclick="createGame()">
+<button
+class="btn primary"
+type="submit">
 Guardar juego
 </button>
 
-<p id="gMsg" class="notice hidden"></p>
+<button
+class="btn secondary"
+type="button"
+onclick="resetGameForm()">
+Limpiar
+</button>
+
+</div>
+
+</form>
 
 </div>
 
 <div class="card">
 
-<h2>Juegos actuales</h2>
+<h3>Juegos cargados</h3>
 
-<div id="gamesList"></div>
+<div id="gamesList">
+<div class="loading">
+Cargando juegos...
+</div>
+</div>
 
 </div>
 
@@ -550,48 +831,102 @@ Guardar juego
 
 </section>
 
-<section id="trivia" class="view">
 
-<div class="grid2">
+<!-- TRIVIA -->
+
+<section
+id="section-trivia"
+class="section">
+
+<h2>🧠 Trivia</h2>
+
+<div class="two">
 
 <div class="card">
 
-<h2>🧠 Nueva pregunta</h2>
+<h3>Agregar pregunta</h3>
 
-<label>Pregunta</label>
-
-<textarea id="qText" class="input"></textarea>
-
-<label>Opciones — una por línea</label>
-
-<textarea id="qOptions" class="input"></textarea>
-
-<label>Índice correcto (0 = primera)</label>
+<form
+id="triviaForm"
+class="form">
 
 <input
-id="qCorrect"
-class="input"
+id="triviaId"
+type="hidden">
+
+<textarea
+id="triviaQuestion"
+placeholder="Pregunta"
+required></textarea>
+
+<input
+id="triviaA"
+placeholder="Respuesta A"
+required>
+
+<input
+id="triviaB"
+placeholder="Respuesta B"
+required>
+
+<input
+id="triviaC"
+placeholder="Respuesta C"
+required>
+
+<input
+id="triviaD"
+placeholder="Respuesta D"
+required>
+
+<select
+id="triviaCorrect">
+
+<option value="0">
+A
+</option>
+
+<option value="1">
+B
+</option>
+
+<option value="2">
+C
+</option>
+
+<option value="3">
+D
+</option>
+
+</select>
+
+<input
+id="triviaPoints"
 type="number"
 min="0"
-value="0">
+value="10"
+placeholder="Puntos">
 
-<label>URL imagen opcional</label>
-
-<input id="qImage" class="input">
-
-<button class="btn gold" onclick="createQuestion()">
+<button
+class="btn primary"
+type="submit">
 Guardar pregunta
 </button>
 
-<p id="qMsg" class="notice hidden"></p>
+</form>
 
 </div>
 
 <div class="card">
 
-<h2>Preguntas cargadas</h2>
+<h3>Preguntas cargadas</h3>
 
-<div id="questionsList"></div>
+<div
+id="triviaList">
+<div class="loading">
+Cargando preguntas...
+</div>
+</div>
 
 </div>
 
@@ -599,42 +934,214 @@ Guardar pregunta
 
 </section>
 
-<section id="premios" class="view">
 
-<div class="grid2">
+<!-- DUELOS -->
+
+<section
+id="section-duelos"
+class="section">
+
+<h2>⚔️ Duelos</h2>
+
+<div class="notice">
+Los duelos creados desde la interfaz pública aparecen aquí.
+El administrador puede visualizar los jugadores y completar el resultado.
+</div>
 
 <div class="card">
 
-<h2>🎁 Nuevo premio</h2>
+<div
+id="duelsList">
+<div class="loading">
+Cargando duelos...
+</div>
+</div>
 
-<label>Nombre</label>
-<input id="pName" class="input">
+</div>
 
-<label>Descripción</label>
-<textarea id="pDesc" class="input"></textarea>
+</section>
 
-<label>Costo en fichas</label>
-<input id="pCost" class="input" type="number" min="1">
 
-<label>Stock</label>
-<input id="pStock" class="input" type="number" min="0" value="1">
+<!-- TORNEOS -->
 
-<label>URL imagen</label>
-<input id="pImage" class="input">
+<section
+id="section-torneos"
+class="section">
 
-<button class="btn gold" onclick="createPrize()">
+<h2>🏆 Torneos</h2>
+
+<div class="two">
+
+<div class="card">
+
+<h3>Crear / editar torneo</h3>
+
+<form
+id="tournamentForm"
+class="form">
+
+<input
+id="tournamentId"
+type="hidden">
+
+<input
+id="tournamentName"
+placeholder="Nombre del torneo"
+required>
+
+<textarea
+id="tournamentDescription"
+placeholder="Descripción"></textarea>
+
+<input
+id="tournamentImage"
+placeholder="URL de imagen">
+
+<input
+id="tournamentMax"
+type="number"
+min="2"
+value="16"
+placeholder="Máximo de jugadores">
+
+<input
+id="tournamentEntry"
+type="number"
+min="0"
+value="0"
+placeholder="Costo en tokens">
+
+<input
+id="tournamentStart"
+type="datetime-local">
+
+<select id="tournamentStatus">
+
+<option value="open">
+Abierto
+</option>
+
+<option value="closed">
+Cerrado
+</option>
+
+<option value="active">
+Activo
+</option>
+
+<option value="finished">
+Finalizado
+</option>
+
+</select>
+
+<button
+class="btn primary"
+type="submit">
+Guardar torneo
+</button>
+
+</form>
+
+</div>
+
+<div class="card">
+
+<h3>Torneos existentes</h3>
+
+<div
+id="tournamentsList">
+<div class="loading">
+Cargando torneos...
+</div>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- PREMIOS -->
+
+<section
+id="section-premios"
+class="section">
+
+<h2>🎁 Premios</h2>
+
+<div class="two">
+
+<div class="card">
+
+<h3>Agregar / editar premio</h3>
+
+<form
+id="prizeForm"
+class="form">
+
+<input
+id="prizeId"
+type="hidden">
+
+<input
+id="prizeName"
+placeholder="Nombre"
+required>
+
+<textarea
+id="prizeDescription"
+placeholder="Descripción"></textarea>
+
+<input
+id="prizeImage"
+placeholder="URL de imagen">
+
+<input
+id="prizeIcon"
+placeholder="Emoji"
+value="🎁">
+
+<input
+id="prizeCost"
+type="number"
+min="0"
+placeholder="Costo en tokens"
+required>
+
+<select id="prizeActive">
+
+<option value="true">
+Activo
+</option>
+
+<option value="false">
+Inactivo
+</option>
+
+</select>
+
+<button
+class="btn primary"
+type="submit">
 Guardar premio
 </button>
 
-<p id="pMsg" class="notice hidden"></p>
+</form>
 
 </div>
 
 <div class="card">
 
-<h2>Premios actuales</h2>
+<h3>Premios existentes</h3>
 
-<div id="prizesList"></div>
+<div
+id="prizesList">
+<div class="loading">
+Cargando premios...
+</div>
+</div>
 
 </div>
 
@@ -642,1578 +1149,2749 @@ Guardar premio
 
 </section>
 
-<section id="torneos" class="view">
 
-<div class="grid2">
+<!-- GALERIA -->
 
-<div class="card">
+<section
+id="section-galeria"
+class="section">
 
-<h2>🏆 Crear torneo</h2>
+<h2>📸 Galería</h2>
 
-<label>Nombre</label>
-<input id="tName" class="input">
-
-<label>Juego / tipo</label>
-<input id="tGame" class="input" value="Pool">
-
-<label>Fecha y hora</label>
-<input id="tDate" class="input" type="datetime-local">
-
-<label>Máximo jugadores</label>
-<input id="tMax" class="input" type="number" min="2" max="16" value="16">
-
-<label>Inscripción en fichas</label>
-<input id="tEntry" class="input" type="number" min="0" value="0">
-
-<label>URL imagen</label>
-<input id="tImage" class="input">
-
-<button class="btn gold" onclick="createTournament()">
-Crear torneo
-</button>
-
-<p id="tMsg" class="notice hidden"></p>
-
-</div>
+<div class="two">
 
 <div class="card">
 
-<h2>Torneos</h2>
+<h3>📱 Cargar foto desde el teléfono</h3>
 
-<div id="tournamentsList"></div>
-
-</div>
-
-</div>
-
-<div class="card" style="margin-top:11px">
-
-<h2>🥇 Competencia</h2>
-
-<div id="adminBracket">
-Seleccioná un torneo para ver sus partidas.
-</div>
-
-</div>
-
-</section>
-
-<section id="duelos" class="view">
-
-<div class="card">
-
-<h2>⚔️ Duelos activos</h2>
-
-<button class="btn" onclick="loadDuels()">
-🔄 Actualizar
-</button>
-
-<div id="duelsList"></div>
-
-</div>
-
-</section>
-
-<section id="fotos" class="view">
-
-<div class="grid2">
-
-<div class="card">
-
-<h2>📸 Cargar foto desde el teléfono</h2>
-
-<p class="muted">
-Elegí una imagen de tu galería.
-Se sube directamente a Supabase Storage.
+<p style="margin-bottom:15px">
+Elegí una imagen directamente desde la galería de tu teléfono.
 </p>
 
-<label>Título</label>
+<form
+id="photoForm"
+class="form">
 
 <input
 id="photoTitle"
-class="input"
-placeholder="Ej. Noche de Pool & Beach">
+placeholder="Título de la foto">
 
-<label>Archivo</label>
+<div class="file">
 
 <input
 id="photoFile"
-class="input"
 type="file"
-accept="image/jpeg,image/png,image/webp,image/gif">
+accept="image/*"
+required>
 
-<button class="btn gold" onclick="uploadPhoto()">
-⬆️ Subir y publicar
+</div>
+
+<button
+class="btn primary"
+type="submit">
+📤 Subir foto
 </button>
 
-<p id="photoMsg" class="notice hidden"></p>
+</form>
+
+<div
+id="uploadStatus">
+</div>
 
 </div>
 
 <div class="card">
 
-<h2>Galería publicada</h2>
+<h3>Fotos cargadas</h3>
 
-<div id="galleryList" class="gallery"></div>
+<div
+id="galleryList"
+class="grid">
+<div class="loading">
+Cargando fotos...
+</div>
+</div>
 
 </div>
 
 </div>
 
 </section>
-
-<section id="mesas" class="view">
-
-<div class="card">
-
-<div class="row" style="justify-content:space-between">
-
-<h2>🎱 Mesas</h2>
-
-<button class="btn" onclick="loadMesas()">
-🔄 Actualizar
-</button>
-
-</div>
-
-<div id="mesasList"></div>
-
-</div>
 
 </section>
 
 </main>
 
-</div>
+
+<div id="toast"></div>
+
 
 <script>
 
-const SB_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
+const SUPABASE_URL =
+"https://nmpakeovqkdajtswjpgm.supabase.co";
 
-const SB_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
+const SUPABASE_KEY =
+"sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const db=window.supabase.createClient(SB_URL,SB_KEY);
+const db =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-const $=id=>document.getElementById(id);
+let currentAdmin=null;
 
-let reservations=[];
-let orders=[];
 
-function esc(v){
+function $(id){
+  return document.getElementById(id);
+}
 
-return String(v??'')
-.replaceAll('&','&amp;')
-.replaceAll('<','&lt;')
-.replaceAll('>','&gt;')
-.replaceAll('"','&quot;')
-.replaceAll("'","&#039;");
+
+function esc(value){
+
+  return String(value ?? "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
 
 }
 
-function msg(id,text){
 
-const e=$(id);
+function toast(message){
 
-e.textContent=text;
-e.classList.remove('hidden');
+  const el=$("toast");
 
-setTimeout(()=>{
-e.classList.add('hidden')
-},4500);
+  el.textContent=message;
+
+  el.classList.add("show");
+
+  clearTimeout(window.__toast);
+
+  window.__toast=setTimeout(
+    ()=>{
+      el.classList.remove("show");
+    },
+    3000
+  );
+
+}
+
+
+function showError(
+  container,
+  error,
+  fallback
+){
+
+  console.error(error);
+
+  container.innerHTML=
+    `<div class="error">
+      ${esc(
+        error?.message ||
+        fallback
+      )}
+    </div>`;
 
 }
 
-function money(v){
 
-return '$'+Number(v||0).toLocaleString('es-AR');
+function showSection(name){
 
-}
+  document
+    .querySelectorAll(".section")
+    .forEach(section=>{
+      section.classList.remove("active");
+    });
 
-function show(v){
+  const section=
+    $("section-"+name);
 
-document.querySelectorAll('.view')
-.forEach(x=>x.classList.toggle('active',x.id===v));
-
-document.querySelectorAll('.tab')
-.forEach(x=>x.classList.toggle('active',x.dataset.v===v));
-
-const loaders={
-juegos:loadGames,
-trivia:loadTrivia,
-premios:loadPrizes,
-torneos:loadTournaments,
-duelos:loadDuels,
-fotos:loadGallery,
-mesas:loadMesas,
-reservas:loadReservations,
-pedidos:loadOrders
-};
-
-if(loaders[v])loaders[v]();
+  if(section){
+    section.classList.add("active");
+  }
 
 }
+
 
 document
-.querySelectorAll('.tab')
-.forEach(b=>b.onclick=()=>show(b.dataset.v));
+  .querySelectorAll(".tab")
+  .forEach(button=>{
 
-$('loginForm').onsubmit=async e=>{
+    button.addEventListener(
+      "click",
+      ()=>{
 
-e.preventDefault();
+        showSection(
+          button.dataset.section
+        );
 
-const r=await db.auth.signInWithPassword({
+      }
+    );
 
-email:$('loginEmail').value.trim(),
-password:$('loginPassword').value
+  });
 
-});
 
-if(r.error){
+async function checkSession(){
 
-msg(
-'loginMessage',
-'❌ Email o contraseña incorrectos.'
+  const {
+    data,
+    error
+  }=await db.auth.getSession();
+
+  if(error){
+
+    console.error(error);
+    return;
+
+  }
+
+  if(data?.session?.user){
+
+    await verifyAdmin(
+      data.session.user
+    );
+
+  }else{
+
+    showLogin();
+
+  }
+
+}
+
+
+async function verifyAdmin(user){
+
+  const {
+    data,
+    error
+  }=await db.rpc(
+    "is_admin_or_staff"
+  );
+
+  if(error){
+
+    console.error(error);
+    showLogin();
+    return;
+
+  }
+
+  if(data===true){
+
+    currentAdmin=user;
+    showAdmin();
+
+  }else{
+
+    await db.auth.signOut();
+
+    $("loginError").innerHTML=
+      `<div class="error">
+        Esta cuenta no tiene permisos de administración.
+      </div>`;
+
+    showLogin();
+
+  }
+
+}
+
+
+function showLogin(){
+
+  $("loginView").style.display="block";
+  $("adminView").style.display="none";
+  $("adminStatus").textContent=
+    "No autenticado";
+
+}
+
+
+async function showAdmin(){
+
+  $("loginView").style.display="none";
+  $("adminView").style.display="block";
+
+  $("adminStatus").textContent=
+    currentAdmin?.email ||
+    "Administrador";
+
+  await loadAll();
+
+}
+
+
+$("loginForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    $("loginError").innerHTML="";
+
+    const email=
+      $("loginEmail").value.trim();
+
+    const password=
+      $("loginPassword").value;
+
+    const {
+      data,
+      error
+    }=await db.auth.signInWithPassword({
+      email,
+      password
+    });
+
+    if(error){
+
+      $("loginError").innerHTML=
+        `<div class="error">
+          ${esc(error.message)}
+        </div>`;
+
+      return;
+
+    }
+
+    await verifyAdmin(
+      data.user
+    );
+
+  }
 );
 
-return;
 
-}
+$("logoutBtn")
+.addEventListener(
+  "click",
+  async()=>{
 
-await initAdmin();
+    await db.auth.signOut();
 
-};
+    currentAdmin=null;
 
-$('logout').onclick=async()=>{
+    showLogin();
 
-await db.auth.signOut();
-
-location.reload();
-
-};
-
-async function init(){
-
-const s=(await db.auth.getSession()).data.session;
-
-if(s){
-
-await initAdmin();
-
-}
-
-}
-
-async function initAdmin(){
-
-const a=await db.rpc('is_admin_or_staff');
-
-if(a.error||a.data!==true){
-
-$('loginScreen').classList.remove('hidden');
-
-$('adminApp').classList.add('hidden');
-
-msg(
-'loginMessage',
-'❌ La cuenta no tiene permisos de administrador/staff.'
+  }
 );
 
-return;
+
+async function loadAll(){
+
+  await Promise.allSettled([
+
+    loadDashboard(),
+    loadReservas(),
+    loadPedidos(),
+    loadMesas(),
+    loadGames(),
+    loadTrivia(),
+    loadDuels(),
+    loadTournaments(),
+    loadPrizes(),
+    loadGallery()
+
+  ]);
 
 }
 
-$('loginScreen').classList.add('hidden');
 
-$('adminApp').classList.remove('hidden');
+async function loadDashboard(){
 
-$('connection').textContent='● CONECTADO';
+  const [
+    mesas,
+    juegos,
+    reservas,
+    pedidos,
+    duelos,
+    torneos
+  ]=await Promise.all([
 
-await refreshAll();
+    db.from("tables_pool")
+      .select("*",{count:"exact",head:true}),
 
-subscribeRealtime();
+    db.from("games")
+      .select("*",{count:"exact",head:true}),
 
-}
+    db.from("reservas")
+      .select("*",{count:"exact",head:true}),
 
-async function refreshAll(){
+    db.from("pedidos")
+      .select("*",{count:"exact",head:true}),
 
-await Promise.all([
-loadReservations(),
-loadOrders(),
-loadTournaments(),
-loadGallery(),
-loadGames(),
-loadTrivia(),
-loadPrizes(),
-loadMesas(),
-loadDuels()
-]);
+    db.from("duel_matches")
+      .select("*",{count:"exact",head:true}),
 
-$('mR').textContent=
-reservations.filter(
-x=>String(x.estado||'').toLowerCase()==='pendiente'
-).length;
+    db.from("tournaments")
+      .select("*",{count:"exact",head:true})
 
-$('mP').textContent=
-orders.filter(
-x=>String(x.estado||'').toLowerCase()==='pendiente'
-).length;
+  ]);
 
-const tr=await db
-.from('tournaments')
-.select('id')
-.in('status',['open','in_progress']);
+  $("statMesas").textContent=
+    mesas.count ?? 0;
 
-$('mT').textContent=(tr.data||[]).length;
+  $("statJuegos").textContent=
+    juegos.count ?? 0;
 
-const ph=await db
-.from('galeria_fotos')
-.select('id');
+  $("statReservas").textContent=
+    reservas.count ?? 0;
 
-$('mF').textContent=(ph.data||[]).length;
+  $("statPedidos").textContent=
+    pedidos.count ?? 0;
 
-$('activity').textContent=
-'✅ Datos actualizados correctamente.';
+  $("dashboardDuels").innerHTML=
+    `<strong>${duelos.count ?? 0}</strong> duelos registrados.`;
+
+  $("dashboardTournaments").innerHTML=
+    `<strong>${torneos.count ?? 0}</strong> torneos registrados.`;
 
 }
 
-async function loadReservations(){
 
-const r=await db
-.from('reservas')
-.select('*')
-.order('fecha')
-.order('hora')
-.limit(100);
+async function loadReservas(){
 
-if(r.error)return;
+  const box=$("reservasList");
 
-reservations=r.data||[];
+  const {
+    data,
+    error
+  }=await db
+    .from("reservas")
+    .select("*")
+    .order(
+      "fecha",
+      {ascending:false}
+    );
 
-$('reservasTable').innerHTML=
+  if(error){
 
-reservations.map(x=>`
+    showError(
+      box,
+      error,
+      "No se pudieron cargar las reservas."
+    );
 
-<tr>
+    return;
 
-<td>
-${esc(x.fecha)}
-<br>
-${esc(x.hora)}
-</td>
+  }
 
-<td>
-<b>${esc(x.nombre)}</b>
-<br>
-<small>${esc(x.telefono)}</small>
-</td>
+  if(!data?.length){
 
-<td>${esc(x.servicio)}</td>
+    box.innerHTML=
+      `<div class="empty">
+        No hay reservas.
+      </div>`;
 
-<td>${esc(x.cantidad_personas)}</td>
+    return;
 
-<td>${esc(x.estado)}</td>
+  }
 
-<td>
+  box.innerHTML=
+    data.map(r=>{
 
-<button
-class="btn green"
-onclick="setReserva(${x.id},'confirmada')">
+      const id=r.id;
 
-✓
+      return `
+        <div class="item">
 
-</button>
+          <div class="item-head">
 
-<button
-class="btn red"
-onclick="setReserva(${x.id},'cancelada')">
+            <div>
 
-×
+              <h3>
+                ${esc(
+                  r.nombre ||
+                  "Sin nombre"
+                )}
+              </h3>
 
-</button>
+              <p>
+                📞 ${esc(r.telefono || "—")}
+              </p>
 
-</td>
+            </div>
 
-</tr>
+            <span class="status">
+              ${esc(
+                r.estado ||
+                r.Estado ||
+                "pendiente"
+              )}
+            </span>
 
-`).join('')
+          </div>
 
-||
-'<tr><td colspan="6" class="empty">No hay reservas.</td></tr>';
+          <p style="margin-top:10px">
+            📅 ${esc(r.fecha || "—")}
+            · ⏰ ${esc(r.hora || r.Hora || "—")}
+            · 👥 ${esc(r.cantidad_personas || "—")}
+          </p>
 
-}
+          <p>
+            🎯 ${esc(r.servicio || r.Servicio || "—")}
+          </p>
 
-async function setReserva(id,estado){
+          <p>
+            📝 ${esc(r.notas || r.Notas || "—")}
+          </p>
 
-const r=await db
-.from('reservas')
-.update({estado})
-.eq('id',id);
+          <div class="actions">
 
-if(r.error){
+            <button
+              class="btn green"
+              onclick="updateReservation('${esc(id)}','confirmada')">
+              Confirmar
+            </button>
 
-alert(r.error.message);
-return;
+            <button
+              class="btn yellow"
+              onclick="updateReservation('${esc(id)}','pendiente')">
+              Pendiente
+            </button>
 
-}
+            <button
+              class="btn red"
+              onclick="updateReservation('${esc(id)}','cancelada')">
+              Cancelar
+            </button>
 
-await refreshAll();
+          </div>
 
-}
+        </div>
+      `;
 
-async function loadOrders(){
-
-const r=await db
-.from('pedidos')
-.select('*')
-.order('created_at',{ascending:false})
-.limit(100);
-
-if(r.error)return;
-
-orders=r.data||[];
-
-$('pedidosTable').innerHTML=
-
-orders.map(x=>`
-
-<tr>
-
-<td>
-${x.created_at?
-new Date(x.created_at).toLocaleString('es-AR')
-:''
-}
-</td>
-
-<td>${esc(x.nombre_cliente)}</td>
-
-<td>${esc(x.telefono)}</td>
-
-<td>${esc(x.tipo_entrega||x.tipo)}</td>
-
-<td>${money(x.total)}</td>
-
-<td>${esc(x.estado)}</td>
-
-<td>
-
-<button
-class="btn green"
-onclick="setPedido('${x.id}','confirmado')">
-✓
-</button>
-
-<button
-class="btn red"
-onclick="setPedido('${x.id}','cancelado')">
-×
-</button>
-
-</td>
-
-</tr>
-
-`).join('')
-
-||
-'<tr><td colspan="7" class="empty">No hay pedidos.</td></tr>';
+    }).join("");
 
 }
 
-async function setPedido(id,estado){
 
-const r=await db
-.from('pedidos')
-.update({estado})
-.eq('id',id);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-await refreshAll();
-
-}
-
-async function loadGames(){
-
-const r=await db
-.from('games')
-.select('*')
-.order('created_at');
-
-if(r.error){
-
-console.error(r.error);
-return;
-
-}
-
-const a=r.data||[];
-
-$('gamesList').innerHTML=
-
-a.map(x=>`
-
-<div class="notice">
-
-<b>
-${esc(x.icon||'🎮')}
-${esc(x.name)}
-</b>
-
-<br>
-
-${x.points_reward||0} pts
-·
-${x.tokens_reward||0} fichas
-
-<br>
-
-<small>
-${esc(x.description||'')}
-</small>
-
-<br>
-
-<button
-class="btn ${x.active?'red':'green'}"
-onclick="toggleGame('${x.id}',${!x.active})">
-
-${x.active?'Desactivar':'Activar'}
-
-</button>
-
-</div>
-
-`).join('')
-
-||
-'<div class="empty">No hay juegos.</div>';
-
-}
-
-async function toggleGame(id,active){
-
-const r=await db
-.from('games')
-.update({active})
-.eq('id',id);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-await loadGames();
-
-}
-
-async function createGame(){
-
-const name=$('gName').value.trim();
-
-if(!name){
-
-msg('gMsg','❌ Falta el nombre.');
-return;
-
-}
-
-const r=await db
-.from('games')
-.insert({
-
-name,
-description:$('gDesc').value.trim(),
-icon:$('gIcon').value.trim()||'🎮',
-points_reward:Number($('gPoints').value)||0,
-tokens_reward:Number($('gTokens').value)||0,
-type:$('gType').value.trim()||'normal',
-image_url:$('gImage').value.trim()||null,
-active:true
-
-});
-
-if(r.error){
-
-msg('gMsg','❌ '+r.error.message);
-return;
-
-}
-
-msg('gMsg','✅ Juego guardado.');
-
-$('gName').value='';
-
-await loadGames();
-
-}
-
-async function loadTrivia(){
-
-const r=await db
-.from('trivia_questions')
-.select('*')
-.order('created_at',{ascending:false})
-.limit(100);
-
-if(r.error)return;
-
-const a=r.data||[];
-
-$('questionsList').innerHTML=
-
-a.map(x=>`
-
-<div class="notice">
-
-<b>${esc(x.question)}</b>
-
-<br>
-
-<small>
-${esc(JSON.stringify(x.options))}
-· correcta: ${x.correct_index}
-</small>
-
-<br>
-
-<button
-class="btn red"
-onclick="deleteQuestion('${x.id}')">
-
-Eliminar
-
-</button>
-
-</div>
-
-`).join('')
-
-||
-'<div class="empty">No hay preguntas.</div>';
-
-}
-
-async function createQuestion(){
-
-const question=$('qText').value.trim();
-
-const options=
-$('qOptions')
-.value
-.split('\n')
-.map(x=>x.trim())
-.filter(Boolean);
-
-const correct=Number($('qCorrect').value);
-
-if(
-!question||
-options.length<2||
-correct<0||
-correct>=options.length
+async function updateReservation(
+  id,
+  status
 ){
 
-msg(
-'qMsg',
-'❌ Completá pregunta, opciones e índice correcto.'
-);
+  const {
+    error
+  }=await db
+    .from("reservas")
+    .update({
+      estado:status
+    })
+    .eq("id",id);
 
-return;
+  if(error){
 
-}
+    toast(
+      "⚠️ "+error.message
+    );
 
-const r=await db
-.from('trivia_questions')
-.insert({
+    return;
 
-question,
-options,
-correct_index:correct,
-active:true,
-image_url:$('qImage').value.trim()||null
+  }
 
-});
+  toast(
+    "✅ Reserva actualizada."
+  );
 
-if(r.error){
-
-msg('qMsg','❌ '+r.error.message);
-return;
-
-}
-
-msg('qMsg','✅ Pregunta guardada.');
-
-$('qText').value='';
-$('qOptions').value='';
-
-await loadTrivia();
+  await loadReservas();
 
 }
 
-async function deleteQuestion(id){
 
-if(!confirm('¿Eliminar pregunta?'))return;
+async function loadPedidos(){
 
-const r=await db
-.from('trivia_questions')
-.delete()
-.eq('id',id);
+  const box=$("pedidosList");
 
-if(r.error){
+  const {
+    data,
+    error
+  }=await db
+    .from("pedidos")
+    .select("*")
+    .order(
+      "created_at",
+      {ascending:false}
+    );
 
-alert(r.error.message);
-return;
+  if(error){
 
-}
+    showError(
+      box,
+      error,
+      "No se pudieron cargar los pedidos."
+    );
 
-await loadTrivia();
+    return;
 
-}
+  }
 
-async function loadPrizes(){
+  if(!data?.length){
 
-const r=await db
-.from('prizes')
-.select('*')
-.order('created_at',{ascending:false});
+    box.innerHTML=
+      `<div class="empty">
+        No hay pedidos.
+      </div>`;
 
-if(r.error)return;
+    return;
 
-const a=r.data||[];
+  }
 
-$('prizesList').innerHTML=
+  box.innerHTML=
+    data.map(p=>{
 
-a.map(x=>`
+      const id=p.id;
 
-<div class="notice">
+      return `
+        <div class="item">
 
-${x.image_url?
-`<img class="thumb" src="${esc(x.image_url)}">`
-:''}
+          <div class="item-head">
 
-<b>🎁 ${esc(x.name)}</b>
+            <div>
 
-·
-${x.token_cost||0} fichas
+              <h3>
+                Pedido #${esc(id)}
+              </h3>
 
-·
-stock ${x.stock??0}
+              <p>
+                ${esc(
+                  p.nombre ||
+                  p.cliente_nombre ||
+                  "Cliente"
+                )}
+              </p>
 
-<br>
+            </div>
 
-<button
-class="btn ${x.active?'red':'green'}"
-onclick="togglePrize('${x.id}',${!x.active})">
+            <span class="status">
+              ${esc(
+                p.estado ||
+                "pendiente"
+              )}
+            </span>
 
-${x.active?'Desactivar':'Activar'}
+          </div>
 
-</button>
+          <p style="margin-top:10px">
+            📞 ${esc(
+              p.telefono ||
+              p.cliente_telefono ||
+              "—"
+            )}
+          </p>
 
-</div>
+          <p>
+            📝 ${esc(
+              p.detalle ||
+              p.descripcion ||
+              p.items ||
+              "—"
+            )}
+          </p>
 
-`).join('')
+          <div class="actions">
 
-||
-'<div class="empty">No hay premios.</div>';
+            <button
+              class="btn green"
+              onclick="updatePedido('${esc(id)}','confirmado')">
+              Confirmar
+            </button>
 
-}
+            <button
+              class="btn yellow"
+              onclick="updatePedido('${esc(id)}','preparando')">
+              Preparando
+            </button>
 
-async function togglePrize(id,active){
+            <button
+              class="btn red"
+              onclick="updatePedido('${esc(id)}','cancelado')">
+              Cancelar
+            </button>
 
-const r=await db
-.from('prizes')
-.update({active})
-.eq('id',id);
+          </div>
 
-if(r.error){
+        </div>
+      `;
 
-alert(r.error.message);
-return;
-
-}
-
-await loadPrizes();
-
-}
-
-async function createPrize(){
-
-const name=$('pName').value.trim();
-
-const cost=Number($('pCost').value);
-
-if(!name||cost<1){
-
-msg(
-'pMsg',
-'❌ Nombre y costo son obligatorios.'
-);
-
-return;
-
-}
-
-const r=await db
-.from('prizes')
-.insert({
-
-name,
-description:$('pDesc').value.trim(),
-token_cost:cost,
-stock:Number($('pStock').value)||0,
-image_url:$('pImage').value.trim()||null,
-active:true
-
-});
-
-if(r.error){
-
-msg('pMsg','❌ '+r.error.message);
-return;
+    }).join("");
 
 }
 
-msg('pMsg','✅ Premio guardado.');
 
-await loadPrizes();
-
-}
-
-async function loadTournaments(){
-
-const r=await db
-.from('tournaments')
-.select('*')
-.order('starts_at');
-
-if(r.error)return;
-
-const a=r.data||[];
-
-$('tournamentsList').innerHTML=
-
-a.map(x=>`
-
-<div class="notice">
-
-<b>🏆 ${esc(x.name)}</b>
-
-<br>
-
-${esc(x.game_type||'Pool')}
-·
-${x.entry_tokens||0} fichas
-·
-máx. ${x.max_players||'∞'}
-
-<br>
-
-Estado:
-<b>${esc(x.status||'')}</b>
-
-<br>
-
-<button
-class="btn dark"
-onclick="viewTournament('${x.id}')">
-
-Ver competencia
-
-</button>
-
-<button
-class="btn ${x.status==='open'?'red':'green'}"
-onclick="setTournament('${x.id}','${x.status==='open'?'cancelled':'open'}')">
-
-${x.status==='open'?'Cerrar':'Abrir'}
-
-</button>
-
-</div>
-
-`).join('')
-
-||
-'<div class="empty">No hay torneos.</div>';
-
-}
-
-async function createTournament(){
-
-const name=$('tName').value.trim();
-
-const date=$('tDate').value;
-
-if(!name||!date){
-
-msg(
-'tMsg',
-'❌ Nombre y fecha son obligatorios.'
-);
-
-return;
-
-}
-
-const r=await db
-.from('tournaments')
-.insert({
-
-name,
-game_type:$('tGame').value.trim()||'Pool',
-starts_at:new Date(date).toISOString(),
-max_players:Math.min(
-16,
-Number($('tMax').value)||16
-),
-entry_tokens:Number($('tEntry').value)||0,
-status:'open',
-image_url:$('tImage').value.trim()||null
-
-});
-
-if(r.error){
-
-msg('tMsg','❌ '+r.error.message);
-return;
-
-}
-
-msg('tMsg','✅ Torneo creado.');
-
-await loadTournaments();
-
-}
-
-async function setTournament(id,status){
-
-const r=await db
-.from('tournaments')
-.update({status})
-.eq('id',id);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-await loadTournaments();
-
-}
-
-async function viewTournament(id){
-
-const r=await db.rpc(
-'get_tournament_matches',
-{
-p_tournament_id:id
-}
-);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-const matches=r.data||[];
-
-$('adminBracket').innerHTML=
-
-matches.length?
-
-`
-
-<div class="bracket">
-
-${matches.map(m=>`
-
-<div class="match">
-
-<b>
-Ronda ${m.round}
-·
-Partida ${m.match_number}
-</b>
-
-<br>
-
-${esc(m.player1_name||'Libre')}
-:
-${m.player1_score??'-'}
-
-<br>
-
-${esc(m.player2_name||'Libre')}
-:
-${m.player2_score??'-'}
-
-<br>
-
-Estado:
-${esc(m.status||'')}
-
-${m.winner_name?
-`<br>🏆 ${esc(m.winner_name)}`
-:''}
-
-${m.status!=='completed' &&
-m.player1_id &&
-m.player2_id?
-
-`
-
-<br>
-
-<input
-id="admScore1_${m.id}"
-class="input"
-type="number"
-min="0"
-placeholder="Jugador 1">
-
-<input
-id="admScore2_${m.id}"
-class="input"
-type="number"
-min="0"
-placeholder="Jugador 2">
-
-<button
-class="btn gold"
-onclick="recordMatch('${m.id}')">
-
-Registrar resultado
-
-</button>
-
-`
-:''}
-
-</div>
-
-`).join('')}
-
-</div>
-
-`
-
-:
-'<div class="empty">Todavía no hay partidas generadas.</div>';
-
-}
-
-async function recordMatch(id){
-
-const s1=Number(
-$('admScore1_'+id)?.value
-);
-
-const s2=Number(
-$('admScore2_'+id)?.value
-);
-
-if(
-!Number.isFinite(s1)||
-!Number.isFinite(s2)||
-s1<0||
-s2<0||
-s1===s2
+async function updatePedido(
+  id,
+  status
 ){
 
-alert(
-'Los resultados deben ser válidos y no pueden terminar empatados.'
+  const {
+    error
+  }=await db
+    .from("pedidos")
+    .update({
+      estado:status
+    })
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Pedido actualizado."
+  );
+
+  await loadPedidos();
+
+}
+
+
+$("mesaForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const payload={
+      nombre:$("mesaNombre").value.trim(),
+      codigo:$("mesaCodigo").value.trim(),
+      descripcion:$("mesaDescripcion").value.trim()
+    };
+
+    const {
+      error
+    }=await db
+      .from("tables_pool")
+      .insert(payload);
+
+    if(error){
+
+      toast(
+        "⚠️ "+error.message
+      );
+
+      return;
+
+    }
+
+    toast(
+      "✅ Mesa creada."
+    );
+
+    event.target.reset();
+
+    await loadMesas();
+    await loadDashboard();
+
+  }
 );
 
-return;
-
-}
-
-const r=await db.rpc(
-'record_tournament_match',
-{
-p_match_id:id,
-p_player1_score:s1,
-p_player2_score:s2
-}
-);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-alert('Resultado registrado.');
-
-await refreshAll();
-
-}
-
-async function loadDuels(){
-
-const r=await db
-.from('duel_matches')
-.select('*')
-.order('created_at',{ascending:false})
-.limit(100);
-
-if(r.error){
-
-console.error(r.error);
-return;
-
-}
-
-const a=r.data||[];
-
-$('duelsList').innerHTML=
-
-a.map(d=>`
-
-<div class="notice">
-
-<b>⚔️ Duelo</b>
-
-<br>
-
-Estado:
-${esc(d.status)}
-
-<br>
-
-Jugador 1:
-${esc(d.player1_id||'—')}
-
-<br>
-
-Jugador 2:
-${esc(d.player2_id||'—')}
-
-<br>
-
-Resultado:
-${d.player1_score??'-'}
--
-${d.player2_score??'-'}
-
-${d.status==='active'?
-
-`
-
-<hr>
-
-<input
-id="ds1_${d.id}"
-class="input"
-type="number"
-min="0"
-placeholder="Puntaje jugador 1">
-
-<input
-id="ds2_${d.id}"
-class="input"
-type="number"
-min="0"
-placeholder="Puntaje jugador 2">
-
-<button
-class="btn gold"
-onclick="completeDuel('${d.id}')">
-
-Cerrar duelo
-
-</button>
-
-`
-:''}
-
-</div>
-
-`).join('')
-
-||
-'<div class="empty">No hay duelos.</div>';
-
-}
-
-async function completeDuel(id){
-
-const s1=Number(
-$('ds1_'+id)?.value
-);
-
-const s2=Number(
-$('ds2_'+id)?.value
-);
-
-if(
-!Number.isFinite(s1)||
-!Number.isFinite(s2)||
-s1<0||
-s2<0||
-s1===s2
-){
-
-alert(
-'Los puntajes deben ser válidos y no pueden empatar.'
-);
-
-return;
-
-}
-
-const r=await db.rpc(
-'complete_duel',
-{
-p_duel_id:id,
-p_player1_score:s1,
-p_player2_score:s2
-}
-);
-
-if(r.error){
-
-alert(r.error.message);
-return;
-
-}
-
-alert('⚔️ Duelo completado.');
-
-await loadDuels();
-
-}
-
-async function uploadPhoto(){
-
-const file=$('photoFile').files[0];
-
-const title=
-$('photoTitle').value.trim()
-||
-file?.name;
-
-if(!file){
-
-msg(
-'photoMsg',
-'❌ Elegí una imagen.'
-);
-
-return;
-
-}
-
-if(file.size>8*1024*1024){
-
-msg(
-'photoMsg',
-'❌ La imagen supera 8 MB.'
-);
-
-return;
-
-}
-
-const allowed=[
-'image/jpeg',
-'image/png',
-'image/webp',
-'image/gif'
-];
-
-if(!allowed.includes(file.type)){
-
-msg(
-'photoMsg',
-'❌ Formato de imagen no permitido.'
-);
-
-return;
-
-}
-
-const ext=
-(file.name.split('.').pop()||'jpg')
-.toLowerCase();
-
-const path=
-'public/'+
-crypto.randomUUID()+
-'.'+
-ext;
-
-const up=
-await db.storage
-.from('Galeria')
-.upload(
-path,
-file,
-{
-contentType:file.type,
-upsert:false
-}
-);
-
-if(up.error){
-
-msg(
-'photoMsg',
-'❌ No se pudo subir: '+up.error.message
-);
-
-return;
-
-}
-
-const url=
-db.storage
-.from('Galeria')
-.getPublicUrl(path)
-.data.publicUrl;
-
-const ins=
-await db
-.from('galeria_fotos')
-.insert({
-
-titulo:title,
-categoria:'galeria',
-ruta:path,
-url
-
-});
-
-if(ins.error){
-
-await db.storage
-.from('Galeria')
-.remove([path]);
-
-msg(
-'photoMsg',
-'❌ No se pudo registrar la foto: '+
-ins.error.message
-);
-
-return;
-
-}
-
-msg(
-'photoMsg',
-'✅ Foto publicada correctamente.'
-);
-
-$('photoFile').value='';
-$('photoTitle').value='';
-
-await loadGallery();
-
-}
-
-async function loadGallery(){
-
-const r=await db
-.from('galeria_fotos')
-.select('*')
-.order('creado_en',{ascending:false});
-
-if(r.error){
-
-console.error(r.error);
-return;
-
-}
-
-const a=r.data||[];
-
-$('galleryList').innerHTML=
-
-a.map(x=>`
-
-<figure>
-
-<img
-src="${esc(x.url)}"
-alt="${esc(x.titulo||'')}">
-
-<figcaption>
-
-${esc(x.titulo||'')}
-
-<button
-class="btn red"
-style="padding:4px 7px;float:right"
-onclick="deletePhoto('${x.id}',${JSON.stringify(x.ruta||'')})">
-
-×
-
-</button>
-
-</figcaption>
-
-</figure>
-
-`).join('')
-
-||
-'<div class="empty">No hay fotos.</div>';
-
-}
-
-async function deletePhoto(id,path){
-
-if(!confirm('¿Eliminar esta foto?'))return;
-
-const d=await db
-.from('galeria_fotos')
-.delete()
-.eq('id',id);
-
-if(d.error){
-
-alert(d.error.message);
-return;
-
-}
-
-if(path){
-
-await db
-.storage
-.from('Galeria')
-.remove([path]);
-
-}
-
-await loadGallery();
-
-}
 
 async function loadMesas(){
 
-const r=await db
-.from('tables_pool')
-.select('*')
-.order('table_number');
+  const box=$("mesasList");
 
-if(r.error){
+  const {
+    data,
+    error
+  }=await db
+    .from("tables_pool")
+    .select("*")
+    .order("id");
 
-console.error(r.error);
-return;
+  if(error){
 
-}
+    showError(
+      box,
+      error,
+      "No se pudieron cargar las mesas."
+    );
 
-const a=r.data||[];
+    return;
 
-$('mesasList').innerHTML=
+  }
 
-a.map(x=>`
+  if(!data?.length){
 
-<div class="notice">
+    box.innerHTML=
+      `<div class="empty">
+        No hay mesas.
+      </div>`;
 
-🎱 Mesa ${x.table_number}
+    return;
 
-·
-${esc(x.name||'')}
+  }
 
-·
+  box.innerHTML=
+    data.map(m=>`
 
-<b>
-${x.active?'ACTIVA':'INACTIVA'}
-</b>
+      <div class="item">
 
-<br>
+        <div class="item-head">
 
-<a
-class="btn"
-href="index.html?mesa=${encodeURIComponent(x.table_number)}">
+          <div>
 
-Abrir acceso
+            <h3>
+              🪑 ${esc(
+                m.nombre ||
+                m.name ||
+                "Mesa"
+              )}
+            </h3>
 
-</a>
+            <p>
+              Código:
+              ${esc(
+                m.codigo ||
+                m.code ||
+                m.id
+              )}
+            </p>
 
-</div>
+          </div>
 
-`).join('')
+          <span class="status">
+            ${m.active === false
+              ? "Inactiva"
+              : "Activa"}
+          </span>
 
-||
-'<div class="empty">No hay mesas.</div>';
+        </div>
 
-}
+        <p>
+          ${esc(
+            m.descripcion ||
+            m.description ||
+            ""
+          )}
+        </p>
 
-function subscribeRealtime(){
+        <div class="actions">
 
-db.channel('pool-beach-admin')
+          <button
+            class="btn red"
+            onclick="deleteMesa('${esc(m.id)}')">
+            Eliminar
+          </button>
 
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'reservas'},
-refreshAll
-)
+        </div>
 
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'pedidos'},
-refreshAll
-)
+      </div>
 
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'games'},
-refreshAll
-)
-
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'trivia_questions'},
-refreshAll
-)
-
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'prizes'},
-refreshAll
-)
-
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'tournaments'},
-refreshAll
-)
-
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'galeria_fotos'},
-refreshAll
-)
-
-.on(
-'postgres_changes',
-{event:'*',schema:'public',table:'duel_matches'},
-loadDuels
-)
-
-.subscribe();
+    `).join("");
 
 }
 
-init();
 
+async function deleteMesa(id){
+
+  if(
+    !confirm(
+      "¿Eliminar esta mesa?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("tables_pool")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Mesa eliminada."
+  );
+
+  await loadMesas();
+  await loadDashboard();
+
+}
+
+
+$("gameForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const id=$("gameId").value;
+
+    const payload={
+      name:$("gameName").value.trim(),
+      description:
+        $("gameDescription").value.trim(),
+      icon:
+        $("gameIcon").value.trim(),
+      image_url:
+        $("gameImage").value.trim(),
+      reward_points:
+        Number(
+          $("gamePoints").value || 0
+        ),
+      reward_tokens:
+        Number(
+          $("gameTokens").value || 0
+        ),
+      active:
+        $("gameActive").value==="true"
+    };
+
+    let result;
+
+    if(id){
+
+      result=await db
+        .from("games")
+        .update(payload)
+        .eq("id",id);
+
+    }else{
+
+      result=await db
+        .from("games")
+        .insert(payload);
+
+    }
+
+    if(result.error){
+
+      toast(
+        "⚠️ "+result.error.message
+      );
+
+      return;
+
+    }
+
+    toast(
+      "✅ Juego guardado."
+    );
+
+    resetGameForm();
+
+    await loadGames();
+
+    await loadDashboard();
+
+  }
+);
+
+
+function resetGameForm(){
+
+  $("gameId").value="";
+  $("gameName").value="";
+  $("gameDescription").value="";
+  $("gameIcon").value="🎮";
+  $("gameImage").value="";
+  $("gamePoints").value="";
+  $("gameTokens").value="";
+  $("gameActive").value="true";
+
+}
+
+
+async function loadGames(){
+
+  const box=$("gamesList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("games")
+    .select("*")
+    .order("name");
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar los juegos."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay juegos.
+      </div>`;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    data.map(g=>`
+
+      <div class="item">
+
+        <div class="item-head">
+
+          <div>
+
+            <h3>
+              ${esc(
+                g.icon ||
+                "🎮"
+              )}
+              ${esc(
+                g.name ||
+                g.nombre ||
+                "Juego"
+              )}
+            </h3>
+
+            <p>
+              ${esc(
+                g.description ||
+                g.descripcion ||
+                ""
+              )}
+            </p>
+
+          </div>
+
+          <span
+            class="status
+              ${g.active===false
+                ? "red"
+                : "green"}">
+
+            ${g.active===false
+              ? "Inactivo"
+              : "Activo"}
+
+          </span>
+
+        </div>
+
+        <p style="margin-top:8px">
+          ⭐ ${Number(
+            g.reward_points ||
+            g.points ||
+            0
+          )}
+          · 🪙 ${Number(
+            g.reward_tokens ||
+            g.tokens ||
+            0
+          )}
+        </p>
+
+        <div class="actions">
+
+          <button
+            class="btn secondary"
+            onclick="editGame('${esc(g.id)}')">
+            Editar
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteGame('${esc(g.id)}')">
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+async function editGame(id){
+
+  const {
+    data,
+    error
+  }=await db
+    .from("games")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  $("gameId").value=data.id;
+  $("gameName").value=
+    data.name ||
+    data.nombre ||
+    "";
+
+  $("gameDescription").value=
+    data.description ||
+    data.descripcion ||
+    "";
+
+  $("gameIcon").value=
+    data.icon ||
+    "🎮";
+
+  $("gameImage").value=
+    data.image_url ||
+    data.image ||
+    "";
+
+  $("gamePoints").value=
+    data.reward_points ||
+    data.points ||
+    0;
+
+  $("gameTokens").value=
+    data.reward_tokens ||
+    data.tokens ||
+    0;
+
+  $("gameActive").value=
+    data.active===false
+      ? "false"
+      : "true";
+
+  showSection("juegos");
+
+}
+
+
+async function deleteGame(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este juego?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("games")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Juego eliminado."
+  );
+
+  await loadGames();
+  await loadDashboard();
+
+}
+
+
+$("triviaForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const id=$("triviaId").value;
+
+    const options=[
+      $("triviaA").value.trim(),
+      $("triviaB").value.trim(),
+      $("triviaC").value.trim(),
+      $("triviaD").value.trim()
+    ];
+
+    const payload={
+      question:
+        $("triviaQuestion").value.trim(),
+      options,
+      correct_answer:
+        Number(
+          $("triviaCorrect").value
+        ),
+      points:
+        Number(
+          $("triviaPoints").value || 0
+        ),
+      active:true
+    };
+
+    let result;
+
+    if(id){
+
+      result=await db
+        .from("trivia_questions")
+        .update(payload)
+        .eq("id",id);
+
+    }else{
+
+      result=await db
+        .from("trivia_questions")
+        .insert(payload);
+
+    }
+
+    if(result.error){
+
+      toast(
+        "⚠️ "+result.error.message
+      );
+
+      return;
+
+    }
+
+    toast(
+      "✅ Pregunta guardada."
+    );
+
+    resetTriviaForm();
+
+    await loadTrivia();
+
+  }
+);
+
+
+function resetTriviaForm(){
+
+  $("triviaId").value="";
+  $("triviaQuestion").value="";
+  $("triviaA").value="";
+  $("triviaB").value="";
+  $("triviaC").value="";
+  $("triviaD").value="";
+  $("triviaCorrect").value="0";
+  $("triviaPoints").value="10";
+
+}
+
+
+async function loadTrivia(){
+
+  const box=$("triviaList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("trivia_questions")
+    .select("*")
+    .order("created_at");
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar las preguntas."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay preguntas.
+      </div>`;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    data.map((q,i)=>{
+
+      const options=
+        q.options ||
+        q.answers ||
+        [];
+
+      return `
+        <div class="item">
+
+          <h3>
+            ${i+1}. ${esc(
+              q.question ||
+              q.pregunta ||
+              ""
+            )}
+          </h3>
+
+          <p>
+            A: ${esc(options[0] || "")}
+          </p>
+
+          <p>
+            B: ${esc(options[1] || "")}
+          </p>
+
+          <p>
+            C: ${esc(options[2] || "")}
+          </p>
+
+          <p>
+            D: ${esc(options[3] || "")}
+          </p>
+
+          <p style="margin-top:8px">
+            Correcta:
+            ${String.fromCharCode(
+              65+
+              Number(
+                q.correct_answer ??
+                q.correct_option ??
+                0
+              )
+            )}
+          </p>
+
+          <div class="actions">
+
+            <button
+              class="btn secondary"
+              onclick="editTrivia('${esc(q.id)}')">
+              Editar
+            </button>
+
+            <button
+              class="btn red"
+              onclick="deleteTrivia('${esc(q.id)}')">
+              Eliminar
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+async function editTrivia(id){
+
+  const {
+    data,
+    error
+  }=await db
+    .from("trivia_questions")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  const options=
+    data.options ||
+    data.answers ||
+    [];
+
+  $("triviaId").value=data.id;
+
+  $("triviaQuestion").value=
+    data.question ||
+    data.pregunta ||
+    "";
+
+  $("triviaA").value=
+    options[0] || "";
+
+  $("triviaB").value=
+    options[1] || "";
+
+  $("triviaC").value=
+    options[2] || "";
+
+  $("triviaD").value=
+    options[3] || "";
+
+  $("triviaCorrect").value=
+    data.correct_answer ??
+    data.correct_option ??
+    0;
+
+  $("triviaPoints").value=
+    data.points || 10;
+
+  showSection("trivia");
+
+}
+
+
+async function deleteTrivia(id){
+
+  if(
+    !confirm(
+      "¿Eliminar esta pregunta?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("trivia_questions")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Pregunta eliminada."
+  );
+
+  await loadTrivia();
+
+}
+
+
+async function loadDuels(){
+
+  const box=$("duelsList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("duel_matches")
+    .select("*")
+    .order(
+      "created_at",
+      {ascending:false}
+    );
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar los duelos."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay duelos registrados.
+      </div>`;
+
+    return;
+
+  }
+
+  const playerIds=[];
+
+  data.forEach(d=>{
+
+    if(d.player1_id)
+      playerIds.push(d.player1_id);
+
+    if(d.player2_id)
+      playerIds.push(d.player2_id);
+
+  });
+
+  let profiles={};
+
+  if(playerIds.length){
+
+    const unique=[
+      ...new Set(playerIds)
+    ];
+
+    const {
+      data:pdata
+    }=await db
+      .from("profiles")
+      .select("id,display_name")
+      .in("id",unique);
+
+    (pdata||[]).forEach(p=>{
+      profiles[p.id]=
+        p.display_name ||
+        "Jugador";
+    });
+
+  }
+
+  box.innerHTML=
+    data.map(d=>{
+
+      const p1=
+        profiles[d.player1_id] ||
+        d.player1_name ||
+        "Jugador 1";
+
+      const p2=
+        profiles[d.player2_id] ||
+        d.player2_name ||
+        "Esperando rival";
+
+      const s1=
+        d.player1_score ??
+        0;
+
+      const s2=
+        d.player2_score ??
+        0;
+
+      const status=
+        d.status ||
+        "waiting";
+
+      const complete=
+        String(status).toLowerCase() !==
+        "completed";
+
+      return `
+        <div class="item">
+
+          <div class="item-head">
+
+            <div>
+
+              <h3>
+                ⚔️ ${esc(p1)}
+                vs
+                ${esc(p2)}
+              </h3>
+
+              <p>
+                ID:
+                ${esc(d.id)}
+              </p>
+
+            </div>
+
+            <span class="status">
+              ${esc(status)}
+            </span>
+
+          </div>
+
+          <p style="margin-top:10px">
+            Resultado:
+            <strong>
+              ${esc(s1)}
+              -
+              ${esc(s2)}
+            </strong>
+          </p>
+
+          <div class="actions">
+
+            ${
+              complete
+                ? `
+                  <button
+                    class="btn green"
+                    onclick="completeDuel(
+                      '${esc(d.id)}',
+                      '${esc(s1)}',
+                      '${esc(s2)}'
+                    )">
+                    Completar duelo
+                  </button>
+                `
+                : `
+                  <span class="status green">
+                    Finalizado
+                  </span>
+                `
+            }
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+async function completeDuel(
+  id,
+  oldScore1,
+  oldScore2
+){
+
+  const score1=prompt(
+    "Puntuación del Jugador 1:",
+    oldScore1
+  );
+
+  if(score1===null)return;
+
+  const score2=prompt(
+    "Puntuación del Jugador 2:",
+    oldScore2
+  );
+
+  if(score2===null)return;
+
+  const s1=Number(score1);
+  const s2=Number(score2);
+
+  if(
+    !Number.isFinite(s1) ||
+    !Number.isFinite(s2) ||
+    s1<0 ||
+    s2<0
+  ){
+
+    toast(
+      "⚠️ Puntuaciones inválidas."
+    );
+
+    return;
+
+  }
+
+  const {
+    data,
+    error
+  }=await db.rpc(
+    "complete_duel",
+    {
+      p_duel_id:id,
+      p_player1_score:s1,
+      p_player2_score:s2
+    }
+  );
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "🏁 Duelo completado."
+  );
+
+  await loadDuels();
+  await loadDashboard();
+
+}
+
+
+$("tournamentForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const id=
+      $("tournamentId").value;
+
+    const start=
+      $("tournamentStart").value;
+
+    const payload={
+      name:
+        $("tournamentName").value.trim(),
+
+      description:
+        $("tournamentDescription")
+          .value.trim(),
+
+      image_url:
+        $("tournamentImage")
+          .value.trim(),
+
+      max_players:
+        Number(
+          $("tournamentMax")
+            .value || 16
+        ),
+
+      entry_tokens:
+        Number(
+          $("tournamentEntry")
+            .value || 0
+        ),
+
+      status:
+        $("tournamentStatus")
+          .value
+    };
+
+    if(start){
+
+      payload.starts_at=
+        new Date(start)
+          .toISOString();
+
+    }
+
+    let result;
+
+    if(id){
+
+      result=await db
+        .from("tournaments")
+        .update(payload)
+        .eq("id",id);
+
+    }else{
+
+      result=await db
+        .from("tournaments")
+        .insert(payload);
+
+    }
+
+    if(result.error){
+
+      toast(
+        "⚠️ "+result.error.message
+      );
+
+      return;
+
+    }
+
+    toast(
+      "✅ Torneo guardado."
+    );
+
+    resetTournamentForm();
+
+    await loadTournaments();
+    await loadDashboard();
+
+  }
+);
+
+
+function resetTournamentForm(){
+
+  $("tournamentId").value="";
+  $("tournamentName").value="";
+  $("tournamentDescription").value="";
+  $("tournamentImage").value="";
+  $("tournamentMax").value="16";
+  $("tournamentEntry").value="0";
+  $("tournamentStart").value="";
+  $("tournamentStatus").value="open";
+
+}
+
+
+async function loadTournaments(){
+
+  const box=$("tournamentsList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("tournaments")
+    .select("*")
+    .order(
+      "starts_at",
+      {ascending:true}
+    );
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar los torneos."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay torneos.
+      </div>`;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    data.map(t=>`
+
+      <div class="item">
+
+        <div class="item-head">
+
+          <div>
+
+            <h3>
+              🏆 ${esc(
+                t.name ||
+                t.nombre ||
+                "Torneo"
+              )}
+            </h3>
+
+            <p>
+              ${esc(
+                t.description ||
+                t.descripcion ||
+                ""
+              )}
+            </p>
+
+          </div>
+
+          <span class="status">
+            ${esc(
+              t.status ||
+              "open"
+            )}
+          </span>
+
+        </div>
+
+        <p style="margin-top:8px">
+          👥 Máximo:
+          ${Number(
+            t.max_players ||
+            16
+          )}
+          · 🪙 Entrada:
+          ${Number(
+            t.entry_tokens ||
+            0
+          )}
+        </p>
+
+        <div class="actions">
+
+          <button
+            class="btn secondary"
+            onclick="editTournament('${esc(t.id)}')">
+            Editar
+          </button>
+
+          <button
+            class="btn green"
+            onclick="startTournament('${esc(t.id)}')">
+            Iniciar
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteTournament('${esc(t.id)}')">
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+async function editTournament(id){
+
+  const {
+    data,
+    error
+  }=await db
+    .from("tournaments")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  $("tournamentId").value=data.id;
+
+  $("tournamentName").value=
+    data.name ||
+    data.nombre ||
+    "";
+
+  $("tournamentDescription").value=
+    data.description ||
+    data.descripcion ||
+    "";
+
+  $("tournamentImage").value=
+    data.image_url ||
+    data.image ||
+    "";
+
+  $("tournamentMax").value=
+    data.max_players ||
+    16;
+
+  $("tournamentEntry").value=
+    data.entry_tokens ||
+    0;
+
+  $("tournamentStatus").value=
+    data.status ||
+    "open";
+
+  if(data.starts_at){
+
+    const date=
+      new Date(data.starts_at);
+
+    const local=
+      new Date(
+        date.getTime()-
+        date.getTimezoneOffset()*60000
+      )
+      .toISOString()
+      .slice(0,16);
+
+    $("tournamentStart").value=
+      local;
+
+  }
+
+  showSection("torneos");
+
+}
+
+
+async function startTournament(id){
+
+  const {
+    error
+  }=await db.rpc(
+    "start_tournament_if_ready",
+    {
+      p_tournament_id:id
+    }
+  );
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "🏆 Torneo iniciado."
+  );
+
+  await loadTournaments();
+
+}
+
+
+async function deleteTournament(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este torneo?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("tournaments")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Torneo eliminado."
+  );
+
+  await loadTournaments();
+  await loadDashboard();
+
+}
+
+
+$("prizeForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const id=
+      $("prizeId").value;
+
+    const payload={
+      name:
+        $("prizeName")
+          .value.trim(),
+
+      description:
+        $("prizeDescription")
+          .value.trim(),
+
+      image_url:
+        $("prizeImage")
+          .value.trim(),
+
+      icon:
+        $("prizeIcon")
+          .value.trim(),
+
+      token_cost:
+        Number(
+          $("prizeCost")
+            .value || 0
+        ),
+
+      active:
+        $("prizeActive")
+          .value==="true"
+    };
+
+    let result;
+
+    if(id){
+
+      result=await db
+        .from("prizes")
+        .update(payload)
+        .eq("id",id);
+
+    }else{
+
+      result=await db
+        .from("prizes")
+        .insert(payload);
+
+    }
+
+    if(result.error){
+
+      toast(
+        "⚠️ "+result.error.message
+      );
+
+      return;
+
+    }
+
+    toast(
+      "✅ Premio guardado."
+    );
+
+    resetPrizeForm();
+
+    await loadPrizes();
+
+  }
+);
+
+
+function resetPrizeForm(){
+
+  $("prizeId").value="";
+  $("prizeName").value="";
+  $("prizeDescription").value="";
+  $("prizeImage").value="";
+  $("prizeIcon").value="🎁";
+  $("prizeCost").value="";
+  $("prizeActive").value="true";
+
+}
+
+
+async function loadPrizes(){
+
+  const box=$("prizesList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("prizes")
+    .select("*")
+    .order(
+      "token_cost",
+      {ascending:true}
+    );
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar los premios."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay premios.
+      </div>`;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    data.map(p=>`
+
+      <div class="item">
+
+        <div class="item-head">
+
+          <div>
+
+            <h3>
+              ${esc(
+                p.icon ||
+                "🎁"
+              )}
+              ${esc(
+                p.name ||
+                p.nombre ||
+                "Premio"
+              )}
+            </h3>
+
+            <p>
+              ${esc(
+                p.description ||
+                ""
+              )}
+            </p>
+
+          </div>
+
+          <span class="status">
+            🪙 ${Number(
+              p.token_cost ||
+              p.cost_tokens ||
+              0
+            )}
+          </span>
+
+        </div>
+
+        <div class="actions">
+
+          <button
+            class="btn secondary"
+            onclick="editPrize('${esc(p.id)}')">
+            Editar
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deletePrize('${esc(p.id)}')">
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+async function editPrize(id){
+
+  const {
+    data,
+    error
+  }=await db
+    .from("prizes")
+    .select("*")
+    .eq("id",id)
+    .single();
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  $("prizeId").value=data.id;
+
+  $("prizeName").value=
+    data.name ||
+    data.nombre ||
+    "";
+
+  $("prizeDescription").value=
+    data.description ||
+    "";
+
+  $("prizeImage").value=
+    data.image_url ||
+    "";
+
+  $("prizeIcon").value=
+    data.icon ||
+    "🎁";
+
+  $("prizeCost").value=
+    data.token_cost ||
+    data.cost_tokens ||
+    0;
+
+  $("prizeActive").value=
+    data.active===false
+      ? "false"
+      : "true";
+
+  showSection("premios");
+
+}
+
+
+async function deletePrize(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este premio?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("prizes")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Premio eliminado."
+  );
+
+  await loadPrizes();
+
+}
+
+
+$("photoForm")
+.addEventListener(
+  "submit",
+  async event=>{
+
+    event.preventDefault();
+
+    const file=
+      $("photoFile").files[0];
+
+    if(!file){
+
+      toast(
+        "Elegí una foto."
+      );
+
+      return;
+
+    }
+
+    const title=
+      $("photoTitle").value.trim() ||
+      "Pool & Beach";
+
+    const extension=
+      file.name
+        .split(".")
+        .pop()
+        .toLowerCase();
+
+    const safeExtension=
+      /^[a-z0-9]+$/.test(extension)
+        ? extension
+        : "jpg";
+
+    const filename=
+      `${crypto.randomUUID()}.${safeExtension}`;
+
+    const path=
+      `gallery/${filename}`;
+
+    $("uploadStatus").innerHTML=
+      `<div class="notice">
+        📤 Subiendo imagen...
+      </div>`;
+
+    const {
+      error:uploadError
+    }=await db.storage
+      .from("Galeria")
+      .upload(
+        path,
+        file,
+        {
+          upsert:false,
+          contentType:file.type
+        }
+      );
+
+    if(uploadError){
+
+      $("uploadStatus").innerHTML=
+        `<div class="error">
+          ${esc(uploadError.message)}
+        </div>`;
+
+      return;
+
+    }
+
+    const {
+      data:publicData
+    }=db.storage
+      .from("Galeria")
+      .getPublicUrl(path);
+
+    const publicUrl=
+      publicData.publicUrl;
+
+    const {
+      error:dbError
+    }=await db
+      .from("galeria_fotos")
+      .insert({
+        title,
+        image_url:publicUrl
+      });
+
+    if(dbError){
+
+      await db.storage
+        .from("Galeria")
+        .remove([path]);
+
+      $("uploadStatus").innerHTML=
+        `<div class="error">
+          ${esc(dbError.message)}
+        </div>`;
+
+      return;
+
+    }
+
+    $("uploadStatus").innerHTML=
+      `<div class="success">
+        ✅ Foto subida correctamente.
+      </div>`;
+
+    event.target.reset();
+
+    await loadGallery();
+
+  }
+);
+
+
+async function loadGallery(){
+
+  const box=$("galleryList");
+
+  const {
+    data,
+    error
+  }=await db
+    .from("galeria_fotos")
+    .select("*")
+    .order(
+      "created_at",
+      {ascending:false}
+    );
+
+  if(error){
+
+    showError(
+      box,
+      error,
+      "No se pudieron cargar las fotos."
+    );
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    box.innerHTML=
+      `<div class="empty">
+        No hay fotos.
+      </div>`;
+
+    return;
+
+  }
+
+  box.innerHTML=
+    data.map(p=>{
+
+      const image=
+        p.image_url ||
+        p.url ||
+        p.foto_url ||
+        "";
+
+      return `
+        <div class="item">
+
+          ${
+            image
+              ? `
+                <img
+                  class="photo"
+                  src="${esc(image)}"
+                  alt="${esc(
+                    p.title ||
+                    "Pool & Beach"
+                  )}">
+              `
+              : ""
+          }
+
+          <h3 style="margin-top:10px">
+            ${esc(
+              p.title ||
+              "Pool & Beach"
+            )}
+          </h3>
+
+          <div class="actions">
+
+            <button
+              class="btn red"
+              onclick="deletePhoto('${esc(p.id)}')">
+              Eliminar
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("");
+
+}
+
+
+async function deletePhoto(id){
+
+  if(
+    !confirm(
+      "¿Eliminar esta foto?"
+    )
+  ){
+    return;
+  }
+
+  const {
+    error
+  }=await db
+    .from("galeria_fotos")
+    .delete()
+    .eq("id",id);
+
+  if(error){
+
+    toast(
+      "⚠️ "+error.message
+    );
+
+    return;
+
+  }
+
+  toast(
+    "✅ Foto eliminada."
+  );
+
+  await loadGallery();
+
+}
+
+
+function setupRealtime(){
+
+  db.channel(
+    "pool-beach-admin-live"
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"reservas"
+    },
+    async()=>{
+      await loadReservas();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"pedidos"
+    },
+    async()=>{
+      await loadPedidos();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"tables_pool"
+    },
+    async()=>{
+      await loadMesas();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"games"
+    },
+    async()=>{
+      await loadGames();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"trivia_questions"
+    },
+    loadTrivia
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"duel_matches"
+    },
+    async()=>{
+      await loadDuels();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"tournaments"
+    },
+    async()=>{
+      await loadTournaments();
+      await loadDashboard();
+    }
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"prizes"
+    },
+    loadPrizes
+  )
+
+  .on(
+    "postgres_changes",
+    {
+      event:"*",
+      schema:"public",
+      table:"galeria_fotos"
+    },
+    loadGallery
+  )
+
+  .subscribe();
+
+}
+
+
+Object.assign(
+  window,
+  {
+    loadDuels,
+    completeDuel,
+    loadGames,
+    editGame,
+    deleteGame,
+    loadTrivia,
+    editTrivia,
+    deleteTrivia,
+    loadTournaments,
+    editTournament,
+    startTournament,
+    deleteTournament,
+    loadPrizes,
+    editPrize,
+    deletePrize,
+    loadGallery,
+    deletePhoto,
+    updateReservation,
+    updatePedido,
+    deleteMesa
+  }
+);
+
+
+setupRealtime();
+
+checkSession();
+
+</script>
+
+<script>
+document.documentElement.dataset.appVersion =
+"FINAL-2026-09-06-AUDIT-RPC-RLS-REALTIME";
 </script>
 
 </body>
