@@ -1,1170 +1,1307 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Pool & Beach — Administración</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool & Beach — Administración</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
-  <style>
-    * {
-      box-sizing: border-box;
-    }
+<style>
+*{box-sizing:border-box}
 
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-      background: #f4f7f8;
-      color: #17202a;
-    }
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#f4f7f8;
+  color:#17202a
+}
 
-    header {
-      background: #083b4c;
-      color: white;
-      padding: 20px;
-    }
+header{
+  background:#083b4c;
+  color:white;
+  padding:20px
+}
 
-    header .header-inner {
-      max-width: 1200px;
-      margin: auto;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 15px;
-      flex-wrap: wrap;
-    }
+header>div,
+main{
+  max-width:1200px;
+  margin:auto
+}
 
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-    }
+header>div{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap
+}
 
-    main {
-      max-width: 1200px;
-      margin: auto;
-      padding: 20px;
-    }
+h1{margin:0;font-size:24px}
 
-    .tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 8px;
-      margin-bottom: 20px;
-    }
+.tabs{
+  display:flex;
+  gap:8px;
+  overflow-x:auto;
+  padding:16px 0
+}
 
-    .tabs button {
-      border: 0;
-      background: #d9e5e8;
-      color: #083b4c;
-      padding: 12px 16px;
-      border-radius: 10px;
-      cursor: pointer;
-      white-space: nowrap;
-      font-weight: bold;
-    }
+.tabs button,
+.btn{
+  border:0;
+  border-radius:9px;
+  padding:11px 15px;
+  cursor:pointer;
+  font-weight:bold
+}
 
-    .tabs button.active {
-      background: #0b7d8c;
-      color: white;
-    }
+.tabs button{
+  background:#d9e5e8;
+  color:#083b4c;
+  white-space:nowrap
+}
 
-    .panel {
-      display: none;
-    }
+.tabs button.active,
+.btn{
+  background:#0b7d8c;
+  color:#fff
+}
 
-    .panel.active {
-      display: block;
-    }
+.panel{display:none}
+.panel.active{display:block}
 
-    .card {
-      background: white;
-      border-radius: 14px;
-      padding: 18px;
-      margin-bottom: 15px;
-      box-shadow: 0 3px 12px rgba(0,0,0,.08);
-    }
+.card{
+  background:white;
+  border-radius:14px;
+  padding:18px;
+  margin-bottom:15px;
+  box-shadow:0 3px 12px #0001
+}
 
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 15px;
-    }
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:15px
+}
 
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 12px;
-    }
+.form-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:12px
+}
 
-    label {
-      display: block;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+label{
+  display:block;
+  font-weight:bold;
+  margin:7px 0
+}
 
-    input,
-    textarea,
-    select {
-      width: 100%;
-      border: 1px solid #ccd5d8;
-      border-radius: 9px;
-      padding: 11px;
-      font-size: 15px;
-      background: white;
-    }
+input,
+textarea,
+select{
+  width:100%;
+  padding:11px;
+  border:1px solid #ccd5d8;
+  border-radius:9px;
+  font-size:15px
+}
 
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
+textarea{
+  min-height:90px;
+  resize:vertical
+}
 
-    .buttons {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-top: 12px;
-    }
+.buttons{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  margin-top:12px
+}
 
-    button.btn {
-      border: 0;
-      border-radius: 9px;
-      padding: 11px 15px;
-      cursor: pointer;
-      background: #0b7d8c;
-      color: white;
-      font-weight: bold;
-    }
+.btn.secondary{background:#355c66}
+.btn.danger{background:#b42318}
+.btn.success{background:#087f5b}
+.btn.light{background:#d9e5e8;color:#083b4c}
 
-    button.btn.secondary {
-      background: #355c66;
-    }
+.status{
+  display:inline-block;
+  padding:5px 9px;
+  border-radius:20px;
+  font-size:13px;
+  font-weight:bold
+}
 
-    button.btn.danger {
-      background: #b42318;
-    }
+.on{
+  background:#d1fadf;
+  color:#087f5b
+}
 
-    button.btn.success {
-      background: #087f5b;
-    }
+.off{
+  background:#fee4e2;
+  color:#b42318
+}
 
-    button.btn.light {
-      background: #d9e5e8;
-      color: #083b4c;
-    }
+.muted{color:#667085}
+.error{color:#b42318;font-weight:bold}
+.success-message{color:#087f5b;font-weight:bold}
 
-    .status {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: bold;
-    }
+.loading,
+.empty{
+  padding:25px;
+  text-align:center;
+  color:#667085;
+  background:white;
+  border-radius:12px
+}
 
-    .status.on {
-      background: #d1fadf;
-      color: #087f5b;
-    }
+.qr-box{
+  display:flex;
+  gap:18px;
+  align-items:center;
+  flex-wrap:wrap
+}
 
-    .status.off {
-      background: #fee4e2;
-      color: #b42318;
-    }
+.qr-image{
+  width:220px;
+  height:220px;
+  object-fit:contain;
+  border:1px solid #ddd;
+  padding:8px;
+  background:white
+}
 
-    .muted {
-      color: #667085;
-    }
+.photo-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:15px
+}
 
-    .error {
-      color: #b42318;
-      font-weight: bold;
-      white-space: pre-wrap;
-    }
+.photo-card img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:10px
+}
 
-    .success-message {
-      color: #087f5b;
-      font-weight: bold;
-    }
+.login{
+  max-width:420px;
+  margin:70px auto;
+  padding:20px
+}
 
-    .qr-box {
-      display: flex;
-      gap: 18px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
+.hidden{display:none!important}
 
-    .qr-image {
-      width: 220px;
-      height: 220px;
-      object-fit: contain;
-      border: 1px solid #ddd;
-      padding: 8px;
-      background: white;
-    }
+.stat{
+  font-size:28px;
+  font-weight:bold
+}
 
-    .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 15px;
-    }
-
-    .photo-card img {
-      width: 100%;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 10px;
-      display: block;
-    }
-
-    .empty {
-      padding: 25px;
-      text-align: center;
-      color: #667085;
-      background: #fff;
-      border-radius: 12px;
-    }
-
-    .loading {
-      padding: 15px;
-      color: #667085;
-    }
-
-    @media (max-width: 600px) {
-      header h1 {
-        font-size: 20px;
-      }
-
-      main {
-        padding: 12px;
-      }
-
-      .qr-image {
-        width: 180px;
-        height: 180px;
-      }
-    }
-  </style>
+@media(max-width:600px){
+  main{padding:12px}
+  header{padding:15px}
+  .qr-image{
+    width:180px;
+    height:180px
+  }
+}
+</style>
 </head>
 
 <body>
 
 <header>
-  <div class="header-inner">
+  <div>
     <h1>Pool & Beach — Administración</h1>
-
-    <button class="btn" id="refreshAll">
-      🔄 Actualizar todo
-    </button>
+    <div class="buttons">
+      <button class="btn light" id="refreshAll">🔄 Actualizar todo</button>
+      <button class="btn danger" id="logoutBtn">Cerrar sesión</button>
+    </div>
   </div>
 </header>
 
-<main>
+<!-- LOGIN -->
+<section id="loginView" class="login card">
 
-  <nav class="tabs" id="tabs"></nav>
+  <h2>🔐 Acceso administrativo</h2>
 
-  <!-- MESAS -->
-  <section id="mesas" class="panel">
+  <p class="muted">
+    Ingresá con un usuario de Supabase autorizado.
+  </p>
 
-    <div class="card">
-      <h2>🪑 Mesas</h2>
+  <label>Email</label>
+  <input id="loginEmail" type="email" autocomplete="username">
 
-      <p class="muted">
-        Administrá las mesas y generá el QR de acceso para cada una.
-      </p>
+  <label>Contraseña</label>
+  <input id="loginPassword" type="password" autocomplete="current-password">
 
-      <div class="form-grid">
+  <button class="btn" id="loginBtn">
+    Ingresar
+  </button>
 
-        <div>
-          <label for="newTableNumber">Número de mesa</label>
-          <input
-            id="newTableNumber"
-            type="number"
-            min="1"
-            placeholder="Ej.: 9"
-          />
-        </div>
+  <p id="loginMessage"></p>
 
-        <div>
-          <label for="newTableName">Nombre</label>
-          <input
-            id="newTableName"
-            type="text"
-            placeholder="Ej.: Mesa 9"
-          />
-        </div>
+</section>
 
+<!-- PANEL -->
+<main id="adminView" class="hidden">
+
+<nav class="tabs" id="tabs"></nav>
+
+<!-- MESAS -->
+<section id="mesas" class="panel">
+
+  <div class="card">
+
+    <h2>🪑 Mesas y QR</h2>
+
+    <p class="muted">
+      Creá mesas y generá automáticamente el QR para entrar al sistema.
+    </p>
+
+    <div class="form-grid">
+
+      <div>
+        <label>Número de mesa</label>
+        <input id="newTableNumber" type="number" min="1">
       </div>
 
-      <div class="buttons">
-        <button class="btn" id="createTable">
-          ➕ Crear mesa
-        </button>
-
-        <button class="btn light" id="refreshTables">
-          🔄 Actualizar mesas
-        </button>
+      <div>
+        <label>Nombre</label>
+        <input id="newTableName" placeholder="Mesa 1">
       </div>
 
-      <div id="tablesMessage"></div>
+      <div>
+        <label>Servicio</label>
+        <input id="newTableService" placeholder="Pool, Juegos, etc.">
+      </div>
+
     </div>
 
-    <div id="tablesGrid" class="grid"></div>
-
-  </section>
-
-  <!-- JUEGOS -->
-  <section id="juegos" class="panel">
-
-    <div class="card">
-      <h2>🎮 Juegos</h2>
-
-      <div class="form-grid">
-
-        <div>
-          <label>Nombre</label>
-          <input id="gameName" placeholder="Nombre del juego">
-        </div>
-
-        <div>
-          <label>Descripción</label>
-          <input id="gameDescription" placeholder="Descripción">
-        </div>
-
-        <div>
-          <label>Puntos</label>
-          <input id="gamePoints" type="number" value="0">
-        </div>
-
-      </div>
-
-      <div class="buttons">
-        <button class="btn" id="saveGame">
-          ➕ Guardar juego
-        </button>
-
-        <button class="btn light" id="refreshGames">
-          🔄 Actualizar
-        </button>
-      </div>
-
-      <div id="gamesMessage"></div>
-    </div>
-
-    <div id="gamesList" class="grid"></div>
-
-  </section>
-
-  <!-- TRIVIA -->
-  <section id="trivia" class="panel">
-
-    <div class="card">
-      <h2>🧠 Trivia</h2>
-
-      <div class="form-grid">
-
-        <div style="grid-column:1/-1">
-          <label>Pregunta</label>
-          <input id="triviaQuestion" placeholder="Escribí la pregunta">
-        </div>
-
-        <div>
-          <label>Respuesta A</label>
-          <input id="triviaA">
-        </div>
-
-        <div>
-          <label>Respuesta B</label>
-          <input id="triviaB">
-        </div>
-
-        <div>
-          <label>Respuesta C</label>
-          <input id="triviaC">
-        </div>
-
-        <div>
-          <label>Respuesta D</label>
-          <input id="triviaD">
-        </div>
-
-        <div>
-          <label>Respuesta correcta</label>
-          <select id="triviaCorrect">
-            <option value="0">A</option>
-            <option value="1">B</option>
-            <option value="2">C</option>
-            <option value="3">D</option>
-          </select>
-        </div>
-
-        <div>
-          <label>Puntos</label>
-          <input id="triviaPoints" type="number" value="10">
-        </div>
-
-      </div>
-
-      <div class="buttons">
-        <button class="btn" id="saveTrivia">
-          ➕ Agregar pregunta
-        </button>
-
-        <button class="btn light" id="refreshTrivia">
-          🔄 Actualizar preguntas
-        </button>
-      </div>
-
-      <div id="triviaMessage"></div>
-    </div>
-
-    <div id="triviaList"></div>
-
-  </section>
-
-  <!-- DUELOS -->
-  <section id="duelos" class="panel">
-
-    <div class="card">
-      <h2>⚔️ Duelos</h2>
-
-      <div class="buttons">
-        <button class="btn" id="refreshDuels">
-          🔄 Actualizar duelos
-        </button>
-      </div>
-    </div>
-
-    <div id="duelsList"></div>
-
-  </section>
-
-  <!-- TORNEOS -->
-  <section id="torneos" class="panel">
-
-    <div class="card">
-      <h2>🏆 Torneos</h2>
-
-      <div class="form-grid">
-
-        <div>
-          <label>Nombre</label>
-          <input id="tournamentName" placeholder="Nombre del torneo">
-        </div>
-
-        <div>
-          <label>Premio</label>
-          <input id="tournamentPrize" placeholder="Premio">
-        </div>
-
-      </div>
-
-      <div class="buttons">
-        <button class="btn" id="saveTournament">
-          ➕ Crear torneo
-        </button>
-
-        <button class="btn light" id="refreshTournaments">
-          🔄 Actualizar
-        </button>
-      </div>
-
-      <div id="tournamentsMessage"></div>
-    </div>
-
-    <div id="tournamentsList"></div>
-
-  </section>
-
-  <!-- PREMIOS -->
-  <section id="premios" class="panel">
-
-    <div class="card">
-      <h2>🎁 Premios</h2>
-
-      <div class="form-grid">
-
-        <div>
-          <label>Nombre</label>
-          <input id="prizeName" placeholder="Nombre del premio">
-        </div>
-
-        <div>
-          <label>Costo en puntos</label>
-          <input id="prizeCost" type="number" value="0">
-        </div>
-
-      </div>
-
-      <div class="buttons">
-        <button class="btn" id="savePrize">
-          ➕ Agregar premio
-        </button>
-
-        <button class="btn light" id="refreshPrizes">
-          🔄 Actualizar
-        </button>
-      </div>
-
-      <div id="prizesMessage"></div>
-    </div>
-
-    <div id="prizesList" class="grid"></div>
-
-  </section>
-
-  <!-- GALERÍA -->
-  <section id="galeria" class="panel">
-
-    <div class="card">
-      <h2>📸 Galería</h2>
-
-      <p class="muted">
-        Seleccioná fotos directamente desde el teléfono y cargalas al proyecto.
-      </p>
-
-      <label for="photoInput">
-        Fotos
-      </label>
-
-      <input
-        id="photoInput"
-        type="file"
-        accept="image/*"
-        multiple
-      />
-
-      <label for="photoCaption">
-        Descripción
-      </label>
-
-      <input
-        id="photoCaption"
-        type="text"
-        placeholder="Descripción de las fotos"
-      />
-
-      <div class="buttons">
-
-        <button class="btn" id="uploadPhotos">
-          📤 Cargar fotos
-        </button>
-
-        <button class="btn light" id="refreshGallery">
-          🔄 Actualizar galería
-        </button>
-
-      </div>
-
-      <div id="uploadStatus"></div>
-    </div>
-
-    <div id="galleryList" class="photo-grid"></div>
-
-  </section>
-
-  <!-- RESERVAS -->
-  <section id="reservas" class="panel">
-
-    <div class="card">
-      <h2>📅 Reservas</h2>
-
-      <button class="btn" id="refreshReservations">
-        🔄 Actualizar reservas
+    <div class="buttons">
+      <button class="btn" id="createTable">
+        ➕ Crear mesa
+      </button>
+
+      <button class="btn light" id="refreshTables">
+        🔄 Actualizar mesas
       </button>
     </div>
 
-    <div id="reservasList"></div>
+    <p id="tablesMessage"></p>
 
-  </section>
+  </div>
 
-  <!-- PEDIDOS -->
-  <section id="pedidos" class="panel">
+  <div id="tablesGrid" class="grid"></div>
 
-    <div class="card">
-      <h2>🛒 Pedidos</h2>
+</section>
 
-      <button class="btn" id="refreshOrders">
-        🔄 Actualizar pedidos
-      </button>
+<!-- JUEGOS -->
+<section id="juegos" class="panel">
+
+  <div class="card">
+
+    <h2>🎮 Juegos</h2>
+
+    <div class="form-grid">
+
+      <div>
+        <label>Nombre</label>
+        <input id="gameName">
+      </div>
+
+      <div>
+        <label>Descripción</label>
+        <textarea id="gameDescription"></textarea>
+      </div>
+
+      <div>
+        <label>Puntos de premio</label>
+        <input id="gamePoints" type="number" min="0" value="0">
+      </div>
+
+      <div>
+        <label>Tokens de premio</label>
+        <input id="gameTokens" type="number" min="0" value="0">
+      </div>
+
     </div>
 
-    <div id="pedidosList"></div>
+    <div class="buttons">
 
-  </section>
+      <button class="btn" id="saveGame">
+        ➕ Guardar juego
+      </button>
+
+      <button class="btn light" id="refreshGames">
+        🔄 Actualizar
+      </button>
+
+    </div>
+
+    <p id="gamesMessage"></p>
+
+  </div>
+
+  <div id="gamesList" class="grid"></div>
+
+</section>
+
+<!-- TRIVIA -->
+<section id="trivia" class="panel">
+
+  <div class="card">
+
+    <h2>🧠 Trivia</h2>
+
+    <label>Pregunta</label>
+    <textarea id="triviaQuestion"></textarea>
+
+    <div class="form-grid">
+
+      <div>
+        <label>A</label>
+        <input id="triviaA">
+      </div>
+
+      <div>
+        <label>B</label>
+        <input id="triviaB">
+      </div>
+
+      <div>
+        <label>C</label>
+        <input id="triviaC">
+      </div>
+
+      <div>
+        <label>D</label>
+        <input id="triviaD">
+      </div>
+
+      <div>
+        <label>Respuesta correcta</label>
+
+        <select id="triviaCorrect">
+          <option value="0">A</option>
+          <option value="1">B</option>
+          <option value="2">C</option>
+          <option value="3">D</option>
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="buttons">
+
+      <button class="btn" id="saveTrivia">
+        ➕ Agregar pregunta
+      </button>
+
+      <button class="btn light" id="refreshTrivia">
+        🔄 Actualizar
+      </button>
+
+    </div>
+
+    <p id="triviaMessage"></p>
+
+  </div>
+
+  <div id="triviaList"></div>
+
+</section>
+
+<!-- DUELOS -->
+<section id="duelos" class="panel">
+
+  <div class="card">
+
+    <h2>⚔️ Duelos</h2>
+
+    <button class="btn" id="refreshDuels">
+      🔄 Actualizar duelos
+    </button>
+
+  </div>
+
+  <div id="duelsList"></div>
+
+</section>
+
+<!-- TORNEOS -->
+<section id="torneos" class="panel">
+
+  <div class="card">
+
+    <h2>🏆 Torneos</h2>
+
+    <div class="form-grid">
+
+      <div>
+        <label>Nombre</label>
+        <input id="tournamentName">
+      </div>
+
+      <div>
+        <label>Tipo de juego</label>
+        <input id="tournamentGameType" value="Bola 8">
+      </div>
+
+      <div>
+        <label>Fecha y hora</label>
+        <input id="tournamentStart" type="datetime-local">
+      </div>
+
+      <div>
+        <label>Inscripción en tokens</label>
+        <input id="tournamentEntry" type="number" min="0" value="0">
+      </div>
+
+      <div>
+        <label>Máximo de jugadores</label>
+        <input id="tournamentMax" type="number" min="2">
+      </div>
+
+    </div>
+
+    <div class="buttons">
+
+      <button class="btn" id="saveTournament">
+        ➕ Crear torneo
+      </button>
+
+      <button class="btn light" id="refreshTournaments">
+        🔄 Actualizar
+      </button>
+
+    </div>
+
+    <p id="tournamentsMessage"></p>
+
+  </div>
+
+  <div id="tournamentsList"></div>
+
+</section>
+
+<!-- PREMIOS -->
+<section id="premios" class="panel">
+
+  <div class="card">
+
+    <h2>🎁 Premios</h2>
+
+    <div class="form-grid">
+
+      <div>
+        <label>Nombre</label>
+        <input id="prizeName">
+      </div>
+
+      <div>
+        <label>Descripción</label>
+        <textarea id="prizeDescription"></textarea>
+      </div>
+
+      <div>
+        <label>Costo en tokens</label>
+        <input id="prizeCost" type="number" min="1" value="1">
+      </div>
+
+      <div>
+        <label>Stock</label>
+        <input id="prizeStock" type="number" min="0">
+      </div>
+
+    </div>
+
+    <div class="buttons">
+
+      <button class="btn" id="savePrize">
+        ➕ Agregar premio
+      </button>
+
+      <button class="btn light" id="refreshPrizes">
+        🔄 Actualizar
+      </button>
+
+    </div>
+
+    <p id="prizesMessage"></p>
+
+  </div>
+
+  <div id="prizesList" class="grid"></div>
+
+</section>
+
+<!-- GALERÍA -->
+<section id="galeria" class="panel">
+
+  <div class="card">
+
+    <h2>📸 Galería</h2>
+
+    <p class="muted">
+      Seleccioná las fotos directamente desde la galería de tu teléfono.
+    </p>
+
+    <label>Fotos</label>
+
+    <input
+      id="photoInput"
+      type="file"
+      accept="image/*"
+      multiple
+    >
+
+    <label>Título</label>
+    <input id="photoTitle">
+
+    <label>Categoría</label>
+    <input id="photoCategory" value="general">
+
+    <div class="buttons">
+
+      <button class="btn" id="uploadPhotos">
+        📤 Cargar fotos
+      </button>
+
+      <button class="btn light" id="refreshGallery">
+        🔄 Actualizar galería
+      </button>
+
+    </div>
+
+    <p id="uploadStatus"></p>
+
+  </div>
+
+  <div id="galleryList" class="photo-grid"></div>
+
+</section>
+
+<!-- RESERVAS -->
+<section id="reservas" class="panel">
+
+  <div class="card">
+
+    <h2>📅 Reservas</h2>
+
+    <button class="btn" id="refreshReservations">
+      🔄 Actualizar reservas
+    </button>
+
+  </div>
+
+  <div id="reservasList"></div>
+
+</section>
+
+<!-- PEDIDOS -->
+<section id="pedidos" class="panel">
+
+  <div class="card">
+
+    <h2>🛒 Pedidos</h2>
+
+    <button class="btn" id="refreshOrders">
+      🔄 Actualizar pedidos
+    </button>
+
+  </div>
+
+  <div id="pedidosList"></div>
+
+</section>
 
 </main>
 
 <script>
 
+/* =========================================================
+   SUPABASE
+========================================================= */
+
 const SUPABASE_URL =
   "https://nmpakeovqkdajtswjpgm.supabase.co";
 
-/*
-  IMPORTANTE:
-  Pegá acá la ANON/PUBLISHABLE KEY pública de tu proyecto Supabase.
-  NO uses la service_role key.
-*/
 const SUPABASE_ANON_KEY =
-  "PEGAR_AQUI_LA_ANON_KEY_PUBLICA";
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const supabaseClient =
+const sb =
   window.supabase.createClient(
     SUPABASE_URL,
     SUPABASE_ANON_KEY
   );
 
 
-const $ = (id) => document.getElementById(id);
+/* =========================================================
+   HELPERS
+========================================================= */
 
+const $ = id => document.getElementById(id);
+
+function esc(value){
+
+  return String(value ?? "")
+    .replace(/[&<>'"]/g, c => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      "'":"&#039;",
+      '"':"&quot;"
+    }[c]));
+
+}
+
+function showMessage(id,text,error=false){
+
+  const el = $(id);
+
+  if(!el)return;
+
+  el.className =
+    error ? "error" : "success-message";
+
+  el.textContent = text;
+
+}
+
+
+/* =========================================================
+   AUTH
+========================================================= */
+
+async function checkSession(){
+
+  const {
+    data:{
+      session
+    }
+  } = await sb.auth.getSession();
+
+  if(session){
+
+    $("loginView").classList.add("hidden");
+    $("adminView").classList.remove("hidden");
+
+    await showTab("mesas");
+
+  }else{
+
+    $("adminView").classList.add("hidden");
+    $("loginView").classList.remove("hidden");
+
+  }
+
+}
+
+
+$("loginBtn").onclick = async () => {
+
+  const email =
+    $("loginEmail").value.trim();
+
+  const password =
+    $("loginPassword").value;
+
+  if(!email || !password){
+
+    showMessage(
+      "loginMessage",
+      "Ingresá email y contraseña.",
+      true
+    );
+
+    return;
+
+  }
+
+  const {
+    error
+  } = await sb.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  if(error){
+
+    showMessage(
+      "loginMessage",
+      error.message,
+      true
+    );
+
+    return;
+
+  }
+
+  showMessage(
+    "loginMessage",
+    "Acceso correcto."
+  );
+
+  await checkSession();
+
+};
+
+
+$("logoutBtn").onclick = async () => {
+
+  await sb.auth.signOut();
+
+  location.reload();
+
+};
+
+
+sb.auth.onAuthStateChange(
+  () => checkSession()
+);
+
+
+/* =========================================================
+   TABS
+========================================================= */
 
 const tabs = [
-  ["mesas", "🪑 Mesas"],
-  ["juegos", "🎮 Juegos"],
-  ["trivia", "🧠 Trivia"],
-  ["duelos", "⚔️ Duelos"],
-  ["torneos", "🏆 Torneos"],
-  ["premios", "🎁 Premios"],
-  ["galeria", "📸 Galería"],
-  ["reservas", "📅 Reservas"],
-  ["pedidos", "🛒 Pedidos"]
+
+  ["mesas","🪑 Mesas"],
+  ["juegos","🎮 Juegos"],
+  ["trivia","🧠 Trivia"],
+  ["duelos","⚔️ Duelos"],
+  ["torneos","🏆 Torneos"],
+  ["premios","🎁 Premios"],
+  ["galeria","📸 Galería"],
+  ["reservas","📅 Reservas"],
+  ["pedidos","🛒 Pedidos"]
+
 ];
 
 
-$("tabs").innerHTML = tabs
-  .map(([id, label]) =>
-    `<button data-tab="${id}">${label}</button>`
-  )
-  .join("");
+$("tabs").innerHTML =
+  tabs.map(t =>
+    `<button data-tab="${t[0]}">${t[1]}</button>`
+  ).join("");
 
 
-document.querySelectorAll("#tabs button").forEach((button) => {
+document
+  .querySelectorAll("#tabs button")
+  .forEach(button => {
 
-  button.addEventListener("click", () => {
-    showTab(button.dataset.tab);
+    button.onclick = () =>
+      showTab(button.dataset.tab);
+
   });
 
-});
 
-
-function showTab(id) {
+async function showTab(id){
 
   document
     .querySelectorAll(".panel")
-    .forEach(panel => panel.classList.remove("active"));
+    .forEach(panel =>
+      panel.classList.remove("active")
+    );
 
   const panel = $(id);
 
-  if (panel) {
+  if(panel)
     panel.classList.add("active");
-  }
 
   document
     .querySelectorAll("#tabs button")
-    .forEach(button => {
+    .forEach(button =>
       button.classList.toggle(
         "active",
         button.dataset.tab === id
-      );
-    });
+      )
+    );
 
-  loadSection(id);
+  await loadSection(id);
+
 }
 
 
-function message(container, text, type = "success") {
-
-  const el = $(container);
-
-  if (!el) return;
-
-  el.className =
-    type === "error"
-      ? "error"
-      : "success-message";
-
-  el.textContent = text;
-}
-
-
-/* =========================
+/* =========================================================
    MESAS
-========================= */
+========================================================= */
 
-async function getTables() {
+async function loadTables(){
 
-  const { data, error } =
-    await supabaseClient
-      .from("tables_pool")
-      .select("*")
-      .order("table_number", { ascending: true });
-
-  if (error) {
-    throw error;
-  }
-
-  return data || [];
-}
-
-
-function getPublicTableUrl(table) {
-
-  const base =
-    window.location.origin +
-    window.location.pathname
-      .replace(/admin\.html.*$/i, "");
-
-  return (
-    base +
-    "index.html?mesa=" +
-    encodeURIComponent(
-      table.id || table.table_number
-    )
-  );
-}
-
-
-async function createQR(url) {
-
-  return await QRCode.toDataURL(
-    url,
-    {
-      width: 500,
-      margin: 3,
-      errorCorrectionLevel: "H"
-    }
-  );
-
-}
-
-
-async function renderTables() {
-
-  const container = $("tablesGrid");
+  const container =
+    $("tablesGrid");
 
   container.innerHTML =
-    `<div class="loading">Cargando mesas...</div>`;
+    '<div class="loading">Cargando mesas...</div>';
 
-  try {
+  const {
+    data,
+    error
+  } = await sb
+    .from("mesas")
+    .select("*")
+    .order("numero",{ascending:true});
 
-    const tables = await getTables();
-
-    if (!tables.length) {
-
-      container.innerHTML =
-        `<div class="empty">
-          No hay mesas cargadas.
-        </div>`;
-
-      return;
-    }
+  if(error){
 
     container.innerHTML = "";
 
-    for (const table of tables) {
+    showMessage(
+      "tablesMessage",
+      "Error cargando mesas: " + error.message,
+      true
+    );
 
-      const number =
-        table.table_number ??
-        table.numero ??
-        table.number ??
-        "";
+    return;
 
-      const name =
-        table.name ||
-        table.nombre ||
-        `Mesa ${number}`;
+  }
 
-      const active =
-        table.active !== false;
+  if(!data?.length){
 
-      const url =
-        getPublicTableUrl(table);
+    container.innerHTML =
+      '<div class="empty">No hay mesas cargadas.</div>';
 
-      const qr =
-        await createQR(url);
+    return;
 
-      const card =
-        document.createElement("div");
+  }
 
-      card.className =
-        "card";
+  container.innerHTML = "";
 
-      card.innerHTML = `
-        <h3>
-          🪑 Mesa ${number}
-        </h3>
+  for(const mesa of data){
 
-        <p>
-          ${name}
-        </p>
+    const number =
+      mesa.numero;
 
-        <span class="status ${active ? "on" : "off"}">
-          ${active ? "ACTIVA" : "INACTIVA"}
-        </span>
+    const name =
+      mesa.nombre ||
+      `Mesa ${number}`;
 
-        <div class="qr-box">
+    const active =
+      mesa.activa !== false;
 
-          <img
-            class="qr-image"
-            src="${qr}"
-            alt="QR Mesa ${number}"
-          >
+    const token =
+      mesa.qr_token ||
+      mesa.id;
 
-          <div>
+    const url =
+      new URL(
+        "index.html",
+        location.href
+      );
 
-            <p class="muted">
-              ${url}
-            </p>
+    url.searchParams.set(
+      "mesa",
+      token
+    );
 
-            <div class="buttons">
+    const qr =
+      await QRCode.toDataURL(
+        url.href,
+        {
+          width:500,
+          margin:3,
+          errorCorrectionLevel:"H"
+        }
+      );
 
-              <button
-                class="btn"
-                data-action="open"
-              >
-                🔗 Abrir acceso
-              </button>
+    const card =
+      document.createElement("div");
 
-              <button
-                class="btn success"
-                data-action="download"
-              >
-                ⬇️ Descargar QR
-              </button>
+    card.className = "card";
 
-              <button
-                class="btn secondary"
-                data-action="print"
-              >
-                🖨️ Imprimir QR
-              </button>
+    card.innerHTML = `
 
-              <button
-                class="btn ${active ? "danger" : "success"}"
-                data-action="toggle"
-              >
-                ${active ? "Desactivar" : "Activar"}
-              </button>
+      <h3>🪑 Mesa ${esc(number)}</h3>
 
-            </div>
+      <p>
+        <strong>${esc(name)}</strong>
+      </p>
+
+      <p>
+        Servicio:
+        ${esc(mesa.servicio || "—")}
+      </p>
+
+      <span class="status ${
+        active ? "on" : "off"
+      }">
+        ${active ? "ACTIVA" : "INACTIVA"}
+      </span>
+
+      <div class="qr-box">
+
+        <img
+          class="qr-image"
+          src="${qr}"
+          alt="QR Mesa ${esc(number)}"
+        >
+
+        <div>
+
+          <p class="muted">
+            ${esc(url.href)}
+          </p>
+
+          <div class="buttons">
+
+            <button
+              class="btn"
+              data-action="open"
+            >
+              🔗 Abrir acceso
+            </button>
+
+            <button
+              class="btn success"
+              data-action="download"
+            >
+              ⬇️ Descargar QR
+            </button>
+
+            <button
+              class="btn secondary"
+              data-action="print"
+            >
+              🖨️ Imprimir QR
+            </button>
+
+            <button
+              class="btn ${
+                active ? "danger" : "success"
+              }"
+              data-action="toggle"
+            >
+              ${
+                active
+                  ? "Desactivar"
+                  : "Activar"
+              }
+            </button>
 
           </div>
 
         </div>
-      `;
+
+      </div>
+
+    `;
 
 
-      card
-        .querySelector('[data-action="open"]')
-        .onclick = () => {
-
-          window.open(
-            url,
-            "_blank",
-            "noopener"
-          );
-
-        };
+    card
+      .querySelector('[data-action="open"]')
+      .onclick = () =>
+        window.open(
+          url.href,
+          "_blank",
+          "noopener"
+        );
 
 
-      card
-        .querySelector('[data-action="download"]')
-        .onclick = () => {
+    card
+      .querySelector('[data-action="download"]')
+      .onclick = () => {
 
-          const link =
-            document.createElement("a");
+        const link =
+          document.createElement("a");
 
-          link.href = qr;
+        link.href = qr;
 
-          link.download =
-            `Pool-Beach-QR-Mesa-${number}.png`;
+        link.download =
+          `Pool-Beach-QR-Mesa-${number}.png`;
 
-          document.body.appendChild(link);
+        document.body.appendChild(link);
 
-          link.click();
+        link.click();
 
-          link.remove();
+        link.remove();
 
-        };
+      };
 
 
-      card
-        .querySelector('[data-action="print"]')
-        .onclick = () => {
+    card
+      .querySelector('[data-action="print"]')
+      .onclick = () => {
 
-          const win =
-            window.open(
-              "",
-              "_blank"
-            );
+        const win =
+          window.open("","_blank");
 
-          if (!win) {
-            alert("El navegador bloqueó la ventana de impresión.");
-            return;
-          }
+        if(!win)return;
 
-          win.document.write(`
-            <!doctype html>
-            <html>
-            <head>
-              <title>QR Mesa ${number}</title>
-            </head>
-            <body style="
+        win.document.write(`
+
+          <!DOCTYPE html>
+
+          <html>
+
+          <head>
+
+            <title>
+              Pool & Beach - Mesa ${esc(number)}
+            </title>
+
+          </head>
+
+          <body
+            style="
               text-align:center;
               font-family:Arial;
-              padding:30px;
-            ">
-              <h1>Pool & Beach</h1>
-              <h2>Mesa ${number}</h2>
-              <img
-                src="${qr}"
-                style="width:400px;height:400px"
-              >
-              <p>Escaneá para entrar a los juegos.</p>
-            </body>
-            </html>
-          `);
+              padding:30px
+            "
+          >
 
-          win.document.close();
+            <h1>Pool & Beach</h1>
 
-          win.onload = () => {
-            win.focus();
-            win.print();
-          };
+            <h2>Mesa ${esc(number)}</h2>
 
-        };
+            <img
+              src="${qr}"
+              style="width:400px"
+            >
 
+            <p>
+              Escaneá el código para entrar.
+            </p>
 
-      card
-        .querySelector('[data-action="toggle"]')
-        .onclick = async () => {
+          </body>
 
-          if (!table.id) {
+          </html>
 
-            alert(
-              "Esta mesa no tiene ID y no puede modificarse."
-            );
+        `);
 
-            return;
-          }
+        win.document.close();
 
-          const { error } =
-            await supabaseClient
-              .from("tables_pool")
-              .update({
-                active: !active
-              })
-              .eq("id", table.id);
+        setTimeout(() => {
 
-          if (error) {
+          win.focus();
+          win.print();
 
-            message(
-              "tablesMessage",
-              error.message,
-              "error"
-            );
+        },500);
 
-            return;
-          }
-
-          await renderTables();
-
-        };
+      };
 
 
-      container.appendChild(card);
+    card
+      .querySelector('[data-action="toggle"]')
+      .onclick = async () => {
 
-    }
+        const {
+          error
+        } = await sb
+          .from("mesas")
+          .update({
+            activa:!active
+          })
+          .eq("id",mesa.id);
 
-  } catch (error) {
+        if(error){
 
-    container.innerHTML = "";
+          showMessage(
+            "tablesMessage",
+            error.message,
+            true
+          );
 
-    message(
-      "tablesMessage",
-      "Error cargando mesas: " +
-      error.message,
-      "error"
-    );
+          return;
+
+        }
+
+        await loadTables();
+
+      };
+
+
+    container.appendChild(card);
 
   }
 
 }
 
 
-$("createTable").onclick =
-  async () => {
+$("createTable").onclick = async () => {
 
-    const number =
-      Number(
-        $("newTableNumber").value
-      );
-
-    const name =
-      $("newTableName").value.trim();
-
-    if (!number) {
-
-      message(
-        "tablesMessage",
-        "Ingresá el número de mesa.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    const { data: existing, error: checkError } =
-      await supabaseClient
-        .from("tables_pool")
-        .select("id")
-        .eq("table_number", number)
-        .maybeSingle();
-
-
-    if (checkError) {
-
-      message(
-        "tablesMessage",
-        checkError.message,
-        "error"
-      );
-
-      return;
-    }
-
-
-    if (existing) {
-
-      message(
-        "tablesMessage",
-        "Esa mesa ya existe.",
-        "error"
-      );
-
-      return;
-    }
-
-
-    const { error } =
-      await supabaseClient
-        .from("tables_pool")
-        .insert({
-          table_number: number,
-          name: name || `Mesa ${number}`,
-          active: true
-        });
-
-
-    if (error) {
-
-      message(
-        "tablesMessage",
-        "No se pudo crear la mesa: " +
-        error.message,
-        "error"
-      );
-
-      return;
-    }
-
-
-    $("newTableNumber").value = "";
-    $("newTableName").value = "";
-
-    message(
-      "tablesMessage",
-      "Mesa creada correctamente."
+  const number =
+    Number(
+      $("newTableNumber").value
     );
 
-    await renderTables();
+  const name =
+    $("newTableName").value.trim();
 
-  };
+  const service =
+    $("newTableService").value.trim();
+
+  if(!number){
+
+    showMessage(
+      "tablesMessage",
+      "Ingresá el número de mesa.",
+      true
+    );
+
+    return;
+
+  }
+
+  const {
+    data:existing,
+    error:checkError
+  } = await sb
+    .from("mesas")
+    .select("id")
+    .eq("numero",number)
+    .maybeSingle();
+
+  if(checkError){
+
+    showMessage(
+      "tablesMessage",
+      checkError.message,
+      true
+    );
+
+    return;
+
+  }
+
+  if(existing){
+
+    showMessage(
+      "tablesMessage",
+      "Esa mesa ya existe.",
+      true
+    );
+
+    return;
+
+  }
+
+  const qrToken =
+    crypto.randomUUID();
+
+  const {
+    error
+  } = await sb
+    .from("mesas")
+    .insert({
+
+      numero:number,
+
+      nombre:
+        name ||
+        `Mesa ${number}`,
+
+      servicio:
+        service || null,
+
+      activa:true,
+
+      qr_token:qrToken
+
+    });
+
+  if(error){
+
+    showMessage(
+      "tablesMessage",
+      "No se pudo crear la mesa: " +
+      error.message,
+      true
+    );
+
+    return;
+
+  }
+
+  $("newTableNumber").value = "";
+  $("newTableName").value = "";
+  $("newTableService").value = "";
+
+  showMessage(
+    "tablesMessage",
+    "Mesa creada correctamente."
+  );
+
+  await loadTables();
+
+};
 
 
 $("refreshTables").onclick =
-  renderTables;
+  loadTables;
 
 
-/* =========================
+/* =========================================================
    JUEGOS
-========================= */
+========================================================= */
 
-async function loadGames() {
+async function loadGames(){
 
   const container =
     $("gamesList");
 
   container.innerHTML =
-    `<div class="loading">Cargando juegos...</div>`;
+    '<div class="loading">Cargando juegos...</div>';
 
-  const { data, error } =
-    await supabaseClient
-      .from("games")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+  const {
+    data,
+    error
+  } = await sb
+    .from("games")
+    .select("*")
+    .order("created_at",{ascending:false});
 
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "gamesMessage",
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  if (!data?.length) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">
-        No hay juegos cargados.
+      `<div class="card error">
+        ${esc(error.message)}
       </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay juegos cargados.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
     data.map(game => `
+
       <div class="card">
 
-        <h3>${escapeHTML(game.name || "")}</h3>
+        <h3>${esc(game.name)}</h3>
 
         <p>
-          ${escapeHTML(
-            game.description || ""
-          )}
+          ${esc(game.description)}
         </p>
 
         <p>
           Puntos:
-          <strong>
-            ${game.points ?? 0}
-          </strong>
+          <strong>${game.points_reward || 0}</strong>
+        </p>
+
+        <p>
+          Tokens:
+          <strong>${game.tokens_reward || 0}</strong>
         </p>
 
         <span class="status ${
-          game.active === false
-            ? "off"
-            : "on"
+          game.active ? "on" : "off"
         }">
-          ${
-            game.active === false
-              ? "INACTIVO"
-              : "ACTIVO"
-          }
+          ${game.active ? "ACTIVO" : "INACTIVO"}
         </span>
 
       </div>
+
     `).join("");
 
 }
@@ -1176,55 +1313,68 @@ $("saveGame").onclick =
     const name =
       $("gameName").value.trim();
 
-    if (!name) {
+    if(!name){
 
-      message(
+      showMessage(
         "gamesMessage",
         "Ingresá el nombre del juego.",
-        "error"
+        true
       );
 
       return;
+
     }
 
+    const {
+      error
+    } = await sb
+      .from("games")
+      .insert({
 
-    const { error } =
-      await supabaseClient
-        .from("games")
-        .insert({
-          name,
-          description:
-            $("gameDescription").value.trim(),
-          points:
-            Number(
-              $("gamePoints").value
-            ) || 0,
-          active: true
-        });
+        name,
 
+        description:
+          $("gameDescription")
+          .value
+          .trim(),
 
-    if (error) {
+        points_reward:
+          Number(
+            $("gamePoints").value
+          ) || 0,
 
-      message(
+        tokens_reward:
+          Number(
+            $("gameTokens").value
+          ) || 0,
+
+        active:true
+
+      });
+
+    if(error){
+
+      showMessage(
         "gamesMessage",
         error.message,
-        "error"
+        true
       );
 
       return;
-    }
 
+    }
 
     $("gameName").value = "";
     $("gameDescription").value = "";
     $("gamePoints").value = "0";
+    $("gameTokens").value = "0";
 
-    message(
+    showMessage(
       "gamesMessage",
       "Juego guardado correctamente."
     );
 
-    loadGames();
+    await loadGames();
 
   };
 
@@ -1233,114 +1383,94 @@ $("refreshGames").onclick =
   loadGames;
 
 
-/* =========================
+/* =========================================================
    TRIVIA
-========================= */
+========================================================= */
 
-async function loadTrivia() {
+async function loadTrivia(){
 
   const container =
     $("triviaList");
 
   container.innerHTML =
-    `<div class="loading">Cargando preguntas...</div>`;
+    '<div class="loading">Cargando preguntas...</div>';
 
-  const { data, error } =
-    await supabaseClient
-      .from("trivia_questions")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+  const {
+    data,
+    error
+  } = await sb
+    .from("trivia_questions")
+    .select("*")
+    .order("created_at",{ascending:false});
 
-
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "triviaMessage",
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  if (!data?.length) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">
-        No hay preguntas cargadas.
+      `<div class="card error">
+        ${esc(error.message)}
       </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay preguntas cargadas.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
-    data.map((q, index) => {
+    data.map((question,index) => {
 
       const options =
-        Array.isArray(q.options)
-          ? q.options
+        Array.isArray(question.options)
+          ? question.options
           : [];
 
+      const correct =
+        Number(
+          question.correct_index
+        );
 
       return `
+
         <div class="card">
 
           <h3>
-            ${index + 1}. 
-            ${escapeHTML(
-              q.question || ""
-            )}
+            ${index + 1}.
+            ${esc(question.question)}
           </h3>
 
-          <p>
-            A:
-            ${escapeHTML(
-              options[0] || ""
-            )}
-          </p>
+          <p>A: ${esc(options[0])}</p>
+          <p>B: ${esc(options[1])}</p>
+          <p>C: ${esc(options[2])}</p>
+          <p>D: ${esc(options[3])}</p>
 
           <p>
-            B:
-            ${escapeHTML(
-              options[1] || ""
-            )}
+            <strong>
+              Correcta:
+              ${["A","B","C","D"][correct] || "A"}
+            </strong>
           </p>
 
-          <p>
-            C:
-            ${escapeHTML(
-              options[2] || ""
-            )}
-          </p>
-
-          <p>
-            D:
-            ${escapeHTML(
-              options[3] || ""
-            )}
-          </p>
-
-          <strong>
-            Correcta:
-            ${String.fromCharCode(
-              65 + Number(
-                q.correct_answer || 0
-              )
-            )}
-          </strong>
-
-          <p>
-            Puntos:
-            ${q.points ?? 0}
-          </p>
+          <span class="status ${
+            question.active
+              ? "on"
+              : "off"
+          }">
+            ${
+              question.active
+                ? "ACTIVA"
+                : "INACTIVA"
+            }
+          </span>
 
         </div>
+
       `;
 
     }).join("");
@@ -1353,61 +1483,65 @@ $("saveTrivia").onclick =
 
     const question =
       $("triviaQuestion")
-        .value
-        .trim();
+      .value
+      .trim();
 
     const options = [
+
       $("triviaA").value.trim(),
       $("triviaB").value.trim(),
       $("triviaC").value.trim(),
       $("triviaD").value.trim()
+
     ];
 
+    const correct =
+      Number(
+        $("triviaCorrect").value
+      );
 
-    if (
+    if(
       !question ||
-      options.some(x => !x)
-    ) {
+      options.some(option => !option)
+    ){
 
-      message(
+      showMessage(
         "triviaMessage",
         "Completá la pregunta y las cuatro respuestas.",
-        "error"
+        true
       );
 
       return;
+
     }
 
+    const {
+      error
+    } = await sb
+      .from("trivia_questions")
+      .insert({
 
-    const { error } =
-      await supabaseClient
-        .from("trivia_questions")
-        .insert({
-          question,
-          options,
-          correct_answer:
-            Number(
-              $("triviaCorrect").value
-            ),
-          points:
-            Number(
-              $("triviaPoints").value
-            ) || 10,
-          active: true
-        });
+        question,
 
+        options,
 
-    if (error) {
+        correct_index:correct,
 
-      message(
+        active:true
+
+      });
+
+    if(error){
+
+      showMessage(
         "triviaMessage",
         error.message,
-        "error"
+        true
       );
 
       return;
-    }
 
+    }
 
     [
       "triviaQuestion",
@@ -1415,21 +1549,18 @@ $("saveTrivia").onclick =
       "triviaB",
       "triviaC",
       "triviaD"
-    ].forEach(id => {
-      $(id).value = "";
-    });
+    ].forEach(id =>
+      $(id).value = ""
+    );
 
+    $("triviaCorrect").value = "0";
 
-    $("triviaPoints").value = "10";
-
-
-    message(
+    showMessage(
       "triviaMessage",
       "Pregunta agregada correctamente."
     );
 
-
-    loadTrivia();
+    await loadTrivia();
 
   };
 
@@ -1438,79 +1569,164 @@ $("refreshTrivia").onclick =
   loadTrivia;
 
 
-/* =========================
-   TORNEOS
-========================= */
+/* =========================================================
+   DUELOS
+========================================================= */
 
-async function loadTournaments() {
+async function loadDuels(){
+
+  const container =
+    $("duelsList");
+
+  container.innerHTML =
+    '<div class="loading">Cargando duelos...</div>';
+
+  const {
+    data,
+    error
+  } = await sb
+    .from("duel_matches")
+    .select("*")
+    .order("created_at",{ascending:false});
+
+  if(error){
+
+    container.innerHTML =
+      `<div class="card error">
+        ${esc(error.message)}
+      </div>`;
+
+    return;
+
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay duelos.</div>';
+
+    return;
+
+  }
+
+  container.innerHTML =
+    data.map(duel => `
+
+      <div class="card">
+
+        <h3>⚔️ Duelo</h3>
+
+        <p>
+          Estado:
+          <strong>${esc(duel.status)}</strong>
+        </p>
+
+        <p>
+          Jugador 1:
+          ${esc(duel.player1_id)}
+        </p>
+
+        <p>
+          Jugador 2:
+          ${esc(duel.player2_id)}
+        </p>
+
+        <p>
+          Marcador:
+          <strong>
+            ${duel.player1_score || 0}
+            -
+            ${duel.player2_score || 0}
+          </strong>
+        </p>
+
+      </div>
+
+    `).join("");
+
+}
+
+
+$("refreshDuels").onclick =
+  loadDuels;
+
+
+/* =========================================================
+   TORNEOS
+========================================================= */
+
+async function loadTournaments(){
 
   const container =
     $("tournamentsList");
 
   container.innerHTML =
-    `<div class="loading">Cargando torneos...</div>`;
+    '<div class="loading">Cargando torneos...</div>';
 
+  const {
+    data,
+    error
+  } = await sb
+    .from("tournaments")
+    .select("*")
+    .order("created_at",{ascending:false});
 
-  const { data, error } =
-    await supabaseClient
-      .from("tournaments")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+  if(error){
 
-
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "tournamentsMessage",
-      error.message,
-      "error"
-    );
+    container.innerHTML =
+      `<div class="card error">
+        ${esc(error.message)}
+      </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay torneos cargados.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
-    data?.length
-      ? data.map(t => `
-          <div class="card">
+    data.map(tournament => `
 
-            <h3>
-              ${escapeHTML(
-                t.name || ""
-              )}
-            </h3>
+      <div class="card">
 
-            <p>
-              Premio:
-              ${escapeHTML(
-                String(
-                  t.prize ?? ""
-                )
-              )}
-            </p>
+        <h3>
+          🏆 ${esc(tournament.name)}
+        </h3>
 
-            <span class="status ${
-              t.active === false
-                ? "off"
-                : "on"
-            }">
-              ${
-                t.active === false
-                  ? "INACTIVO"
-                  : "ACTIVO"
-              }
-            </span>
+        <p>
+          Juego:
+          ${esc(tournament.game_type)}
+        </p>
 
-          </div>
-        `).join("")
-      : `<div class="empty">
-          No hay torneos cargados.
-        </div>`;
+        <p>
+          Inscripción:
+          ${tournament.entry_tokens || 0}
+          tokens
+        </p>
+
+        <p>
+          Máximo:
+          ${tournament.max_players || "—"}
+          jugadores
+        </p>
+
+        <p>
+          Estado:
+          <strong>
+            ${esc(tournament.status)}
+          </strong>
+        </p>
+
+      </div>
+
+    `).join("");
 
 }
 
@@ -1520,56 +1736,92 @@ $("saveTournament").onclick =
 
     const name =
       $("tournamentName")
-        .value
-        .trim();
+      .value
+      .trim();
 
+    if(!name){
 
-    if (!name) {
-
-      message(
+      showMessage(
         "tournamentsMessage",
         "Ingresá el nombre del torneo.",
-        "error"
+        true
       );
 
       return;
+
     }
 
+    const localDate =
+      $("tournamentStart").value;
 
-    const { error } =
-      await supabaseClient
-        .from("tournaments")
-        .insert({
-          name,
-          prize:
-            $("tournamentPrize")
-              .value
-              .trim(),
-          active: true
-        });
+    let startsAt = null;
 
+    if(localDate){
 
-    if (error) {
+      const date =
+        new Date(localDate);
 
-      message(
+      if(!Number.isNaN(date.getTime()))
+        startsAt =
+          date.toISOString();
+
+    }
+
+    const {
+      error
+    } = await sb
+      .from("tournaments")
+      .insert({
+
+        name,
+
+        game_type:
+          $("tournamentGameType")
+          .value
+          .trim() ||
+          "Bola 8",
+
+        starts_at:
+          startsAt,
+
+        entry_tokens:
+          Number(
+            $("tournamentEntry").value
+          ) || 0,
+
+        max_players:
+          Number(
+            $("tournamentMax").value
+          ) || null,
+
+        status:"open"
+
+      });
+
+    if(error){
+
+      showMessage(
         "tournamentsMessage",
         error.message,
-        "error"
+        true
       );
 
       return;
+
     }
 
-
     $("tournamentName").value = "";
-    $("tournamentPrize").value = "";
+    $("tournamentGameType").value = "Bola 8";
+    $("tournamentStart").value = "";
+    $("tournamentEntry").value = "0";
+    $("tournamentMax").value = "";
 
-    message(
+    showMessage(
       "tournamentsMessage",
       "Torneo creado correctamente."
     );
 
-    loadTournaments();
+    await loadTournaments();
 
   };
 
@@ -1578,63 +1830,83 @@ $("refreshTournaments").onclick =
   loadTournaments;
 
 
-/* =========================
+/* =========================================================
    PREMIOS
-========================= */
+========================================================= */
 
-async function loadPrizes() {
+async function loadPrizes(){
 
   const container =
     $("prizesList");
 
   container.innerHTML =
-    `<div class="loading">Cargando premios...</div>`;
+    '<div class="loading">Cargando premios...</div>';
 
+  const {
+    data,
+    error
+  } = await sb
+    .from("prizes")
+    .select("*")
+    .order("created_at",{ascending:false});
 
-  const { data, error } =
-    await supabaseClient
-      .from("prizes")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
+  if(error){
 
-
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "prizesMessage",
-      error.message,
-      "error"
-    );
+    container.innerHTML =
+      `<div class="card error">
+        ${esc(error.message)}
+      </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay premios cargados.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
-    data?.length
-      ? data.map(p => `
-          <div class="card">
+    data.map(prize => `
 
-            <h3>
-              ${escapeHTML(
-                p.name || ""
-              )}
-            </h3>
+      <div class="card">
 
-            <p>
-              ${p.cost_points ?? 0}
-              puntos
-            </p>
+        <h3>🎁 ${esc(prize.name)}</h3>
 
-          </div>
-        `).join("")
-      : `<div class="empty">
-          No hay premios cargados.
-        </div>`;
+        <p>
+          ${esc(prize.description)}
+        </p>
+
+        <p>
+          Costo:
+          <strong>
+            ${prize.token_cost || 0}
+            tokens
+          </strong>
+        </p>
+
+        <p>
+          Stock:
+          ${prize.stock ?? "Sin límite"}
+        </p>
+
+        <span class="status ${
+          prize.active ? "on" : "off"
+        }">
+          ${
+            prize.active
+              ? "ACTIVO"
+              : "INACTIVO"
+          }
+        </span>
+
+      </div>
+
+    `).join("");
 
 }
 
@@ -1644,58 +1916,90 @@ $("savePrize").onclick =
 
     const name =
       $("prizeName")
-        .value
-        .trim();
+      .value
+      .trim();
 
+    const cost =
+      Number(
+        $("prizeCost").value
+      );
 
-    if (!name) {
+    if(!name){
 
-      message(
+      showMessage(
         "prizesMessage",
         "Ingresá el nombre del premio.",
-        "error"
+        true
       );
 
       return;
+
     }
 
+    if(cost < 1){
 
-    const { error } =
-      await supabaseClient
-        .from("prizes")
-        .insert({
-          name,
-          cost_points:
-            Number(
-              $("prizeCost").value
-            ) || 0,
-          active: true
-        });
+      showMessage(
+        "prizesMessage",
+        "El costo debe ser mayor a cero.",
+        true
+      );
 
+      return;
 
-    if (error) {
+    }
 
-      message(
+    const stockValue =
+      $("prizeStock").value;
+
+    const stock =
+      stockValue === ""
+        ? null
+        : Number(stockValue);
+
+    const {
+      error
+    } = await sb
+      .from("prizes")
+      .insert({
+
+        name,
+
+        description:
+          $("prizeDescription")
+          .value
+          .trim(),
+
+        token_cost:cost,
+
+        stock,
+
+        active:true
+
+      });
+
+    if(error){
+
+      showMessage(
         "prizesMessage",
         error.message,
-        "error"
+        true
       );
 
       return;
+
     }
 
-
     $("prizeName").value = "";
-    $("prizeCost").value = "0";
+    $("prizeDescription").value = "";
+    $("prizeCost").value = "1";
+    $("prizeStock").value = "";
 
-
-    message(
+    showMessage(
       "prizesMessage",
       "Premio agregado correctamente."
     );
 
-
-    loadPrizes();
+    await loadPrizes();
 
   };
 
@@ -1704,73 +2008,67 @@ $("refreshPrizes").onclick =
   loadPrizes;
 
 
-/* =========================
+/* =========================================================
    GALERÍA / STORAGE
-========================= */
+========================================================= */
 
-async function loadGallery() {
+async function loadGallery(){
 
   const container =
     $("galleryList");
 
   container.innerHTML =
-    `<div class="loading">Cargando galería...</div>`;
+    '<div class="loading">Cargando galería...</div>';
 
+  const {
+    data,
+    error
+  } = await sb
+    .from("galeria_fotos")
+    .select("*")
+    .order("creado_en",{ascending:false});
 
-  const { data, error } =
-    await supabaseClient
-      .from("galeria_fotos")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
-
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "uploadStatus",
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  if (!data?.length) {
+  if(error){
 
     container.innerHTML =
-      `<div class="empty">
-        No hay fotos cargadas.
+      `<div class="card error">
+        ${esc(error.message)}
       </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay fotos cargadas.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
     data.map(photo => `
+
       <div class="card photo-card">
 
         <img
-          src="${escapeAttribute(
-            photo.url || ""
-          )}"
-          alt="${escapeAttribute(
-            photo.caption || "Foto"
-          )}"
+          src="${esc(photo.url)}"
+          alt="${esc(photo.titulo)}"
+          loading="lazy"
         >
 
+        <h3>
+          ${esc(photo.titulo)}
+        </h3>
+
         <p>
-          ${escapeHTML(
-            photo.caption || ""
-          )}
+          ${esc(photo.categoria)}
         </p>
 
       </div>
+
     `).join("");
 
 }
@@ -1780,134 +2078,154 @@ $("uploadPhotos").onclick =
   async () => {
 
     const files =
-      Array.from(
-        $("photoInput").files || []
-      );
+      [...$("photoInput").files];
 
+    if(!files.length){
 
-    if (!files.length) {
-
-      message(
+      showMessage(
         "uploadStatus",
-        "Seleccioná al menos una foto desde el teléfono.",
-        "error"
+        "Seleccioná una o más fotos desde tu teléfono.",
+        true
       );
 
       return;
+
     }
 
-
     $("uploadStatus").className =
-      "loading";
+      "muted";
 
     $("uploadStatus").textContent =
       "Subiendo fotos...";
 
+    const title =
+      $("photoTitle")
+      .value
+      .trim();
 
-    const caption =
-      $("photoCaption")
-        .value
-        .trim();
+    const category =
+      $("photoCategory")
+      .value
+      .trim() ||
+      "general";
 
 
-    for (const file of files) {
+    for(const file of files){
 
-      if (!file.type.startsWith("image/")) {
+      if(!file.type.startsWith("image/")){
 
-        message(
+        showMessage(
           "uploadStatus",
           `${file.name} no es una imagen.`,
-          "error"
+          true
         );
 
         return;
+
       }
 
 
       const safeName =
         file.name
-          .replace(
-            /[^a-zA-Z0-9._-]/g,
-            "_"
-          );
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g,"")
+          .replace(/[^a-zA-Z0-9._-]/g,"_");
 
 
       const path =
         `galeria/${Date.now()}-${crypto.randomUUID()}-${safeName}`;
 
 
-      const upload =
-        await supabaseClient
-          .storage
-          .from("Galeria")
-          .upload(
-            path,
-            file,
-            {
-              cacheControl: "3600",
-              upsert: false,
-              contentType: file.type
-            }
-          );
+      const {
+        error:uploadError
+      } = await sb
+        .storage
+        .from("Galeria")
+        .upload(
+          path,
+          file,
+          {
+            upsert:false,
+            contentType:file.type,
+            cacheControl:"3600"
+          }
+        );
 
 
-      if (upload.error) {
+      if(uploadError){
 
-        message(
+        showMessage(
           "uploadStatus",
           "Error al subir " +
           file.name +
           ": " +
-          upload.error.message,
-          "error"
+          uploadError.message,
+          true
         );
 
         return;
+
       }
 
 
-      const publicUrl =
-        supabaseClient
+      const {
+        data:publicData
+      } =
+        sb
           .storage
           .from("Galeria")
-          .getPublicUrl(path)
-          .data
-          .publicUrl;
+          .getPublicUrl(path);
 
 
-      const insert =
-        await supabaseClient
-          .from("galeria_fotos")
-          .insert({
-            url: publicUrl,
-            caption,
-            active: true
-          });
+      const publicUrl =
+        publicData.publicUrl;
 
 
-      if (insert.error) {
+      const {
+        error:insertError
+      } = await sb
+        .from("galeria_fotos")
+        .insert({
 
-        message(
+          titulo:
+            title ||
+            file.name,
+
+          categoria:
+            category,
+
+          ruta:
+            path,
+
+          url:
+            publicUrl
+
+        });
+
+
+      if(insertError){
+
+        showMessage(
           "uploadStatus",
-          "La foto se subió a Storage pero no pudo registrarse: " +
-          insert.error.message,
-          "error"
+          "La foto se subió a Storage pero no se pudo registrar: " +
+          insertError.message,
+          true
         );
 
         return;
+
       }
 
     }
 
 
     $("photoInput").value = "";
-    $("photoCaption").value = "";
+    $("photoTitle").value = "";
 
-    message(
+    showMessage(
       "uploadStatus",
       "Fotos cargadas correctamente."
     );
-
 
     await loadGallery();
 
@@ -1918,194 +2236,94 @@ $("refreshGallery").onclick =
   loadGallery;
 
 
-/* =========================
-   DUELOS
-========================= */
-
-async function loadDuels() {
-
-  const container =
-    $("duelsList");
-
-  container.innerHTML =
-    `<div class="loading">Cargando duelos...</div>`;
-
-
-  const { data, error } =
-    await supabaseClient
-      .from("duel_matches")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
-
-  if (error) {
-
-    container.innerHTML = "";
-
-    message(
-      "duelsList",
-      error.message,
-      "error"
-    );
-
-    return;
-  }
-
-
-  container.innerHTML =
-    data?.length
-      ? data.map(d => `
-          <div class="card">
-
-            <h3>
-              ⚔️ Duelo
-            </h3>
-
-            <p>
-              Estado:
-              <strong>
-                ${escapeHTML(
-                  String(
-                    d.status ?? ""
-                  )
-                )}
-              </strong>
-            </p>
-
-            <p>
-              Jugador 1:
-              ${escapeHTML(
-                String(
-                  d.player1_id ?? ""
-                )
-              )}
-            </p>
-
-            <p>
-              Jugador 2:
-              ${escapeHTML(
-                String(
-                  d.player2_id ?? ""
-                )
-              )}
-            </p>
-
-            <p>
-              Marcador:
-              ${d.score1 ?? 0}
-              -
-              ${d.score2 ?? 0}
-            </p>
-
-          </div>
-        `).join("")
-      : `<div class="empty">
-          No hay duelos registrados.
-        </div>`;
-
-}
-
-
-$("refreshDuels").onclick =
-  loadDuels;
-
-
-/* =========================
+/* =========================================================
    RESERVAS
-========================= */
+========================================================= */
 
-async function loadReservations() {
+async function loadReservations(){
 
   const container =
     $("reservasList");
 
   container.innerHTML =
-    `<div class="loading">Cargando reservas...</div>`;
+    '<div class="loading">Cargando reservas...</div>';
 
+  const {
+    data,
+    error
+  } = await sb
+    .from("reservas")
+    .select("*")
+    .order("fecha",{ascending:false});
 
-  const { data, error } =
-    await supabaseClient
-      .from("reservas")
-      .select("*")
-      .order("fecha", {
-        ascending: false
-      });
-
-
-  if (error) {
+  if(error){
 
     container.innerHTML =
       `<div class="card error">
-        ${escapeHTML(error.message)}
+        ${esc(error.message)}
       </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay reservas.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
-    data?.length
-      ? data.map(r => `
-          <div class="card">
+    data.map(r => `
 
-            <h3>
-              ${escapeHTML(
-                r.nombre || ""
-              )}
-            </h3>
+      <div class="card">
 
-            <p>
-              Teléfono:
-              ${escapeHTML(
-                r.telefono || ""
-              )}
-            </p>
+        <h3>
+          📅 ${esc(r.nombre)}
+        </h3>
 
-            <p>
-              Fecha:
-              ${escapeHTML(
-                String(
-                  r.fecha || ""
-                )
-              )}
-            </p>
+        <p>
+          Teléfono:
+          ${esc(r.telefono)}
+        </p>
 
-            <p>
-              Hora:
-              ${escapeHTML(
-                String(
-                  r.Hora ||
-                  r.hora ||
-                  ""
-                )
-              )}
-            </p>
+        <p>
+          Fecha:
+          ${esc(r.fecha)}
+        </p>
 
-            <p>
-              Servicio:
-              ${escapeHTML(
-                r.Servicio ||
-                r.servicio ||
-                ""
-              )}
-            </p>
+        <p>
+          Hora:
+          ${esc(r.hora)}
+        </p>
 
-            <p>
-              Estado:
-              ${escapeHTML(
-                r.Estado ||
-                r.estado ||
-                ""
-              )}
-            </p>
+        <p>
+          Servicio:
+          ${esc(r.servicio)}
+        </p>
 
-          </div>
-        `).join("")
-      : `<div class="empty">
-          No hay reservas.
-        </div>`;
+        <p>
+          Personas:
+          ${r.cantidad_personas || 1}
+        </p>
+
+        <p>
+          Estado:
+          <strong>
+            ${esc(r.estado)}
+          </strong>
+        </p>
+
+        <p>
+          ${esc(r.notas)}
+        </p>
+
+      </div>
+
+    `).join("");
 
 }
 
@@ -2114,87 +2332,92 @@ $("refreshReservations").onclick =
   loadReservations;
 
 
-/* =========================
+/* =========================================================
    PEDIDOS
-========================= */
+========================================================= */
 
-async function loadOrders() {
+async function loadOrders(){
 
   const container =
     $("pedidosList");
 
   container.innerHTML =
-    `<div class="loading">Cargando pedidos...</div>`;
+    '<div class="loading">Cargando pedidos...</div>';
 
+  const {
+    data,
+    error
+  } = await sb
+    .from("pedidos")
+    .select("*")
+    .order("created_at",{ascending:false});
 
-  const { data, error } =
-    await supabaseClient
-      .from("pedidos")
-      .select("*")
-      .order("created_at", {
-        ascending: false
-      });
-
-
-  if (error) {
+  if(error){
 
     container.innerHTML =
       `<div class="card error">
-        ${escapeHTML(error.message)}
+        ${esc(error.message)}
       </div>`;
 
     return;
+
   }
 
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay pedidos.</div>';
+
+    return;
+
+  }
 
   container.innerHTML =
-    data?.length
-      ? data.map(p => `
-          <div class="card">
+    data.map(order => `
 
-            <h3>
-              🛒 Pedido
-            </h3>
+      <div class="card">
 
-            <p>
-              ${escapeHTML(
-                String(
-                  p.nombre || ""
-                )
-              )}
-            </p>
+        <h3>🛒 Pedido</h3>
 
-            <p>
-              ${escapeHTML(
-                String(
-                  p.pedido || ""
-                )
-              )}
-            </p>
+        <p>
+          Cliente:
+          ${esc(order.nombre_cliente)}
+        </p>
 
-            <p>
-              Estado:
-              ${escapeHTML(
-                String(
-                  p.estado || ""
-                )
-              )}
-            </p>
+        <p>
+          Teléfono:
+          ${esc(order.telefono)}
+        </p>
 
-            <p>
-              Total:
-              ${escapeHTML(
-                String(
-                  p.total ?? ""
-                )
-              )}
-            </p>
+        <p>
+          Tipo:
+          ${esc(order.tipo)}
+        </p>
 
-          </div>
-        `).join("")
-      : `<div class="empty">
-          No hay pedidos.
-        </div>`;
+        <p>
+          Estado:
+          <strong>
+            ${esc(order.estado)}
+          </strong>
+        </p>
+
+        <p>
+          Total:
+          $${esc(order.total)}
+        </p>
+
+        <p>
+          Mesa:
+          ${esc(order.mesa)}
+        </p>
+
+        <p>
+          ${esc(order.notas)}
+        </p>
+
+      </div>
+
+    `).join("");
 
 }
 
@@ -2203,49 +2426,40 @@ $("refreshOrders").onclick =
   loadOrders;
 
 
-/* =========================
+/* =========================================================
    CARGA GENERAL
-========================= */
+========================================================= */
 
-async function loadSection(id) {
+async function loadSection(id){
 
-  switch (id) {
+  switch(id){
 
     case "mesas":
-      await renderTables();
-      break;
+      return loadTables();
 
     case "juegos":
-      await loadGames();
-      break;
+      return loadGames();
 
     case "trivia":
-      await loadTrivia();
-      break;
+      return loadTrivia();
 
     case "duelos":
-      await loadDuels();
-      break;
+      return loadDuels();
 
     case "torneos":
-      await loadTournaments();
-      break;
+      return loadTournaments();
 
     case "premios":
-      await loadPrizes();
-      break;
+      return loadPrizes();
 
     case "galeria":
-      await loadGallery();
-      break;
+      return loadGallery();
 
     case "reservas":
-      await loadReservations();
-      break;
+      return loadReservations();
 
     case "pedidos":
-      await loadOrders();
-      break;
+      return loadOrders();
 
   }
 
@@ -2260,43 +2474,17 @@ $("refreshAll").onclick =
         ".panel.active"
       );
 
-    if (active) {
-      await loadSection(
-        active.id
-      );
-    }
+    if(active)
+      await loadSection(active.id);
 
   };
 
 
-/* =========================
-   UTILIDADES
-========================= */
-
-function escapeHTML(value) {
-
-  return String(value ?? "")
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
-
-}
-
-
-function escapeAttribute(value) {
-
-  return escapeHTML(value);
-
-}
-
-
-/* =========================
+/* =========================================================
    INICIO
-========================= */
+========================================================= */
 
-showTab("mesas");
+checkSession();
 
 </script>
 
