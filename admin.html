@@ -1,928 +1,273 @@
+<!-- admin.html COMPLETO -->
 <!doctype html>
 <html lang="es">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pool & Beach | Administración</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-:root{
---bg:#06131e;
---p:#0d2939;
---p2:#12364a;
---line:#28556b;
---sky:#5edcff;
---green:#62e6a1;
---gold:#ffd166;
---red:#ff7182;
---txt:#f4fbff;
---muted:#9db9c7
-}
-
-*{
-box-sizing:border-box
-}
-
-body{
-margin:0;
-background:linear-gradient(180deg,#0b2a3a,#031018);
-color:var(--txt);
-font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif
-}
-
-.app{
-width:min(1200px,94%);
-margin:auto;
-padding:14px 0 60px
-}
-
-.top{
-display:flex;
-justify-content:space-between;
-gap:12px;
-align-items:center
-}
-
-.brand{
-font-size:23px;
-font-weight:950
-}
-
-.brand span{
-color:var(--sky)
-}
-
-.actions,
-.row{
-display:flex;
-gap:8px;
-flex-wrap:wrap;
-align-items:center
-}
-
-.status{
-padding:7px 10px;
-border-radius:99px;
-border:1px solid var(--line);
-color:var(--sky);
-font-size:11px
-}
-
-.btn,
-.tab{
-border:0;
-border-radius:12px;
-padding:11px 14px;
-font-weight:900;
-cursor:pointer
-}
-
-.btn{
-background:var(--sky);
-color:#05202c;
-transition:
-transform .15s,
-opacity .15s,
-box-shadow .15s;
-box-shadow:0 5px 14px #0002
-}
-
-.btn:hover{
-transform:translateY(-1px);
-opacity:.95
-}
-
-.btn:active{
-transform:translateY(0);
-box-shadow:none
-}
-
-.btn:disabled{
-opacity:.5;
-cursor:not-allowed;
-transform:none
-}
-
-.btn.dark,
-.tab{
-background:#102c3d;
-color:var(--txt);
-border:1px solid var(--line)
-}
-
-.btn.green{
-background:var(--green);
-color:#052116
-}
-
-.btn.gold{
-background:var(--gold);
-color:#2c2200
-}
-
-.btn.red{
-background:var(--red);
-color:#fff
-}
-
-.hero,
-.card{
-background:linear-gradient(145deg,var(--p2),var(--p));
-border:1px solid var(--line);
-border-radius:18px;
-padding:17px;
-box-shadow:0 12px 30px #0004
-}
-
-.hero{
-margin:14px 0
-}
-
-.hero h1{
-margin:0 0 5px
-}
-
-.muted,
-small{
-color:var(--muted)
-}
-
-.tabs{
-display:flex;
-gap:7px;
-overflow:auto;
-padding:4px 0 9px;
-position:sticky;
-top:0;
-z-index:10;
-background:#06131ee8;
-backdrop-filter:blur(10px)
-}
-
-.tab{
-white-space:nowrap
-}
-
-.tab.active{
-background:var(--sky);
-color:#05202c
-}
-
-.tab:hover{
-transform:translateY(-1px)
-}
-
-.view{
-display:none
-}
-
-.view.active{
-display:block
-}
-
-.cards,
-.grid2{
-display:grid;
-gap:11px
-}
-
-.cards{
-grid-template-columns:repeat(4,1fr)
-}
-
-.grid2{
-grid-template-columns:1fr 1fr
-}
-
-.metric b{
-display:block;
-font-size:29px;
-margin-top:4px
-}
-
-.input,
-select,
-textarea{
-width:100%;
-padding:11px;
-border:1px solid var(--line);
-border-radius:10px;
-background:#061722;
-color:var(--txt);
-margin:5px 0 8px
-}
-
-textarea{
-min-height:80px;
-resize:vertical
-}
-
-label{
-display:block;
-color:var(--muted);
-font-size:12px;
-margin-top:7px
-}
-
-.table-wrap{
-overflow:auto
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-min-width:700px
-}
-
-th,
-td{
-padding:10px;
-border-bottom:1px solid #234759;
-text-align:left;
-vertical-align:top
-}
-
-th{
-color:var(--muted)
-}
-
-.notice{
-padding:10px;
-border-radius:11px;
-background:#102b3c;
-border:1px solid var(--line);
-margin:7px 0
-}
-
-.hidden{
-display:none!important
-}
-
-.item{
-padding:12px 0;
-border-bottom:1px solid #214657
-}
-
-.item:last-child{
-border:0
-}
-
-.thumb{
-width:100%;
-max-height:190px;
-object-fit:cover;
-border-radius:12px
-}
-
-.gallery{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:10px
-}
-
-.gallery figure{
-margin:0
-}
-
-.gallery img{
-width:100%;
-aspect-ratio:1;
-object-fit:cover;
-border-radius:12px
-}
-
-.login{
-max-width:430px;
-margin:8vh auto
-}
-
-.login h2{
-margin-bottom:8px
-}
-
-.login button{
-min-height:46px
-}
-
-@media(max-width:850px){
-
-.cards{
-grid-template-columns:1fr 1fr
-}
-
-}
-
-@media(max-width:650px){
-
-.grid2,
-.gallery,
-.cards{
-grid-template-columns:1fr
-}
-
-.top{
-align-items:flex-start;
-flex-direction:column
-}
-
-.top .actions{
-width:100%
-}
-
-.top .actions .btn{
-flex:1
-}
-
-.app{
-width:94%
-}
-
-}
+:root{--bg:#06131e;--p:#0d2939;--p2:#12364a;--line:#28556b;--sky:#5edcff;--green:#62e6a1;--gold:#ffd166;--red:#ff7182;--txt:#f4fbff;--muted:#9db9c7}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#0b2a3a,#031018);color:var(--txt);font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif}
+.app{width:min(1200px,94%);margin:auto;padding:14px 0 60px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.brand{font-size:23px;font-weight:950}.brand span{color:var(--sky)}
+.actions,.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.status{padding:7px 10px;border-radius:99px;border:1px solid var(--line);color:var(--sky);font-size:11px}
+.btn,.tab{border:0;border-radius:12px;padding:11px 14px;font-weight:900;cursor:pointer}
+.btn{background:var(--sky);color:#05202c;transition:.15s;box-shadow:0 5px 14px #0002}
+.btn:hover{transform:translateY(-1px);opacity:.95}
+.btn:active{transform:translateY(0);box-shadow:none}
+.btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.btn.dark,.tab{background:#102c3d;color:var(--txt);border:1px solid var(--line)}
+.btn.green{background:var(--green);color:#052116}
+.btn.gold{background:var(--gold);color:#2c2200}
+.btn.red{background:var(--red);color:#fff}
+.hero,.card{background:linear-gradient(145deg,var(--p2),var(--p));border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 12px 30px #0004}
+.hero{margin:14px 0}.hero h1{margin:0 0 5px}
+.muted,small{color:var(--muted)}
+.tabs{display:flex;gap:7px;overflow:auto;padding:4px 0 9px;position:sticky;top:0;z-index:10;background:#06131ee8;backdrop-filter:blur(10px)}
+.tab{white-space:nowrap}.tab.active{background:var(--sky);color:#05202c}.tab:hover{transform:translateY(-1px)}
+.view{display:none}.view.active{display:block}
+.cards,.grid2{display:grid;gap:11px}.cards{grid-template-columns:repeat(4,1fr)}.grid2{grid-template-columns:1fr 1fr}
+.metric b{display:block;font-size:29px;margin-top:4px}
+.input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:10px;background:#061722;color:var(--txt);margin:5px 0 8px}
+textarea{min-height:80px;resize:vertical}
+label{display:block;color:var(--muted);font-size:12px;margin-top:7px}
+.table-wrap{overflow:auto}
+table{width:100%;border-collapse:collapse;min-width:700px}
+th,td{padding:10px;border-bottom:1px solid #234759;text-align:left;vertical-align:top}
+th{color:var(--muted)}
+.notice{padding:10px;border-radius:11px;background:#102b3c;border:1px solid var(--line);margin:7px 0}
+.hidden{display:none!important}
+.item{padding:12px 0;border-bottom:1px solid #214657}.item:last-child{border:0}
+.thumb{width:100%;max-height:190px;object-fit:cover;border-radius:12px}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.gallery figure{margin:0}.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
+.login{max-width:430px;margin:8vh auto}
+@media(max-width:850px){.cards{grid-template-columns:1fr 1fr}}
+@media(max-width:650px){.grid2,.gallery,.cards{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.top .actions{width:100%}.top .actions .btn{flex:1}.app{width:94%}}
 </style>
 </head>
 
 <body>
 
 <div id="login" class="login card">
-
-<div
-class="brand"
-style="text-align:center">
-POOL <span>&</span> BEACH
-</div>
-
-<h2 style="text-align:center">
-⚙️ Administración
-</h2>
-
-<p class="notice">
-Ingresá con tu cuenta autorizada.
-</p>
+<div class="brand" style="text-align:center">POOL <span>&</span> BEACH</div>
+<h2 style="text-align:center">⚙️ Administración</h2>
+<p class="notice">Ingresá con tu cuenta autorizada.</p>
 
 <form id="loginForm">
+<label for="email">Email</label>
+<input id="email" class="input" type="email" autocomplete="username" required>
 
-<label for="email">
-Email
-</label>
+<label for="password">Contraseña</label>
+<input id="password" class="input" type="password" autocomplete="current-password" required>
 
-<input
-id="email"
-class="input"
-type="email"
-autocomplete="username"
-required>
-
-<label for="password">
-Contraseña
-</label>
-
-<input
-id="password"
-class="input"
-type="password"
-autocomplete="current-password"
-required>
-
-<button
-id="loginButton"
-type="submit"
-class="btn"
-style="width:100%">
+<button id="loginButton" type="submit" class="btn" style="width:100%">
 Iniciar sesión
 </button>
 
-<p
-id="loginMsg"
-class="notice hidden">
-</p>
-
+<p id="loginMsg" class="notice hidden"></p>
 </form>
-
 </div>
-
 
 <div id="app" class="app hidden">
 
 <div class="top">
-
 <div>
-
-<div class="brand">
-POOL <span>&</span> BEACH
-</div>
-
-<small>
-Panel administrativo
-</small>
-
+<div class="brand">POOL <span>&</span> BEACH</div>
+<small>Panel administrativo</small>
 </div>
 
 <div class="actions">
-
-<span
-id="status"
-class="status">
-CONECTANDO
-</span>
-
-<a
-href="index.html"
-class="btn dark">
-Ver sitio
-</a>
-
-<button
-type="button"
-id="logout"
-class="btn red">
-Cerrar sesión
-</button>
-
+<span id="status" class="status">CONECTANDO</span>
+<a href="index.html" class="btn dark">Ver sitio</a>
+<button type="button" id="logout" class="btn red">Cerrar sesión</button>
 </div>
-
 </div>
-
 
 <section class="hero">
-
-<h1>
-📊 Administración
-</h1>
-
+<h1>📊 Administración</h1>
 <p class="muted">
 Productos, pedidos, reservas, promociones y fotos.
 Las actividades son promocionales: no hay sistema de juegos.
 </p>
-
 </section>
-
 
 <nav class="tabs">
-
-<button
-type="button"
-class="tab active"
-data-view="dashboard">
-🏠 Inicio
-</button>
-
-<button
-type="button"
-class="tab"
-data-view="reservas">
-📅 Reservas
-</button>
-
-<button
-type="button"
-class="tab"
-data-view="pedidos">
-🛒 Pedidos
-</button>
-
-<button
-type="button"
-class="tab"
-data-view="productos">
-🍔 Productos
-</button>
-
-<button
-type="button"
-class="tab"
-data-view="promos">
-🔥 Promos
-</button>
-
-<button
-type="button"
-class="tab"
-data-view="fotos">
-📸 Fotos
-</button>
-
+<button type="button" class="tab active" data-view="dashboard">🏠 Inicio</button>
+<button type="button" class="tab" data-view="reservas">📅 Reservas</button>
+<button type="button" class="tab" data-view="pedidos">🛒 Pedidos</button>
+<button type="button" class="tab" data-view="productos">🍔 Productos</button>
+<button type="button" class="tab" data-view="promos">🔥 Promos</button>
+<button type="button" class="tab" data-view="fotos">📸 Fotos</button>
 </nav>
 
-
-<section
-id="dashboard"
-class="view active">
-
+<section id="dashboard" class="view active">
 <div class="cards">
-
-<div class="card metric">
-<small>Reservas pendientes</small>
-<b id="mR">0</b>
+<div class="card metric"><small>Reservas pendientes</small><b id="mR">0</b></div>
+<div class="card metric"><small>Pedidos pendientes</small><b id="mP">0</b></div>
+<div class="card metric"><small>Productos</small><b id="mProd">0</b></div>
+<div class="card metric"><small>Fotos</small><b id="mF">0</b></div>
 </div>
 
-<div class="card metric">
-<small>Pedidos pendientes</small>
-<b id="mP">0</b>
+<div class="card" style="margin-top:11px">
+<button type="button" class="btn" onclick="refreshAll()">🔄 Actualizar todo</button>
+<div id="dashMsg" class="notice">Panel listo.</div>
 </div>
-
-<div class="card metric">
-<small>Productos</small>
-<b id="mProd">0</b>
-</div>
-
-<div class="card metric">
-<small>Fotos</small>
-<b id="mF">0</b>
-</div>
-
-</div>
-
-<div
-class="card"
-style="margin-top:11px">
-
-<button
-type="button"
-class="btn"
-onclick="refreshAll()">
-🔄 Actualizar todo
-</button>
-
-<div
-id="dashMsg"
-class="notice">
-Panel listo.
-</div>
-
-</div>
-
 </section>
 
-
-<section
-id="reservas"
-class="view">
-
+<section id="reservas" class="view">
 <div class="card">
-
-<h2>
-📅 Reservas
-</h2>
-
+<h2>📅 Reservas</h2>
 <div class="table-wrap">
-
 <table>
-
-<thead>
-
-<tr>
-<th>Fecha</th>
-<th>Cliente</th>
-<th>Teléfono</th>
-<th>Personas</th>
-<th>Servicio</th>
-<th>Estado</th>
-<th></th>
-</tr>
-
-</thead>
-
+<thead><tr><th>Fecha</th><th>Cliente</th><th>Teléfono</th><th>Personas</th><th>Servicio</th><th>Estado</th><th>Notas</th></tr></thead>
 <tbody id="reservasTable"></tbody>
-
 </table>
-
 </div>
-
 </div>
-
 </section>
 
-
-<section
-id="pedidos"
-class="view">
-
+<section id="pedidos" class="view">
 <div class="card">
-
-<h2>
-🛒 Pedidos
-</h2>
-
+<h2>🛒 Pedidos</h2>
 <div class="table-wrap">
-
 <table>
-
-<thead>
-
-<tr>
-<th>Fecha</th>
-<th>Cliente</th>
-<th>Teléfono</th>
-<th>Entrega</th>
-<th>Total</th>
-<th>Estado</th>
-<th></th>
-</tr>
-
-</thead>
-
+<thead><tr><th>Fecha</th><th>Cliente</th><th>Teléfono</th><th>Entrega</th><th>Total</th><th>Estado</th><th></th></tr></thead>
 <tbody id="ordersTable"></tbody>
-
 </table>
-
 </div>
-
 </div>
-
 </section>
 
-
-<section
-id="productos"
-class="view">
-
+<section id="productos" class="view">
 <div class="grid2">
 
 <div class="card">
+<h2>🍔 Nuevo producto</h2>
 
-<h2>
-🍔 Nuevo producto
-</h2>
+<label>Nombre</label>
+<input id="pn" class="input">
 
-<label for="pn">
-Nombre
-</label>
+<label>Categoría</label>
+<input id="pc" class="input" placeholder="Pizza, hamburguesa, bebida...">
 
-<input
-id="pn"
-class="input">
+<label>Descripción</label>
+<textarea id="pd" class="input"></textarea>
 
-<label for="pc">
-Categoría
-</label>
+<label>Precio</label>
+<input id="pp" class="input" type="number" min="0">
 
-<input
-id="pc"
-class="input"
-placeholder="Pizza, hamburguesa, bebida...">
+<label><input id="pa" type="checkbox" checked> Activo y disponible</label>
 
-<label for="pd">
-Descripción
-</label>
-
-<textarea
-id="pd"
-class="input">
-</textarea>
-
-<label for="pp">
-Precio
-</label>
-
-<input
-id="pp"
-class="input"
-type="number"
-min="0">
-
-<label>
-<input
-id="pa"
-type="checkbox"
-checked>
-Activo y disponible
-</label>
-
-<button
-type="button"
-class="btn gold"
-onclick="createProduct()">
-Guardar producto
-</button>
-
-<p
-id="prodMsg"
-class="notice hidden">
-</p>
-
+<button type="button" class="btn gold" onclick="createProduct()">Guardar producto</button>
+<p id="prodMsg" class="notice hidden"></p>
 </div>
 
-
 <div class="card">
-
-<h2>
-Productos actuales
-</h2>
-
+<h2>Productos actuales</h2>
 <div id="productsList"></div>
-
 </div>
 
 </div>
-
 </section>
 
-
-<section
-id="promos"
-class="view">
-
+<section id="promos" class="view">
 <div class="grid2">
 
 <div class="card">
+<h2>🔥 Nueva promoción</h2>
 
-<h2>
-🔥 Nueva promoción
-</h2>
+<label>Título</label>
+<input id="promoTitle" class="input">
 
-<label for="promoTitle">
-Título
-</label>
+<label>Descripción</label>
+<textarea id="promoDesc" class="input"></textarea>
 
-<input
-id="promoTitle"
-class="input">
+<label>Precio opcional</label>
+<input id="promoPrice" class="input" type="number" min="0">
 
-<label for="promoDesc">
-Descripción
-</label>
+<label><input id="promoActive" type="checkbox" checked> Publicada</label>
 
-<textarea
-id="promoDesc"
-class="input">
-</textarea>
-
-<label for="promoPrice">
-Precio opcional
-</label>
-
-<input
-id="promoPrice"
-class="input"
-type="number"
-min="0">
-
-<label>
-<input
-id="promoActive"
-type="checkbox"
-checked>
-Publicada
-</label>
-
-<button
-type="button"
-class="btn gold"
-onclick="createPromo()">
-Guardar promoción
-</button>
-
-<p
-id="promoMsg"
-class="notice hidden">
-</p>
-
+<button type="button" class="btn gold" onclick="createPromo()">Guardar promoción</button>
+<p id="promoMsg" class="notice hidden"></p>
 </div>
 
-
 <div class="card">
-
-<h2>
-Promociones actuales
-</h2>
-
+<h2>Promociones actuales</h2>
 <div id="promosList"></div>
-
 </div>
 
 </div>
-
 </section>
 
-
-<section
-id="fotos"
-class="view">
-
+<section id="fotos" class="view">
 <div class="grid2">
 
 <div class="card">
-
-<h2>
-📸 Subir foto
-</h2>
+<h2>📸 Subir foto</h2>
 
 <p class="muted">
 Podés elegir una foto directamente desde el celular.
 Se guarda en el bucket <strong>Galeria</strong>.
 </p>
 
-<label for="photoTitle">
-Título
-</label>
+<label>Título</label>
+<input id="photoTitle" class="input" placeholder="Ej.: Pizza, local, pool...">
 
-<input
-id="photoTitle"
-class="input"
-placeholder="Ej.: Pizza, local, pool...">
+<label>Foto</label>
+<input id="photoFile" class="input" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
 
-<label for="photoFile">
-Foto
-</label>
+<img id="preview" class="thumb hidden" alt="Vista previa">
 
-<input
-id="photoFile"
-class="input"
-type="file"
-accept="image/jpeg,image/png,image/webp,image/gif">
-
-<img
-id="preview"
-class="thumb hidden"
-alt="Vista previa">
-
-<button
-type="button"
-class="btn green"
-onclick="uploadPhoto()">
-⬆️ Subir foto
-</button>
-
-<p
-id="photoMsg"
-class="notice hidden">
-</p>
-
+<button type="button" class="btn green" onclick="uploadPhoto()">⬆️ Subir foto</button>
+<p id="photoMsg" class="notice hidden"></p>
 </div>
-
 
 <div class="card">
-
-<h2>
-Galería publicada
-</h2>
-
-<div
-id="galleryList"
-class="gallery">
+<h2>Galería publicada</h2>
+<div id="galleryList" class="gallery"></div>
 </div>
 
 </div>
-
-</div>
-
 </section>
 
 </div>
 
-
 <script>
+const SUPABASE_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
+const SUPABASE_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-const SUPABASE_URL =
-'https://nmpakeovqkdajtswjpgm.supabase.co';
-
-const SUPABASE_KEY =
-'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
-
-const db =
-window.supabase.createClient(
+const db=window.supabase.createClient(
 SUPABASE_URL,
 SUPABASE_KEY
 );
-
 
 function $(id){
 return document.getElementById(id);
 }
 
-
 function esc(v){
-
-return String(v ?? '')
+return String(v??'')
 .replaceAll('&','&amp;')
 .replaceAll('<','&lt;')
 .replaceAll('>','&gt;')
 .replaceAll('"','&quot;')
-.replaceAll("'",'&#039;');
-
+.replaceAll("'","&#039;");
 }
-
 
 function money(v){
-
-return '$' +
-Number(v || 0)
-.toLocaleString('es-AR');
-
+return '$'+Number(v||0).toLocaleString('es-AR');
 }
-
 
 function msg(id,text){
-
-const element=$(id);
-
-element.textContent=text;
-element.classList.remove('hidden');
-
+const el=$(id);
+el.textContent=text;
+el.classList.remove('hidden');
 }
-
 
 async function login(){
 
@@ -930,77 +275,41 @@ const email=$('email').value.trim();
 const password=$('password').value;
 const button=$('loginButton');
 
-if(!email || !password){
-
-msg(
-'loginMsg',
-'❌ Ingresá email y contraseña.'
-);
-
+if(!email||!password){
+msg('loginMsg','❌ Ingresá email y contraseña.');
 return;
 }
 
 button.disabled=true;
 button.textContent='Ingresando...';
-
 $('loginMsg').classList.add('hidden');
 
 try{
 
-const {
-data,
-error
-}=await db.auth.signInWithPassword({
-
-email,
-password
-
+const {data,error}=await db.auth.signInWithPassword({
+email:email,
+password:password
 });
-
 
 if(error){
 
-let text=
-error.message ||
-'No se pudo iniciar sesión.';
+let text=error.message||'No se pudo iniciar sesión.';
 
-if(
-/invalid login credentials/i.test(text)
-){
-
-text=
-'Email o contraseña incorrectos.';
-
+if(/invalid login credentials/i.test(text)){
+text='Email o contraseña incorrectos.';
 }
 
-if(
-/email not confirmed/i.test(text)
-){
-
-text=
-'El email todavía no está confirmado en Supabase.';
-
+if(/email not confirmed/i.test(text)){
+text='El email todavía no está confirmado en Supabase.';
 }
 
-msg(
-'loginMsg',
-'❌ '+text
-);
-
+msg('loginMsg','❌ '+text);
 return;
-
 }
 
-
-if(!data || !data.session){
-
-msg(
-'loginMsg',
-'❌ Supabase no devolvió una sesión válida.'
-);
-
+if(!data||!data.session){
+msg('loginMsg','❌ Supabase no devolvió una sesión válida.');
 return;
-
 }
 
 await showApp();
@@ -1018,156 +327,80 @@ button.disabled=false;
 button.textContent='Iniciar sesión';
 
 }
-
 }
 
-
-$('loginForm').addEventListener(
-'submit',
-function(e){
-
+$('loginForm').addEventListener('submit',function(e){
 e.preventDefault();
 login();
+});
 
-}
-);
-
-
-$('logout').onclick=
-async function(){
-
+$('logout').onclick=async function(){
 await db.auth.signOut();
-
 location.reload();
-
 };
 
+db.auth.onAuthStateChange(function(event,session){
 
-db.auth.onAuthStateChange(
-function(event,session){
+if(!session)return;
 
-if(!session)
-return;
-
-if(
-$('app').classList.contains('hidden')
-){
-
+if($('app').classList.contains('hidden')){
 showApp();
-
 }
 
-}
-);
-
+});
 
 async function showApp(){
 
-$('login')
-.classList.add('hidden');
-
-$('app')
-.classList.remove('hidden');
-
-$('status').textContent=
-'CONECTADO';
+$('login').classList.add('hidden');
+$('app').classList.remove('hidden');
+$('status').textContent='CONECTADO';
 
 await refreshAll();
-
 }
 
-
-document
-.querySelectorAll('.tab')
-.forEach(function(tab){
+document.querySelectorAll('.tab').forEach(function(tab){
 
 tab.onclick=function(){
 
-document
-.querySelectorAll('.tab')
-.forEach(function(x){
-
+document.querySelectorAll('.tab').forEach(function(x){
 x.classList.remove('active');
-
 });
 
-document
-.querySelectorAll('.view')
-.forEach(function(x){
-
+document.querySelectorAll('.view').forEach(function(x){
 x.classList.remove('active');
-
 });
 
 tab.classList.add('active');
-
-$(tab.dataset.view)
-.classList.add('active');
+$(tab.dataset.view).classList.add('active');
 
 };
 
 });
-
 
 async function createProduct(){
 
 const payload={
-
-nombre:
-$('pn').value.trim(),
-
-categoria:
-$('pc').value.trim(),
-
-descripcion:
-$('pd').value.trim(),
-
-precio:
-Number($('pp').value || 0),
-
-activo:
-$('pa').checked,
-
-disponible:
-$('pa').checked
-
+nombre:$('pn').value.trim(),
+categoria:$('pc').value.trim(),
+descripcion:$('pd').value.trim(),
+precio:Number($('pp').value||0),
+activo:$('pa').checked,
+disponible:$('pa').checked
 };
 
-
 if(!payload.nombre){
-
-msg(
-'prodMsg',
-'❌ Falta el nombre.'
-);
-
+msg('prodMsg','❌ Falta el nombre.');
 return;
-
 }
 
-
-const r=
-await db
-.from('productos')
-.insert(payload);
-
+const r=await db.from('productos').insert(payload);
 
 if(r.error){
-
-msg(
-'prodMsg',
-'❌ '+r.error.message
-);
-
+msg('prodMsg','❌ '+r.error.message);
 return;
-
 }
 
-
-msg(
-'prodMsg',
-'✅ Producto guardado.'
-);
+msg('prodMsg','✅ Producto guardado.');
 
 $('pn').value='';
 $('pc').value='';
@@ -1175,852 +408,448 @@ $('pd').value='';
 $('pp').value='';
 
 await loadProducts();
-
 }
-
 
 async function loadProducts(){
 
-const r=
-await db
+const r=await db
 .from('productos')
 .select('*')
 .order('categoria')
 .order('nombre');
 
-
 if(r.error){
 
 $('productsList').innerHTML=
-'<div class="notice">❌ '+
-esc(r.error.message)+
-'</div>';
+'<div class="notice">❌ '+esc(r.error.message)+'</div>';
 
 return;
-
 }
 
+const rows=r.data||[];
 
-const rows=r.data || [];
+$('mProd').textContent=rows.length;
 
-$('mProd').textContent=
-rows.length;
-
-
-$('productsList').innerHTML=
-
-rows.map(function(p){
+$('productsList').innerHTML=rows.map(function(p){
 
 return `
-
 <div class="item">
-
-<strong>
-${esc(p.nombre)}
-</strong>
-
-· ${money(p.precio)}
-
+<strong>${esc(p.nombre)}</strong> · ${money(p.precio)}
 <br>
-
 <small>
-
-${esc(p.categoria || '')}
-
-·
-
-${p.activo && p.disponible
-?'Disponible'
-:'Oculto'}
-
+${esc(p.categoria||'')} ·
+${p.activo&&p.disponible?'Disponible':'Oculto'}
 </small>
 
-<div
-class="row"
-style="margin-top:7px">
+<div class="row" style="margin-top:7px">
 
 <button
 type="button"
 class="btn dark"
-onclick="toggleProduct(
-'${esc(p.id)}',
-${!p.activo}
-)">
-
-${p.activo
-?'Ocultar'
-:'Publicar'}
-
+onclick="toggleProduct('${esc(p.id)}',${!p.activo})">
+${p.activo?'Ocultar':'Publicar'}
 </button>
 
 <button
 type="button"
 class="btn red"
-onclick="deleteProduct(
-'${esc(p.id)}'
-)">
-
+onclick="deleteProduct('${esc(p.id)}')">
 Eliminar
-
 </button>
 
 </div>
-
 </div>
-
 `;
 
-}).join('') ||
-
-'<div class="empty">
-No hay productos.
-</div>';
+}).join('')||'<div class="empty">No hay productos.</div>';
 
 }
-
 
 async function toggleProduct(id,value){
 
-const r=
-await db
+const r=await db
 .from('productos')
 .update({
-
 activo:value,
 disponible:value
-
 })
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadProducts();
-
 }
-
 
 async function deleteProduct(id){
 
-if(!confirm(
-'¿Eliminar producto?'
-))
-return;
+if(!confirm('¿Eliminar producto?'))return;
 
-
-const r=
-await db
+const r=await db
 .from('productos')
 .delete()
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadProducts();
-
 }
-
 
 async function createPromo(){
 
 const payload={
-
-titulo:
-$('promoTitle').value.trim(),
-
-descripcion:
-$('promoDesc').value.trim(),
-
-precio:
-Number($('promoPrice').value || 0) || null,
-
-activa:
-$('promoActive').checked
-
+titulo:$('promoTitle').value.trim(),
+descripcion:$('promoDesc').value.trim(),
+precio:Number($('promoPrice').value||0)||null,
+activa:$('promoActive').checked
 };
 
-
 if(!payload.titulo){
-
-msg(
-'promoMsg',
-'❌ Falta el título.'
-);
-
+msg('promoMsg','❌ Falta el título.');
 return;
-
 }
 
-
-const r=
-await db
-.from('promociones')
-.insert(payload);
-
+const r=await db.from('promociones').insert(payload);
 
 if(r.error){
-
-msg(
-'promoMsg',
-'❌ '+r.error.message
-);
-
+msg('promoMsg','❌ '+r.error.message);
 return;
-
 }
 
-
-msg(
-'promoMsg',
-'✅ Promoción guardada.'
-);
+msg('promoMsg','✅ Promoción guardada.');
 
 $('promoTitle').value='';
 $('promoDesc').value='';
 $('promoPrice').value='';
 
 await loadPromos();
-
 }
-
 
 async function loadPromos(){
 
-const r=
-await db
+const r=await db
 .from('promociones')
 .select('*')
-.order(
-'created_at',
-{ascending:false}
-);
-
+.order('created_at',{ascending:false});
 
 if(r.error){
 
 $('promosList').innerHTML=
-'<div class="notice">❌ '+
-esc(r.error.message)+
-'</div>';
+'<div class="notice">❌ '+esc(r.error.message)+'</div>';
 
 return;
-
 }
 
+const rows=r.data||[];
 
-const rows=r.data || [];
-
-
-$('promosList').innerHTML=
-
-rows.map(function(p){
+$('promosList').innerHTML=rows.map(function(p){
 
 return `
-
 <div class="item">
 
-<strong>
-${esc(p.titulo || p.nombre)}
-</strong>
+<strong>${esc(p.titulo||p.nombre)}</strong>
 
 <br>
 
 <small>
-
-${esc(p.descripcion || '')}
-
-${p.precio
-?' · '+money(p.precio)
-:''}
-
-·
-
-${p.activa
-?'Publicada'
-:'Oculta'}
-
+${esc(p.descripcion||'')}
+${p.precio?' · '+money(p.precio):''}
+· ${p.activa?'Publicada':'Oculta'}
 </small>
 
-<div
-class="row"
-style="margin-top:7px">
+<div class="row" style="margin-top:7px">
 
 <button
 type="button"
 class="btn dark"
-onclick="togglePromo(
-'${esc(p.id)}',
-${!p.activa}
-)">
-
-${p.activa
-?'Ocultar'
-:'Publicar'}
-
+onclick="togglePromo('${esc(p.id)}',${!p.activa})">
+${p.activa?'Ocultar':'Publicar'}
 </button>
 
 <button
 type="button"
 class="btn red"
-onclick="deletePromo(
-'${esc(p.id)}'
-)">
-
+onclick="deletePromo('${esc(p.id)}')">
 Eliminar
-
 </button>
 
 </div>
-
 </div>
-
 `;
 
-}).join('') ||
-
-'<div class="empty">
-No hay promociones.
-</div>';
+}).join('')||'<div class="empty">No hay promociones.</div>';
 
 }
-
 
 async function togglePromo(id,value){
 
-const r=
-await db
+const r=await db
 .from('promociones')
-.update({
-activa:value
-})
+.update({activa:value})
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadPromos();
-
 }
-
 
 async function deletePromo(id){
 
-if(!confirm(
-'¿Eliminar promoción?'
-))
-return;
+if(!confirm('¿Eliminar promoción?'))return;
 
-
-const r=
-await db
+const r=await db
 .from('promociones')
 .delete()
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadPromos();
-
 }
-
 
 async function loadOrders(){
 
-const r=
-await db
+const r=await db
 .from('pedidos')
 .select('*')
-.order(
-'created_at',
-{ascending:false}
-);
-
+.order('created_at',{ascending:false});
 
 if(r.error){
 
 $('ordersTable').innerHTML=
-'<tr><td colspan="7">❌ '+
-esc(r.error.message)+
-'</td></tr>';
+'<tr><td colspan="7">❌ '+esc(r.error.message)+'</td></tr>';
 
 return;
-
 }
 
+const rows=r.data||[];
 
-const rows=r.data || [];
-
-
-const pending=
-rows.filter(function(x){
-
-return [
+$('mP').textContent=
+rows.filter(x=>[
 'pendiente',
 'confirmado',
 'en_preparacion'
-].includes(x.estado);
+].includes(x.estado)).length;
 
-}).length;
-
-
-$('mP').textContent=
-pending;
-
-
-$('ordersTable').innerHTML=
-
-rows.map(function(o){
+$('ordersTable').innerHTML=rows.map(function(o){
 
 return `
-
 <tr>
 
+<td>${esc(o.created_at||o.creado_en||'')}</td>
+
+<td>${esc(o.nombre_cliente||'')}</td>
+
+<td>${esc(o.telefono||'')}</td>
+
 <td>
-${esc(
-o.created_at ||
-o.creado_en ||
-''
-)}
+${esc(o.tipo_entrega||'')}
+${o.direccion?'<br>'+esc(o.direccion):''}
 </td>
 
-<td>
-${esc(
-o.nombre_cliente ||
-''
-)}
-</td>
-
-<td>
-${esc(
-o.telefono ||
-''
-)}
-</td>
+<td>${money(o.total)}</td>
 
 <td>
 
-${esc(
-o.tipo_entrega ||
-''
-)}
+<select onchange="updateOrder('${esc(o.id)}',this.value)">
 
-${o.direccion
-?'<br>'+esc(o.direccion)
-:''}
-
-</td>
-
-<td>
-${money(o.total)}
-</td>
-
-<td>
-
-<select
-onchange="updateOrder(
-'${esc(o.id)}',
-this.value
-)">
-
-<option
-${o.estado==='pendiente'
-?'selected':''}>
-pendiente
-</option>
-
-<option
-${o.estado==='confirmado'
-?'selected':''}>
-confirmado
-</option>
-
-<option
-${o.estado==='en_preparacion'
-?'selected':''}>
-en_preparacion
-</option>
-
-<option
-${o.estado==='listo'
-?'selected':''}>
-listo
-</option>
-
-<option
-${o.estado==='entregado'
-?'selected':''}>
-entregado
-</option>
-
-<option
-${o.estado==='cancelado'
-?'selected':''}>
-cancelado
-</option>
+<option value="pendiente" ${o.estado==='pendiente'?'selected':''}>pendiente</option>
+<option value="confirmado" ${o.estado==='confirmado'?'selected':''}>confirmado</option>
+<option value="en_preparacion" ${o.estado==='en_preparacion'?'selected':''}>en_preparacion</option>
+<option value="listo" ${o.estado==='listo'?'selected':''}>listo</option>
+<option value="entregado" ${o.estado==='entregado'?'selected':''}>entregado</option>
+<option value="cancelado" ${o.estado==='cancelado'?'selected':''}>cancelado</option>
 
 </select>
 
 </td>
 
 <td>
-
 <button
 type="button"
 class="btn dark"
-onclick="viewOrder(
-'${esc(o.id)}'
-)">
-
+onclick="viewOrder('${esc(o.id)}')">
 Ver
-
 </button>
-
 </td>
 
 </tr>
-
 `;
 
-}).join('') ||
-
-'<tr>
-<td colspan="7">
-No hay pedidos.
-</td>
-</tr>';
+}).join('')||
+'<tr><td colspan="7">No hay pedidos.</td></tr>';
 
 }
-
 
 async function updateOrder(id,status){
 
-const r=
-await db
+const r=await db
 .from('pedidos')
-.update({
-estado:status
-})
+.update({estado:status})
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadOrders();
-
 }
-
 
 async function viewOrder(id){
 
-const r=
-await db
+const r=await db
 .from('pedidos')
 .select('*')
 .eq('id',id)
 .single();
 
-
 if(r.error){
-
 alert(r.error.message);
-
 return;
-
 }
-
 
 const o=r.data;
 
-
 alert(
-
-'Pedido de '+
-(o.nombre_cliente || 'cliente')+
-'\n\n'+
-
-JSON.stringify(
-o.items || [],
-null,
-2
-)+
-
-'\n\nNotas: '+
-(o.notas || 'Sin notas')
-
+'Pedido de '+(o.nombre_cliente||'cliente')+
+'\n\n'+JSON.stringify(o.items||[],null,2)+
+'\n\nNotas: '+(o.notas||'Sin notas')
 );
 
 }
 
-
 async function loadReservations(){
 
-const r=
-await db
+const r=await db
 .from('reservas')
 .select('*')
 .order('fecha')
 .order('hora');
 
-
 if(r.error){
 
 $('reservasTable').innerHTML=
-'<tr><td colspan="7">❌ '+
-esc(r.error.message)+
-'</td></tr>';
+'<tr><td colspan="7">❌ '+esc(r.error.message)+'</td></tr>';
 
 return;
-
 }
 
-
-const rows=r.data || [];
-
+const rows=r.data||[];
 
 $('mR').textContent=
-rows.filter(function(x){
+rows.filter(x=>x.estado==='pendiente').length;
 
-return x.estado==='pendiente';
-
-}).length;
-
-
-$('reservasTable').innerHTML=
-
-rows.map(function(x){
+$('reservasTable').innerHTML=rows.map(function(x){
 
 return `
-
 <tr>
 
-<td>
-${esc(x.fecha || '')}
-${esc(x.hora || '')}
-</td>
+<td>${esc(x.fecha||'')} ${esc(x.hora||'')}</td>
 
-<td>
-${esc(
-x.nombre ||
-x.nombre_cliente ||
-''
-)}
-</td>
+<td>${esc(x.nombre||x.nombre_cliente||'')}</td>
 
-<td>
-${esc(x.telefono || '')}
-</td>
+<td>${esc(x.telefono||'')}</td>
 
-<td>
-${esc(
-x.cantidad_personas || ''
-)}
-</td>
+<td>${esc(x.cantidad_personas||'')}</td>
 
-<td>
-${esc(x.servicio || '')}
-</td>
+<td>${esc(x.servicio||'')}</td>
 
 <td>
 
-<select
-onchange="updateReservation(
-'${esc(x.id)}',
-this.value
-)">
+<select onchange="updateReservation('${esc(x.id)}',this.value)">
 
-<option
-${x.estado==='pendiente'
-?'selected':''}>
-pendiente
-</option>
-
-<option
-${x.estado==='confirmada'
-?'selected':''}>
-confirmada
-</option>
-
-<option
-${x.estado==='atendida'
-?'selected':''}>
-atendida
-</option>
-
-<option
-${x.estado==='rechazada'
-?'selected':''}>
-rechazada
-</option>
+<option value="pendiente" ${x.estado==='pendiente'?'selected':''}>pendiente</option>
+<option value="confirmada" ${x.estado==='confirmada'?'selected':''}>confirmada</option>
+<option value="atendida" ${x.estado==='atendida'?'selected':''}>atendida</option>
+<option value="rechazada" ${x.estado==='rechazada'?'selected':''}>rechazada</option>
 
 </select>
 
 </td>
 
-<td>
-${esc(x.notas || '')}
-</td>
+<td>${esc(x.notas||'')}</td>
 
 </tr>
-
 `;
 
-}).join('') ||
-
-'<tr>
-<td colspan="7">
-No hay reservas.
-</td>
-</tr>';
+}).join('')||
+'<tr><td colspan="7">No hay reservas.</td></tr>';
 
 }
-
 
 async function updateReservation(id,status){
 
-const r=
-await db
+const r=await db
 .from('reservas')
-.update({
-estado:status
-})
+.update({estado:status})
 .eq('id',id);
 
-
-if(r.error)
-alert(r.error.message);
+if(r.error)alert(r.error.message);
 
 await loadReservations();
-
 }
 
+$('photoFile').addEventListener('change',function(){
 
-$('photoFile').addEventListener(
-'change',
-function(){
-
-const f=
-$('photoFile').files[0];
+const f=$('photoFile').files[0];
 
 if(!f){
 
-$('preview')
-.classList.add('hidden');
-
+$('preview').classList.add('hidden');
 return;
 
 }
-
 
 if(!f.type.startsWith('image/')){
 
-alert(
-'Elegí una imagen.'
-);
-
+alert('Elegí una imagen.');
 $('photoFile').value='';
-
 return;
 
 }
-
 
 if(f.size>8*1024*1024){
 
-alert(
-'Máximo 8 MB.'
-);
-
+alert('Máximo 8 MB.');
 $('photoFile').value='';
-
 return;
 
 }
 
-
-$('preview').src=
-URL.createObjectURL(f);
-
-$('preview')
-.classList.remove('hidden');
+$('preview').src=URL.createObjectURL(f);
+$('preview').classList.remove('hidden');
 
 });
 
-
 async function uploadPhoto(){
 
-const f=
-$('photoFile').files[0];
-
+const f=$('photoFile').files[0];
 
 if(!f){
 
-msg(
-'photoMsg',
-'❌ Elegí una foto.'
-);
-
+msg('photoMsg','❌ Elegí una foto.');
 return;
 
 }
 
-
-const s=
-await db.auth.getSession();
-
+const s=await db.auth.getSession();
 
 if(!s.data?.session){
 
-msg(
-'photoMsg',
-'❌ Sesión vencida.'
-);
-
+msg('photoMsg','❌ Sesión vencida.');
 return;
 
 }
 
-
-const ext=
-(
-f.name
-.split('.')
-.pop() ||
-'jpg'
-)
-.toLowerCase()
-.replace(
-/[^a-z0-9]/g,
-''
-) ||
-'jpg';
-
+const ext=(
+f.name.split('.').pop()||'jpg'
+).toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
 
 const path=
-'public/' +
-(
-crypto.randomUUID
-?crypto.randomUUID()
-:Date.now()
-) +
-'.' +
-ext;
+'public/'+
+(crypto.randomUUID?crypto.randomUUID():Date.now())+
+'.'+ext;
 
+msg('photoMsg','⏳ Subiendo...');
 
-msg(
-'photoMsg',
-'⏳ Subiendo...'
-);
-
-
-const up=
-await db.storage
+const up=await db.storage
 .from('Galeria')
 .upload(
 path,
@@ -2032,48 +861,26 @@ upsert:false
 }
 );
 
-
 if(up.error){
 
-msg(
-'photoMsg',
-'❌ '+up.error.message
-);
-
+msg('photoMsg','❌ '+up.error.message);
 return;
 
 }
 
-
-const url=
-db.storage
+const url=db.storage
 .from('Galeria')
 .getPublicUrl(path)
-.data
-.publicUrl;
+.data.publicUrl;
 
-
-const ins=
-await db
+const ins=await db
 .from('galeria_fotos')
 .insert({
-
-titulo:
-$('photoTitle')
-.value
-.trim() ||
-f.name,
-
-categoria:
-'galeria',
-
-ruta:
-path,
-
+titulo:$('photoTitle').value.trim()||f.name,
+categoria:'galeria',
+ruta:path,
 url
-
 });
-
 
 if(ins.error){
 
@@ -2081,182 +888,120 @@ await db.storage
 .from('Galeria')
 .remove([path]);
 
-msg(
-'photoMsg',
-'❌ '+ins.error.message
-);
-
+msg('photoMsg','❌ '+ins.error.message);
 return;
 
 }
 
-
-msg(
-'photoMsg',
-'✅ Foto subida y publicada.'
-);
-
+msg('photoMsg','✅ Foto subida y publicada.');
 
 $('photoFile').value='';
-
 $('photoTitle').value='';
-
-$('preview')
-.classList.add('hidden');
-
+$('preview').classList.add('hidden');
 
 await loadGallery();
 
 }
 
-
 async function loadGallery(){
 
-const r=
-await db
+const r=await db
 .from('galeria_fotos')
 .select('*')
-.order(
-'created_at',
-{ascending:false}
-);
-
+.order('created_at',{ascending:false});
 
 if(r.error){
 
 $('galleryList').innerHTML=
-'<div class="notice">❌ '+
-esc(r.error.message)+
-'</div>';
+'<div class="notice">❌ '+esc(r.error.message)+'</div>';
 
 return;
 
 }
 
+const rows=r.data||[];
 
-const rows=r.data || [];
+$('mF').textContent=rows.length;
 
-
-$('mF').textContent=
-rows.length;
-
-
-$('galleryList').innerHTML=
-
-rows.map(function(x){
+$('galleryList').innerHTML=rows.map(function(x){
 
 return `
-
 <figure>
 
 <img
 src="${esc(x.url)}"
-alt="${esc(x.titulo || 'Foto')}">
+alt="${esc(x.titulo||'Foto')}">
 
 <figcaption>
 
-<small>
-${esc(x.titulo || '')}
-</small>
+<small>${esc(x.titulo||'')}</small>
 
 <button
 type="button"
 class="btn red"
 style="padding:4px 7px;float:right"
-onclick="deletePhoto(
-'${esc(x.id)}',
-'${esc(x.ruta)}'
-)">
-
+onclick="deletePhoto('${esc(x.id)}','${esc(x.ruta)}')">
 ×
-
 </button>
 
 </figcaption>
 
 </figure>
-
 `;
 
-}).join('') ||
-
-'<div class="empty">
-No hay fotos.
-</div>';
+}).join('')||
+'<div class="empty">No hay fotos.</div>';
 
 }
 
-
 async function deletePhoto(id,path){
 
-if(!confirm(
-'¿Eliminar foto?'
-))
-return;
+if(!confirm('¿Eliminar foto?'))return;
 
-
-const r=
-await db
+const r=await db
 .from('galeria_fotos')
 .delete()
 .eq('id',id);
 
-
 if(r.error){
 
 alert(r.error.message);
-
 return;
 
 }
-
 
 await db.storage
 .from('Galeria')
 .remove([path]);
 
-
 await loadGallery();
 
 }
 
-
 async function refreshAll(){
 
-$('dashMsg').textContent=
-'Actualizando...';
-
+$('dashMsg').textContent='Actualizando...';
 
 await Promise.allSettled([
-
 loadProducts(),
 loadPromos(),
 loadOrders(),
 loadReservations(),
 loadGallery()
-
 ]);
 
-
-$('dashMsg').textContent=
-'✅ Datos actualizados.';
+$('dashMsg').textContent='✅ Datos actualizados.';
 
 }
-
 
 (async function(){
 
 try{
 
-const {
-data
-}=await db.auth.getSession();
-
+const {data}=await db.auth.getSession();
 
 if(data?.session){
-
 await showApp();
-
 }
 
 }catch(error){
