@@ -1,511 +1,774 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pool & Beach | Puerto Pirámides</title>
+<meta name="description" content="Pool & Beach Puerto Pirámides: comida, promociones, pool, PlayStation, truco, dados, simuladores y más.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 <style>
-:root{
- --bg:#06131e;--card:#0c2333;--card2:#123149;--line:#24536a;
- --sky:#62dcff;--gold:#ffd166;--green:#67e7a2;--red:#ff7182;
- --txt:#f5fbff;--muted:#9ab5c5;
-}
+:root{--bg:#061923;--bg2:#0d2b3a;--card:#103444;--sky:#42d9ff;--green:#52e39b;--gold:#ffd166;--text:#f5fcff;--muted:#a9c5d0;--line:#ffffff18;--light:#f5fafb;--dark:#073448;--radius:22px}
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif}
-.app{max-width:1050px;margin:auto;padding:12px 14px 80px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:10px}
-.brand{font-size:23px;font-weight:950}.brand span{color:var(--sky)}
-.badge{border:1px solid var(--line);border-radius:99px;padding:6px 10px;color:var(--sky);font-size:11px}
-.hero{margin-top:14px;padding:25px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(145deg,#103a54,#0a1c2b);box-shadow:0 18px 45px #0006}
-.hero h1{margin:0 0 8px;font-size:31px}.hero p{color:var(--muted);line-height:1.5}
-.card{background:linear-gradient(155deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:16px;margin-top:12px}
-h2{margin-top:0}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:11px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:11px}
-.features{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:15px}
-.feature{padding:14px;border:1px solid var(--line);border-radius:15px;background:#0b2130;text-align:center;font-weight:800}
-.tabs{display:flex;gap:8px;overflow:auto;margin:14px 0;padding-bottom:4px}
-.tab,.btn{border:0;border-radius:12px;padding:11px 13px;font-weight:900;cursor:pointer}
-.tab{background:#0b2130;color:var(--txt);white-space:nowrap;border:1px solid var(--line)}
-.tab.active{background:var(--sky);color:#052031}
-.btn{background:var(--sky);color:#052031}.btn.gold{background:var(--gold)}
-.btn.green{background:var(--green);color:#062116}.btn.red{background:var(--red);color:#2b0710}.btn.dark{background:#15364b;color:white}
-.view{display:none}.view.active{display:block}
-.input,select,textarea{width:100%;padding:12px;border-radius:11px;background:#071925;border:1px solid var(--line);color:var(--txt);margin:5px 0 9px}
-label{display:block;color:var(--muted);font-size:12px;margin-top:8px}
-textarea{min-height:85px}
-.product{display:flex;flex-direction:column;gap:7px}
-.product img,.gallery img{width:100%;aspect-ratio:16/10;object-fit:cover;border-radius:12px}
-.product-name{font-size:18px;font-weight:900}
-.price{color:var(--gold);font-size:18px;font-weight:950}
-.muted{color:var(--muted)}
-.notice{padding:11px;border-radius:12px;background:#102a3b;border:1px solid #26536b;margin:8px 0}
-.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.row>*{flex:1;min-width:120px}
-.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.gallery figure{margin:0}
-.empty{text-align:center;padding:20px;color:var(--muted)}
-.hidden{display:none!important}
-.pool{border:1px solid var(--line);padding:15px;border-radius:15px;background:#0b2130}
-.pool h3{margin:0 0 5px}
-.footer{text-align:center;color:#7894a5;font-size:11px;padding:25px}
-.success{background:#103b2b;border-color:#2c8d65;color:#b9ffdc}
-@media(max-width:700px){
- .features{grid-template-columns:repeat(2,1fr)}
- .grid,.grid3{grid-template-columns:1fr}
- .gallery{grid-template-columns:1fr 1fr}
- .hero h1{font-size:25px}
-}
-@media(max-width:430px){.gallery{grid-template-columns:1fr}.app{padding:9px}}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#031018);color:var(--text)}
+a{text-decoration:none;color:inherit}
+button,input,select,textarea{font:inherit}
+.container{width:min(1180px,94%);margin:auto}
+header{position:sticky;top:0;z-index:50;background:#04131de8;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.logo{font-size:21px;font-weight:950}
+.logo span{color:var(--sky)}
+nav{display:flex;gap:7px;overflow:auto}
+nav a{padding:9px 11px;border-radius:12px;background:#ffffff0b;white-space:nowrap;font-size:13px;font-weight:800}
+.hero{padding:38px 0}
+.hero-box{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:30px;padding:42px;background:linear-gradient(135deg,#123f51,#071c28);box-shadow:0 20px 50px #0005}
+.hero-box:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-100px;top:-90px;background:#42d9ff12}
+.hero h1{font-size:clamp(38px,7vw,70px);line-height:.96;margin:0 0 16px}
+.hero h1 span{color:var(--sky)}
+.hero p{max-width:760px;color:var(--muted);font-size:18px;line-height:1.6}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:23px}
+.btn{border:0;border-radius:13px;padding:12px 16px;font-weight:900;cursor:pointer}
+.primary{background:var(--sky);color:#03202a}
+.secondary{background:#ffffff10;color:var(--text);border:1px solid var(--line)}
+.green{background:var(--green);color:#042217}
+.gold{background:var(--gold);color:#2b2100}
+.section{padding:32px 0}
+.title{margin-bottom:17px}
+.title h2{margin:0;font-size:29px}
+.title p{margin:5px 0 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:linear-gradient(180deg,var(--card),#0a2632);border:1px solid var(--line);border-radius:var(--radius);padding:20px;box-shadow:0 10px 30px #0003}
+.activity-icon{font-size:42px;margin-bottom:12px}
+.card h3{margin:0 0 7px}
+.card p{color:var(--muted);line-height:1.5}
+.chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:12px}
+.chip{background:#ffffff0b;border:1px solid var(--line);padding:7px 10px;border-radius:999px;font-size:12px}
+.media{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:15px;margin-bottom:13px;background:#071923;border:1px solid var(--line)}
+.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}
+.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:17px;border:1px solid var(--line)}
+.empty{color:var(--muted);padding:14px}
+.menu{background:var(--light);color:var(--dark);border-radius:26px;padding:22px}
+.menu .title p{color:#52717d}
+.products{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.product{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid #dbe7ea}
+.product:last-child{border:0}
+.product strong{display:block}
+.product small{color:#607982}
+.price{font-weight:950;white-space:nowrap}
+.order-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.order-panel{background:white;color:var(--dark);border-radius:22px;padding:19px}
+.order-product{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #e2ecef}
+.order-product:last-child{border:0}
+.add{background:#087c9e;color:#fff;border:0;border-radius:10px;padding:9px 12px;font-weight:900}
+.cart-line{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #e2ecef}
+.qty{display:flex;gap:6px;align-items:center;margin-top:6px}
+.qty button{width:28px;height:28px;border:0;border-radius:7px;background:#e9f5f7;font-weight:900}
+.total{display:flex;justify-content:space-between;font-size:21px;font-weight:950;padding:15px 0}
+.delivery{background:#f0f7f8;padding:12px;border-radius:13px;margin:10px 0}
+.form{display:grid;gap:9px}
+.form input,.form textarea,.form select{width:100%;padding:11px;border:1px solid #d3e0e4;border-radius:10px;color:#173e4d;background:#fff}
+.form textarea{min-height:75px;resize:vertical}
+.message{text-align:center;min-height:23px;font-weight:800}
+.reservation{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.reservation .full{grid-column:1/-1}
+.qrbox{text-align:center}
+.qrbox canvas{background:white;padding:10px;border-radius:15px;max-width:100%}
+.map{border-radius:18px;background:#e7f7fa;color:#174453;padding:25px;text-align:center}
+.hours{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.hours div{padding:17px;border-radius:16px;background:#ffffff08;border:1px solid var(--line)}
+footer{padding:35px 0;text-align:center;color:var(--muted);border-top:1px solid var(--line);margin-top:35px}
+@media(max-width:850px){.grid{grid-template-columns:1fr 1fr}.order-layout{grid-template-columns:1fr}.gallery{grid-template-columns:1fr 1fr}}
+@media(max-width:580px){nav{max-width:55vw}.hero-box{padding:27px 20px}.grid,.products,.reservation,.hours{grid-template-columns:1fr}.reservation .full{grid-column:auto}.gallery{grid-template-columns:1fr 1fr}.section{padding:25px 0}}
 </style>
 </head>
-
 <body>
-<div class="app">
 
-<header class="top">
- <div class="brand">POOL <span>&</span> BEACH</div>
- <div id="connection" class="badge">CONECTANDO...</div>
+<header>
+<div class="container nav">
+<div class="logo">POOL <span>&</span> BEACH</div>
+<nav>
+<a href="#actividades">Actividades</a>
+<a href="#menu">Menú</a>
+<a href="#pedidos">Pedidos</a>
+<a href="#reservas">Reservas</a>
+<a href="#galeria">Fotos</a>
+<a href="#contacto">Contacto</a>
+</nav>
+</div>
 </header>
 
+<main>
+
 <section class="hero">
- <h1>🏖️ Pool & Beach</h1>
- <p>
- Un lugar para disfrutar, comer, jugar al Pool, compartir unas cartas,
- dados, fútbol, música, amigos y un ambiente familiar frente a la playa con bar.
- </p>
-
- <div class="features">
-  <div class="feature">🎱 Pool</div>
-  <div class="feature">🃏 Cartas</div>
-  <div class="feature">🎲 Dados</div>
-  <div class="feature">⚽ Fútbol</div>
-  <div class="feature">🎵 Música</div>
-  <div class="feature">👥 Amigos</div>
-  <div class="feature">👨‍👩‍👧 Familiar</div>
-  <div class="feature">🏖️ Playa & Bar</div>
- </div>
+<div class="container">
+<div class="hero-box">
+<h1>POOL <span>&</span> BEACH</h1>
+<p>Un lugar para comer, tomar algo y disfrutar en Puerto Pirámides. Vení a jugar al pool, divertirte con PlayStation, truco, dados, simuladores y vivir una noche diferente.</p>
+<div class="actions">
+<a class="btn primary" href="#pedidos">🛒 Hacer pedido</a>
+<a class="btn green" href="#reservas">📅 Reservar</a>
+<a class="btn secondary" href="#actividades">🎯 Ver actividades</a>
+</div>
+</div>
+</div>
 </section>
 
-<nav class="tabs">
- <button class="tab active" data-view="menu">🍔 Menú</button>
- <button class="tab" data-view="reservar">📅 Reservar</button>
- <button class="tab" data-view="pool">🎱 Pool</button>
- <button class="tab" data-view="canjes">🎁 Canje</button>
- <button class="tab" data-view="fotos">📸 Fotos</button>
-</nav>
-
-<section id="menu" class="view active">
- <div class="card">
-  <h2>🍔 Menú Pool & Beach</h2>
-  <div id="categories"></div>
-  <div id="products" class="grid"></div>
- </div>
-
- <div class="card">
-  <h2>🛒 Tu pedido</h2>
-  <div id="cart">Todavía no agregaste productos.</div>
-  <div id="cartTotal" class="price"></div>
-  <button id="goOrder" class="btn gold hidden">Continuar pedido</button>
- </div>
+<section id="actividades" class="section">
+<div class="container">
+<div class="title">
+<h2>🎯 Actividades</h2>
+<p>Promocionamos nuestras propuestas. No necesitás crear una cuenta ni jugar dentro de esta web.</p>
+</div>
+<div class="grid" id="activitiesGrid"></div>
+</div>
 </section>
 
-<section id="reservar" class="view">
- <div class="card">
-  <h2>📅 Reservar / pedir</h2>
-  <form id="orderForm">
-
-   <label>Nombre</label>
-   <input id="nombre" class="input" required>
-
-   <label>Teléfono</label>
-   <input id="telefono" class="input" type="tel" required>
-
-   <label>Fecha</label>
-   <input id="fecha" class="input" type="date" required>
-
-   <label>Hora</label>
-   <input id="hora" class="input" type="time" required>
-
-   <label>¿Cómo querés recibir tu pedido?</label>
-   <select id="tipoEntrega" class="input">
-    <option value="retiro">🏠 Retiro en el negocio</option>
-    <option value="delivery">🛵 Delivery</option>
-   </select>
-
-   <div id="direccionBox" class="hidden">
-    <label>Dirección para delivery</label>
-    <input id="direccion" class="input">
-   </div>
-
-   <label>Observaciones</label>
-   <textarea id="notas" class="input" placeholder="Alguna indicación para tu pedido..."></textarea>
-
-   <button class="btn gold" type="submit">Enviar pedido</button>
-  </form>
-  <div id="orderMessage" class="notice hidden"></div>
- </div>
+<section id="promociones" class="section">
+<div class="container">
+<div class="title">
+<h2>🔥 Promociones</h2>
+<p>Las promociones que tenemos disponibles en Pool & Beach.</p>
+</div>
+<div class="grid" id="promosGrid">
+<div class="empty">Cargando promociones...</div>
+</div>
+</div>
 </section>
 
-<section id="pool" class="view">
- <div class="card">
-  <h2>🎱 Reservar mesa de Pool</h2>
-  <p class="muted">Disponemos únicamente de 3 mesas de Pool.</p>
-
-  <form id="poolForm">
-   <label>Nombre</label>
-   <input id="poolNombre" class="input" required>
-
-   <label>Teléfono</label>
-   <input id="poolTelefono" class="input" type="tel" required>
-
-   <label>Mesa</label>
-   <select id="poolMesa" class="input">
-    <option value="1">Mesa de Pool 1</option>
-    <option value="2">Mesa de Pool 2</option>
-    <option value="3">Mesa de Pool 3</option>
-   </select>
-
-   <label>Fecha</label>
-   <input id="poolFecha" class="input" type="date" required>
-
-   <label>Hora</label>
-   <input id="poolHora" class="input" type="time" required>
-
-   <label>Observaciones</label>
-   <textarea id="poolNotas" class="input"></textarea>
-
-   <button class="btn gold">Reservar mesa</button>
-  </form>
-
-  <div id="poolMessage" class="notice hidden"></div>
- </div>
-
- <div class="grid3" id="poolCards"></div>
+<section id="menu" class="section">
+<div class="container">
+<div class="title">
+<h2>🍔 Menú</h2>
+<p>Elegí lo que quieras pedir. Los productos disponibles aparecen también en el carrito.</p>
+</div>
+<div class="menu">
+<div id="menuProducts" class="products">
+<div class="empty">Cargando menú...</div>
+</div>
+</div>
+</div>
 </section>
 
-<section id="canjes" class="view">
- <div class="card">
-  <h2>🎁 Canjes</h2>
-  <p class="muted">Consultá las opciones disponibles para canjear.</p>
-  <div id="canjesList" class="grid"></div>
- </div>
-</section>
-
-<section id="fotos" class="view">
- <div class="card">
-  <h2>📸 Pool & Beach</h2>
-  <div id="gallery" class="gallery"></div>
- </div>
-</section>
-
-<footer class="footer">
- Pool & Beach · Puerto Pirámides
-</footer>
-
+<section id="pedidos" class="section">
+<div class="container">
+<div class="title">
+<h2>🛒 Pedidos</h2>
+<p>Pedí con delivery o retiralo en el local. Delivery: $3.000.</p>
 </div>
 
+<div class="order-layout">
+
+<div class="order-panel">
+<h3>Elegí tus productos</h3>
+<div id="orderProducts">
+<div class="empty">Cargando productos...</div>
+</div>
+</div>
+
+<div class="order-panel">
+<h3>Tu pedido</h3>
+
+<div id="cart">
+<div class="empty">Todavía no agregaste productos.</div>
+</div>
+
+<div class="total">
+<span>Total</span>
+<span id="orderTotal">$0</span>
+</div>
+
+<div class="delivery">
+<strong>Forma de entrega</strong>
+
+<label>
+<input type="radio" name="deliveryType" value="delivery" checked>
+🚚 Delivery — $3.000
+</label>
+
+<label>
+<input type="radio" name="deliveryType" value="retiro">
+🏠 Retiro en el local — $0
+</label>
+
+<div id="addressWrap">
+<input id="orderAddress" placeholder="Dirección para delivery" style="width:100%;padding:10px;border:1px solid #d3e0e4;border-radius:9px;margin-top:7px">
+</div>
+</div>
+
+<form id="orderForm" class="form">
+<input id="orderName" placeholder="Nombre" required>
+<input id="orderPhone" placeholder="Teléfono" required>
+<textarea id="orderNotes" placeholder="Notas del pedido (opcional)"></textarea>
+<button class="btn primary" type="submit">Enviar pedido</button>
+<div id="orderMessage" class="message"></div>
+</form>
+
+</div>
+</div>
+</div>
+</section>
+
+<section id="reservas" class="section">
+<div class="container">
+<div class="title">
+<h2>📅 Reservas</h2>
+<p>Reservá tu visita sin elegir mesa.</p>
+</div>
+
+<div class="card">
+<form id="reservationForm" class="form reservation">
+
+<input id="rName" placeholder="Nombre" required>
+<input id="rPhone" placeholder="Teléfono" required>
+
+<input id="rDate" type="date" required>
+<input id="rTime" type="time" required>
+
+<input id="rPeople" type="number" min="1" max="100" placeholder="Cantidad de personas" required>
+<input id="rService" placeholder="Servicio o motivo">
+
+<textarea id="rNotes" class="full" placeholder="Observaciones"></textarea>
+
+<button class="btn primary full" type="submit">Enviar reserva</button>
+
+<div id="rMessage" class="message full"></div>
+
+</form>
+</div>
+</div>
+</section>
+
+<section id="galeria" class="section">
+<div class="container">
+<div class="title">
+<h2>📸 Galería</h2>
+<p>Conocé Pool & Beach.</p>
+</div>
+
+<div id="gallery" class="gallery">
+<div class="empty">Cargando fotos...</div>
+</div>
+
+</div>
+</section>
+
+<section id="qr" class="section">
+<div class="container">
+<div class="card qrbox">
+<div class="title">
+<h2>📱 QR general</h2>
+<p>Un único QR para entrar al sitio de Pool & Beach.</p>
+</div>
+
+<canvas id="generalQR" width="230" height="230"></canvas>
+
+<p id="qrUrl" class="muted" style="word-break:break-all"></p>
+
+<button class="btn primary" onclick="downloadQR()">Descargar QR</button>
+
+</div>
+</div>
+</section>
+
+<section id="horarios" class="section">
+<div class="container">
+<div class="title">
+<h2>🕐 Horarios</h2>
+</div>
+
+<div class="hours">
+<div>
+<strong>Local</strong><br>
+12:00 a 15:00<br>
+19:00 a 03:30
+</div>
+
+<div>
+<strong>Cocina</strong><br>
+12:00 a 15:00<br>
+20:00 a 01:00
+</div>
+</div>
+
+</div>
+</section>
+
+<section id="contacto" class="section">
+<div class="container">
+<div class="title">
+<h2>📍 Contacto</h2>
+<p>Puerto Pirámides · Patagonia Argentina</p>
+</div>
+
+<div class="map">
+<strong>POOL & BEACH</strong>
+<p>Puerto Pirámides, Chubut</p>
+<p>Comida · bebidas · pool · PlayStation · truco · dados · simuladores</p>
+</div>
+
+</div>
+</section>
+
+</main>
+
+<footer>
+POOL & BEACH · Puerto Pirámides · Patagonia Argentina
+</footer>
+
 <script>
-const SB_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
-const SB_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
-const db=window.supabase.createClient(SB_URL,SB_KEY);
 
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??'')
- .replaceAll('&','&amp;')
- .replaceAll('<','&lt;')
- .replaceAll('>','&gt;')
- .replaceAll('"','&quot;')
- .replaceAll("'","&#039;");
+const SUPABASE_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
+const SUPABASE_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-let products=[];
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+const DELIVERY_FEE=3000;
+
 let cart=[];
 
+const activities=[
+['🎱','Pool','Mesas de pool para disfrutar con amigos y pasar un buen momento.'],
+['🎮','PlayStation','Jugá y competí con tus amigos en PlayStation.'],
+['🃏','Truco','Clásicos partidos de truco para compartir y divertirse.'],
+['🎲','Dados','Una propuesta simple y divertida para jugar en grupo.'],
+['🏎️','Simuladores','Viví una experiencia diferente con nuestros simuladores.'],
+['⚽','Fútbol','Disfrutá del fútbol y de nuestras propuestas para compartir.']
+];
+
+function $(id){
+return document.getElementById(id)
+}
+
+function esc(v){
+return String(v??'')
+.replaceAll('&','&amp;')
+.replaceAll('<','&lt;')
+.replaceAll('>','&gt;')
+.replaceAll('"','&quot;')
+.replaceAll("'","&#039;")
+}
+
 function money(v){
- return '$'+Number(v||0).toLocaleString('es-AR');
+return '$'+Number(v||0).toLocaleString('es-AR')
 }
 
-function message(id,text,success=false){
- const el=$(id);
- el.textContent=text;
- el.classList.remove('hidden');
- el.classList.toggle('success',success);
+function safeUrl(v){
+try{
+const u=new URL(String(v||''),location.href);
+return ['http:','https:'].includes(u.protocol)?u.href:''
+}catch{
+return''
+}
 }
 
-document.querySelectorAll('.tab').forEach(btn=>{
- btn.onclick=()=>{
-  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
-  $(btn.dataset.view).classList.add('active');
+function renderActivities(){
 
-  if(btn.dataset.view==='menu')loadProducts();
-  if(btn.dataset.view==='pool')loadPool();
-  if(btn.dataset.view==='canjes')loadCanjes();
-  if(btn.dataset.view==='fotos')loadGallery();
- };
-});
+$('activitiesGrid').innerHTML=activities.map(a=>`
+<article class="card">
+<div class="activity-icon">${a[0]}</div>
+<h3>${esc(a[1])}</h3>
+<p>${esc(a[2])}</p>
+</article>
+`).join('')
 
-$('tipoEntrega').onchange=()=>{
- $('direccionBox').classList.toggle('hidden',$('tipoEntrega').value!=='delivery');
-};
+}
 
 async function loadProducts(){
- const r=await db.from('productos')
-  .select('*')
-  .eq('activo',true)
-  .eq('disponible',true)
-  .order('categoria')
-  .order('nombre');
 
- if(r.error){
-  $('products').innerHTML='<div class="notice">No se pudo cargar el menú.</div>';
-  return;
- }
+const r=await db
+.from('productos')
+.select('*')
+.eq('activo',true)
+.eq('disponible',true)
+.order('categoria')
+.order('nombre');
 
- products=r.data||[];
+if(r.error){
 
- const cats=[...new Set(products.map(x=>x.categoria||'Otros'))];
+$('menuProducts').innerHTML='<div class="empty">No se pudo cargar el menú.</div>';
 
- $('categories').innerHTML=cats.length
-  ? '<div class="row">'+cats.map(c=>`<span class="badge">${esc(c)}</span>`).join('')+'</div>'
-  : '';
+$('orderProducts').innerHTML='<div class="empty">No se pudieron cargar los productos.</div>';
 
- $('products').innerHTML=products.map(p=>`
-  <article class="card product">
-   ${p.image_url?`<img src="${esc(p.image_url)}" alt="${esc(p.nombre)}" loading="lazy">`:''}
-   <div class="product-name">${esc(p.nombre)}</div>
-   <div class="muted">${esc(p.descripcion||'')}</div>
-   <div class="muted">${esc(p.categoria||'')}</div>
-   <div class="price">${money(p.precio)}</div>
-   <button class="btn" onclick="addCart('${p.id}')">Agregar</button>
-  </article>
- `).join('')||'<div class="empty">El menú todavía no tiene productos publicados.</div>';
+return
 }
 
-function addCart(id){
- const p=products.find(x=>String(x.id)===String(id));
- if(!p)return;
+const rows=r.data||[];
 
- const existing=cart.find(x=>String(x.id)===String(id));
+$('menuProducts').innerHTML=rows.map(p=>`
+<div class="product">
+<div>
+<strong>${esc(p.nombre)}</strong>
+<small>
+${esc(p.categoria||'')}
+${p.descripcion?' · '+esc(p.descripcion):''}
+</small>
+</div>
+<span class="price">${money(p.precio)}</span>
+</div>
+`).join('')||'<div class="empty">No hay productos disponibles.</div>';
 
- if(existing)existing.cantidad++;
- else cart.push({
-  id:p.id,
-  nombre:p.nombre,
-  precio:Number(p.precio||0),
-  cantidad:1
- });
+$('orderProducts').innerHTML=rows.map(p=>{
 
- renderCart();
+const img=safeUrl(p.image_url);
+
+return `
+<div class="order-product">
+
+${img?`
+<img src="${esc(img)}"
+style="width:62px;height:62px;object-fit:cover;border-radius:10px">
+`:''}
+
+<div style="flex:1">
+<strong>${esc(p.nombre)}</strong>
+<div class="muted">${money(p.precio)}</div>
+</div>
+
+<button class="add"
+onclick='addToCart(${JSON.stringify({
+id:p.id,
+nombre:p.nombre,
+precio:p.precio
+})})'>
+Agregar
+</button>
+
+</div>
+`
+
+}).join('')||'<div class="empty">No hay productos disponibles.</div>'
+
 }
 
-function removeCart(id){
- const i=cart.findIndex(x=>String(x.id)===String(id));
- if(i<0)return;
- cart[i].cantidad--;
- if(cart[i].cantidad<=0)cart.splice(i,1);
- renderCart();
+function addToCart(p){
+
+const x=cart.find(i=>String(i.id)===String(p.id));
+
+if(x){
+x.cantidad++
+}else{
+cart.push({...p,cantidad:1})
 }
 
-function totalCart(){
- return cart.reduce((s,x)=>s+x.precio*x.cantidad,0);
+renderCart()
+
+}
+
+function changeQty(id,n){
+
+const x=cart.find(i=>String(i.id)===String(id));
+
+if(!x)return;
+
+x.cantidad+=n;
+
+if(x.cantidad<=0){
+cart=cart.filter(i=>String(i.id)!==String(id))
+}
+
+renderCart()
+
 }
 
 function renderCart(){
- if(!cart.length){
-  $('cart').textContent='Todavía no agregaste productos.';
-  $('cartTotal').textContent='';
-  $('goOrder').classList.add('hidden');
-  return;
- }
 
- $('cart').innerHTML=cart.map(x=>`
-  <div class="notice">
-   <b>${esc(x.nombre)}</b>
-   × ${x.cantidad}
-   · ${money(x.precio*x.cantidad)}
-   <button class="btn red" onclick="removeCart('${x.id}')">−</button>
-  </div>
- `).join('');
+const el=$('cart');
 
- $('cartTotal').textContent='Total: '+money(totalCart());
- $('goOrder').classList.remove('hidden');
+el.innerHTML=cart.length?
+
+cart.map(i=>`
+<div class="cart-line">
+
+<div>
+<strong>${esc(i.nombre)}</strong>
+
+<div class="qty">
+<button onclick="changeQty('${esc(i.id)}',-1)">−</button>
+<span>${i.cantidad}</span>
+<button onclick="changeQty('${esc(i.id)}',1)">+</button>
+</div>
+
+</div>
+
+<strong>${money(i.precio*i.cantidad)}</strong>
+
+</div>
+`).join('')
+
+:'<div class="empty">Todavía no agregaste productos.</div>';
+
+const type=document.querySelector('input[name=deliveryType]:checked')?.value||'delivery';
+
+const subtotal=cart.reduce(
+(s,i)=>s+Number(i.precio||0)*i.cantidad,
+0
+);
+
+$('orderTotal').textContent=money(
+subtotal+(cart.length&&type==='delivery'?DELIVERY_FEE:0)
+);
+
+$('addressWrap').style.display=
+type==='delivery'?'block':'none'
+
 }
 
-$('goOrder').onclick=()=>{
- document.querySelector('[data-view="reservar"]').click();
-};
+document.querySelectorAll('input[name=deliveryType]')
+.forEach(x=>x.addEventListener('change',renderCart));
 
-$('orderForm').onsubmit=async e=>{
- e.preventDefault();
+$('orderForm').addEventListener('submit',async e=>{
 
- if(!cart.length){
-  message('orderMessage','Primero agregá productos al pedido.');
-  return;
- }
+e.preventDefault();
 
- const tipo=$('tipoEntrega').value;
-
- if(tipo==='delivery'&&!$('direccion').value.trim()){
-  message('orderMessage','Ingresá la dirección para el delivery.');
-  return;
- }
-
- const payload={
-  nombre_cliente:$('nombre').value.trim(),
-  telefono:$('telefono').value.trim(),
-  tipo:tipo,
-  tipo_entrega:tipo,
-  direccion:tipo==='delivery'?$('direccion').value.trim():null,
-  estado:'pendiente',
-  total:totalCart(),
-  notas:$('notas').value.trim(),
-  items:cart.map(x=>({
-   producto_id:x.id,
-   nombre:x.nombre,
-   precio:x.precio,
-   cantidad:x.cantidad
-  }))
- };
-
- const r=await db.from('pedidos').insert(payload);
-
- if(r.error){
-  message('orderMessage','No se pudo enviar el pedido: '+r.error.message);
-  return;
- }
-
- message('orderMessage','✅ Pedido enviado correctamente. Pool & Beach recibirá tu pedido.',true);
-
- cart=[];
- renderCart();
- $('orderForm').reset();
- $('direccionBox').classList.add('hidden');
-};
-
-$('poolForm').onsubmit=async e=>{
- e.preventDefault();
-
- const fecha=$('poolFecha').value;
- const hora=$('poolHora').value;
- const mesa=Number($('poolMesa').value);
-
- const check=await db.from('reservas')
-  .select('id,estado')
-  .eq('fecha',fecha)
-  .eq('hora',hora)
-  .eq('servicio','Pool')
-  .eq('notas',`Mesa ${mesa}`)
-  .neq('estado','cancelada');
-
- if(check.error){
-  message('poolMessage','No se pudo comprobar la disponibilidad.');
-  return;
- }
-
- if(check.data?.length){
-  message('poolMessage','❌ Esa mesa ya está reservada para ese horario.');
-  return;
- }
-
- const r=await db.from('reservas').insert({
-  nombre:$('poolNombre').value.trim(),
-  telefono:$('poolTelefono').value.trim(),
-  fecha,
-  hora,
-  servicio:'Pool',
-  cantidad_personas:1,
-  estado:'pendiente',
-  notas:`Mesa ${mesa}${$('poolNotas').value.trim()?' · '+$('poolNotas').value.trim():''}`
- });
-
- if(r.error){
-  message('poolMessage','No se pudo realizar la reserva: '+r.error.message);
-  return;
- }
-
- message('poolMessage','✅ Reserva de Mesa de Pool enviada correctamente.',true);
- $('poolForm').reset();
-};
-
-async function loadPool(){
- const r=await db.from('tables_pool')
-  .select('*')
-  .eq('active',true)
-  .order('table_number');
-
- if(r.error||!r.data?.length){
-  $('poolCards').innerHTML=[1,2,3].map(n=>`
-   <div class="pool">
-    <h3>🎱 Mesa de Pool ${n}</h3>
-    <p class="muted">Disponible para reservar.</p>
-   </div>`).join('');
-  return;
- }
-
- $('poolCards').innerHTML=r.data.slice(0,3).map(x=>`
-  <div class="pool">
-   <h3>🎱 ${esc(x.name||'Mesa de Pool '+x.table_number)}</h3>
-   <p class="muted">Reservala desde el formulario.</p>
-  </div>
- `).join('');
+if(!cart.length){
+$('orderMessage').textContent='Agregá al menos un producto.';
+return
 }
 
-async function loadCanjes(){
- const r=await db.from('canjes')
-  .select('*')
-  .eq('activo',true)
-  .order('created_at',{ascending:false});
+const type=document.querySelector(
+'input[name=deliveryType]:checked'
+).value;
 
- if(r.error){
-  $('canjesList').innerHTML='<div class="notice">No se pudieron cargar los canjes.</div>';
-  return;
- }
+const address=$('orderAddress').value.trim();
 
- $('canjesList').innerHTML=(r.data||[]).map(x=>`
-  <article class="card">
-   ${x.image_url?`<img class="gallery" src="${esc(x.image_url)}" alt="${esc(x.nombre)}">`:''}
-   <h3>${esc(x.nombre)}</h3>
-   <p class="muted">${esc(x.descripcion||'')}</p>
-   <div class="price">${money(x.costo)}</div>
-  </article>
- `).join('')||'<div class="empty">No hay opciones de canje publicadas.</div>';
+if(type==='delivery'&&!address){
+$('orderMessage').textContent='Ingresá la dirección de delivery.';
+return
+}
+
+const subtotal=cart.reduce(
+(s,i)=>s+Number(i.precio||0)*i.cantidad,
+0
+);
+
+const payload={
+
+nombre_cliente:$('orderName').value.trim(),
+
+telefono:$('orderPhone').value.trim(),
+
+tipo_entrega:type,
+
+direccion:type==='delivery'?address:null,
+
+total:subtotal+(type==='delivery'?DELIVERY_FEE:0),
+
+items:cart.map(i=>({
+id:i.id,
+nombre:i.nombre,
+precio:Number(i.precio),
+cantidad:i.cantidad
+})),
+
+notas:$('orderNotes').value.trim(),
+
+estado:'pendiente'
+
+};
+
+const r=await db.from('pedidos').insert(payload);
+
+if(r.error){
+
+$('orderMessage').textContent=
+'No se pudo enviar el pedido: '+r.error.message;
+
+return
+
+}
+
+$('orderMessage').textContent=
+'✅ Pedido enviado correctamente.';
+
+cart=[];
+
+$('orderForm').reset();
+
+document.querySelector(
+'input[name=deliveryType][value=delivery]'
+).checked=true;
+
+renderCart()
+
+});
+
+$('reservationForm').addEventListener('submit',async e=>{
+
+e.preventDefault();
+
+const payload={
+
+nombre:$('rName').value.trim(),
+
+telefono:$('rPhone').value.trim(),
+
+fecha:$('rDate').value,
+
+hora:$('rTime').value,
+
+servicio:$('rService').value.trim(),
+
+cantidad_personas:Number($('rPeople').value),
+
+estado:'pendiente',
+
+notas:$('rNotes').value.trim()
+
+};
+
+const r=await db.from('reservas').insert(payload);
+
+if(r.error){
+
+$('rMessage').textContent=
+'No se pudo enviar la reserva: '+r.error.message;
+
+return
+
+}
+
+$('rMessage').textContent=
+'✅ Reserva enviada correctamente.';
+
+$('reservationForm').reset()
+
+});
+
+async function loadPromos(){
+
+const r=await db
+.from('promociones')
+.select('*')
+.eq('activo',true)
+.order('created_at',{ascending:false});
+
+if(r.error){
+
+$('promosGrid').innerHTML=
+'<div class="empty">No hay promociones cargadas.</div>';
+
+return
+}
+
+const rows=r.data||[];
+
+$('promosGrid').innerHTML=rows.map(p=>{
+
+const u=safeUrl(p.image_url);
+
+return `
+<article class="card">
+
+${u?
+`<img class="media"
+src="${esc(u)}"
+alt="${esc(p.titulo||p.nombre||'Promoción')}">`
+:''}
+
+<h3>${esc(p.titulo||p.nombre||'Promoción')}</h3>
+
+<p>${esc(p.descripcion||'')}</p>
+
+${p.precio?
+`<div class="chips">
+<span class="chip">${money(p.precio)}</span>
+</div>`
+:''}
+
+</article>
+`
+
+}).join('')||
+'<div class="empty">No hay promociones cargadas.</div>'
+
 }
 
 async function loadGallery(){
- const r=await db.from('galeria_fotos')
-  .select('*')
-  .order('creado_en',{ascending:false});
 
- if(r.error){
-  $('gallery').innerHTML='<div class="notice">No se pudo cargar la galería.</div>';
-  return;
- }
+const r=await db
+.from('galeria_fotos')
+.select('*')
+.order('creado_en',{ascending:false});
 
- $('gallery').innerHTML=(r.data||[]).map(x=>`
-  <figure>
-   <img src="${esc(x.url)}" alt="${esc(x.titulo||'Pool & Beach')}" loading="lazy">
-   <figcaption class="muted">${esc(x.titulo||'Pool & Beach')}</figcaption>
-  </figure>
- `).join('')||'<div class="empty">Todavía no hay fotos publicadas.</div>';
+if(r.error){
+
+$('gallery').innerHTML=
+'<div class="empty">No se pudo cargar la galería.</div>';
+
+return
+}
+
+const rows=r.data||[];
+
+$('gallery').innerHTML=rows.map(x=>{
+
+const u=safeUrl(x.url);
+
+return u?
+`<img src="${esc(u)}"
+alt="${esc(x.titulo||'Pool & Beach')}"
+loading="lazy">`
+:''
+
+}).join('')||
+'<div class="empty">Todavía no hay fotos publicadas.</div>'
+
+}
+
+function setupQR(){
+
+const url=new URL(location.href);
+
+url.search='';
+url.hash='';
+
+$('qrUrl').textContent=url.href;
+
+if(window.QRious){
+
+new QRious({
+element:$('generalQR'),
+value:url.href,
+size:230,
+level:'H',
+background:'white',
+foreground:'black'
+})
+
+}
+
+}
+
+function downloadQR(){
+
+const a=document.createElement('a');
+
+a.download='QR-General-Pool-Beach.png';
+
+a.href=$('generalQR').toDataURL('image/png');
+
+a.click()
+
 }
 
 async function init(){
- const r=await db.from('productos').select('id').limit(1);
 
- $('connection').textContent=r.error?'● SIN CONEXIÓN':'● CONECTADO';
+renderActivities();
 
- await Promise.all([
-  loadProducts(),
-  loadPool(),
-  loadCanjes(),
-  loadGallery()
- ]);
+setupQR();
+
+renderCart();
+
+await Promise.allSettled([
+loadProducts(),
+loadPromos(),
+loadGallery()
+])
+
 }
 
 init();
+
 </script>
 </body>
 </html>
