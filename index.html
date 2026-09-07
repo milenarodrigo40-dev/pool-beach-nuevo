@@ -1,467 +1,157 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pool & Beach | Puerto Pirámides</title>
-<meta name="description" content="Pool & Beach Puerto Pirámides: comida, promociones, pool, PlayStation, truco, dados, simuladores y más.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pool & Beach Games | Puerto Pirámides</title>
+<meta name="theme-color" content="#071923">
+<meta name="application-name" content="Pool & Beach Games">
+<meta name="description" content="Pool & Beach Games Puerto Pirámides. Juegos, duelos, torneos, trivia, puntos, tokens, ranking y premios.">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
 <style>
-:root{
---bg:#061923;
---bg2:#0d2b3a;
---card:#103444;
---sky:#42d9ff;
---green:#52e39b;
---gold:#ffd166;
---text:#f5fcff;
---muted:#a9c5d0;
---line:#ffffff18;
---light:#f5fafb;
---dark:#073448;
---radius:22px
-}
-*{box-sizing:border-box}
+:root{--bg:#071923;--bg2:#0c2633;--card:#102f3e;--card2:#12394a;--text:#f5fbff;--muted:#a9c4cf;--primary:#31d7ff;--green:#42e695;--yellow:#ffd166;--red:#ff647c;--border:rgba(255,255,255,.10);--shadow:0 15px 40px rgba(0,0,0,.25);--radius:22px}
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{
-margin:0;
-font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;
-background:linear-gradient(180deg,var(--bg),#031018);
-color:var(--text)
-}
-a{text-decoration:none;color:inherit}
-button,input,select,textarea{font:inherit}
+body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top right,rgba(49,215,255,.13),transparent 30%),linear-gradient(180deg,var(--bg),#041018 100%);color:var(--text);min-height:100vh}
+button,input,select{font:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.5}
+a{color:inherit;text-decoration:none}
 .container{width:min(1180px,94%);margin:auto}
-
-header{
-position:sticky;
-top:0;
-z-index:50;
-background:#04131de8;
-backdrop-filter:blur(12px);
-border-bottom:1px solid var(--line)
-}
-
-.nav{
-min-height:68px;
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:12px
-}
-
-.logo{font-size:21px;font-weight:950}
-.logo span{color:var(--sky)}
-
-nav{
-display:flex;
-gap:7px;
-overflow:auto
-}
-
-nav a{
-padding:9px 11px;
-border-radius:12px;
-background:#ffffff0b;
-white-space:nowrap;
-font-size:13px;
-font-weight:800
-}
-
-nav a:hover{
-background:#42d9ff18;
-color:var(--sky)
-}
-
-.hero{padding:38px 0}
-
-.hero-box{
-position:relative;
-overflow:hidden;
-border:1px solid var(--line);
-border-radius:30px;
-padding:42px;
-background:linear-gradient(135deg,#123f51,#071c28);
-box-shadow:0 20px 50px #0005
-}
-
-.hero-box:after{
-content:"";
-position:absolute;
-width:260px;
-height:260px;
-border-radius:50%;
-right:-100px;
-top:-90px;
-background:#42d9ff12
-}
-
-.hero h1{
-font-size:clamp(38px,7vw,70px);
-line-height:.96;
-margin:0 0 16px
-}
-
-.hero h1 span{color:var(--sky)}
-
-.hero p{
-max-width:760px;
-color:var(--muted);
-font-size:18px;
-line-height:1.6
-}
-
-.actions{
-display:flex;
-flex-wrap:wrap;
-gap:10px;
-margin-top:23px
-}
-
-.btn{
-border:0;
-border-radius:13px;
-padding:12px 16px;
-font-weight:900;
-cursor:pointer;
-transition:transform .15s,opacity .15s,box-shadow .15s;
-box-shadow:0 5px 14px #0002
-}
-
-.btn:hover{
-transform:translateY(-1px);
-opacity:.95
-}
-
-.btn:active{
-transform:translateY(0);
-box-shadow:none
-}
-
-.btn:disabled{
-opacity:.5;
-cursor:not-allowed;
-transform:none
-}
-
-.primary{
-background:var(--sky);
-color:#03202a
-}
-
-.secondary{
-background:#ffffff10;
-color:var(--text);
-border:1px solid var(--line)
-}
-
-.green{
-background:var(--green);
-color:#042217
-}
-
-.gold{
-background:var(--gold);
-color:#2b2100
-}
-
-.section{padding:32px 0}
-
-.title{margin-bottom:17px}
-
-.title h2{
-margin:0;
-font-size:29px
-}
-
-.title p{
-margin:5px 0 0;
-color:var(--muted)
-}
-
-.grid{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:15px
-}
-
-.card{
-background:linear-gradient(180deg,var(--card),#0a2632);
-border:1px solid var(--line);
-border-radius:var(--radius);
-padding:20px;
-box-shadow:0 10px 30px #0003
-}
-
-.card h3{margin:0 0 7px}
-
-.card p{
-color:var(--muted);
-line-height:1.5
-}
-
-.activity-icon{
-font-size:42px;
-margin-bottom:12px
-}
-
-.chips{
-display:flex;
-flex-wrap:wrap;
-gap:7px;
-margin-top:12px
-}
-
-.chip{
-background:#ffffff0b;
-border:1px solid var(--line);
-padding:7px 10px;
-border-radius:999px;
-font-size:12px
-}
-
-.media{
-width:100%;
-aspect-ratio:16/9;
-object-fit:cover;
-border-radius:15px;
-margin-bottom:13px;
-background:#071923;
-border:1px solid var(--line)
-}
-
-.gallery{
-display:grid;
-grid-template-columns:repeat(3,1fr);
-gap:13px
-}
-
-.gallery img{
-width:100%;
-aspect-ratio:1;
-object-fit:cover;
-border-radius:17px;
-border:1px solid var(--line)
-}
-
-.empty{
-color:var(--muted);
-padding:14px
-}
-
-.menu{
-background:var(--light);
-color:var(--dark);
-border-radius:26px;
-padding:22px
-}
-
-.menu .title p{color:#52717d}
-
-.products{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:10px
-}
-
-.product{
-display:flex;
-gap:12px;
-justify-content:space-between;
-align-items:center;
-padding:12px;
-border-bottom:1px solid #dbe7ea
-}
-
-.product:last-child{border:0}
-
-.product strong{display:block}
-.product small{color:#607982}
-
-.price{
-font-weight:950;
-white-space:nowrap
-}
-
-.order-layout{
-display:grid;
-grid-template-columns:1.1fr .9fr;
-gap:16px
-}
-
-.order-panel{
-background:white;
-color:var(--dark);
-border-radius:22px;
-padding:19px
-}
-
-.order-product{
-display:flex;
-align-items:center;
-justify-content:space-between;
-gap:10px;
-padding:12px 0;
-border-bottom:1px solid #e2ecef
-}
-
-.order-product:last-child{border:0}
-
-.add{
-background:#087c9e;
-color:#fff;
-border:0;
-border-radius:10px;
-padding:9px 12px;
-font-weight:900;
-cursor:pointer;
-transition:.15s
-}
-
-.add:hover{
-transform:translateY(-1px);
-opacity:.92
-}
-
-.cart-line{
-display:flex;
-justify-content:space-between;
-gap:10px;
-padding:10px 0;
-border-bottom:1px solid #e2ecef
-}
-
-.qty{
-display:flex;
-gap:6px;
-align-items:center;
-margin-top:6px
-}
-
-.qty button{
-width:28px;
-height:28px;
-border:0;
-border-radius:7px;
-background:#e9f5f7;
-font-weight:900;
-cursor:pointer
-}
-
-.total{
-display:flex;
-justify-content:space-between;
-font-size:21px;
-font-weight:950;
-padding:15px 0
-}
-
-.delivery{
-background:#f0f7f8;
-padding:12px;
-border-radius:13px;
-margin:10px 0
-}
-
-.form{
-display:grid;
-gap:9px
-}
-
-.form input,
-.form textarea,
-.form select{
-width:100%;
-padding:11px;
-border:1px solid #d3e0e4;
-border-radius:10px;
-color:#173e4d;
-background:#fff
-}
-
-.form textarea{
-min-height:75px;
-resize:vertical
-}
-
-.message{
-text-align:center;
-min-height:23px;
-font-weight:800
-}
-
-.reservation{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px
-}
-
-.reservation .full{
-grid-column:1/-1
-}
-
-.map{
-border-radius:18px;
-background:#e7f7fa;
-color:#174453;
-padding:25px;
-text-align:center
-}
-
-.hours{
-display:grid;
-grid-template-columns:1fr 1fr;
-gap:12px
-}
-
-.hours div{
-padding:17px;
-border-radius:16px;
-background:#ffffff08;
-border:1px solid var(--line)
-}
-
-footer{
-padding:35px 0;
-text-align:center;
-color:var(--muted);
-border-top:1px solid var(--line);
-margin-top:35px
-}
-
+header{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(4,16,24,.90);border-bottom:1px solid var(--border)}
+.header-inner{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:21px;font-weight:900;white-space:nowrap}
+.logo span{color:var(--primary)}
+.header-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--border);font-size:13px;font-weight:700}
+.hero{padding:55px 0 35px}
+.hero-box{border:1px solid var(--border);background:linear-gradient(135deg,rgba(18,57,74,.96),rgba(6,27,38,.96));border-radius:30px;padding:38px;box-shadow:var(--shadow);overflow:hidden;position:relative}
+.hero-box:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-100px;top:-100px;background:rgba(49,215,255,.10)}
+.hero h1{font-size:clamp(34px,7vw,68px);line-height:.95;margin-bottom:18px}
+.hero h1 span{color:var(--primary)}
+.hero p{max-width:700px;color:var(--muted);font-size:17px;line-height:1.6}
+.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
+section{padding:30px 0}
+.section-title{margin-bottom:18px}
+.section-title h2{font-size:28px}
+.section-title p{color:var(--muted);margin-top:6px}
+.profile{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px}
+.stat small{display:block;color:var(--muted);margin-bottom:7px}
+.stat strong{font-size:27px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.card{background:linear-gradient(180deg,var(--card),#0a2531);border:1px solid var(--border);border-radius:var(--radius);padding:21px;box-shadow:0 10px 30px rgba(0,0,0,.13)}
+.game-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:rgba(49,215,255,.10);margin-bottom:14px}
+.card h3{font-size:20px;margin-bottom:7px}
+.card p{color:var(--muted);line-height:1.5}
+.reward{margin:15px 0;display:flex;gap:8px;flex-wrap:wrap}
+.reward span{background:rgba(255,255,255,.07);border-radius:999px;padding:7px 10px;font-size:12px}
+.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:900;transition:.2s}
+.btn:hover:not(:disabled){transform:translateY(-2px)}
+.btn-primary{background:var(--primary);color:#03131a}
+.btn-secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border)}
+.btn-green{background:var(--green);color:#052016}
+.btn-yellow{background:var(--yellow);color:#251b00}
+.btn-red{background:var(--red);color:white}
+.duel-layout,.tournament-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.duel-status{margin:12px 0;padding:13px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
+.duel-list{display:grid;gap:10px;margin-top:15px}
+.duel-item{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.score-input{width:100%;padding:13px;border-radius:13px;border:1px solid var(--border);background:#061923;color:white;outline:none}
+.score-input:focus{border-color:var(--primary)}
+.tournament-card{position:relative}
+.tournament-status{position:absolute;right:15px;top:15px;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;background:rgba(66,230,149,.13);color:var(--green)}
+.tournament-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
+.info-box{background:rgba(255,255,255,.05);border-radius:12px;padding:10px}
+.info-box small{color:var(--muted);display:block}
+.info-box strong{display:block;margin-top:3px}
+.match{background:rgba(255,255,255,.04);border:1px solid var(--border);padding:14px;border-radius:15px;margin-bottom:10px}
+.match-header{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:10px}
+.player-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0}
+.trivia-box{max-width:800px;margin:auto}
+.trivia-question{font-size:24px;line-height:1.3;margin:20px 0}
+.answers{display:grid;gap:10px}
+.answer{width:100%;text-align:left;padding:16px;border-radius:15px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:white;font-weight:700}
+.answer:hover:not(:disabled){background:rgba(49,215,255,.12);border-color:rgba(49,215,255,.4)}
+.answer.correct{background:rgba(66,230,149,.20);border-color:var(--green)}
+.answer.wrong{background:rgba(255,100,124,.18);border-color:var(--red)}
+.ranking{display:grid;gap:8px}
+.rank-row{display:grid;grid-template-columns:50px 1fr auto auto;align-items:center;gap:10px;padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px}
+.rank-number{font-size:21px;font-weight:900}
+.rank-name{font-weight:800}
+.rank-points,.rank-tokens{font-size:13px;color:var(--muted)}
+.prize-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+.prize{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}
+.prize-icon{font-size:35px;margin-bottom:10px}
+.media{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px;margin:-2px 0 14px;border:1px solid var(--border);background:#071923}
+.media-fallback{width:100%;aspect-ratio:16/9;display:grid;place-items:center;border-radius:16px;margin:-2px 0 14px;background:rgba(49,215,255,.08);font-size:52px;border:1px solid var(--border)}
+.table-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px}
+.table-code{font-size:28px;font-weight:900;color:var(--primary)}
+.qr{background:white;padding:10px;border-radius:15px;display:inline-flex}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(100px);opacity:0;z-index:999;background:#102f3e;border:1px solid var(--border);padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);transition:.3s;max-width:90%;text-align:center}
+#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+.loading,.empty{color:var(--muted);padding:15px 0}
+footer{margin-top:50px;border-top:1px solid var(--border);padding:30px 0;color:var(--muted);text-align:center}
 @media(max-width:850px){
 .grid{grid-template-columns:1fr 1fr}
-.order-layout{grid-template-columns:1fr}
-.gallery{grid-template-columns:1fr 1fr}
+.profile{grid-template-columns:1fr 1fr}
+.prize-grid{grid-template-columns:1fr 1fr}
+.duel-layout,.tournament-layout{grid-template-columns:1fr}
 }
+@media(max-width:560px){
+.hero{padding-top:25px}
+.hero-box{padding:25px 20px;border-radius:23px}
+.grid{grid-template-columns:1fr}
+.profile{grid-template-columns:1fr 1fr}
+.prize-grid{grid-template-columns:1fr 1fr}
+.header-inner{align-items:flex-start;padding:12px 0}
+.header-stats{max-width:190px}
+.badge{font-size:11px;padding:6px 8px}
+.rank-row{grid-template-columns:38px 1fr auto}
+.rank-tokens{display:none}
+.tournament-info{grid-template-columns:1fr 1fr}
+}
+.map-card{margin-top:18px}
+.map-wrap{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:#eaf8fb}
+.map-wrap img{display:block;width:100%;height:auto;min-height:260px;object-fit:cover}
+.map-note{margin-top:10px;color:var(--muted);font-size:12px}
 
-@media(max-width:580px){
-nav{max-width:55vw}
-.hero-box{padding:27px 20px}
-.grid,.products,.reservation,.hours{grid-template-columns:1fr}
-.reservation .full{grid-column:auto}
-.gallery{grid-template-columns:1fr 1fr}
-.section{padding:25px 0}
-}
+/* PEDIDOS */
+.pedidos-app{background:linear-gradient(180deg,#eaf7fa,#f7fbfc)}
+.pedido-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
+.pedido-panel{background:white;border:1px solid #dce8eb;border-radius:22px;padding:21px;box-shadow:0 8px 25px rgba(0,0,0,.06)}
+.pedido-producto{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e5ecef}
+.pedido-producto:last-child{border-bottom:0}
+.pedido-producto strong{color:#063c55;display:block}
+.pedido-producto small{color:#687a82}
+.btn-pedir{border:0;border-radius:11px;padding:10px 13px;background:#087c9e;color:#fff;font-weight:900;cursor:pointer;white-space:nowrap}
+.carrito-linea{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #e5ecef}
+.carrito-controles{display:flex;align-items:center;gap:7px;margin-top:6px}
+.carrito-controles button{width:28px;height:28px;border:0;border-radius:7px;background:#eaf7fa;cursor:pointer;font-weight:900}
+.pedido-total{display:flex;justify-content:space-between;font-size:21px;font-weight:900;color:#063c55;padding:15px 0}
+.entrega-box{background:#f2f8fa;border-radius:14px;padding:13px;margin:10px 0}
+.entrega-box label{display:block;margin:8px 0;color:#314b55}
+.entrega-box input[type=text],.pedido-form input,.pedido-form textarea{width:100%;padding:12px;border:1px solid #d6e1e5;border-radius:10px;font:inherit}
+.pedido-form{display:grid;gap:9px}
+.pedido-form textarea{min-height:70px;resize:vertical}
+.pedido-msg{min-height:24px;text-align:center;font-weight:900;margin-top:8px}
+.pedido-vacio{padding:20px;text-align:center;color:#687a82}
+@media(max-width:800px){.pedido-layout{grid-template-columns:1fr}}
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="container nav">
+<div class="container header-inner">
 <div class="logo">POOL <span>&</span> BEACH</div>
-
-<nav>
-<a href="#actividades">Actividades</a>
-<a href="#menu">Menú</a>
-<a href="#pedidos">Pedidos</a>
-<a href="#reservas">Reservas</a>
-<a href="#galeria">Fotos</a>
-<a href="#contacto">Contacto</a>
-</nav>
-
+<div class="header-stats">
+<div class="badge" id="tableBadge">Mesa —</div>
+<div class="badge">🎮 Games</div>
+<div class="badge" id="profileBadge">Invitado</div>
+</div>
 </div>
 </header>
 
@@ -470,804 +160,122 @@ nav{max-width:55vw}
 <section class="hero">
 <div class="container">
 <div class="hero-box">
-
-<h1>POOL <span>&</span> BEACH</h1>
-
-<p>
-Un lugar para comer, tomar algo y disfrutar en Puerto Pirámides.
-Vení a jugar al pool, divertirte con PlayStation, truco, dados,
-simuladores y vivir una noche diferente.
-</p>
-
-<div class="actions">
-<a class="btn primary" href="#pedidos">🛒 Hacer pedido</a>
-<a class="btn green" href="#reservas">📅 Reservar</a>
-<a class="btn secondary" href="#actividades">🎯 Ver actividades</a>
+<h1>POOL <span>&</span> BEACH<br>GAMES</h1>
+<p>Jugá, competí, sumá puntos, participá en duelos y torneos, subí en el ranking y canjeá premios.</p>
+<div class="hero-actions">
+<button class="btn btn-primary" onclick="scrollToId('juegos')">🎮 Ver juegos</button>
+<button class="btn btn-secondary" onclick="scrollToId('pedidos')">🍔 Hacer pedido</button>
+<button class="btn btn-secondary" onclick="scrollToId('duelos')">⚔️ Duelos</button>
+<button class="btn btn-secondary" onclick="scrollToId('torneos')">🏆 Torneos</button>
 </div>
-
 </div>
 </div>
 </section>
 
-<section id="actividades" class="section">
+<section id="perfil">
 <div class="container">
-
-<div class="title">
-<h2>🎯 Actividades</h2>
-<p>
-Promocionamos nuestras propuestas.
-No necesitás crear una cuenta ni jugar dentro de esta web.
-</p>
+<div class="section-title">
+<h2>Tu perfil</h2>
+<p>Ingresá para guardar tus puntos, tokens, duelos y torneos.</p>
 </div>
-
-<div class="grid" id="activitiesGrid"></div>
-
+<div class="profile">
+<div class="stat"><small>Jugador</small><strong id="profileName">Invitado</strong></div>
+<div class="stat"><small>Puntos</small><strong id="profilePoints">0</strong></div>
+<div class="stat"><small>Tokens</small><strong id="profileTokens">0</strong></div>
+<div class="stat"><small>Ranking</small><strong id="profileRank">—</strong></div>
+</div>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:15px">
+<button class="btn btn-primary" id="loginBtn" onclick="loginGuest()">🎮 Entrar como jugador</button>
+<button class="btn btn-secondary" id="logoutBtn" onclick="logout()" style="display:none">Cerrar sesión</button>
+<button class="btn btn-secondary" id="changeNameBtn" onclick="changeDisplayName()" style="display:none">✏️ Cambiar nombre</button>
+</div>
 </div>
 </section>
 
-<section id="promociones" class="section">
+<section id="mesa">
 <div class="container">
-
-<div class="title">
-<h2>🔥 Promociones</h2>
-<p>Las promociones que tenemos disponibles en Pool & Beach.</p>
+<div class="section-title">
+<h2>Tu mesa</h2>
+<p>Escaneá el QR de tu mesa para identificarla automáticamente.</p>
 </div>
-
-<div class="grid" id="promosGrid">
-<div class="empty">Cargando promociones...</div>
+<div class="card table-box">
+<div>
+<div class="table-code" id="tableNumber">Mesa —</div>
+<p id="tableInfo">No se detectó una mesa.</p>
 </div>
-
+<div class="qr"><canvas id="qrCanvas"></canvas></div>
+</div>
 </div>
 </section>
 
-<section id="menu" class="section">
+<section id="juegos">
 <div class="container">
-
-<div class="title">
-<h2>🍔 Menú</h2>
-<p>
-Elegí lo que quieras pedir.
-Los productos disponibles aparecen también en el carrito.
-</p>
+<div class="section-title">
+<h2>🎮 Juegos</h2>
+<p>Elegí una experiencia y empezá a jugar.</p>
 </div>
-
-<div class="menu">
-<div id="menuProducts" class="products">
-<div class="empty">Cargando menú...</div>
+<div id="gamesGrid" class="grid">
+<div class="loading">Cargando juegos...</div>
 </div>
-</div>
-
 </div>
 </section>
 
-<section id="pedidos" class="section">
+<section id="pedidos" class="pedidos-app">
 <div class="container">
-
-<div class="title">
-<h2>🛒 Pedidos</h2>
-<p>
-Pedí con delivery o retiralo en el local.
-Delivery: $3.000.
-</p>
+<div class="section-title">
+<h2>🍔 Pedidos</h2>
+<p>Elegí tus productos y enviá el pedido directamente al local.</p>
 </div>
 
-<div class="order-layout">
+<div class="pedido-layout">
 
-<div class="order-panel">
-<h3>Elegí tus productos</h3>
-<div id="orderProducts">
-<div class="empty">Cargando productos...</div>
+<div class="pedido-panel">
+<h3 style="color:#063c55;margin-bottom:10px">Menú</h3>
+<div id="pedidoProductos">
+<div class="pedido-vacio">Cargando productos...</div>
 </div>
 </div>
 
-<div class="order-panel">
+<div class="pedido-panel">
+<h3 style="color:#063c55;margin-bottom:10px">🛒 Tu pedido</h3>
 
-<h3>Tu pedido</h3>
-
-<div id="cart">
-<div class="empty">Todavía no agregaste productos.</div>
+<div id="pedidoCarrito">
+<div class="pedido-vacio">Todavía no agregaste productos.</div>
 </div>
 
-<div class="total">
+<div class="pedido-total">
 <span>Total</span>
-<span id="orderTotal">$0</span>
+<span id="pedidoTotal">$0</span>
 </div>
 
-<div class="delivery">
-
-<strong>Forma de entrega</strong>
+<div class="entrega-box">
+<strong style="color:#063c55">Forma de entrega</strong>
 
 <label>
-<input type="radio" name="deliveryType" value="delivery" checked>
-🚚 Delivery — $3.000
+<input type="radio" name="tipoEntregaPedido" value="retiro" checked onchange="tipoEntregaPedido()">
+ Retiro en el local
 </label>
 
 <label>
-<input type="radio" name="deliveryType" value="retiro">
-🏠 Retiro en el local — $0
+<input type="radio" name="tipoEntregaPedido" value="delivery" onchange="tipoEntregaPedido()">
+ Delivery
 </label>
 
-<div id="addressWrap">
-<input
-id="orderAddress"
-placeholder="Dirección para delivery"
-style="width:100%;padding:10px;border:1px solid #d3e0e4;border-radius:9px;margin-top:7px">
+<div id="direccionPedidoWrap" style="display:none;margin-top:8px">
+<input id="pedidoDireccion" type="text" placeholder="Dirección para el delivery">
+</div>
 </div>
 
-</div>
-
-<form id="orderForm" class="form">
-
-<input id="orderName" placeholder="Nombre" required>
-
-<input id="orderPhone" placeholder="Teléfono" required>
-
-<textarea
-id="orderNotes"
-placeholder="Notas del pedido (opcional)">
-</textarea>
-
-<button class="btn primary" type="submit">
-Enviar pedido
-</button>
-
-<div id="orderMessage" class="message"></div>
-
+<form class="pedido-form" id="pedidoForm">
+<input id="pedidoNombre" type="text" placeholder="Nombre" required>
+<input id="pedidoTelefono" type="tel" placeholder="Teléfono" required>
+<textarea id="pedidoNotas" placeholder="Notas del pedido (opcional)"></textarea>
+<button class="btn-pedir" type="submit">📲 Enviar pedido</button>
 </form>
 
-</div>
-</div>
-</div>
-</section>
-
-<section id="reservas" class="section">
-<div class="container">
-
-<div class="title">
-<h2>📅 Reservas</h2>
-<p>Reservá tu visita sin elegir mesa.</p>
-</div>
-
-<div class="card">
-
-<form id="reservationForm" class="form reservation">
-
-<input id="rName" placeholder="Nombre" required>
-
-<input id="rPhone" placeholder="Teléfono" required>
-
-<input id="rDate" type="date" required>
-
-<input id="rTime" type="time" required>
-
-<input
-id="rPeople"
-type="number"
-min="1"
-max="100"
-placeholder="Cantidad de personas"
-required>
-
-<input id="rService" placeholder="Servicio o motivo">
-
-<textarea
-id="rNotes"
-class="full"
-placeholder="Observaciones">
-</textarea>
-
-<button class="btn primary full" type="submit">
-Enviar reserva
-</button>
-
-<div id="rMessage" class="message full"></div>
-
-</form>
-
-</div>
-</div>
-</section>
-
-<section id="galeria" class="section">
-<div class="container">
-
-<div class="title">
-<h2>📸 Galería</h2>
-<p>Conocé Pool & Beach.</p>
-</div>
-
-<div id="gallery" class="gallery">
-<div class="empty">Cargando fotos...</div>
-</div>
-
-</div>
-</section>
-
-<section id="horarios" class="section">
-<div class="container">
-
-<div class="title">
-<h2>🕐 Horarios</h2>
-</div>
-
-<div class="hours">
-
-<div>
-<strong>Local</strong><br>
-12:00 a 15:00<br>
-19:00 a 03:30
-</div>
-
-<div>
-<strong>Cocina</strong><br>
-12:00 a 15:00<br>
-20:00 a 01:00
+<div id="pedidoMensaje" class="pedido-msg"></div>
 </div>
 
 </div>
 </div>
 </section>
-
-<section id="contacto" class="section">
-<div class="container">
-
-<div class="title">
-<h2>📍 Contacto</h2>
-<p>Puerto Pirámides · Patagonia Argentina</p>
-</div>
-
-<div class="map">
-
-<strong>POOL & BEACH</strong>
-
-<p>Puerto Pirámides, Chubut</p>
-
-<p>
-Comida · bebidas · pool · PlayStation · truco · dados · simuladores
-</p>
-
-</div>
-</div>
-</section>
-
-</main>
-
-<footer>
-POOL & BEACH · Puerto Pirámides · Patagonia Argentina
-</footer>
-
-<script>
-
-const SUPABASE_URL='https://nmpakeovqkdajtswjpgm.supabase.co';
-
-const SUPABASE_KEY='sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
-
-const db=window.supabase.createClient(
-SUPABASE_URL,
-SUPABASE_KEY
-);
-
-const DELIVERY_FEE=3000;
-
-let cart=[];
-
-const activities=[
-['🎱','Pool','Mesas de pool para disfrutar con amigos y pasar un buen momento.'],
-['🎮','PlayStation','Jugá y competí con tus amigos en PlayStation.'],
-['🃏','Truco','Clásicos partidos de truco para compartir y divertirse.'],
-['🎲','Dados','Una propuesta simple y divertida para jugar en grupo.'],
-['🏎️','Simuladores','Viví una experiencia diferente con nuestros simuladores.'],
-['⚽','Fútbol','Disfrutá del fútbol y de nuestras propuestas para compartir.']
-];
-
-function $(id){
-return document.getElementById(id)
-}
-
-function esc(v){
-return String(v??'')
-.replaceAll('&','&amp;')
-.replaceAll('<','&lt;')
-.replaceAll('>','&gt;')
-.replaceAll('"','&quot;')
-.replaceAll("'",'&#039;')
-}
-
-function money(v){
-return '$'+Number(v||0).toLocaleString('es-AR')
-}
-
-function safeUrl(v){
-try{
-const u=new URL(String(v||''),location.href);
-return ['http:','https:'].includes(u.protocol)?u.href:''
-}catch{
-return''
-}
-}
-
-function renderActivities(){
-
-$('activitiesGrid').innerHTML=
-activities.map(a=>`
-<article class="card">
-
-<div class="activity-icon">
-${a[0]}
-</div>
-
-<h3>${esc(a[1])}</h3>
-
-<p>
-${esc(a[2])}
-</p>
-
-</article>
-`).join('')
-
-}
-
-async function loadProducts(){
-
-const menu=await db
-.from('productos')
-.select('*')
-.eq('activo',true)
-.eq('disponible',true)
-.order('categoria')
-.order('nombre');
-
-if(menu.error){
-
-$('menuProducts').innerHTML=
-'<div class="empty">No se pudo cargar el menú.</div>';
-
-$('orderProducts').innerHTML=
-'<div class="empty">No se pudieron cargar los productos.</div>';
-
-return
-}
-
-const rows=menu.data||[];
-
-$('menuProducts').innerHTML=
-rows.map(p=>`
-
-<div class="product">
-
-<div>
-
-<strong>${esc(p.nombre)}</strong>
-
-<small>
-${esc(p.categoria||'')}
-${p.descripcion?' · '+esc(p.descripcion):''}
-</small>
-
-</div>
-
-<span class="price">
-${money(p.precio)}
-</span>
-
-</div>
-
-`).join('')||
-'<div class="empty">No hay productos disponibles.</div>';
-
-$('orderProducts').innerHTML=
-rows.map(p=>{
-
-const img=safeUrl(p.image_url);
-
-return `
-
-<div class="order-product">
-
-${img?
-`<img
-src="${esc(img)}"
-style="width:62px;height:62px;object-fit:cover;border-radius:10px">`
-:''}
-
-<div style="flex:1">
-
-<strong>
-${esc(p.nombre)}
-</strong>
-
-<div class="muted">
-${money(p.precio)}
-</div>
-
-</div>
-
-<button
-type="button"
-class="add"
-onclick='addToCart(${JSON.stringify({
-id:p.id,
-nombre:p.nombre,
-precio:p.precio
-})})'>
-Agregar
-</button>
-
-</div>
-`
-
-}).join('')||
-'<div class="empty">No hay productos disponibles.</div>'
-
-}
-
-function addToCart(p){
-
-const x=cart.find(
-i=>String(i.id)===String(p.id)
-);
-
-if(x)
-x.cantidad++;
-else
-cart.push({...p,cantidad:1});
-
-renderCart()
-}
-
-function changeQty(id,n){
-
-const x=cart.find(
-i=>String(i.id)===String(id)
-);
-
-if(!x)return;
-
-x.cantidad+=n;
-
-if(x.cantidad<=0)
-cart=cart.filter(
-i=>String(i.id)!==String(id)
-);
-
-renderCart()
-}
-
-function renderCart(){
-
-const el=$('cart');
-
-el.innerHTML=cart.length?
-
-cart.map(i=>`
-
-<div class="cart-line">
-
-<div>
-
-<strong>
-${esc(i.nombre)}
-</strong>
-
-<div class="qty">
-
-<button
-type="button"
-onclick="changeQty('${esc(i.id)}',-1)">
-−
-</button>
-
-<span>
-${i.cantidad}
-</span>
-
-<button
-type="button"
-onclick="changeQty('${esc(i.id)}',1)">
-+
-</button>
-
-</div>
-
-</div>
-
-<strong>
-${money(i.precio*i.cantidad)}
-</strong>
-
-</div>
-
-`).join(''):
-
-'<div class="empty">Todavía no agregaste productos.</div>';
-
-const type=
-document.querySelector(
-'input[name=deliveryType]:checked'
-)?.value||'delivery';
-
-const subtotal=
-cart.reduce(
-(s,i)=>s+Number(i.precio||0)*i.cantidad,
-0
-);
-
-$('orderTotal').textContent=
-money(
-subtotal+
-(cart.length&&type==='delivery'
-?DELIVERY_FEE:0)
-);
-
-$('addressWrap').style.display=
-type==='delivery'?'block':'none'
-}
-
-document
-.querySelectorAll('input[name=deliveryType]')
-.forEach(x=>
-x.addEventListener(
-'change',
-renderCart
-)
-);
-
-$('orderForm').addEventListener(
-'submit',
-async e=>{
-
-e.preventDefault();
-
-if(!cart.length)
-return $('orderMessage').textContent=
-'Agregá al menos un producto.';
-
-const type=
-document.querySelector(
-'input[name=deliveryType]:checked'
-).value;
-
-const address=
-$('orderAddress').value.trim();
-
-if(type==='delivery'&&!address)
-return $('orderMessage').textContent=
-'Ingresá la dirección de delivery.';
-
-const subtotal=
-cart.reduce(
-(s,i)=>s+Number(i.precio||0)*i.cantidad,
-0
-);
-
-const payload={
-
-nombre_cliente:
-$('orderName').value.trim(),
-
-telefono:
-$('orderPhone').value.trim(),
-
-tipo_entrega:type,
-
-direccion:
-type==='delivery'?address:null,
-
-total:
-subtotal+
-(type==='delivery'?DELIVERY_FEE:0),
-
-items:
-cart.map(i=>({
-id:i.id,
-nombre:i.nombre,
-precio:Number(i.precio),
-cantidad:i.cantidad
-})),
-
-notas:
-$('orderNotes').value.trim(),
-
-estado:'pendiente'
-
-};
-
-const r=
-await db
-.from('pedidos')
-.insert(payload);
-
-if(r.error){
-
-$('orderMessage').textContent=
-'No se pudo enviar el pedido: '+
-r.error.message;
-
-return
-}
-
-$('orderMessage').textContent=
-'✅ Pedido enviado correctamente.';
-
-cart=[];
-
-$('orderForm').reset();
-
-document
-.querySelector(
-'input[name=deliveryType][value=delivery]'
-).checked=true;
-
-renderCart()
-
-});
-
-$('reservationForm').addEventListener(
-'submit',
-async e=>{
-
-e.preventDefault();
-
-const payload={
-
-nombre:
-$('rName').value.trim(),
-
-telefono:
-$('rPhone').value.trim(),
-
-fecha:
-$('rDate').value,
-
-hora:
-$('rTime').value,
-
-servicio:
-$('rService').value.trim(),
-
-cantidad_personas:
-Number($('rPeople').value),
-
-estado:'pendiente',
-
-notas:
-$('rNotes').value.trim()
-
-};
-
-const r=
-await db
-.from('reservas')
-.insert(payload);
-
-if(r.error){
-
-$('rMessage').textContent=
-'No se pudo enviar la reserva: '+
-r.error.message;
-
-return
-}
-
-$('rMessage').textContent=
-'✅ Reserva enviada correctamente.';
-
-$('reservationForm').reset()
-
-});
-
-async function loadPromos(){
-
-const r=
-await db
-.from('promociones')
-.select('*')
-.eq('activa',true)
-.order('created_at',{ascending:false});
-
-if(r.error){
-
-$('promosGrid').innerHTML=
-'<div class="empty">No hay promociones cargadas.</div>';
-
-return
-}
-
-const rows=r.data||[];
-
-$('promosGrid').innerHTML=
-rows.map(p=>{
-
-const u=safeUrl(p.image_url);
-
-return `
-
-<article class="card">
-
-${u?
-`<img
-class="media"
-src="${esc(u)}"
-alt="${esc(p.titulo||p.nombre||'Promoción')}">`
-:''}
-
-<h3>
-${esc(p.titulo||p.nombre||'Promoción')}
-</h3>
-
-<p>
-${esc(p.descripcion||'')}
-</p>
-
-${p.precio?
-`<div class="chips">
-<span class="chip">
-${money(p.precio)}
-</span>
-</div>`
-:''}
-
-</article>
-
-`
-
-}).join('')||
-'<div class="empty">No hay promociones cargadas.</div>'
-
-}
-
-async function loadGallery(){
-
-const r=
-await db
-.from('galeria_fotos')
-.select('*')
-.order('creado_en',{ascending:false});
-
-if(r.error){
-
-$('gallery').innerHTML=
-'<div class="empty">No se pudo cargar la galería.</div>';
-
-return
-}
-
-const rows=r.data||[];
-
-$('gallery').innerHTML=
-rows.map(x=>{
-
-const u=safeUrl(x.url);
-
-return u?
-`<img
-src="${esc(u)}"
-alt="${esc(x.titulo||'Pool & Beach')}"
-loading="lazy">`
-:'';
-
-}).join('')||
-'<div class="empty">Todavía no hay fotos publicadas.</div>'
-
-}
-
-async function init(){
-
-renderActivities();
-
-renderCart();
-
-await Promise.allSettled([
-loadProducts(),
-loadPromos(),
-loadGallery()
-])
-
-}
-
-init();
-
-</script>
-
-</body>
-</html>
