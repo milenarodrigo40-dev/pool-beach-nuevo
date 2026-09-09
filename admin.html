@@ -1,261 +1,360 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-<meta charset="UTF-8">
+<meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Pool & Beach | Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
-<script src="supabase.js"></script>
 
 <style>
 :root{
   --bg:#06131e;
-  --card:#0c2333;
-  --card2:#123149;
-  --line:#24536a;
-  --sky:#62dcff;
+  --p:#0d2939;
+  --p2:#12364a;
+  --line:#28556b;
+  --sky:#5edcff;
+  --green:#62e6a1;
   --gold:#ffd166;
-  --green:#67e7a2;
   --red:#ff7182;
-  --txt:#f5fbff;
-  --muted:#9ab5c5;
+  --txt:#f4fbff;
+  --muted:#9db9c7
 }
 
-*{box-sizing:border-box}
+*{
+  box-sizing:border-box
+}
 
 body{
   margin:0;
-  background:radial-gradient(circle at 20% 0%,#16415a,#06131e 48%,#03080d);
+  background:linear-gradient(180deg,#0b2a3a,#031018);
   color:var(--txt);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif
 }
 
 .app{
-  max-width:1180px;
+  width:min(1200px,94%);
   margin:auto;
-  padding:15px 14px 70px;
+  padding:14px 0 60px
 }
 
 .card{
-  background:linear-gradient(145deg,var(--card2),var(--card));
+  background:linear-gradient(145deg,var(--p2),var(--p));
   border:1px solid var(--line);
   border-radius:18px;
-  padding:17px;
+  padding:16px;
   margin-bottom:14px;
-  box-shadow:0 10px 25px #0004;
+  box-shadow:0 10px 25px #0004
 }
 
 .login{
   max-width:430px;
-  margin:10vh auto;
+  margin:8vh auto
 }
-
-.brand{
-  text-align:center;
-  font-size:25px;
-  font-weight:950;
-  margin-bottom:20px;
-}
-
-.brand span{color:var(--sky)}
-
-input,
-select,
-textarea{
-  width:100%;
-  padding:11px;
-  margin:5px 0 10px;
-  border-radius:11px;
-  border:1px solid var(--line);
-  background:#061722;
-  color:var(--txt);
-  font:inherit;
-}
-
-textarea{min-height:90px}
-
-label{
-  color:var(--muted);
-  font-size:12px;
-}
-
-button,
-.btn{
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:11px 14px;
-  min-height:42px;
-  background:var(--sky);
-  color:#05202f;
-  font-weight:900;
-  cursor:pointer;
-}
-
-button.dark,
-.btn.dark{
-  background:#15364b;
-  color:var(--txt);
-}
-
-button.gold{background:var(--gold)}
-
-button.red{background:var(--red)}
 
 .top{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px;
-  margin-bottom:10px;
+  gap:12px
+}
+
+.brand{
+  font-size:23px;
+  font-weight:950
+}
+
+.brand span{
+  color:var(--sky)
+}
+
+.actions,
+.row{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center
+}
+
+.status{
+  padding:7px 10px;
+  border-radius:99px;
+  border:1px solid var(--line);
+  color:var(--sky);
+  font-size:11px
+}
+
+.btn,
+.tab{
+  border:0;
+  border-radius:12px;
+  padding:11px 14px;
+  font-weight:900;
+  cursor:pointer
+}
+
+.btn{
+  background:var(--sky);
+  color:#05202c
+}
+
+.btn.dark,
+.tab{
+  background:#102c3d;
+  color:var(--txt);
+  border:1px solid var(--line)
+}
+
+.btn.green{
+  background:var(--green);
+  color:#052116
+}
+
+.btn.gold{
+  background:var(--gold);
+  color:#2c2200
+}
+
+.btn.red{
+  background:var(--red);
+  color:#fff
+}
+
+.hero{
+  margin:14px 0
+}
+
+.hero h1{
+  margin:0 0 5px
+}
+
+.muted,
+small{
+  color:var(--muted)
 }
 
 .tabs{
   display:flex;
-  gap:8px;
+  gap:7px;
   overflow:auto;
+  padding:4px 0 9px;
   position:sticky;
   top:0;
-  z-index:20;
-  padding:7px 0;
+  z-index:10;
   background:#06131ee8;
-  backdrop-filter:blur(8px);
+  backdrop-filter:blur(10px)
 }
 
-.tabs button{
-  white-space:nowrap;
-  background:#15364b;
-  color:var(--txt);
+.tab{
+  white-space:nowrap
 }
 
-.tabs button.active{
+.tab.active{
   background:var(--sky);
-  color:#05202f;
+  color:#05202c
 }
 
-.view{display:none}
-.view.active{display:block}
+.view{
+  display:none
+}
 
-.grid{
+.view.active{
+  display:block
+}
+
+.cards,
+.grid2{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:11px;
+  gap:11px
+}
+
+.cards{
+  grid-template-columns:repeat(4,1fr)
 }
 
 .grid2{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:14px;
+  grid-template-columns:1fr 1fr
 }
 
 .metric{
-  padding:16px;
+  padding:15px;
   border:1px solid var(--line);
   border-radius:15px;
-  background:#092031;
+  background:#092031
 }
 
-.metric small{color:var(--muted)}
+.metric small{
+  color:var(--muted)
+}
 
 .metric b{
   display:block;
-  font-size:30px;
-  margin-top:5px;
+  font-size:29px;
+  margin-top:4px
+}
+
+.input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  background:#061722;
+  color:var(--txt);
+  margin:5px 0 8px;
+  font:inherit
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical
+}
+
+label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:7px
+}
+
+.checkbox{
+  display:flex;
+  gap:8px;
+  align-items:center
+}
+
+.checkbox input{
+  width:auto;
+  margin:0
 }
 
 .table-wrap{
-  overflow:auto;
+  overflow:auto
 }
 
 table{
   width:100%;
-  min-width:700px;
   border-collapse:collapse;
+  min-width:900px
 }
 
-th,td{
+th,
+td{
   padding:10px;
-  border-bottom:1px solid #234456;
+  border-bottom:1px solid #234759;
   text-align:left;
-  vertical-align:top;
+  vertical-align:top
 }
 
-th{color:var(--muted)}
-
-.status{
-  display:inline-block;
-  padding:6px 10px;
-  border-radius:99px;
-  border:1px solid var(--line);
-  color:var(--sky);
-  font-size:12px;
+th{
+  color:var(--muted)
 }
 
 .notice{
-  padding:11px;
-  border-radius:12px;
-  background:#102a3b;
-  border:1px solid #28556c;
-  margin:8px 0;
-}
-
-.error{color:var(--red)}
-.ok{color:var(--green)}
-
-.qr-box{
-  text-align:center;
-}
-
-#generalQr{
-  background:white;
-  border-radius:12px;
   padding:10px;
-  max-width:280px;
-  width:100%;
+  border-radius:11px;
+  background:#102b3c;
+  border:1px solid var(--line);
+  margin:7px 0
 }
 
-.file-box{
-  border:1px dashed var(--line);
-  padding:14px;
-  border-radius:13px;
-  margin:8px 0;
+.msg{
+  min-height:20px;
+  margin-top:8px
+}
+
+.ok{
+  color:var(--green)
+}
+
+.error{
+  color:var(--red)
+}
+
+.hidden{
+  display:none!important
+}
+
+.item{
+  padding:12px 0;
+  border-bottom:1px solid #214657
+}
+
+.item:last-child{
+  border:0
+}
+
+.thumb{
+  width:100%;
+  max-height:190px;
+  object-fit:cover;
+  border-radius:12px
 }
 
 .gallery{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:10px;
+  gap:10px
+}
+
+.gallery figure{
+  margin:0;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:9px
 }
 
 .gallery img{
   width:100%;
   aspect-ratio:1;
   object-fit:cover;
-  border-radius:12px;
+  border-radius:10px
 }
 
-.item-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:8px;
+.alert{
+  background:#3a2730;
+  border:1px solid var(--red);
+  color:#fff;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px
+}
+
+.empty{
+  color:var(--muted);
+  padding:10px 0
 }
 
 @media(max-width:850px){
-  .grid{grid-template-columns:repeat(2,1fr)}
+  .cards{
+    grid-template-columns:1fr 1fr
+  }
 }
 
-@media(max-width:600px){
-  .grid,
+@media(max-width:650px){
   .grid2,
-  .gallery{
-    grid-template-columns:1fr;
+  .gallery,
+  .cards{
+    grid-template-columns:1fr
   }
 
   .top{
     align-items:flex-start;
-    flex-direction:column;
+    flex-direction:column
+  }
+
+  .top .actions{
+    width:100%
+  }
+
+  .top .actions .btn{
+    flex:1
+  }
+
+  .app{
+    width:94%
   }
 }
 </style>
@@ -263,7 +362,7 @@ th{color:var(--muted)}
 
 <body>
 
-<div id="loginScreen" class="login card">
+<div id="login" class="login card">
 
   <div class="brand">
     POOL <span>&</span> BEACH
@@ -271,1469 +370,2380 @@ th{color:var(--muted)}
 
   <h2>🔐 Administración</h2>
 
-  <p style="color:var(--muted)">
-    Ingresá con una cuenta autorizada.
+  <p class="notice">
+    Ingresá con una cuenta autorizada de administrador o staff.
   </p>
 
-  <label>Email</label>
-  <input id="loginEmail" type="email" autocomplete="username">
+  <form id="loginForm">
 
-  <label>Contraseña</label>
-  <input id="loginPassword" type="password" autocomplete="current-password">
+    <label>Email</label>
+    <input
+      id="email"
+      class="input"
+      type="email"
+      autocomplete="username"
+      required
+    >
 
-  <button id="loginBtn" style="width:100%">Ingresar</button>
+    <label>Contraseña</label>
+    <input
+      id="password"
+      class="input"
+      type="password"
+      autocomplete="current-password"
+      required
+    >
 
-  <div id="loginError" class="error"></div>
+    <button
+      class="btn"
+      type="submit"
+    >
+      Iniciar sesión
+    </button>
+
+    <p id="loginMsg" class="msg hidden"></p>
+
+  </form>
+
 </div>
 
-<div id="adminApp" class="app" style="display:none">
+<div id="app" class="app hidden">
 
   <div class="top">
+
     <div>
-      <div class="brand" style="text-align:left;margin:0">
+      <div class="brand">
         POOL <span>&</span> BEACH
       </div>
-      <small style="color:var(--muted)">Panel administrativo</small>
+
+      <small id="userInfo">
+        Panel administrativo
+      </small>
     </div>
 
-    <button id="logoutBtn" class="dark">Cerrar sesión</button>
-  </div>
-
-  <div class="tabs">
-
-    <button data-view="dashboard" class="active">📊 Inicio</button>
-    <button data-view="reservas">📅 Reservas</button>
-    <button data-view="pedidos">🛵 Pedidos</button>
-    <button data-view="productos">🍔 Productos</button>
-    <button data-view="promociones">🔥 Promos</button>
-    <button data-view="juegos">🎮 Juegos</button>
-    <button data-view="trivia">🧠 Trivia</button>
-    <button data-view="premios">🏆 Premios</button>
-    <button data-view="torneos">🏅 Torneos</button>
-    <button data-view="duelo">⚔️ Duelo</button>
-    <button data-view="fotos">📸 Fotos</button>
-
-  </div>
-
-  <!-- DASHBOARD -->
-
-  <section id="view-dashboard" class="view active">
-
-    <div class="grid">
-
-      <div class="metric">
-        <small>Reservas pendientes</small>
-        <b id="mReservas">0</b>
-      </div>
-
-      <div class="metric">
-        <small>Pedidos pendientes</small>
-        <b id="mPedidos">0</b>
-      </div>
-
-      <div class="metric">
-        <small>Torneos abiertos</small>
-        <b id="mTorneos">0</b>
-      </div>
-
-      <div class="metric">
-        <small>Fotos publicadas</small>
-        <b id="mFotos">0</b>
-      </div>
-
-    </div>
-
-    <div class="card qr-box">
-
-      <h2>📱 QR GENERAL</h2>
-
-      <p style="color:var(--muted)">
-        Este es el único QR del sistema.
-        No está asociado a ninguna mesa.
-      </p>
-
-      <canvas id="generalQr"></canvas>
-
-      <p id="generalQrUrl"
-         style="word-break:break-all;color:var(--muted)">
-      </p>
-
-      <div class="item-actions" style="justify-content:center">
-
-        <button id="openPublicBtn">
-          🌐 Abrir página
-        </button>
-
-        <button id="downloadQrBtn" class="dark">
-          ⬇️ Descargar QR
-        </button>
-
-      </div>
-
-    </div>
-
-    <div class="card">
-
-      <h2>🎮 Sistema de juegos</h2>
-
-      <p style="color:var(--muted)">
-        La entrada general lleva al sistema de juegos.
-        Desde allí el cliente puede elegir el juego,
-        sumar puntos y consultar su tarjeta.
-      </p>
-
-      <div class="item-actions">
-        <a class="btn" href="juegos.html">Abrir Juegos</a>
-        <a class="btn dark" href="tarjeta.html">Tarjetas</a>
-        <a class="btn dark" href="admin-juegos.html">Administrar Juegos</a>
-      </div>
-
-    </div>
-
-  </section>
-
-  <!-- RESERVAS -->
-
-  <section id="view-reservas" class="view">
-
-    <div class="card">
-      <h2>📅 Reservas</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Servicio</th>
-              <th>Personas</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-
-          <tbody id="reservasBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- PEDIDOS -->
-
-  <section id="view-pedidos" class="view">
-
-    <div class="card">
-      <h2>🛵 Pedidos</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Entrega</th>
-              <th>Dirección</th>
-              <th>Pedido</th>
-              <th>Total</th>
-              <th>Estado</th>
-              <th>Acción</th>
-            </tr>
-          </thead>
-
-          <tbody id="pedidosBody"></tbody>
-        </table>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- PRODUCTOS -->
-
-  <section id="view-productos" class="view">
-
-    <div class="card">
-
-      <h2>🍔 Nuevo producto</h2>
-
-      <form id="productoForm">
-
-        <input id="productoNombre" placeholder="Nombre" required>
-
-        <input id="productoCategoria" placeholder="Categoría">
-
-        <textarea id="productoDescripcion"
-          placeholder="Descripción"></textarea>
-
-        <input id="productoPrecio"
-          type="number"
-          min="0"
-          placeholder="Precio"
-          required>
-
-        <button>Guardar producto</button>
-
-      </form>
-
-    </div>
-
-    <div class="card">
-      <h2>Productos</h2>
-      <div id="productosList"></div>
-    </div>
-
-  </section>
-
-  <!-- PROMOCIONES -->
-
-  <section id="view-promociones" class="view">
-
-    <div class="card">
-
-      <h2>🔥 Nueva promoción</h2>
-
-      <form id="promoForm">
-
-        <input id="promoTitulo"
-          placeholder="Título"
-          required>
-
-        <textarea id="promoDescripcion"
-          placeholder="Descripción"></textarea>
-
-        <input id="promoPrecio"
-          type="number"
-          min="0"
-          placeholder="Precio">
-
-        <input id="promoImagen"
-          placeholder="URL de imagen (opcional)">
-
-        <button>Guardar promoción</button>
-
-      </form>
-
-    </div>
-
-    <div class="card">
-      <h2>Promociones</h2>
-      <div id="promosList"></div>
-    </div>
-
-  </section>
-
-  <!-- JUEGOS -->
-
-  <section id="view-juegos" class="view">
-
-    <div class="card">
-
-      <h2>🎮 Administración de juegos</h2>
-
-      <p style="color:var(--muted)">
-        La administración específica de juegos se mantiene
-        en el panel de juegos.
-      </p>
-
-      <a class="btn" href="admin-juegos.html">
-        Abrir administración de juegos
+    <div class="actions">
+
+      <span id="status" class="status">
+        CONECTADO
+      </span>
+
+      <a
+        href="index.html"
+        class="btn dark"
+      >
+        Ver sitio
       </a>
 
+      <button
+        id="logout"
+        class="btn red"
+      >
+        Cerrar sesión
+      </button>
+
     </div>
+
+  </div>
+
+  <div id="newAlert" class="alert hidden"></div>
+
+  <section class="hero card">
+
+    <h1>📊 Administración</h1>
+
+    <p class="muted">
+      Reservas, pedidos, productos, promociones,
+      canjes y fotos.
+      Las actividades del local son promocionales:
+      no hay sistema de juegos.
+    </p>
 
   </section>
 
-  <!-- TRIVIA -->
+  <nav class="tabs">
 
-  <section id="view-trivia" class="view">
+    <button
+      class="tab active"
+      data-view="dashboard"
+    >
+      🏠 Inicio
+    </button>
 
-    <div class="card">
+    <button
+      class="tab"
+      data-view="reservas"
+    >
+      📅 Reservas
+    </button>
 
-      <h2>🧠 Nueva pregunta de Trivia</h2>
+    <button
+      class="tab"
+      data-view="pedidos"
+    >
+      🛒 Pedidos
+    </button>
 
-      <form id="triviaForm">
+    <button
+      class="tab"
+      data-view="productos"
+    >
+      🍔 Productos
+    </button>
 
-        <textarea id="triviaPregunta"
-          placeholder="Pregunta"
-          required></textarea>
+    <button
+      class="tab"
+      data-view="promos"
+    >
+      🔥 Promos
+    </button>
 
-        <input id="triviaRespuesta"
-          placeholder="Respuesta correcta"
-          required>
+    <button
+      class="tab"
+      data-view="canjes"
+    >
+      🎁 Canjes
+    </button>
 
-        <input id="triviaPuntos"
-          type="number"
-          value="10"
-          min="1">
+    <button
+      class="tab"
+      data-view="fotos"
+    >
+      📸 Fotos
+    </button>
 
-        <button>Guardar pregunta</button>
+  </nav>
 
-      </form>
+  <main>
 
-    </div>
+    <section
+      id="dashboard"
+      class="view active"
+    >
 
-    <div class="card">
-      <h2>Preguntas</h2>
-      <div id="triviaList"></div>
-    </div>
+      <div class="cards">
 
-  </section>
+        <div class="card metric">
+          <small>Reservas pendientes</small>
+          <b id="mR">0</b>
+        </div>
 
-  <!-- PREMIOS -->
+        <div class="card metric">
+          <small>Pedidos pendientes</small>
+          <b id="mP">0</b>
+        </div>
 
-  <section id="view-premios" class="view">
+        <div class="card metric">
+          <small>Productos</small>
+          <b id="mProd">0</b>
+        </div>
 
-    <div class="card">
+        <div class="card metric">
+          <small>Fotos</small>
+          <b id="mF">0</b>
+        </div>
 
-      <h2>🏆 Nuevo premio</h2>
-
-      <form id="premioForm">
-
-        <input id="premioNombre"
-          placeholder="Nombre del premio"
-          required>
-
-        <textarea id="premioDescripcion"
-          placeholder="Descripción"></textarea>
-
-        <input id="premioCosto"
-          type="number"
-          min="1"
-          placeholder="Puntos necesarios"
-          required>
-
-        <button>Guardar premio</button>
-
-      </form>
-
-    </div>
-
-    <div class="card">
-      <h2>Premios</h2>
-      <div id="premiosList"></div>
-    </div>
-
-  </section>
-
-  <!-- TORNEOS -->
-
-  <section id="view-torneos" class="view">
-
-    <div class="card">
-
-      <h2>🏅 Nuevo torneo</h2>
-
-      <form id="torneoForm">
-
-        <input id="torneoNombre"
-          placeholder="Nombre del torneo"
-          required>
-
-        <textarea id="torneoDescripcion"
-          placeholder="Descripción"></textarea>
-
-        <input id="torneoPremio"
-          placeholder="Premio">
-
-        <button>Crear torneo</button>
-
-      </form>
-
-    </div>
-
-    <div class="card">
-      <h2>Torneos</h2>
-      <div id="torneosList"></div>
-    </div>
-
-  </section>
-
-  <!-- DUELOS -->
-
-  <section id="view-duelo" class="view">
-
-    <div class="card">
-
-      <h2>⚔️ Duelos</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Jugador 1</th>
-              <th>Jugador 2</th>
-              <th>Estado</th>
-              <th>Resultado</th>
-            </tr>
-          </thead>
-
-          <tbody id="duelosBody"></tbody>
-        </table>
       </div>
-
-    </div>
-
-  </section>
-
-  <!-- FOTOS -->
-
-  <section id="view-fotos" class="view">
-
-    <div class="grid2">
 
       <div class="card">
 
-        <h2>📸 Subir foto</h2>
+        <button
+          class="btn"
+          onclick="refreshAll()"
+        >
+          🔄 Actualizar todo
+        </button>
 
-        <p style="color:var(--muted)">
-          Podés elegir directamente una foto de la galería
-          del teléfono.
-        </p>
+        <div
+          id="dashMsg"
+          class="notice"
+        >
+          Panel listo.
+        </div>
 
-        <label>Título</label>
-        <input id="fotoTitulo" placeholder="Título">
+      </div>
 
-        <label>Categoría</label>
-        <select id="fotoCategoria">
-          <option value="general">General</option>
-          <option value="comida">Comida</option>
-          <option value="juegos">Juegos</option>
-          <option value="eventos">Eventos</option>
-        </select>
+    </section>
 
-        <div class="file-box">
+    <section
+      id="reservas"
+      class="view"
+    >
 
-          <label>Seleccionar foto</label>
+      <div class="card">
+
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2>📅 Reservas</h2>
+
+          <button
+            class="btn dark"
+            onclick="loadReservations()"
+          >
+            Actualizar
+          </button>
+
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Hora</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Personas</th>
+                <th>Servicio</th>
+                <th>Mesa</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="reservasTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="pedidos"
+      class="view"
+    >
+
+      <div class="card">
+
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2>🛒 Pedidos</h2>
+
+          <button
+            class="btn dark"
+            onclick="loadOrders()"
+          >
+            Actualizar
+          </button>
+
+        </div>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Entrega</th>
+                <th>Dirección</th>
+                <th>Items</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+            </thead>
+
+            <tbody id="ordersTable"></tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="productos"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🍔 Producto</h2>
+
+          <label>Nombre</label>
+          <input id="pn" class="input">
+
+          <label>Categoría</label>
+          <input
+            id="pc"
+            class="input"
+            placeholder="Pizza, hamburguesa, bebida..."
+          >
+
+          <label>Descripción</label>
+          <textarea id="pd" class="input"></textarea>
+
+          <label>Precio</label>
+          <input
+            id="pp"
+            class="input"
+            type="number"
+            min="0"
+          >
+
+          <label class="checkbox">
+            <input
+              id="pa"
+              type="checkbox"
+              checked
+            >
+            Activo y disponible
+          </label>
+
+          <button
+            class="btn gold"
+            onclick="createProduct()"
+          >
+            Guardar producto
+          </button>
+
+          <p
+            id="prodMsg"
+            class="msg hidden"
+          ></p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Productos actuales</h2>
+
+          <div id="productsList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="promos"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🔥 Promoción</h2>
+
+          <label>Título</label>
+          <input id="promoTitle" class="input">
+
+          <label>Descripción</label>
+          <textarea id="promoDesc" class="input"></textarea>
+
+          <label>Precio opcional</label>
+          <input
+            id="promoPrice"
+            class="input"
+            type="number"
+            min="0"
+          >
+
+          <label class="checkbox">
+            <input
+              id="promoActive"
+              type="checkbox"
+              checked
+            >
+            Publicada
+          </label>
+
+          <button
+            class="btn gold"
+            onclick="createPromo()"
+          >
+            Guardar promoción
+          </button>
+
+          <p
+            id="promoMsg"
+            class="msg hidden"
+          ></p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Promociones actuales</h2>
+
+          <div id="promosList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="canjes"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🎁 Nuevo canje</h2>
+
+          <p class="muted">
+            Administrá las opciones de canje sin activar
+            ningún sistema de juegos.
+          </p>
+
+          <label>Nombre</label>
+          <input id="cn" class="input">
+
+          <label>Descripción</label>
+          <textarea id="cd" class="input"></textarea>
+
+          <label>Costo en tokens</label>
+          <input
+            id="cc"
+            class="input"
+            type="number"
+            min="1"
+            value="1"
+          >
+
+          <label>Stock</label>
+          <input
+            id="cs"
+            class="input"
+            type="number"
+            min="0"
+            value="0"
+          >
+
+          <label class="checkbox">
+            <input
+              id="ca"
+              type="checkbox"
+              checked
+            >
+            Activo
+          </label>
+
+          <button
+            class="btn gold"
+            onclick="createCanje()"
+          >
+            Guardar canje
+          </button>
+
+          <p
+            id="canjeMsg"
+            class="msg hidden"
+          ></p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Canjes actuales</h2>
+
+          <div id="canjesList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="fotos"
+      class="view"
+    >
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>📸 Subir foto</h2>
+
+          <p class="muted">
+            Elegí una foto directamente desde el celular
+            o la galería. Se guarda en el bucket
+            <strong>Galeria</strong>.
+          </p>
+
+          <label>Título</label>
+
+          <input
+            id="photoTitle"
+            class="input"
+            placeholder="Ej.: Local, pool, comida..."
+          >
+
+          <label>Foto</label>
 
           <input
             id="photoFile"
+            class="input"
             type="file"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/webp,image/gif"
           >
+
+          <img
+            id="preview"
+            class="thumb hidden"
+            alt="Vista previa"
+          >
+
+          <button
+            class="btn green"
+            type="button"
+            onclick="uploadPhoto()"
+          >
+            ⬆️ Subir foto
+          </button>
+
+          <p
+            id="photoMsg"
+            class="msg hidden"
+          ></p>
 
         </div>
 
-        <label>O utilizar URL</label>
+        <div class="card">
 
-        <input
-          id="fotoUrl"
-          placeholder="https://..."
-        >
+          <h2>Galería publicada</h2>
 
-        <button id="uploadPhotoBtn">
-          📤 Publicar foto
-        </button>
-
-        <div id="photoStatus"></div>
-
-      </div>
-
-      <div class="card">
-
-        <h2>🗺️ Foto del mapa</h2>
-
-        <p style="color:var(--muted)">
-          Esta imagen aparece en la página pública como
-          ubicación de Pool & Beach.
-        </p>
-
-        <div class="file-box">
-
-          <label>Seleccionar mapa desde el teléfono</label>
-
-          <input
-            id="mapFile"
-            type="file"
-            accept="image/*"
-          >
+          <div
+            id="galleryList"
+            class="gallery"
+          ></div>
 
         </div>
 
-        <label>O utilizar URL</label>
-
-        <input
-          id="mapUrl"
-          placeholder="https://..."
-        >
-
-        <button id="uploadMapBtn" class="gold">
-          🗺️ Cambiar mapa
-        </button>
-
-        <div id="mapStatus"></div>
-
       </div>
 
-    </div>
+    </section>
 
-    <div class="card">
-
-      <h2>Fotos publicadas</h2>
-
-      <div id="fotosList" class="gallery"></div>
-
-    </div>
-
-  </section>
+  </main>
 
 </div>
 
 <script>
-const db = window.supabaseClient ||
+
+const SUPABASE_URL =
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
+
+const SUPABASE_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const db =
   window.supabase.createClient(
-    "https://nmpakeovqkdajtswjpgm.supabase.co",
-    "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu"
+    SUPABASE_URL,
+    SUPABASE_KEY
   );
 
-let currentUser=null;
+const $ =
+  id => document.getElementById(id);
 
-document.querySelectorAll(".tabs button").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    document.querySelectorAll(".tabs button")
-      .forEach(x=>x.classList.remove("active"));
+const money =
+  n =>
+    new Intl.NumberFormat("es-AR",{
+      style:"currency",
+      currency:"ARS",
+      maximumFractionDigits:0
+    }).format(Number(n)||0);
 
-    document.querySelectorAll(".view")
-      .forEach(x=>x.classList.remove("active"));
-
-    btn.classList.add("active");
-
-    const view=document.getElementById(
-      "view-"+btn.dataset.view
+const esc =
+  v =>
+    String(v ?? "").replace(
+      /[&<>"']/g,
+      c => ({
+        "&":"&amp;",
+        "<":"&lt;",
+        ">":"&gt;",
+        '"':"&quot;",
+        "'":"&#039;"
+      }[c])
     );
 
-    if(view) view.classList.add("active");
-  });
-});
+function msg(id,text,ok=false){
 
-document.getElementById("loginBtn").addEventListener("click",login);
+  const e = $(id);
 
-document.getElementById("logoutBtn").addEventListener("click",async()=>{
-  await db.auth.signOut();
-  location.reload();
-});
+  e.textContent = text;
 
-async function login(){
+  e.className =
+    "msg " + (ok ? "ok" : "error");
 
-  const email=document.getElementById("loginEmail").value.trim();
-  const password=document.getElementById("loginPassword").value;
-
-  const error=document.getElementById("loginError");
-  error.textContent="";
-
-  const {error:authError}=await db.auth.signInWithPassword({
-    email,
-    password
-  });
-
-  if(authError){
-    error.textContent=authError.message;
-    return;
-  }
-
-  await verificarAdmin();
+  e.classList.remove("hidden");
 }
 
-async function verificarAdmin(){
+function showView(view){
 
-  const {data:{user}}=await db.auth.getUser();
+  document
+    .querySelectorAll(".tab")
+    .forEach(x =>
+      x.classList.toggle(
+        "active",
+        x.dataset.view === view
+      )
+    );
 
-  if(!user){
-    mostrarLogin();
-    return;
+  document
+    .querySelectorAll(".view")
+    .forEach(x =>
+      x.classList.toggle(
+        "active",
+        x.id === view
+      )
+    );
+
+  if(view === "reservas")
+    loadReservations();
+
+  if(view === "pedidos")
+    loadOrders();
+
+  if(view === "productos")
+    loadProducts();
+
+  if(view === "promos")
+    loadPromos();
+
+  if(view === "canjes")
+    loadCanjes();
+
+  if(view === "fotos")
+    loadGallery();
+}
+
+document
+  .querySelectorAll(".tab")
+  .forEach(t =>
+    t.addEventListener(
+      "click",
+      () => showView(t.dataset.view)
+    )
+  );
+
+async function requireAdmin(){
+
+  const s =
+    await db.auth.getSession();
+
+  if(!s.data?.session)
+    throw new Error(
+      "Sesión no iniciada."
+    );
+
+  const p =
+    await db
+      .from("profiles")
+      .select("role,display_name")
+      .eq(
+        "id",
+        s.data.session.user.id
+      )
+      .maybeSingle();
+
+  if(p.error)
+    throw p.error;
+
+  if(
+    !p.data ||
+    !["admin","staff"].includes(
+      p.data.role
+    )
+  ){
+
+    throw new Error(
+      "La cuenta ingresó a Supabase, pero no tiene rol admin/staff en profiles."
+    );
   }
 
-  const {data:profile,error}=await db
-    .from("profiles")
-    .select("role,display_name")
-    .eq("id",user.id)
-    .maybeSingle();
+  $("userInfo").textContent =
+    (p.data.display_name ||
+      s.data.session.user.email) +
+    " · " +
+    p.data.role;
+}
 
-  if(error || !profile ||
-     !["admin","staff"].includes(profile.role)){
+async function enter(){
+
+  try{
+
+    await requireAdmin();
+
+    $("login")
+      .classList
+      .add("hidden");
+
+    $("app")
+      .classList
+      .remove("hidden");
+
+    await refreshAll();
+
+    startRealtime();
+
+  }catch(e){
+
+    $("login")
+      .classList
+      .remove("hidden");
+
+    $("app")
+      .classList
+      .add("hidden");
+
+    msg(
+      "loginMsg",
+      "❌ " +
+      (e.message ||
+       "No se pudo iniciar sesión.")
+    );
+  }
+}
+
+$("loginForm")
+  .addEventListener("submit",async e => {
+
+    e.preventDefault();
+
+    const r =
+      await db.auth.signInWithPassword({
+        email:
+          $("email")
+            .value
+            .trim(),
+
+        password:
+          $("password").value
+      });
+
+    if(r.error){
+
+      return msg(
+        "loginMsg",
+        "❌ " +
+        r.error.message
+      );
+    }
+
+    await enter();
+
+  });
+
+$("logout").onclick =
+  async () => {
 
     await db.auth.signOut();
 
-    document.getElementById("loginError").textContent=
-      "La cuenta no tiene permisos de administración.";
+    location.reload();
+  };
 
-    mostrarLogin();
+async function loadReservations(){
+
+  const r =
+    await db
+      .from("reservas")
+      .select("*")
+      .order("fecha",{ascending:true})
+      .order("hora",{ascending:true});
+
+  if(r.error){
+
+    $("reservasTable").innerHTML =
+      '<tr><td colspan="9">❌ ' +
+      esc(r.error.message) +
+      "</td></tr>";
+
     return;
   }
 
-  currentUser=user;
+  const rows =
+    r.data || [];
 
-  document.getElementById("loginScreen").style.display="none";
-  document.getElementById("adminApp").style.display="block";
+  $("mR").textContent =
+    rows.filter(
+      x => x.estado === "pendiente"
+    ).length;
 
-  iniciarAdmin();
+  $("reservasTable").innerHTML =
+    rows.map(x => {
+
+      const m =
+        (
+          String(x.notas || "")
+            .match(
+              /\[MESA_POOL:(1|2|3)\]/
+            ) || []
+        )[1] || "—";
+
+      return `
+
+        <tr>
+
+          <td>
+            ${esc(x.fecha || "")}
+          </td>
+
+          <td>
+            ${esc(x.hora || "")}
+          </td>
+
+          <td>
+            ${esc(x.nombre || "")}
+          </td>
+
+          <td>
+            ${esc(x.telefono || "")}
+          </td>
+
+          <td>
+            ${esc(x.cantidad_personas || "")}
+          </td>
+
+          <td>
+            ${esc(x.servicio || "")}
+          </td>
+
+          <td>
+            ${m}
+          </td>
+
+          <td>
+
+            <select
+              onchange="updateReservation('${x.id}',this.value)"
+            >
+
+              <option
+                ${x.estado==="pendiente"?"selected":""}
+              >
+                pendiente
+              </option>
+
+              <option
+                ${x.estado==="confirmada"?"selected":""}
+              >
+                confirmada
+              </option>
+
+              <option
+                ${x.estado==="cancelada"?"selected":""}
+              >
+                cancelada
+              </option>
+
+            </select>
+
+          </td>
+
+          <td>
+
+            <button
+              class="btn red"
+              onclick="deleteReservation('${x.id}')"
+            >
+              Eliminar
+            </button>
+
+          </td>
+
+        </tr>
+      `;
+
+    }).join("") ||
+    '<tr><td colspan="9">No hay reservas.</td></tr>';
 }
 
-function mostrarLogin(){
-  document.getElementById("loginScreen").style.display="block";
-  document.getElementById("adminApp").style.display="none";
+async function updateReservation(
+  id,
+  state
+){
+
+  const r =
+    await db
+      .from("reservas")
+      .update({
+        estado:state
+      })
+      .eq("id",id);
+
+  if(r.error)
+    alert(r.error.message);
+
+  await loadReservations();
+  await loadMetrics();
 }
 
-async function iniciarAdmin(){
+async function deleteReservation(id){
 
-  generarQrGeneral();
+  if(!confirm(
+    "¿Eliminar reserva?"
+  )) return;
 
-  await refreshAll();
+  const r =
+    await db
+      .from("reservas")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadReservations();
+  await loadMetrics();
+}
+
+function itemsText(items){
+
+  if(Array.isArray(items)){
+
+    return items
+      .map(i =>
+        `${i.cantidad || 0}× ` +
+        `${i.nombre_producto || "Producto"} — ` +
+        `${money(i.subtotal || 0)}`
+      )
+      .join("\n");
+  }
+
+  return JSON.stringify(
+    items || []
+  );
+}
+
+async function loadOrders(){
+
+  const r =
+    await db
+      .from("pedidos")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(r.error){
+
+    $("ordersTable").innerHTML =
+      '<tr><td colspan="9">❌ ' +
+      esc(r.error.message) +
+      "</td></tr>";
+
+    return;
+  }
+
+  const rows =
+    r.data || [];
+
+  $("mP").textContent =
+    rows.filter(
+      x =>
+        [
+          "pendiente",
+          "confirmado",
+          "preparando",
+          "listo"
+        ].includes(x.estado)
+    ).length;
+
+  $("ordersTable").innerHTML =
+    rows.map(o => `
+
+      <tr>
+
+        <td>
+          ${esc(o.created_at || "")}
+        </td>
+
+        <td>
+          ${esc(o.nombre_cliente || "")}
+        </td>
+
+        <td>
+          ${esc(o.telefono || "")}
+        </td>
+
+        <td>
+          ${esc(
+            o.tipo_entrega ||
+            o.tipo ||
+            ""
+          )}
+        </td>
+
+        <td>
+          ${esc(o.direccion || "—")}
+        </td>
+
+        <td>
+
+          <pre
+            style="
+              white-space:pre-wrap;
+              margin:0
+            "
+          >${esc(
+            itemsText(o.items)
+          )}</pre>
+
+        </td>
+
+        <td>
+          ${money(o.total)}
+        </td>
+
+        <td>
+
+          <select
+            onchange="updateOrder('${o.id}',this.value)"
+          >
+
+            ${[
+              "pendiente",
+              "confirmado",
+              "preparando",
+              "listo",
+              "entregado",
+              "cancelado"
+            ].map(s => `
+              <option
+                ${o.estado===s?"selected":""}
+              >
+                ${s}
+              </option>
+            `).join("")}
+
+          </select>
+
+        </td>
+
+        <td>
+
+          <button
+            class="btn dark"
+            onclick="viewOrder('${o.id}')"
+          >
+            Ver
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteOrder('${o.id}')"
+          >
+            Eliminar
+          </button>
+
+        </td>
+
+      </tr>
+
+    `).join("") ||
+    '<tr><td colspan="9">No hay pedidos.</td></tr>';
+}
+
+async function updateOrder(
+  id,
+  state
+){
+
+  const r =
+    await db
+      .from("pedidos")
+      .update({
+        estado:state
+      })
+      .eq("id",id);
+
+  if(r.error)
+    alert(r.error.message);
+
+  await loadOrders();
+  await loadMetrics();
+}
+
+async function deleteOrder(id){
+
+  if(!confirm(
+    "¿Eliminar pedido?"
+  )) return;
+
+  const r =
+    await db
+      .from("pedidos")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadOrders();
+  await loadMetrics();
+}
+
+async function viewOrder(id){
+
+  const r =
+    await db
+      .from("pedidos")
+      .select("*")
+      .eq("id",id)
+      .single();
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  const o = r.data;
+
+  alert(
+    `Pedido de ${
+      o.nombre_cliente || "cliente"
+    }\n\n` +
+    `${itemsText(o.items)}\n\n` +
+    `Notas: ${
+      o.notas || "Sin notas"
+    }`
+  );
+}
+
+async function createProduct(){
+
+  const name =
+    $("pn")
+      .value
+      .trim();
+
+  if(!name)
+    return msg(
+      "prodMsg",
+      "❌ Falta el nombre."
+    );
+
+  const payload = {
+
+    nombre:name,
+
+    categoria:
+      $("pc")
+        .value
+        .trim() ||
+      "General",
+
+    descripcion:
+      $("pd")
+        .value
+        .trim(),
+
+    precio:
+      Number(
+        $("pp").value || 0
+      ),
+
+    activo:
+      $("pa").checked,
+
+    disponible:
+      $("pa").checked
+  };
+
+  const r =
+    await db
+      .from("productos")
+      .insert(payload);
+
+  if(r.error)
+    return msg(
+      "prodMsg",
+      "❌ " +
+      r.error.message
+    );
+
+  msg(
+    "prodMsg",
+    "✅ Producto guardado.",
+    true
+  );
+
+  ["pn","pc","pd","pp"]
+    .forEach(
+      id => $(id).value=""
+    );
+
+  $("pa").checked = true;
+
+  await loadProducts();
+  await loadMetrics();
+}
+
+async function loadProducts(){
+
+  const r =
+    await db
+      .from("productos")
+      .select("*")
+      .order("categoria")
+      .order("nombre");
+
+  if(r.error){
+
+    $("productsList").innerHTML =
+      '<div class="notice">❌ ' +
+      esc(r.error.message) +
+      "</div>";
+
+    return;
+  }
+
+  const rows =
+    r.data || [];
+
+  $("mProd").textContent =
+    rows.length;
+
+  $("productsList").innerHTML =
+    rows.map(p => `
+
+      <div class="item">
+
+        <strong>
+          ${esc(p.nombre)}
+        </strong>
+
+        <div
+          class="row"
+          style="margin-top:5px"
+        >
+
+          <input
+            id="price-${p.id}"
+            class="input"
+            style="max-width:150px;margin:0"
+            type="number"
+            min="0"
+            value="${Number(p.precio)||0}"
+          >
+
+          <button
+            class="btn"
+            onclick="saveProduct('${p.id}')"
+          >
+            Guardar precio
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="toggleProduct(
+              '${p.id}',
+              ${!(p.activo && p.disponible)}
+            )"
+          >
+            ${
+              p.activo && p.disponible
+                ? "Ocultar"
+                : "Publicar"
+            }
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteProduct('${p.id}')"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+        <small>
+          ${esc(p.categoria || "General")}
+          ·
+          ${
+            p.activo && p.disponible
+              ? "Disponible"
+              : "Oculto"
+          }
+        </small>
+
+      </div>
+
+    `).join("") ||
+    '<div class="empty">No hay productos.</div>';
+}
+
+async function saveProduct(id){
+
+  const v =
+    Number(
+      $("price-" + id).value
+    );
+
+  if(v < 0)
+    return alert(
+      "El precio no puede ser negativo."
+    );
+
+  const r =
+    await db
+      .from("productos")
+      .update({
+        precio:v
+      })
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadProducts();
+}
+
+async function toggleProduct(
+  id,
+  value
+){
+
+  const r =
+    await db
+      .from("productos")
+      .update({
+        activo:value,
+        disponible:value
+      })
+      .eq("id",id);
+
+  if(r.error)
+    alert(r.error.message);
+
+  await loadProducts();
+}
+
+async function deleteProduct(id){
+
+  if(!confirm(
+    "¿Eliminar producto?"
+  )) return;
+
+  const r =
+    await db
+      .from("productos")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadProducts();
+  await loadMetrics();
+}
+
+async function createPromo(){
+
+  const title =
+    $("promoTitle")
+      .value
+      .trim();
+
+  if(!title)
+    return msg(
+      "promoMsg",
+      "❌ Falta el título."
+    );
+
+  const payload = {
+
+    titulo:title,
+
+    descripcion:
+      $("promoDesc")
+        .value
+        .trim(),
+
+    precio:
+      $("promoPrice").value
+        ? Number(
+            $("promoPrice").value
+          )
+        : null,
+
+    activa:
+      $("promoActive").checked
+  };
+
+  const r =
+    await db
+      .from("promociones")
+      .insert(payload);
+
+  if(r.error)
+    return msg(
+      "promoMsg",
+      "❌ " +
+      r.error.message
+    );
+
+  msg(
+    "promoMsg",
+    "✅ Promoción guardada.",
+    true
+  );
+
+  $("promoTitle").value="";
+  $("promoDesc").value="";
+  $("promoPrice").value="";
+  $("promoActive").checked=true;
+
+  await loadPromos();
+}
+
+async function loadPromos(){
+
+  const r =
+    await db
+      .from("promociones")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(r.error){
+
+    $("promosList").innerHTML =
+      '<div class="notice">❌ ' +
+      esc(r.error.message) +
+      "</div>";
+
+    return;
+  }
+
+  const rows =
+    r.data || [];
+
+  $("promosList").innerHTML =
+    rows.map(p => `
+
+      <div class="item">
+
+        <strong>
+          ${esc(p.titulo)}
+        </strong>
+
+        <br>
+
+        <small>
+          ${esc(p.descripcion || "")}
+
+          ${
+            p.precio != null
+              ? " · " +
+                money(p.precio)
+              : ""
+          }
+
+          ·
+          ${
+            p.activa
+              ? "Publicada"
+              : "Oculta"
+          }
+        </small>
+
+        <div
+          class="row"
+          style="margin-top:7px"
+        >
+
+          <button
+            class="btn dark"
+            onclick="togglePromo(
+              '${p.id}',
+              ${!p.activa}
+            )"
+          >
+            ${
+              p.activa
+                ? "Ocultar"
+                : "Publicar"
+            }
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deletePromo('${p.id}')"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("") ||
+    '<div class="empty">No hay promociones.</div>';
+}
+
+async function togglePromo(
+  id,
+  value
+){
+
+  const r =
+    await db
+      .from("promociones")
+      .update({
+        activa:value
+      })
+      .eq("id",id);
+
+  if(r.error)
+    alert(r.error.message);
+
+  await loadPromos();
+}
+
+async function deletePromo(id){
+
+  if(!confirm(
+    "¿Eliminar promoción?"
+  )) return;
+
+  const r =
+    await db
+      .from("promociones")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadPromos();
+}
+
+async function createCanje(){
+
+  const name =
+    $("cn")
+      .value
+      .trim();
+
+  const cost =
+    Number(
+      $("cc").value || 0
+    );
+
+  if(!name)
+    return msg(
+      "canjeMsg",
+      "❌ Falta el nombre."
+    );
+
+  if(cost < 1)
+    return msg(
+      "canjeMsg",
+      "❌ El costo debe ser mayor a 0."
+    );
+
+  const payload = {
+
+    name:name,
+
+    description:
+      $("cd")
+        .value
+        .trim(),
+
+    token_cost:cost,
+
+    cost_tokens:cost,
+
+    stock:
+      Number(
+        $("cs").value || 0
+      ),
+
+    active:
+      $("ca").checked
+  };
+
+  const r =
+    await db
+      .from("prizes")
+      .insert(payload);
+
+  if(r.error)
+    return msg(
+      "canjeMsg",
+      "❌ " +
+      r.error.message
+    );
+
+  msg(
+    "canjeMsg",
+    "✅ Canje guardado.",
+    true
+  );
+
+  ["cn","cd","cc","cs"]
+    .forEach(
+      id => $(id).value=""
+    );
+
+  $("cc").value=1;
+  $("cs").value=0;
+  $("ca").checked=true;
+
+  await loadCanjes();
+}
+
+async function loadCanjes(){
+
+  const r =
+    await db
+      .from("prizes")
+      .select(
+        "id,name,description,token_cost,cost_tokens,stock,active"
+      )
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(r.error){
+
+    $("canjesList").innerHTML =
+      '<div class="notice">❌ ' +
+      esc(r.error.message) +
+      "</div>";
+
+    return;
+  }
+
+  const rows =
+    r.data || [];
+
+  $("canjesList").innerHTML =
+    rows.map(p => `
+
+      <div class="item">
+
+        <strong>
+          ${esc(p.name)}
+        </strong>
+
+        <br>
+
+        <small>
+
+          ${esc(
+            p.description || ""
+          )}
+
+          ·
+          ${Number(
+            p.token_cost ||
+            p.cost_tokens ||
+            0
+          )}
+          tokens
+
+          · stock
+          ${Number(
+            p.stock ?? 0
+          )}
+
+          ·
+          ${
+            p.active
+              ? "Activo"
+              : "Oculto"
+          }
+
+        </small>
+
+        <div
+          class="row"
+          style="margin-top:7px"
+        >
+
+          <button
+            class="btn dark"
+            onclick="toggleCanje(
+              '${p.id}',
+              ${!p.active}
+            )"
+          >
+            ${
+              p.active
+                ? "Ocultar"
+                : "Publicar"
+            }
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteCanje('${p.id}')"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>
+
+    `).join("") ||
+    '<div class="empty">No hay canjes cargados.</div>';
+}
+
+async function toggleCanje(
+  id,
+  value
+){
+
+  const r =
+    await db
+      .from("prizes")
+      .update({
+        active:value
+      })
+      .eq("id",id);
+
+  if(r.error)
+    alert(r.error.message);
+
+  await loadCanjes();
+}
+
+async function deleteCanje(id){
+
+  if(!confirm(
+    "¿Eliminar canje?"
+  )) return;
+
+  const r =
+    await db
+      .from("prizes")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  await loadCanjes();
+}
+
+$("photoFile")
+  .addEventListener(
+    "change",
+    () => {
+
+      const f =
+        $("photoFile")
+          .files[0];
+
+      if(!f){
+
+        $("preview")
+          .classList
+          .add("hidden");
+
+        return;
+      }
+
+      if(!f.type.startsWith("image/")){
+
+        alert(
+          "Elegí una imagen."
+        );
+
+        return;
+      }
+
+      if(
+        f.size >
+        8 * 1024 * 1024
+      ){
+
+        alert(
+          "Máximo 8 MB."
+        );
+
+        return;
+      }
+
+      $("preview").src =
+        URL.createObjectURL(f);
+
+      $("preview")
+        .classList
+        .remove("hidden");
+    }
+  );
+
+async function uploadPhoto(){
+
+  const f =
+    $("photoFile")
+      .files[0];
+
+  if(!f)
+    return msg(
+      "photoMsg",
+      "❌ Elegí una foto."
+    );
+
+  if(
+    f.size >
+    8 * 1024 * 1024
+  )
+    return msg(
+      "photoMsg",
+      "❌ Máximo 8 MB."
+    );
+
+  const s =
+    await db.auth.getSession();
+
+  if(!s.data?.session)
+    return msg(
+      "photoMsg",
+      "❌ Sesión vencida."
+    );
+
+  try{
+
+    msg(
+      "photoMsg",
+      "⏳ Subiendo..."
+    );
+
+    const ext =
+      (
+        f.name
+          .split(".")
+          .pop() ||
+        "jpg"
+      )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      ) || "jpg";
+
+    const path =
+      "public/" +
+      Date.now() +
+      "-" +
+      (
+        crypto.randomUUID
+          ? crypto.randomUUID()
+          : Math.random()
+              .toString(36)
+              .slice(2)
+      ) +
+      "." +
+      ext;
+
+    const up =
+      await db
+        .storage
+        .from("Galeria")
+        .upload(
+          path,
+          f,
+          {
+            contentType:f.type,
+            cacheControl:"3600",
+            upsert:false
+          }
+        );
+
+    if(up.error)
+      throw up.error;
+
+    const url =
+      db
+        .storage
+        .from("Galeria")
+        .getPublicUrl(path)
+        .data
+        .publicUrl;
+
+    const ins =
+      await db
+        .from("galeria_fotos")
+        .insert({
+          titulo:
+            $("photoTitle")
+              .value
+              .trim() ||
+            f.name,
+
+          categoria:"galeria",
+
+          ruta:path,
+
+          url
+        });
+
+    if(ins.error){
+
+      await db
+        .storage
+        .from("Galeria")
+        .remove([path]);
+
+      throw ins.error;
+    }
+
+    msg(
+      "photoMsg",
+      "✅ Foto subida y publicada.",
+      true
+    );
+
+    $("photoFile").value="";
+    $("photoTitle").value="";
+
+    $("preview")
+      .classList
+      .add("hidden");
+
+    await loadGallery();
+    await loadMetrics();
+
+  }catch(e){
+
+    console.error(e);
+
+    msg(
+      "photoMsg",
+      "❌ " +
+      (
+        e.message ||
+        "No se pudo subir la foto."
+      )
+    );
+  }
+}
+
+async function loadGallery(){
+
+  const r =
+    await db
+      .from("galeria_fotos")
+      .select(
+        "id,titulo,categoria,ruta,url,created_at,creado_en"
+      )
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(r.error){
+
+    $("galleryList").innerHTML =
+      '<div class="notice">❌ ' +
+      esc(r.error.message) +
+      "</div>";
+
+    return;
+  }
+
+  const rows =
+    r.data || [];
+
+  $("mF").textContent =
+    rows.length;
+
+  $("galleryList").innerHTML =
+    rows.map(p => {
+
+      const u =
+        p.url ||
+        (
+          p.ruta
+            ? db
+                .storage
+                .from("Galeria")
+                .getPublicUrl(
+                  p.ruta
+                )
+                .data
+                .publicUrl
+            : ""
+        );
+
+      return `
+
+        <figure>
+
+          ${
+            u
+              ? `<img
+                  src="${esc(u)}"
+                  alt="${esc(
+                    p.titulo ||
+                    "Foto"
+                  )}"
+                >`
+              : ""
+          }
+
+          <figcaption>
+
+            <small>
+              ${esc(
+                p.titulo || ""
+              )}
+            </small>
+
+            <button
+              class="btn red"
+              style="
+                padding:4px 7px;
+                float:right
+              "
+              onclick="deletePhoto(
+                '${p.id}',
+                '${esc(p.ruta || "")}'
+              )"
+            >
+              ×
+            </button>
+
+          </figcaption>
+
+        </figure>
+      `;
+
+    }).join("") ||
+    '<div class="empty">No hay fotos.</div>';
+}
+
+async function deletePhoto(
+  id,
+  path
+){
+
+  if(!confirm(
+    "¿Eliminar foto?"
+  )) return;
+
+  const r =
+    await db
+      .from("galeria_fotos")
+      .delete()
+      .eq("id",id);
+
+  if(r.error)
+    return alert(
+      r.error.message
+    );
+
+  if(path){
+
+    await db
+      .storage
+      .from("Galeria")
+      .remove([path]);
+  }
+
+  await loadGallery();
+  await loadMetrics();
+}
+
+async function loadMetrics(){
+
+  const [
+    r,
+    p,
+    pr,
+    f
+  ] =
+    await Promise.allSettled([
+
+      db
+        .from("reservas")
+        .select("id,estado"),
+
+      db
+        .from("pedidos")
+        .select("id,estado"),
+
+      db
+        .from("productos")
+        .select("id"),
+
+      db
+        .from("galeria_fotos")
+        .select("id")
+
+    ]);
+
+  if(
+    r.status === "fulfilled"
+  ){
+
+    $("mR").textContent =
+      (r.value.data || [])
+        .filter(
+          x =>
+            x.estado ===
+            "pendiente"
+        )
+        .length;
+  }
+
+  if(
+    p.status === "fulfilled"
+  ){
+
+    $("mP").textContent =
+      (p.value.data || [])
+        .filter(
+          x =>
+            [
+              "pendiente",
+              "confirmado",
+              "preparando",
+              "listo"
+            ].includes(
+              x.estado
+            )
+        )
+        .length;
+  }
+
+  if(
+    pr.status === "fulfilled"
+  ){
+
+    $("mProd").textContent =
+      (pr.value.data || [])
+        .length;
+  }
+
+  if(
+    f.status === "fulfilled"
+  ){
+
+    $("mF").textContent =
+      (f.value.data || [])
+        .length;
+  }
 }
 
 async function refreshAll(){
 
-  await Promise.all([
-    contarReservas(),
-    contarPedidos(),
-    contarTorneos(),
-    contarFotos(),
+  $("dashMsg")
+    .textContent =
+    "Actualizando...";
 
-    loadReservas(),
-    loadPedidos(),
-    loadProductos(),
-    loadPromociones(),
-    loadTrivia(),
-    loadPremios(),
-    loadTorneos(),
-    loadDuelos(),
-    loadFotos()
+  await Promise.allSettled([
+
+    loadMetrics(),
+    loadReservations(),
+    loadOrders(),
+    loadProducts(),
+    loadPromos(),
+    loadCanjes(),
+    loadGallery()
+
   ]);
+
+  $("dashMsg")
+    .textContent =
+    "✅ Datos actualizados.";
+
+  await checkNew();
 }
 
-async function contarReservas(){
+async function checkNew(){
+
+  const [
+    r,
+    p
+  ] =
+    await Promise.allSettled([
+
+      db
+        .from("reservas")
+        .select(
+          "id,nombre,fecha,hora"
+        )
+        .eq(
+          "estado",
+          "pendiente"
+        )
+        .or(
+          "notificacion_vista.is.false,notificacion_vista.is.null"
+        ),
+
+      db
+        .from("pedidos")
+        .select(
+          "id,nombre_cliente"
+        )
+        .eq(
+          "estado",
+          "pendiente"
+        )
+        .or(
+          "notificacion_vista.is.false,notificacion_vista.is.null"
+        )
+
+    ]);
+
+  const rn =
+    r.status === "fulfilled"
+      ? r.value.data || []
+      : [];
+
+  const pn =
+    p.status === "fulfilled"
+      ? p.value.data || []
+      : [];
+
+  if(rn.length || pn.length){
+
+    $("newAlert")
+      .textContent =
+      `🔔 Nuevos: ${rn.length} reserva(s) y ${pn.length} pedido(s).`;
+
+    $("newAlert")
+      .classList
+      .remove("hidden");
 
-  const {count}=await db
-    .from("reservas")
-    .select("*",{count:"exact",head:true})
-    .eq("Estado","pendiente");
-
-  document.getElementById("mReservas").textContent=count || 0;
-}
-
-async function contarPedidos(){
-
-  const {count}=await db
-    .from("pedidos")
-    .select("*",{count:"exact",head:true})
-    .eq("estado","pendiente");
-
-  document.getElementById("mPedidos").textContent=count || 0;
-}
-
-async function contarTorneos(){
-
-  const {count}=await db
-    .from("tournaments")
-    .select("*",{count:"exact",head:true})
-    .eq("status","open");
-
-  document.getElementById("mTorneos").textContent=count || 0;
-}
-
-async function contarFotos(){
-
-  const {count}=await db
-    .from("galeria_fotos")
-    .select("*",{count:"exact",head:true})
-    .neq("categoria","mapa");
-
-  document.getElementById("mFotos").textContent=count || 0;
-}
-
-async function loadReservas(){
-
-  const body=document.getElementById("reservasBody");
-
-  const {data,error}=await db
-    .from("reservas")
-    .select("*")
-    .order("fecha",{ascending:true});
-
-  if(error){
-    body.innerHTML=`<tr><td colspan="8">Error cargando reservas.</td></tr>`;
-    return;
-  }
-
-  body.innerHTML=(data || []).map(r=>`
-    <tr>
-      <td>${esc(r.fecha)}</td>
-      <td>${esc(r.Hora)}</td>
-      <td>${esc(r.nombre)}</td>
-      <td>${esc(r.telefono)}</td>
-      <td>${esc(r.Servicio)}</td>
-      <td>${esc(r.cantidad_personas)}</td>
-      <td><span class="status">${esc(r.Estado)}</span></td>
-      <td>
-        <div class="item-actions">
-          <button onclick="cambiarReserva('${r.id}','confirmada')">
-            Confirmar
-          </button>
-
-          <button class="red"
-            onclick="cambiarReserva('${r.id}','cancelada')">
-            Cancelar
-          </button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function cambiarReserva(id,estado){
-
-  const {error}=await db
-    .from("reservas")
-    .update({Estado:estado})
-    .eq("id",id);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  await refreshAll();
-}
-
-async function loadPedidos(){
-
-  const body=document.getElementById("pedidosBody");
-
-  const {data,error}=await db
-    .from("pedidos")
-    .select("*")
-    .order("created_at",{ascending:false});
-
-  if(error){
-    body.innerHTML=`<tr><td colspan="8">Error cargando pedidos.</td></tr>`;
-    return;
-  }
-
-  body.innerHTML=(data || []).map(p=>`
-    <tr>
-      <td>${esc(p.nombre_cliente)}</td>
-      <td>${esc(p.telefono)}</td>
-      <td>${esc(p.tipo_entrega)}</td>
-      <td>${esc(p.direccion)}</td>
-      <td>${esc(p.items)}</td>
-      <td>$${formatear(p.total)}</td>
-      <td><span class="status">${esc(p.estado)}</span></td>
-      <td>
-        <div class="item-actions">
-          <button onclick="cambiarPedido('${p.id}','confirmado')">
-            Confirmar
-          </button>
-
-          <button class="red"
-            onclick="cambiarPedido('${p.id}','cancelado')">
-            Cancelar
-          </button>
-        </div>
-      </td>
-    </tr>
-  `).join("");
-}
-
-async function cambiarPedido(id,estado){
-
-  const {error}=await db
-    .from("pedidos")
-    .update({estado})
-    .eq("id",id);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  await refreshAll();
-}
-
-document.getElementById("productoForm")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  const payload={
-    nombre:document.getElementById("productoNombre").value.trim(),
-    categoria:document.getElementById("productoCategoria").value.trim(),
-    descripcion:document.getElementById("productoDescripcion").value.trim(),
-    precio:Number(document.getElementById("productoPrecio").value),
-    activo:true
-  };
-
-  const {error}=await db
-    .from("productos")
-    .insert(payload);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  e.target.reset();
-  await loadProductos();
-});
-
-async function loadProductos(){
-
-  const box=document.getElementById("productosList");
-
-  const {data,error}=await db
-    .from("productos")
-    .select("*")
-    .order("nombre");
-
-  if(error){
-    box.innerHTML=`<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(p=>`
-    <div class="notice">
-      <b>${esc(p.nombre)}</b>
-      <br>
-      ${esc(p.descripcion || "")}
-      <br>
-      <strong>$${formatear(p.precio)}</strong>
-
-      <div class="item-actions">
-        <button class="${p.activo ? "red":"dark"}"
-          onclick="toggleProducto('${p.id}',${!p.activo})">
-          ${p.activo ? "Desactivar":"Activar"}
-        </button>
-      </div>
-    </div>
-  `).join("");
-}
-
-async function toggleProducto(id,activo){
-
-  const {error}=await db
-    .from("productos")
-    .update({activo})
-    .eq("id",id);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  await loadProductos();
-}
-
-document.getElementById("promoForm")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  const payload={
-    titulo:document.getElementById("promoTitulo").value.trim(),
-    descripcion:document.getElementById("promoDescripcion").value.trim(),
-    precio:Number(document.getElementById("promoPrecio").value || 0),
-    image_url:document.getElementById("promoImagen").value.trim(),
-    activa:true
-  };
-
-  const {error}=await db
-    .from("promociones")
-    .insert(payload);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  e.target.reset();
-  await loadPromociones();
-});
-
-async function loadPromociones(){
-
-  const box=document.getElementById("promosList");
-
-  const {data,error}=await db
-    .from("promociones")
-    .select("*")
-    .order("id",{ascending:false});
-
-  if(error){
-    box.innerHTML=`<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(p=>`
-    <div class="notice">
-
-      <b>${esc(p.titulo)}</b>
-
-      <p>${esc(p.descripcion || "")}</p>
-
-      <strong>$${formatear(p.precio)}</strong>
-
-      <div class="item-actions">
-
-        <button
-          class="${p.activa ? "red":"dark"}"
-          onclick="togglePromo('${p.id}',${!p.activa})">
-          ${p.activa ? "Desactivar":"Activar"}
-        </button>
-
-      </div>
-
-    </div>
-  `).join("");
-}
-
-async function togglePromo(id,activa){
-
-  const {error}=await db
-    .from("promociones")
-    .update({activa})
-    .eq("id",id);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  await loadPromociones();
-}
-
-document.getElementById("triviaForm")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  const payload={
-    pregunta:document.getElementById("triviaPregunta").value.trim(),
-    respuesta_correcta:document.getElementById("triviaRespuesta").value.trim(),
-    puntos:Number(document.getElementById("triviaPuntos").value || 10)
-  };
-
-  const {error}=await db
-    .from("trivia_questions")
-    .insert(payload);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  e.target.reset();
-  await loadTrivia();
-});
-
-async function loadTrivia(){
-
-  const box=document.getElementById("triviaList");
-
-  const {data,error}=await db
-    .from("trivia_questions")
-    .select("*")
-    .order("id",{ascending:false});
-
-  if(error){
-    box.innerHTML=`<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(q=>`
-    <div class="notice">
-      <b>${esc(q.pregunta)}</b>
-      <br>
-      Respuesta: ${esc(q.respuesta_correcta)}
-      <br>
-      Puntos: ${esc(q.puntos)}
-    </div>
-  `).join("");
-}
-
-document.getElementById("premioForm")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  const payload={
-    nombre:document.getElementById("premioNombre").value.trim(),
-    descripcion:document.getElementById("premioDescripcion").value.trim(),
-    puntos:Number(document.getElementById("premioCosto").value),
-    activo:true
-  };
-
-  const {error}=await db
-    .from("prizes")
-    .insert(payload);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  e.target.reset();
-  await loadPremios();
-});
-
-async function loadPremios(){
-
-  const box=document.getElementById("premiosList");
-
-  const {data,error}=await db
-    .from("prizes")
-    .select("*")
-    .order("id",{ascending:false});
-
-  if(error){
-    box.innerHTML=`<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(p=>`
-    <div class="notice">
-      <b>${esc(p.nombre)}</b>
-      <br>
-      ${esc(p.descripcion || "")}
-      <br>
-      ${esc(p.puntos)} puntos
-    </div>
-  `).join("");
-}
-
-document.getElementById("torneoForm")
-.addEventListener("submit",async e=>{
-
-  e.preventDefault();
-
-  const payload={
-    name:document.getElementById("torneoNombre").value.trim(),
-    description:document.getElementById("torneoDescripcion").value.trim(),
-    prize:document.getElementById("torneoPremio").value.trim(),
-    status:"open"
-  };
-
-  const {error}=await db
-    .from("tournaments")
-    .insert(payload);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  e.target.reset();
-  await loadTorneos();
-});
-
-async function loadTorneos(){
-
-  const box=document.getElementById("torneosList");
-
-  const {data,error}=await db
-    .from("tournaments")
-    .select("*")
-    .order("id",{ascending:false});
-
-  if(error){
-    box.innerHTML=`<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(t=>`
-    <div class="notice">
-      <b>${esc(t.name)}</b>
-      <br>
-      ${esc(t.description || "")}
-      <br>
-      Estado: ${esc(t.status)}
-      <br>
-      Premio: ${esc(t.prize || "")}
-    </div>
-  `).join("");
-}
-
-async function loadDuelos(){
-
-  const body=document.getElementById("duelosBody");
-
-  const {data,error}=await db
-    .from("duel_matches")
-    .select("*")
-    .order("id",{ascending:false});
-
-  if(error){
-    body.innerHTML=`<tr><td colspan="5">${esc(error.message)}</td></tr>`;
-    return;
-  }
-
-  body.innerHTML=(data || []).map(d=>`
-    <tr>
-      <td>${esc(d.id)}</td>
-      <td>${esc(d.player1_id || d.player_1_id || "")}</td>
-      <td>${esc(d.player2_id || d.player_2_id || "")}</td>
-      <td>${esc(d.status || "")}</td>
-      <td>${esc(d.winner_id || "")}</td>
-    </tr>
-  `).join("");
-}
-
-/* =========================
-   FOTOS
-========================= */
-
-document.getElementById("uploadPhotoBtn")
-.addEventListener("click",subirFoto);
-
-async function subirFoto(e){
-
-  e.preventDefault();
-
-  const status=document.getElementById("photoStatus");
-  const file=document.getElementById("photoFile").files[0];
-  const manualUrl=document.getElementById("fotoUrl").value.trim();
-
-  status.className="";
-  status.textContent="";
-
-  let url=manualUrl;
-
-  if(file){
-
-    const extension=
-      file.name.split(".").pop().toLowerCase();
-
-    const safeName=file.name
-      .replace(/[^a-zA-Z0-9._-]/g,"-");
-
-    const path=
-      "galeria/" +
-      Date.now() +
-      "-" +
-      safeName;
-
-    const {error:uploadError}=await db.storage
-      .from("galeria")
-      .upload(path,file,{
-        upsert:false,
-        contentType:file.type
-      });
-
-    if(uploadError){
-
-      status.className="error";
-      status.textContent=
-        "No se pudo subir la foto. Verificá que exista el bucket 'galeria' en Storage.";
-      return;
-    }
-
-    const publicResult=db.storage
-      .from("galeria")
-      .getPublicUrl(path);
-
-    url=publicResult.data.publicUrl;
-  }
-
-  if(!url){
-
-    status.className="error";
-    status.textContent=
-      "Seleccioná una foto o ingresá una URL.";
-    return;
-  }
-
-  const {error}=await db
-    .from("galeria_fotos")
-    .insert({
-      titulo:document.getElementById("fotoTitulo").value.trim(),
-      categoria:document.getElementById("fotoCategoria").value,
-      url
-    });
-
-  if(error){
-
-    status.className="error";
-    status.textContent=error.message;
-    return;
-  }
-
-  status.className="ok";
-  status.textContent="Foto publicada correctamente.";
-
-  document.getElementById("photoFile").value="";
-  document.getElementById("fotoUrl").value="";
-  document.getElementById("fotoTitulo").value="";
-
-  await loadFotos();
-  await contarFotos();
-}
-
-/* =========================
-   MAPA
-========================= */
-
-document.getElementById("uploadMapBtn")
-.addEventListener("click",subirMapa);
-
-async function subirMapa(e){
-
-  e.preventDefault();
-
-  const status=document.getElementById("mapStatus");
-  const file=document.getElementById("mapFile").files[0];
-  const manualUrl=document.getElementById("mapUrl").value.trim();
-
-  status.className="";
-  status.textContent="";
-
-  let url=manualUrl;
-
-  if(file){
-
-    const safeName=file.name
-      .replace(/[^a-zA-Z0-9._-]/g,"-");
-
-    const path=
-      "mapa/" +
-      Date.now() +
-      "-" +
-      safeName;
-
-    const {error:uploadError}=await db.storage
-      .from("galeria")
-      .upload(path,file,{
-        upsert:false,
-        contentType:file.type
-      });
-
-    if(uploadError){
-
-      status.className="error";
-      status.textContent=
-        "No se pudo subir el mapa. Verificá el bucket 'galeria'.";
-      return;
-    }
-
-    url=db.storage
-      .from("galeria")
-      .getPublicUrl(path)
-      .data
-      .publicUrl;
-  }
-
-  if(!url){
-
-    status.className="error";
-    status.textContent=
-      "Seleccioná una imagen o ingresá una URL.";
-    return;
-  }
-
-  /*
-   * Se utiliza la tabla existente galeria_fotos.
-   * categoria = mapa identifica la única imagen del mapa.
-   */
-
-  const {error:deleteError}=await db
-    .from("galeria_fotos")
-    .delete()
-    .eq("categoria","mapa");
-
-  if(deleteError){
-
-    status.className="error";
-    status.textContent=deleteError.message;
-    return;
-  }
-
-  const {error:insertError}=await db
-    .from("galeria_fotos")
-    .insert({
-      titulo:"Mapa",
-      categoria:"mapa",
-      url
-    });
-
-  if(insertError){
-
-    status.className="error";
-    status.textContent=insertError.message;
-    return;
-  }
-
-  status.className="ok";
-  status.textContent=
-    "Mapa actualizado correctamente.";
-
-  document.getElementById("mapFile").value="";
-  document.getElementById("mapUrl").value="";
-
-  await loadFotos();
-}
-
-/* =========================
-   LISTADO FOTOS
-========================= */
-
-async function loadFotos(){
-
-  const box=document.getElementById("fotosList");
-
-  const {data,error}=await db
-    .from("galeria_fotos")
-    .select("id,titulo,url,categoria,creado_en")
-    .order("creado_en",{ascending:false});
-
-  if(error){
-
-    box.innerHTML=
-      `<div class="error">${esc(error.message)}</div>`;
-    return;
-  }
-
-  box.innerHTML=(data || []).map(f=>`
-
-    <div class="card">
-
-      <img
-        src="${escAttr(f.url)}"
-        alt="${escAttr(f.titulo || "")}"
-      >
-
-      <b>${esc(f.titulo || "Sin título")}</b>
-
-      <small style="display:block;color:var(--muted)">
-        ${esc(f.categoria || "general")}
-      </small>
-
-      <div class="item-actions">
-
-        <button
-          class="red"
-          onclick="eliminarFoto('${f.id}')">
-          Eliminar
-        </button>
-
-      </div>
-
-    </div>
-
-  `).join("");
-}
-
-async function eliminarFoto(id){
-
-  if(!confirm("¿Eliminar esta foto?")) return;
-
-  const {error}=await db
-    .from("galeria_fotos")
-    .delete()
-    .eq("id",id);
-
-  if(error){
-    alert(error.message);
-    return;
-  }
-
-  await loadFotos();
-  await contarFotos();
-}
-
-/* =========================
-   QR GENERAL
-========================= */
-
-function obtenerUrlGeneral(){
-
-  /*
-   * IMPORTANTE:
-   * nunca agrega ?mesa ni ningún identificador.
-   */
-
-  const url=new URL("index.html",location.href);
-
-  url.search="";
-  url.hash="";
-
-  return url.href;
-}
-
-function generarQrGeneral(){
-
-  const url=obtenerUrlGeneral();
-
-  const canvas=document.getElementById("generalQr");
-
-  if(!canvas || !window.QRious) return;
-
-  new QRious({
-    element:canvas,
-    value:url,
-    size:280,
-    level:"H"
-  });
-
-  document.getElementById("generalQrUrl")
-    .textContent=url;
-}
-
-document.getElementById("openPublicBtn")
-.addEventListener("click",()=>{
-  window.open(obtenerUrlGeneral(),"_blank");
-});
-
-document.getElementById("downloadQrBtn")
-.addEventListener("click",()=>{
-
-  const canvas=document.getElementById("generalQr");
-
-  if(!canvas) return;
-
-  const a=document.createElement("a");
-
-  a.download="pool-beach-qr-general.png";
-  a.href=canvas.toDataURL("image/png");
-
-  a.click();
-});
-
-/* =========================
-   UTILIDADES
-========================= */
-
-function formatear(n){
-  return Number(n || 0).toLocaleString("es-AR");
-}
-
-function esc(value){
-
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-function escAttr(value){
-  return esc(value);
-}
-
-/* =========================
-   INICIO
-========================= */
-
-(async function(){
-
-  const {data:{session}}=await db.auth.getSession();
-
-  if(session){
-    await verificarAdmin();
   }else{
-    mostrarLogin();
+
+    $("newAlert")
+      .classList
+      .add("hidden");
+  }
+}
+
+function startRealtime(){
+
+  try{
+
+    db
+      .channel("pool-beach-admin")
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"reservas"
+        },
+        async () => {
+
+          await loadReservations();
+          await loadMetrics();
+          await checkNew();
+
+        }
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"pedidos"
+        },
+        async () => {
+
+          await loadOrders();
+          await loadMetrics();
+          await checkNew();
+
+        }
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"productos"
+        },
+        loadProducts
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"promociones"
+        },
+        loadPromos
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"galeria_fotos"
+        },
+        loadGallery
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"prizes"
+        },
+        loadCanjes
+      )
+
+      .subscribe();
+
+  }catch(e){
+
+    console.warn(e);
   }
 
-})();
+  setInterval(
+    checkNew,
+    15000
+  );
+}
+
+enter();
 
 </script>
 
