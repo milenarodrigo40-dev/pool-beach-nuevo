@@ -3,359 +3,346 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-
 <title>Pool & Beach | Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --bg:#06131e;
-  --p:#0d2939;
-  --p2:#12364a;
-  --line:#28556b;
-  --sky:#5edcff;
-  --green:#62e6a1;
-  --gold:#ffd166;
-  --red:#ff7182;
-  --txt:#f4fbff;
-  --muted:#9db9c7
+--bg:#06131e;
+--p:#0d2939;
+--p2:#12364a;
+--line:#28556b;
+--sky:#5edcff;
+--green:#62e6a1;
+--gold:#ffd166;
+--red:#ff7182;
+--txt:#f4fbff;
+--muted:#9db9c7
 }
 
-*{
-  box-sizing:border-box
-}
+*{box-sizing:border-box}
 
 body{
-  margin:0;
-  background:linear-gradient(180deg,#0b2a3a,#031018);
-  color:var(--txt);
-  font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif
+margin:0;
+background:linear-gradient(180deg,#0b2a3a,#031018);
+color:var(--txt);
+font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif
 }
 
 .app{
-  width:min(1200px,94%);
-  margin:auto;
-  padding:14px 0 60px
+width:min(1200px,94%);
+margin:auto;
+padding:14px 0 60px
 }
 
 .card{
-  background:linear-gradient(145deg,var(--p2),var(--p));
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:16px;
-  margin-bottom:14px;
-  box-shadow:0 10px 25px #0004
+background:linear-gradient(145deg,var(--p2),var(--p));
+border:1px solid var(--line);
+border-radius:18px;
+padding:16px;
+margin-bottom:14px;
+box-shadow:0 10px 25px #0004
 }
 
 .login{
-  max-width:430px;
-  margin:8vh auto
+max-width:430px;
+margin:8vh auto
 }
 
 .top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:12px
 }
 
 .brand{
-  font-size:23px;
-  font-weight:950
+font-size:23px;
+font-weight:950
 }
 
 .brand span{
-  color:var(--sky)
+color:var(--sky)
 }
 
-.actions,
-.row{
-  display:flex;
-  gap:8px;
-  flex-wrap:wrap;
-  align-items:center
+.actions,.row{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+align-items:center
 }
 
 .status{
-  padding:7px 10px;
-  border-radius:99px;
-  border:1px solid var(--line);
-  color:var(--sky);
-  font-size:11px
+padding:7px 10px;
+border-radius:99px;
+border:1px solid var(--line);
+color:var(--sky);
+font-size:11px
 }
 
-.btn,
-.tab{
-  border:0;
-  border-radius:12px;
-  padding:11px 14px;
-  font-weight:900;
-  cursor:pointer
+.btn,.tab{
+border:0;
+border-radius:12px;
+padding:11px 14px;
+font-weight:900;
+cursor:pointer
 }
 
 .btn{
-  background:var(--sky);
-  color:#05202c
+background:var(--sky);
+color:#05202c
 }
 
-.btn.dark,
-.tab{
-  background:#102c3d;
-  color:var(--txt);
-  border:1px solid var(--line)
+.btn.dark,.tab{
+background:#102c3d;
+color:var(--txt);
+border:1px solid var(--line)
 }
 
 .btn.green{
-  background:var(--green);
-  color:#052116
+background:var(--green);
+color:#052116
 }
 
 .btn.gold{
-  background:var(--gold);
-  color:#2c2200
+background:var(--gold);
+color:#2c2200
 }
 
 .btn.red{
-  background:var(--red);
-  color:#fff
+background:var(--red);
+color:#fff
 }
 
 .hero{
-  margin:14px 0
+margin:14px 0
 }
 
 .hero h1{
-  margin:0 0 5px
+margin:0 0 5px
 }
 
-.muted,
-small{
-  color:var(--muted)
+.muted,small{
+color:var(--muted)
 }
 
 .tabs{
-  display:flex;
-  gap:7px;
-  overflow:auto;
-  padding:4px 0 9px;
-  position:sticky;
-  top:0;
-  z-index:10;
-  background:#06131ee8;
-  backdrop-filter:blur(10px)
+display:flex;
+gap:7px;
+overflow:auto;
+padding:4px 0 9px;
+position:sticky;
+top:0;
+z-index:10;
+background:#06131ee8;
+backdrop-filter:blur(10px)
 }
 
 .tab{
-  white-space:nowrap
+white-space:nowrap
 }
 
 .tab.active{
-  background:var(--sky);
-  color:#05202c
+background:var(--sky);
+color:#05202c
 }
 
 .view{
-  display:none
+display:none
 }
 
 .view.active{
-  display:block
+display:block
 }
 
-.cards,
-.grid2{
-  display:grid;
-  gap:11px
+.cards,.grid2{
+display:grid;
+gap:11px
 }
 
 .cards{
-  grid-template-columns:repeat(4,1fr)
+grid-template-columns:repeat(4,1fr)
 }
 
 .grid2{
-  grid-template-columns:1fr 1fr
+grid-template-columns:1fr 1fr
 }
 
 .metric{
-  padding:15px;
-  border:1px solid var(--line);
-  border-radius:15px;
-  background:#092031
+padding:15px;
+border:1px solid var(--line);
+border-radius:15px;
+background:#092031
 }
 
 .metric small{
-  color:var(--muted)
+color:var(--muted)
 }
 
 .metric b{
-  display:block;
-  font-size:29px;
-  margin-top:4px
+display:block;
+font-size:29px;
+margin-top:4px
 }
 
-.input,
-select,
-textarea{
-  width:100%;
-  padding:11px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  background:#061722;
-  color:var(--txt);
-  margin:5px 0 8px;
-  font:inherit
+.input,select,textarea{
+width:100%;
+padding:11px;
+border:1px solid var(--line);
+border-radius:10px;
+background:#061722;
+color:var(--txt);
+margin:5px 0 8px;
+font:inherit
 }
 
 textarea{
-  min-height:80px;
-  resize:vertical
+min-height:80px;
+resize:vertical
 }
 
 label{
-  display:block;
-  color:var(--muted);
-  font-size:12px;
-  margin-top:7px
-}
-
-.checkbox{
-  display:flex;
-  gap:8px;
-  align-items:center
-}
-
-.checkbox input{
-  width:auto;
-  margin:0
+display:block;
+color:var(--muted);
+font-size:12px;
+margin-top:7px
 }
 
 .table-wrap{
-  overflow:auto
+overflow:auto
 }
 
 table{
-  width:100%;
-  border-collapse:collapse;
-  min-width:900px
+width:100%;
+border-collapse:collapse;
+min-width:820px
 }
 
-th,
-td{
-  padding:10px;
-  border-bottom:1px solid #234759;
-  text-align:left;
-  vertical-align:top
+th,td{
+padding:10px;
+border-bottom:1px solid #234759;
+text-align:left;
+vertical-align:top
 }
 
 th{
-  color:var(--muted)
+color:var(--muted)
 }
 
 .notice{
-  padding:10px;
-  border-radius:11px;
-  background:#102b3c;
-  border:1px solid var(--line);
-  margin:7px 0
+padding:10px;
+border-radius:11px;
+background:#102b3c;
+border:1px solid var(--line);
+margin:7px 0
 }
 
 .msg{
-  min-height:20px;
-  margin-top:8px
+min-height:20px;
+margin-top:8px
 }
 
 .ok{
-  color:var(--green)
+color:var(--green)
 }
 
 .error{
-  color:var(--red)
+color:var(--red)
 }
 
 .hidden{
-  display:none!important
+display:none!important
 }
 
 .item{
-  padding:12px 0;
-  border-bottom:1px solid #214657
+padding:12px 0;
+border-bottom:1px solid #214657
 }
 
 .item:last-child{
-  border:0
+border:0
 }
 
 .thumb{
-  width:100%;
-  max-height:190px;
-  object-fit:cover;
-  border-radius:12px
+width:100%;
+max-height:190px;
+object-fit:cover;
+border-radius:12px
 }
 
 .gallery{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:10px
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:10px
 }
 
 .gallery figure{
-  margin:0;
-  border:1px solid var(--line);
-  border-radius:13px;
-  padding:9px
+margin:0;
+border:1px solid var(--line);
+border-radius:13px;
+padding:9px
 }
 
 .gallery img{
-  width:100%;
-  aspect-ratio:1;
-  object-fit:cover;
-  border-radius:10px
+width:100%;
+aspect-ratio:1;
+object-fit:cover;
+border-radius:10px
 }
 
 .alert{
-  background:#3a2730;
-  border:1px solid var(--red);
-  color:#fff;
-  padding:12px;
-  border-radius:12px;
-  margin-bottom:12px
+background:#3a2730;
+border:1px solid var(--red);
+color:#fff;
+padding:12px;
+border-radius:12px;
+margin-bottom:12px
+}
+
+.checkbox{
+display:flex;
+gap:8px;
+align-items:center
+}
+
+.checkbox input{
+width:auto;
+margin:0
 }
 
 .empty{
-  color:var(--muted);
-  padding:10px 0
+color:var(--muted);
+padding:10px 0
 }
 
 @media(max-width:850px){
-  .cards{
-    grid-template-columns:1fr 1fr
-  }
+.cards{
+grid-template-columns:1fr 1fr
+}
 }
 
 @media(max-width:650px){
-  .grid2,
-  .gallery,
-  .cards{
-    grid-template-columns:1fr
-  }
+.grid2,.gallery,.cards{
+grid-template-columns:1fr
+}
 
-  .top{
-    align-items:flex-start;
-    flex-direction:column
-  }
+.top{
+align-items:flex-start;
+flex-direction:column
+}
 
-  .top .actions{
-    width:100%
-  }
+.top .actions{
+width:100%
+}
 
-  .top .actions .btn{
-    flex:1
-  }
+.top .actions .btn{
+flex:1
+}
 
-  .app{
-    width:94%
-  }
+.app{
+width:94%
+}
 }
 </style>
 </head>
@@ -364,2384 +351,2136 @@ th{
 
 <div id="login" class="login card">
 
-  <div class="brand">
-    POOL <span>&</span> BEACH
-  </div>
-
-  <h2>🔐 Administración</h2>
-
-  <p class="notice">
-    Ingresá con una cuenta autorizada de administrador o staff.
-  </p>
-
-  <form id="loginForm">
-
-    <label>Email</label>
-    <input
-      id="email"
-      class="input"
-      type="email"
-      autocomplete="username"
-      required
-    >
-
-    <label>Contraseña</label>
-    <input
-      id="password"
-      class="input"
-      type="password"
-      autocomplete="current-password"
-      required
-    >
-
-    <button
-      class="btn"
-      type="submit"
-    >
-      Iniciar sesión
-    </button>
-
-    <p id="loginMsg" class="msg hidden"></p>
-
-  </form>
-
+<div class="brand">
+POOL <span>&</span> BEACH
 </div>
+
+<h2>🔐 Administración</h2>
+
+<p class="notice">
+Ingresá con una cuenta autorizada de administrador o staff.
+</p>
+
+<form id="loginForm">
+
+<label>Email</label>
+<input
+id="email"
+class="input"
+type="email"
+autocomplete="username"
+required
+>
+
+<label>Contraseña</label>
+<input
+id="password"
+class="input"
+type="password"
+autocomplete="current-password"
+required
+>
+
+<button class="btn" type="submit">
+Iniciar sesión
+</button>
+
+<p id="loginMsg" class="msg hidden"></p>
+
+</form>
+</div>
+
 
 <div id="app" class="app hidden">
 
-  <div class="top">
-
-    <div>
-      <div class="brand">
-        POOL <span>&</span> BEACH
-      </div>
-
-      <small id="userInfo">
-        Panel administrativo
-      </small>
-    </div>
-
-    <div class="actions">
-
-      <span id="status" class="status">
-        CONECTADO
-      </span>
-
-      <a
-        href="index.html"
-        class="btn dark"
-      >
-        Ver sitio
-      </a>
-
-      <button
-        id="logout"
-        class="btn red"
-      >
-        Cerrar sesión
-      </button>
-
-    </div>
-
-  </div>
-
-  <div id="newAlert" class="alert hidden"></div>
-
-  <section class="hero card">
-
-    <h1>📊 Administración</h1>
-
-    <p class="muted">
-      Reservas, pedidos, productos, promociones,
-      canjes y fotos.
-      Las actividades del local son promocionales:
-      no hay sistema de juegos.
-    </p>
-
-  </section>
-
-  <nav class="tabs">
-
-    <button
-      class="tab active"
-      data-view="dashboard"
-    >
-      🏠 Inicio
-    </button>
-
-    <button
-      class="tab"
-      data-view="reservas"
-    >
-      📅 Reservas
-    </button>
-
-    <button
-      class="tab"
-      data-view="pedidos"
-    >
-      🛒 Pedidos
-    </button>
-
-    <button
-      class="tab"
-      data-view="productos"
-    >
-      🍔 Productos
-    </button>
-
-    <button
-      class="tab"
-      data-view="promos"
-    >
-      🔥 Promos
-    </button>
-
-    <button
-      class="tab"
-      data-view="canjes"
-    >
-      🎁 Canjes
-    </button>
-
-    <button
-      class="tab"
-      data-view="fotos"
-    >
-      📸 Fotos
-    </button>
+<div class="top">
 
-  </nav>
+<div>
+<div class="brand">
+POOL <span>&</span> BEACH
+</div>
 
-  <main>
+<small id="userInfo">
+Panel administrativo
+</small>
+</div>
 
-    <section
-      id="dashboard"
-      class="view active"
-    >
+<div class="actions">
 
-      <div class="cards">
+<span id="status" class="status">
+CONECTADO
+</span>
 
-        <div class="card metric">
-          <small>Reservas pendientes</small>
-          <b id="mR">0</b>
-        </div>
+<a href="index.html" class="btn dark">
+Ver sitio
+</a>
 
-        <div class="card metric">
-          <small>Pedidos pendientes</small>
-          <b id="mP">0</b>
-        </div>
+<button id="logout" class="btn red">
+Cerrar sesión
+</button>
 
-        <div class="card metric">
-          <small>Productos</small>
-          <b id="mProd">0</b>
-        </div>
+</div>
+</div>
 
-        <div class="card metric">
-          <small>Fotos</small>
-          <b id="mF">0</b>
-        </div>
 
-      </div>
+<div id="newAlert" class="alert hidden"></div>
 
-      <div class="card">
 
-        <button
-          class="btn"
-          onclick="refreshAll()"
-        >
-          🔄 Actualizar todo
-        </button>
+<section class="hero card">
 
-        <div
-          id="dashMsg"
-          class="notice"
-        >
-          Panel listo.
-        </div>
+<h1>📊 Administración</h1>
 
-      </div>
+<p class="muted">
+Reservas, pedidos, productos, promociones, canjes y fotos.
+Las actividades del local son promocionales: no hay sistema de juegos.
+</p>
 
-    </section>
+</section>
 
-    <section
-      id="reservas"
-      class="view"
-    >
 
-      <div class="card">
+<nav class="tabs">
 
-        <div
-          class="row"
-          style="justify-content:space-between"
-        >
+<button class="tab active" data-view="dashboard">
+🏠 Inicio
+</button>
 
-          <h2>📅 Reservas</h2>
+<button class="tab" data-view="reservas">
+📅 Reservas
+</button>
 
-          <button
-            class="btn dark"
-            onclick="loadReservations()"
-          >
-            Actualizar
-          </button>
+<button class="tab" data-view="pedidos">
+🛒 Pedidos
+</button>
 
-        </div>
+<button class="tab" data-view="productos">
+🍔 Productos
+</button>
 
-        <div class="table-wrap">
+<button class="tab" data-view="promos">
+🔥 Promos
+</button>
 
-          <table>
+<button class="tab" data-view="canjes">
+🎁 Canjes
+</button>
 
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Hora</th>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Personas</th>
-                <th>Servicio</th>
-                <th>Mesa</th>
-                <th>Estado</th>
-                <th></th>
-              </tr>
-            </thead>
+<button class="tab" data-view="fotos">
+📸 Fotos
+</button>
 
-            <tbody id="reservasTable"></tbody>
+</nav>
 
-          </table>
 
-        </div>
+<main>
 
-      </div>
+<section id="dashboard" class="view active">
 
-    </section>
+<div class="cards">
 
-    <section
-      id="pedidos"
-      class="view"
-    >
+<div class="card metric">
+<small>Reservas pendientes</small>
+<b id="mR">0</b>
+</div>
 
-      <div class="card">
+<div class="card metric">
+<small>Pedidos pendientes</small>
+<b id="mP">0</b>
+</div>
 
-        <div
-          class="row"
-          style="justify-content:space-between"
-        >
+<div class="card metric">
+<small>Productos</small>
+<b id="mProd">0</b>
+</div>
 
-          <h2>🛒 Pedidos</h2>
-
-          <button
-            class="btn dark"
-            onclick="loadOrders()"
-          >
-            Actualizar
-          </button>
-
-        </div>
-
-        <div class="table-wrap">
-
-          <table>
-
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Entrega</th>
-                <th>Dirección</th>
-                <th>Items</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th></th>
-              </tr>
-            </thead>
-
-            <tbody id="ordersTable"></tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="productos"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🍔 Producto</h2>
-
-          <label>Nombre</label>
-          <input id="pn" class="input">
-
-          <label>Categoría</label>
-          <input
-            id="pc"
-            class="input"
-            placeholder="Pizza, hamburguesa, bebida..."
-          >
-
-          <label>Descripción</label>
-          <textarea id="pd" class="input"></textarea>
-
-          <label>Precio</label>
-          <input
-            id="pp"
-            class="input"
-            type="number"
-            min="0"
-          >
-
-          <label class="checkbox">
-            <input
-              id="pa"
-              type="checkbox"
-              checked
-            >
-            Activo y disponible
-          </label>
-
-          <button
-            class="btn gold"
-            onclick="createProduct()"
-          >
-            Guardar producto
-          </button>
-
-          <p
-            id="prodMsg"
-            class="msg hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Productos actuales</h2>
-
-          <div id="productsList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="promos"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🔥 Promoción</h2>
-
-          <label>Título</label>
-          <input id="promoTitle" class="input">
-
-          <label>Descripción</label>
-          <textarea id="promoDesc" class="input"></textarea>
-
-          <label>Precio opcional</label>
-          <input
-            id="promoPrice"
-            class="input"
-            type="number"
-            min="0"
-          >
-
-          <label class="checkbox">
-            <input
-              id="promoActive"
-              type="checkbox"
-              checked
-            >
-            Publicada
-          </label>
-
-          <button
-            class="btn gold"
-            onclick="createPromo()"
-          >
-            Guardar promoción
-          </button>
-
-          <p
-            id="promoMsg"
-            class="msg hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Promociones actuales</h2>
-
-          <div id="promosList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="canjes"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🎁 Nuevo canje</h2>
-
-          <p class="muted">
-            Administrá las opciones de canje sin activar
-            ningún sistema de juegos.
-          </p>
-
-          <label>Nombre</label>
-          <input id="cn" class="input">
-
-          <label>Descripción</label>
-          <textarea id="cd" class="input"></textarea>
-
-          <label>Costo en tokens</label>
-          <input
-            id="cc"
-            class="input"
-            type="number"
-            min="1"
-            value="1"
-          >
-
-          <label>Stock</label>
-          <input
-            id="cs"
-            class="input"
-            type="number"
-            min="0"
-            value="0"
-          >
-
-          <label class="checkbox">
-            <input
-              id="ca"
-              type="checkbox"
-              checked
-            >
-            Activo
-          </label>
-
-          <button
-            class="btn gold"
-            onclick="createCanje()"
-          >
-            Guardar canje
-          </button>
-
-          <p
-            id="canjeMsg"
-            class="msg hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Canjes actuales</h2>
-
-          <div id="canjesList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="fotos"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>📸 Subir foto</h2>
-
-          <p class="muted">
-            Elegí una foto directamente desde el celular
-            o la galería. Se guarda en el bucket
-            <strong>Galeria</strong>.
-          </p>
-
-          <label>Título</label>
-
-          <input
-            id="photoTitle"
-            class="input"
-            placeholder="Ej.: Local, pool, comida..."
-          >
-
-          <label>Foto</label>
-
-          <input
-            id="photoFile"
-            class="input"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-          >
-
-          <img
-            id="preview"
-            class="thumb hidden"
-            alt="Vista previa"
-          >
-
-          <button
-            class="btn green"
-            type="button"
-            onclick="uploadPhoto()"
-          >
-            ⬆️ Subir foto
-          </button>
-
-          <p
-            id="photoMsg"
-            class="msg hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Galería publicada</h2>
-
-          <div
-            id="galleryList"
-            class="gallery"
-          ></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
+<div class="card metric">
+<small>Fotos</small>
+<b id="mF">0</b>
+</div>
 
 </div>
 
+<div class="card">
+
+<button class="btn" onclick="refreshAll()">
+🔄 Actualizar todo
+</button>
+
+<div id="dashMsg" class="notice">
+Panel listo.
+</div>
+
+</div>
+
+</section>
+
+
+<section id="reservas" class="view">
+
+<div class="card">
+
+<div class="row" style="justify-content:space-between">
+
+<h2>📅 Reservas</h2>
+
+<button
+class="btn dark"
+onclick="loadReservations()">
+Actualizar
+</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Hora</th>
+<th>Cliente</th>
+<th>Teléfono</th>
+<th>Personas</th>
+<th>Servicio</th>
+<th>Mesa</th>
+<th>Estado</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="reservasTable"></tbody>
+
+</table>
+
+</div>
+</div>
+
+</section>
+
+
+<section id="pedidos" class="view">
+
+<div class="card">
+
+<div class="row" style="justify-content:space-between">
+
+<h2>🛒 Pedidos</h2>
+
+<button
+class="btn dark"
+onclick="loadOrders()">
+Actualizar
+</button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+<tr>
+<th>Fecha</th>
+<th>Cliente</th>
+<th>Teléfono</th>
+<th>Entrega</th>
+<th>Dirección</th>
+<th>Items</th>
+<th>Total</th>
+<th>Estado</th>
+<th></th>
+</tr>
+</thead>
+
+<tbody id="ordersTable"></tbody>
+
+</table>
+
+</div>
+</div>
+
+</section>
+
+
+<section id="productos" class="view">
+
+<div class="grid2">
+
+<div class="card">
+
+<h2>🍔 Producto</h2>
+
+<label>Nombre</label>
+<input id="pn" class="input">
+
+<label>Categoría</label>
+<input
+id="pc"
+class="input"
+placeholder="Pizza, hamburguesa, bebida..."
+>
+
+<label>Descripción</label>
+<textarea id="pd" class="input"></textarea>
+
+<label>Precio</label>
+<input
+id="pp"
+class="input"
+type="number"
+min="0"
+>
+
+<label class="checkbox">
+<input id="pa" type="checkbox" checked>
+Activo y disponible
+</label>
+
+<button
+class="btn gold"
+onclick="createProduct()">
+Guardar producto
+</button>
+
+<p id="prodMsg" class="msg hidden"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Productos actuales</h2>
+
+<div id="productsList"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="promos" class="view">
+
+<div class="grid2">
+
+<div class="card">
+
+<h2>🔥 Promoción</h2>
+
+<label>Título</label>
+<input id="promoTitle" class="input">
+
+<label>Descripción</label>
+<textarea id="promoDesc" class="input"></textarea>
+
+<label>Precio opcional</label>
+<input
+id="promoPrice"
+class="input"
+type="number"
+min="0"
+>
+
+<label class="checkbox">
+<input id="promoActive" type="checkbox" checked>
+Publicada
+</label>
+
+<button
+class="btn gold"
+onclick="createPromo()">
+Guardar promoción
+</button>
+
+<p id="promoMsg" class="msg hidden"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Promociones actuales</h2>
+
+<div id="promosList"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="canjes" class="view">
+
+<div class="grid2">
+
+<div class="card">
+
+<h2>🎁 Nuevo canje</h2>
+
+<p class="muted">
+Administrá las opciones de canje sin activar ningún sistema de juegos.
+</p>
+
+<label>Nombre</label>
+<input id="cn" class="input">
+
+<label>Descripción</label>
+<textarea id="cd" class="input"></textarea>
+
+<label>Costo en tokens</label>
+<input
+id="cc"
+class="input"
+type="number"
+min="1"
+value="1"
+>
+
+<label>Stock</label>
+<input
+id="cs"
+class="input"
+type="number"
+min="0"
+value="0"
+>
+
+<label class="checkbox">
+<input id="ca" type="checkbox" checked>
+Activo
+</label>
+
+<button
+class="btn gold"
+onclick="createCanje()">
+Guardar canje
+</button>
+
+<p id="canjeMsg" class="msg hidden"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Canjes actuales</h2>
+
+<div id="canjesList"></div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section id="fotos" class="view">
+
+<div class="grid2">
+
+<div class="card">
+
+<h2>📸 Subir foto</h2>
+
+<p class="muted">
+Elegí una foto directamente desde el celular o la galería.
+Se guarda en el bucket <strong>Galeria</strong>.
+</p>
+
+<label>Título</label>
+
+<input
+id="photoTitle"
+class="input"
+placeholder="Ej.: Local, pool, comida..."
+>
+
+<label>Foto</label>
+
+<input
+id="photoFile"
+class="input"
+type="file"
+accept="image/jpeg,image/png,image/webp,image/gif"
+>
+
+<img
+id="preview"
+class="thumb hidden"
+alt="Vista previa"
+>
+
+<button
+class="btn green"
+type="button"
+onclick="uploadPhoto()">
+⬆️ Subir foto
+</button>
+
+<p id="photoMsg" class="msg hidden"></p>
+
+</div>
+
+
+<div class="card">
+
+<h2>Galería publicada</h2>
+
+<div id="galleryList" class="gallery"></div>
+
+</div>
+
+</div>
+
+</section>
+
+</main>
+</div>
+
+
 <script>
 
-const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+const SUPABASE_URL=
+'https://nmpakeovqkdajtswjpgm.supabase.co';
 
-const SUPABASE_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const SUPABASE_KEY=
+'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-const db =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
+const db=window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
+);
 
-const $ =
-  id => document.getElementById(id);
+const $=id=>document.getElementById(id);
 
-const money =
-  n =>
-    new Intl.NumberFormat("es-AR",{
-      style:"currency",
-      currency:"ARS",
-      maximumFractionDigits:0
-    }).format(Number(n)||0);
+const money=n=>
+new Intl.NumberFormat('es-AR',{
+style:'currency',
+currency:'ARS',
+maximumFractionDigits:0
+}).format(Number(n)||0);
 
-const esc =
-  v =>
-    String(v ?? "").replace(
-      /[&<>"']/g,
-      c => ({
-        "&":"&amp;",
-        "<":"&lt;",
-        ">":"&gt;",
-        '"':"&quot;",
-        "'":"&#039;"
-      }[c])
-    );
+const esc=v=>
+String(v??'').replace(
+/[&<>"']/g,
+c=>({
+'&':'&amp;',
+'<':'&lt;',
+'>':'&gt;',
+'"':'&quot;',
+"'":'&#039;'
+}[c])
+);
+
 
 function msg(id,text,ok=false){
 
-  const e = $(id);
+const e=$(id);
 
-  e.textContent = text;
+if(!e)return;
 
-  e.className =
-    "msg " + (ok ? "ok" : "error");
+e.textContent=text;
 
-  e.classList.remove("hidden");
+e.className='msg '+(
+ok?'ok':'error'
+);
+
+e.classList.remove('hidden');
+
 }
+
 
 function showView(view){
 
-  document
-    .querySelectorAll(".tab")
-    .forEach(x =>
-      x.classList.toggle(
-        "active",
-        x.dataset.view === view
-      )
-    );
-
-  document
-    .querySelectorAll(".view")
-    .forEach(x =>
-      x.classList.toggle(
-        "active",
-        x.id === view
-      )
-    );
-
-  if(view === "reservas")
-    loadReservations();
-
-  if(view === "pedidos")
-    loadOrders();
-
-  if(view === "productos")
-    loadProducts();
-
-  if(view === "promos")
-    loadPromos();
-
-  if(view === "canjes")
-    loadCanjes();
-
-  if(view === "fotos")
-    loadGallery();
-}
+document
+.querySelectorAll('.tab')
+.forEach(x=>
+x.classList.toggle(
+'active',
+x.dataset.view===view
+)
+);
 
 document
-  .querySelectorAll(".tab")
-  .forEach(t =>
-    t.addEventListener(
-      "click",
-      () => showView(t.dataset.view)
-    )
-  );
+.querySelectorAll('.view')
+.forEach(x=>
+x.classList.toggle(
+'active',
+x.id===view
+)
+);
+
+if(view==='reservas')
+loadReservations();
+
+if(view==='pedidos')
+loadOrders();
+
+if(view==='productos')
+loadProducts();
+
+if(view==='promos')
+loadPromos();
+
+if(view==='canjes')
+loadCanjes();
+
+if(view==='fotos')
+loadGallery();
+
+}
+
+
+document
+.querySelectorAll('.tab')
+.forEach(t=>
+t.addEventListener(
+'click',
+()=>showView(t.dataset.view)
+)
+);
+
 
 async function requireAdmin(){
 
-  const s =
-    await db.auth.getSession();
+const u=await db.auth.getUser();
 
-  if(!s.data?.session)
-    throw new Error(
-      "Sesión no iniciada."
-    );
+if(u.error)
+throw u.error;
 
-  const p =
-    await db
-      .from("profiles")
-      .select("role,display_name")
-      .eq(
-        "id",
-        s.data.session.user.id
-      )
-      .maybeSingle();
+if(!u.data?.user)
+throw new Error(
+'Sesión no iniciada.'
+);
 
-  if(p.error)
-    throw p.error;
+const roleCheck=
+await db.rpc('is_admin_or_staff');
 
-  if(
-    !p.data ||
-    !["admin","staff"].includes(
-      p.data.role
-    )
-  ){
+if(roleCheck.error){
 
-    throw new Error(
-      "La cuenta ingresó a Supabase, pero no tiene rol admin/staff en profiles."
-    );
-  }
+throw new Error(
+'No se pudo verificar el acceso administrativo: '+
+roleCheck.error.message
+);
 
-  $("userInfo").textContent =
-    (p.data.display_name ||
-      s.data.session.user.email) +
-    " · " +
-    p.data.role;
 }
+
+if(roleCheck.data!==true){
+
+throw new Error(
+'Esta cuenta no tiene rol admin/staff en profiles.'
+);
+
+}
+
+let nombre=
+u.data.user.email||'Usuario';
+
+const p=await db
+.from('profiles')
+.select('display_name,role')
+.eq('id',u.data.user.id)
+.maybeSingle();
+
+if(!p.error&&p.data){
+
+nombre=
+(p.data.display_name||nombre)+
+' · '+
+(p.data.role||'staff');
+
+}
+
+$('userInfo').textContent=nombre;
+
+}
+
 
 async function enter(){
 
-  try{
+try{
 
-    await requireAdmin();
+await requireAdmin();
 
-    $("login")
-      .classList
-      .add("hidden");
+$('login').classList.add('hidden');
 
-    $("app")
-      .classList
-      .remove("hidden");
+$('app').classList.remove('hidden');
 
-    await refreshAll();
+await refreshAll();
 
-    startRealtime();
+startRealtime();
 
-  }catch(e){
+}
+catch(e){
 
-    $("login")
-      .classList
-      .remove("hidden");
+$('login').classList.remove('hidden');
 
-    $("app")
-      .classList
-      .add("hidden");
+$('app').classList.add('hidden');
 
-    msg(
-      "loginMsg",
-      "❌ " +
-      (e.message ||
-       "No se pudo iniciar sesión.")
-    );
-  }
+msg(
+'loginMsg',
+'❌ '+(
+e.message||
+'No se pudo iniciar sesión.'
+)
+);
+
+console.error(
+'Pool & Beach admin:',
+e
+);
+
 }
 
-$("loginForm")
-  .addEventListener("submit",async e => {
+}
 
-    e.preventDefault();
 
-    const r =
-      await db.auth.signInWithPassword({
-        email:
-          $("email")
-            .value
-            .trim(),
+$('loginForm').addEventListener(
+'submit',
+async e=>{
 
-        password:
-          $("password").value
-      });
+e.preventDefault();
 
-    if(r.error){
+const email=
+$('email').value.trim();
 
-      return msg(
-        "loginMsg",
-        "❌ " +
-        r.error.message
-      );
-    }
+const password=
+$('password').value;
 
-    await enter();
+if(!email||!password){
 
-  });
+return msg(
+'loginMsg',
+'❌ Completá email y contraseña.'
+);
 
-$("logout").onclick =
-  async () => {
+}
 
-    await db.auth.signOut();
+msg(
+'loginMsg',
+'⏳ Iniciando sesión...',
+true
+);
 
-    location.reload();
-  };
+const r=
+await db.auth.signInWithPassword({
+email,
+password
+});
+
+if(r.error){
+
+return msg(
+'loginMsg',
+'❌ '+r.error.message
+);
+
+}
+
+await enter();
+
+}
+);
+
+
+$('logout').onclick=
+async()=>{
+await db.auth.signOut();
+location.reload();
+};
+
 
 async function loadReservations(){
 
-  const r =
-    await db
-      .from("reservas")
-      .select("*")
-      .order("fecha",{ascending:true})
-      .order("hora",{ascending:true});
+const r=await db
+.from('reservas')
+.select('*')
+.order('fecha',{ascending:true})
+.order('hora',{ascending:true});
 
-  if(r.error){
+if(r.error){
 
-    $("reservasTable").innerHTML =
-      '<tr><td colspan="9">❌ ' +
-      esc(r.error.message) +
-      "</td></tr>";
+$('reservasTable').innerHTML=
+'<tr><td colspan="9">❌ '+
+esc(r.error.message)+
+'</td></tr>';
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("mR").textContent =
-    rows.filter(
-      x => x.estado === "pendiente"
-    ).length;
-
-  $("reservasTable").innerHTML =
-    rows.map(x => {
-
-      const m =
-        (
-          String(x.notas || "")
-            .match(
-              /\[MESA_POOL:(1|2|3)\]/
-            ) || []
-        )[1] || "—";
-
-      return `
-
-        <tr>
-
-          <td>
-            ${esc(x.fecha || "")}
-          </td>
-
-          <td>
-            ${esc(x.hora || "")}
-          </td>
-
-          <td>
-            ${esc(x.nombre || "")}
-          </td>
-
-          <td>
-            ${esc(x.telefono || "")}
-          </td>
-
-          <td>
-            ${esc(x.cantidad_personas || "")}
-          </td>
-
-          <td>
-            ${esc(x.servicio || "")}
-          </td>
-
-          <td>
-            ${m}
-          </td>
-
-          <td>
-
-            <select
-              onchange="updateReservation('${x.id}',this.value)"
-            >
-
-              <option
-                ${x.estado==="pendiente"?"selected":""}
-              >
-                pendiente
-              </option>
-
-              <option
-                ${x.estado==="confirmada"?"selected":""}
-              >
-                confirmada
-              </option>
-
-              <option
-                ${x.estado==="cancelada"?"selected":""}
-              >
-                cancelada
-              </option>
-
-            </select>
-
-          </td>
-
-          <td>
-
-            <button
-              class="btn red"
-              onclick="deleteReservation('${x.id}')"
-            >
-              Eliminar
-            </button>
-
-          </td>
-
-        </tr>
-      `;
-
-    }).join("") ||
-    '<tr><td colspan="9">No hay reservas.</td></tr>';
+return;
 }
 
-async function updateReservation(
-  id,
-  state
-){
+const rows=r.data||[];
 
-  const r =
-    await db
-      .from("reservas")
-      .update({
-        estado:state
-      })
-      .eq("id",id);
+$('mR').textContent=
+rows.filter(
+x=>x.estado==='pendiente'
+).length;
 
-  if(r.error)
-    alert(r.error.message);
+$('reservasTable').innerHTML=
+rows.map(x=>{
 
-  await loadReservations();
-  await loadMetrics();
+const m=
+(
+String(x.notas||'')
+.match(
+/\[MESA_POOL:(1|2|3)\]/
+)||[]
+)[1]||'—';
+
+return `
+<tr>
+<td>${esc(x.fecha||'')}</td>
+<td>${esc(x.hora||'')}</td>
+<td>${esc(x.nombre||'')}</td>
+<td>${esc(x.telefono||'')}</td>
+<td>${esc(x.cantidad_personas||'')}</td>
+<td>${esc(x.servicio||'')}</td>
+<td>${m}</td>
+
+<td>
+<select onchange="updateReservation('${x.id}',this.value)">
+<option ${x.estado==='pendiente'?'selected':''}>pendiente</option>
+<option ${x.estado==='confirmada'?'selected':''}>confirmada</option>
+<option ${x.estado==='cancelada'?'selected':''}>cancelada</option>
+</select>
+</td>
+
+<td>
+<button
+class="btn red"
+onclick="deleteReservation('${x.id}')">
+Eliminar
+</button>
+</td>
+
+</tr>
+`;
+
+}).join('')||
+'<tr><td colspan="9">No hay reservas.</td></tr>';
+
 }
+
+
+async function updateReservation(id,state){
+
+const r=
+await db
+.from('reservas')
+.update({estado:state})
+.eq('id',id);
+
+if(r.error)
+alert(r.error.message);
+
+await loadReservations();
+await loadMetrics();
+
+}
+
 
 async function deleteReservation(id){
 
-  if(!confirm(
-    "¿Eliminar reserva?"
-  )) return;
+if(!confirm('¿Eliminar reserva?'))
+return;
 
-  const r =
-    await db
-      .from("reservas")
-      .delete()
-      .eq("id",id);
+const r=
+await db
+.from('reservas')
+.delete()
+.eq('id',id);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  await loadReservations();
-  await loadMetrics();
+await loadReservations();
+await loadMetrics();
+
 }
+
 
 function itemsText(items){
 
-  if(Array.isArray(items)){
+return Array.isArray(items)
+?
+items.map(i=>
+`${i.cantidad||0}× ${
+i.nombre_producto||'Producto'
+} — ${money(i.subtotal||0)}`
+).join('\n')
+:
+JSON.stringify(items||[]);
 
-    return items
-      .map(i =>
-        `${i.cantidad || 0}× ` +
-        `${i.nombre_producto || "Producto"} — ` +
-        `${money(i.subtotal || 0)}`
-      )
-      .join("\n");
-  }
-
-  return JSON.stringify(
-    items || []
-  );
 }
+
 
 async function loadOrders(){
 
-  const r =
-    await db
-      .from("pedidos")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
+const r=
+await db
+.from('pedidos')
+.select('*')
+.order('created_at',{ascending:false});
 
-  if(r.error){
+if(r.error){
 
-    $("ordersTable").innerHTML =
-      '<tr><td colspan="9">❌ ' +
-      esc(r.error.message) +
-      "</td></tr>";
+$('ordersTable').innerHTML=
+'<tr><td colspan="9">❌ '+
+esc(r.error.message)+
+'</td></tr>';
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("mP").textContent =
-    rows.filter(
-      x =>
-        [
-          "pendiente",
-          "confirmado",
-          "preparando",
-          "listo"
-        ].includes(x.estado)
-    ).length;
-
-  $("ordersTable").innerHTML =
-    rows.map(o => `
-
-      <tr>
-
-        <td>
-          ${esc(o.created_at || "")}
-        </td>
-
-        <td>
-          ${esc(o.nombre_cliente || "")}
-        </td>
-
-        <td>
-          ${esc(o.telefono || "")}
-        </td>
-
-        <td>
-          ${esc(
-            o.tipo_entrega ||
-            o.tipo ||
-            ""
-          )}
-        </td>
-
-        <td>
-          ${esc(o.direccion || "—")}
-        </td>
-
-        <td>
-
-          <pre
-            style="
-              white-space:pre-wrap;
-              margin:0
-            "
-          >${esc(
-            itemsText(o.items)
-          )}</pre>
-
-        </td>
-
-        <td>
-          ${money(o.total)}
-        </td>
-
-        <td>
-
-          <select
-            onchange="updateOrder('${o.id}',this.value)"
-          >
-
-            ${[
-              "pendiente",
-              "confirmado",
-              "preparando",
-              "listo",
-              "entregado",
-              "cancelado"
-            ].map(s => `
-              <option
-                ${o.estado===s?"selected":""}
-              >
-                ${s}
-              </option>
-            `).join("")}
-
-          </select>
-
-        </td>
-
-        <td>
-
-          <button
-            class="btn dark"
-            onclick="viewOrder('${o.id}')"
-          >
-            Ver
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deleteOrder('${o.id}')"
-          >
-            Eliminar
-          </button>
-
-        </td>
-
-      </tr>
-
-    `).join("") ||
-    '<tr><td colspan="9">No hay pedidos.</td></tr>';
+return;
 }
 
-async function updateOrder(
-  id,
-  state
-){
+const rows=r.data||[];
 
-  const r =
-    await db
-      .from("pedidos")
-      .update({
-        estado:state
-      })
-      .eq("id",id);
+$('mP').textContent=
+rows.filter(
+x=>[
+'pendiente',
+'confirmado',
+'preparando',
+'listo'
+].includes(x.estado)
+).length;
 
-  if(r.error)
-    alert(r.error.message);
+$('ordersTable').innerHTML=
+rows.map(o=>
+`<tr>
 
-  await loadOrders();
-  await loadMetrics();
+<td>${esc(o.created_at||'')}</td>
+
+<td>${esc(o.nombre_cliente||'')}</td>
+
+<td>${esc(o.telefono||'')}</td>
+
+<td>${esc(o.tipo_entrega||o.tipo||'')}</td>
+
+<td>${esc(o.direccion||'—')}</td>
+
+<td>
+<pre style="white-space:pre-wrap;margin:0">
+${esc(itemsText(o.items))}
+</pre>
+</td>
+
+<td>${money(o.total)}</td>
+
+<td>
+<select onchange="updateOrder('${o.id}',this.value)">
+${
+[
+'pendiente',
+'confirmado',
+'preparando',
+'listo',
+'entregado',
+'cancelado'
+]
+.map(s=>
+`<option ${
+o.estado===s?'selected':''
+}>${s}</option>`
+).join('')
 }
+</select>
+</td>
+
+<td>
+
+<button
+class="btn dark"
+onclick="viewOrder('${o.id}')">
+Ver
+</button>
+
+<button
+class="btn red"
+onclick="deleteOrder('${o.id}')">
+Eliminar
+</button>
+
+</td>
+
+</tr>`
+).join('')||
+'<tr><td colspan="9">No hay pedidos.</td></tr>';
+
+}
+
+
+async function updateOrder(id,state){
+
+const r=
+await db
+.from('pedidos')
+.update({estado:state})
+.eq('id',id);
+
+if(r.error)
+alert(r.error.message);
+
+await loadOrders();
+await loadMetrics();
+
+}
+
 
 async function deleteOrder(id){
 
-  if(!confirm(
-    "¿Eliminar pedido?"
-  )) return;
+if(!confirm('¿Eliminar pedido?'))
+return;
 
-  const r =
-    await db
-      .from("pedidos")
-      .delete()
-      .eq("id",id);
+const r=
+await db
+.from('pedidos')
+.delete()
+.eq('id',id);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  await loadOrders();
-  await loadMetrics();
+await loadOrders();
+await loadMetrics();
+
 }
+
 
 async function viewOrder(id){
 
-  const r =
-    await db
-      .from("pedidos")
-      .select("*")
-      .eq("id",id)
-      .single();
+const r=
+await db
+.from('pedidos')
+.select('*')
+.eq('id',id)
+.single();
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  const o = r.data;
+const o=r.data;
 
-  alert(
-    `Pedido de ${
-      o.nombre_cliente || "cliente"
-    }\n\n` +
-    `${itemsText(o.items)}\n\n` +
-    `Notas: ${
-      o.notas || "Sin notas"
-    }`
-  );
+alert(
+`Pedido de ${
+o.nombre_cliente||'cliente'
 }
+
+${itemsText(o.items)}
+
+Notas: ${
+o.notas||'Sin notas'
+}`
+);
+
+}
+
 
 async function createProduct(){
 
-  const name =
-    $("pn")
-      .value
-      .trim();
+const name=$('pn').value.trim();
 
-  if(!name)
-    return msg(
-      "prodMsg",
-      "❌ Falta el nombre."
-    );
+if(!name)
+return msg(
+'prodMsg',
+'❌ Falta el nombre.'
+);
 
-  const payload = {
+const precio=Number(
+$('pp').value||0
+);
 
-    nombre:name,
+if(precio<0)
+return msg(
+'prodMsg',
+'❌ El precio no puede ser negativo.'
+);
 
-    categoria:
-      $("pc")
-        .value
-        .trim() ||
-      "General",
+const payload={
+nombre:name,
+categoria:
+$('pc').value.trim()||'General',
+descripcion:
+$('pd').value.trim(),
+precio,
+activo:$('pa').checked,
+disponible:$('pa').checked
+};
 
-    descripcion:
-      $("pd")
-        .value
-        .trim(),
+const r=
+await db
+.from('productos')
+.insert(payload);
 
-    precio:
-      Number(
-        $("pp").value || 0
-      ),
+if(r.error)
+return msg(
+'prodMsg',
+'❌ '+r.error.message
+);
 
-    activo:
-      $("pa").checked,
+msg(
+'prodMsg',
+'✅ Producto guardado.',
+true
+);
 
-    disponible:
-      $("pa").checked
-  };
+['pn','pc','pd','pp']
+.forEach(id=>
+$(id).value=''
+);
 
-  const r =
-    await db
-      .from("productos")
-      .insert(payload);
+$('pa').checked=true;
 
-  if(r.error)
-    return msg(
-      "prodMsg",
-      "❌ " +
-      r.error.message
-    );
+await loadProducts();
+await loadMetrics();
 
-  msg(
-    "prodMsg",
-    "✅ Producto guardado.",
-    true
-  );
-
-  ["pn","pc","pd","pp"]
-    .forEach(
-      id => $(id).value=""
-    );
-
-  $("pa").checked = true;
-
-  await loadProducts();
-  await loadMetrics();
 }
+
 
 async function loadProducts(){
 
-  const r =
-    await db
-      .from("productos")
-      .select("*")
-      .order("categoria")
-      .order("nombre");
+const r=
+await db
+.from('productos')
+.select('*')
+.order('categoria')
+.order('nombre');
 
-  if(r.error){
+if(r.error){
 
-    $("productsList").innerHTML =
-      '<div class="notice">❌ ' +
-      esc(r.error.message) +
-      "</div>";
+$('productsList').innerHTML=
+'<div class="notice">❌ '+
+esc(r.error.message)+
+'</div>';
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("mProd").textContent =
-    rows.length;
-
-  $("productsList").innerHTML =
-    rows.map(p => `
-
-      <div class="item">
-
-        <strong>
-          ${esc(p.nombre)}
-        </strong>
-
-        <div
-          class="row"
-          style="margin-top:5px"
-        >
-
-          <input
-            id="price-${p.id}"
-            class="input"
-            style="max-width:150px;margin:0"
-            type="number"
-            min="0"
-            value="${Number(p.precio)||0}"
-          >
-
-          <button
-            class="btn"
-            onclick="saveProduct('${p.id}')"
-          >
-            Guardar precio
-          </button>
-
-          <button
-            class="btn dark"
-            onclick="toggleProduct(
-              '${p.id}',
-              ${!(p.activo && p.disponible)}
-            )"
-          >
-            ${
-              p.activo && p.disponible
-                ? "Ocultar"
-                : "Publicar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deleteProduct('${p.id}')"
-          >
-            Eliminar
-          </button>
-
-        </div>
-
-        <small>
-          ${esc(p.categoria || "General")}
-          ·
-          ${
-            p.activo && p.disponible
-              ? "Disponible"
-              : "Oculto"
-          }
-        </small>
-
-      </div>
-
-    `).join("") ||
-    '<div class="empty">No hay productos.</div>';
+return;
 }
+
+const rows=r.data||[];
+
+$('mProd').textContent=rows.length;
+
+$('productsList').innerHTML=
+rows.map(p=>
+`<div class="item">
+
+<strong>${esc(p.nombre)}</strong>
+
+<div class="row" style="margin-top:5px">
+
+<input
+id="price-${p.id}"
+class="input"
+style="max-width:150px;margin:0"
+type="number"
+min="0"
+value="${Number(p.precio)||0}"
+>
+
+<button
+class="btn"
+onclick="saveProduct('${p.id}')">
+Guardar precio
+</button>
+
+<button
+class="btn dark"
+onclick="toggleProduct(
+'${p.id}',
+${!(p.activo&&p.disponible)}
+)">
+${
+p.activo&&p.disponible
+?'Ocultar'
+:'Publicar'
+}
+</button>
+
+<button
+class="btn red"
+onclick="deleteProduct('${p.id}')">
+Eliminar
+</button>
+
+</div>
+
+<small>
+${esc(p.categoria||'General')} ·
+${
+p.activo&&p.disponible
+?'Disponible'
+:'Oculto'
+}
+</small>
+
+</div>`
+).join('')||
+'<div class="empty">No hay productos.</div>';
+
+}
+
 
 async function saveProduct(id){
 
-  const v =
-    Number(
-      $("price-" + id).value
-    );
+const input=$('price-'+id);
 
-  if(v < 0)
-    return alert(
-      "El precio no puede ser negativo."
-    );
+if(!input)
+return;
 
-  const r =
-    await db
-      .from("productos")
-      .update({
-        precio:v
-      })
-      .eq("id",id);
+const v=Number(input.value);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(!Number.isFinite(v)||v<0)
+return alert(
+'El precio debe ser un número válido mayor o igual a 0.'
+);
 
-  await loadProducts();
+const r=
+await db
+.from('productos')
+.update({precio:v})
+.eq('id',id);
+
+if(r.error)
+return alert(r.error.message);
+
+await loadProducts();
+
 }
 
-async function toggleProduct(
-  id,
-  value
-){
 
-  const r =
-    await db
-      .from("productos")
-      .update({
-        activo:value,
-        disponible:value
-      })
-      .eq("id",id);
+async function toggleProduct(id,v){
 
-  if(r.error)
-    alert(r.error.message);
+const r=
+await db
+.from('productos')
+.update({
+activo:v,
+disponible:v
+})
+.eq('id',id);
 
-  await loadProducts();
+if(r.error)
+alert(r.error.message);
+
+await loadProducts();
+
 }
+
 
 async function deleteProduct(id){
 
-  if(!confirm(
-    "¿Eliminar producto?"
-  )) return;
+if(!confirm('¿Eliminar producto?'))
+return;
 
-  const r =
-    await db
-      .from("productos")
-      .delete()
-      .eq("id",id);
+const r=
+await db
+.from('productos')
+.delete()
+.eq('id',id);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  await loadProducts();
-  await loadMetrics();
+await loadProducts();
+await loadMetrics();
+
 }
+
 
 async function createPromo(){
 
-  const title =
-    $("promoTitle")
-      .value
-      .trim();
+const title=
+$('promoTitle').value.trim();
 
-  if(!title)
-    return msg(
-      "promoMsg",
-      "❌ Falta el título."
-    );
+if(!title)
+return msg(
+'promoMsg',
+'❌ Falta el título.'
+);
 
-  const payload = {
+const precioTexto=
+$('promoPrice').value.trim();
 
-    titulo:title,
+const precio=
+precioTexto===''?
+null:
+Number(precioTexto);
 
-    descripcion:
-      $("promoDesc")
-        .value
-        .trim(),
-
-    precio:
-      $("promoPrice").value
-        ? Number(
-            $("promoPrice").value
-          )
-        : null,
-
-    activa:
-      $("promoActive").checked
-  };
-
-  const r =
-    await db
-      .from("promociones")
-      .insert(payload);
-
-  if(r.error)
-    return msg(
-      "promoMsg",
-      "❌ " +
-      r.error.message
-    );
-
-  msg(
-    "promoMsg",
-    "✅ Promoción guardada.",
-    true
-  );
-
-  $("promoTitle").value="";
-  $("promoDesc").value="";
-  $("promoPrice").value="";
-  $("promoActive").checked=true;
-
-  await loadPromos();
+if(
+precio!==null&&
+(!Number.isFinite(precio)||precio<0)
+){
+return msg(
+'promoMsg',
+'❌ El precio no es válido.'
+);
 }
+
+const payload={
+titulo:title,
+descripcion:
+$('promoDesc').value.trim(),
+precio,
+activa:
+$('promoActive').checked
+};
+
+const r=
+await db
+.from('promociones')
+.insert(payload);
+
+if(r.error)
+return msg(
+'promoMsg',
+'❌ '+r.error.message
+);
+
+msg(
+'promoMsg',
+'✅ Promoción guardada.',
+true
+);
+
+$('promoTitle').value='';
+$('promoDesc').value='';
+$('promoPrice').value='';
+$('promoActive').checked=true;
+
+await loadPromos();
+
+}
+
 
 async function loadPromos(){
 
-  const r =
-    await db
-      .from("promociones")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
+const r=
+await db
+.from('promociones')
+.select('*')
+.order('created_at',{ascending:false});
 
-  if(r.error){
+if(r.error){
 
-    $("promosList").innerHTML =
-      '<div class="notice">❌ ' +
-      esc(r.error.message) +
-      "</div>";
+$('promosList').innerHTML=
+'<div class="notice">❌ '+
+esc(r.error.message)+
+'</div>';
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("promosList").innerHTML =
-    rows.map(p => `
-
-      <div class="item">
-
-        <strong>
-          ${esc(p.titulo)}
-        </strong>
-
-        <br>
-
-        <small>
-          ${esc(p.descripcion || "")}
-
-          ${
-            p.precio != null
-              ? " · " +
-                money(p.precio)
-              : ""
-          }
-
-          ·
-          ${
-            p.activa
-              ? "Publicada"
-              : "Oculta"
-          }
-        </small>
-
-        <div
-          class="row"
-          style="margin-top:7px"
-        >
-
-          <button
-            class="btn dark"
-            onclick="togglePromo(
-              '${p.id}',
-              ${!p.activa}
-            )"
-          >
-            ${
-              p.activa
-                ? "Ocultar"
-                : "Publicar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deletePromo('${p.id}')"
-          >
-            Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("") ||
-    '<div class="empty">No hay promociones.</div>';
+return;
 }
 
-async function togglePromo(
-  id,
-  value
-){
+const rows=r.data||[];
 
-  const r =
-    await db
-      .from("promociones")
-      .update({
-        activa:value
-      })
-      .eq("id",id);
+$('promosList').innerHTML=
+rows.map(p=>
+`<div class="item">
 
-  if(r.error)
-    alert(r.error.message);
+<strong>${esc(p.titulo)}</strong>
 
-  await loadPromos();
+<br>
+
+<small>
+${esc(p.descripcion||'')}
+${
+p.precio!=null
+?' · '+money(p.precio)
+:''
 }
+ ·
+${p.activa?'Publicada':'Oculta'}
+</small>
+
+<div class="row" style="margin-top:7px">
+
+<button
+class="btn dark"
+onclick="togglePromo(
+'${p.id}',
+${!p.activa}
+)">
+${p.activa?'Ocultar':'Publicar'}
+</button>
+
+<button
+class="btn red"
+onclick="deletePromo('${p.id}')">
+Eliminar
+</button>
+
+</div>
+
+</div>`
+).join('')||
+'<div class="empty">No hay promociones.</div>';
+
+}
+
+
+async function togglePromo(id,v){
+
+const r=
+await db
+.from('promociones')
+.update({activa:v})
+.eq('id',id);
+
+if(r.error)
+alert(r.error.message);
+
+await loadPromos();
+
+}
+
 
 async function deletePromo(id){
 
-  if(!confirm(
-    "¿Eliminar promoción?"
-  )) return;
+if(!confirm('¿Eliminar promoción?'))
+return;
 
-  const r =
-    await db
-      .from("promociones")
-      .delete()
-      .eq("id",id);
+const r=
+await db
+.from('promociones')
+.delete()
+.eq('id',id);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  await loadPromos();
+await loadPromos();
+
 }
+
 
 async function createCanje(){
 
-  const name =
-    $("cn")
-      .value
-      .trim();
+const name=
+$('cn').value.trim();
 
-  const cost =
-    Number(
-      $("cc").value || 0
-    );
+const cost=
+Number($('cc').value||0);
 
-  if(!name)
-    return msg(
-      "canjeMsg",
-      "❌ Falta el nombre."
-    );
+const stock=
+Number($('cs').value||0);
 
-  if(cost < 1)
-    return msg(
-      "canjeMsg",
-      "❌ El costo debe ser mayor a 0."
-    );
+if(!name)
+return msg(
+'canjeMsg',
+'❌ Falta el nombre.'
+);
 
-  const payload = {
+if(!Number.isInteger(cost)||cost<1)
+return msg(
+'canjeMsg',
+'❌ El costo debe ser un número entero mayor a 0.'
+);
 
-    name:name,
+if(!Number.isInteger(stock)||stock<0)
+return msg(
+'canjeMsg',
+'❌ El stock debe ser un número entero mayor o igual a 0.'
+);
 
-    description:
-      $("cd")
-        .value
-        .trim(),
+const payload={
+name,
+description:
+$('cd').value.trim(),
+token_cost:cost,
+cost_tokens:cost,
+stock,
+active:
+$('ca').checked
+};
 
-    token_cost:cost,
+const r=
+await db
+.from('prizes')
+.insert(payload);
 
-    cost_tokens:cost,
+if(r.error)
+return msg(
+'canjeMsg',
+'❌ '+r.error.message
+);
 
-    stock:
-      Number(
-        $("cs").value || 0
-      ),
+msg(
+'canjeMsg',
+'✅ Canje guardado.',
+true
+);
 
-    active:
-      $("ca").checked
-  };
+['cn','cd','cc','cs']
+.forEach(id=>
+$(id).value=''
+);
 
-  const r =
-    await db
-      .from("prizes")
-      .insert(payload);
+$('cc').value=1;
+$('cs').value=0;
+$('ca').checked=true;
 
-  if(r.error)
-    return msg(
-      "canjeMsg",
-      "❌ " +
-      r.error.message
-    );
+await loadCanjes();
 
-  msg(
-    "canjeMsg",
-    "✅ Canje guardado.",
-    true
-  );
-
-  ["cn","cd","cc","cs"]
-    .forEach(
-      id => $(id).value=""
-    );
-
-  $("cc").value=1;
-  $("cs").value=0;
-  $("ca").checked=true;
-
-  await loadCanjes();
 }
+
 
 async function loadCanjes(){
 
-  const r =
-    await db
-      .from("prizes")
-      .select(
-        "id,name,description,token_cost,cost_tokens,stock,active"
-      )
-      .order(
-        "created_at",
-        {ascending:false}
-      );
+const r=
+await db
+.from('prizes')
+.select(
+'id,name,description,token_cost,cost_tokens,stock,active'
+)
+.order('created_at',{ascending:false});
 
-  if(r.error){
+if(r.error){
 
-    $("canjesList").innerHTML =
-      '<div class="notice">❌ ' +
-      esc(r.error.message) +
-      "</div>";
+$('canjesList').innerHTML=
+'<div class="notice">❌ '+
+esc(r.error.message)+
+'</div>';
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("canjesList").innerHTML =
-    rows.map(p => `
-
-      <div class="item">
-
-        <strong>
-          ${esc(p.name)}
-        </strong>
-
-        <br>
-
-        <small>
-
-          ${esc(
-            p.description || ""
-          )}
-
-          ·
-          ${Number(
-            p.token_cost ||
-            p.cost_tokens ||
-            0
-          )}
-          tokens
-
-          · stock
-          ${Number(
-            p.stock ?? 0
-          )}
-
-          ·
-          ${
-            p.active
-              ? "Activo"
-              : "Oculto"
-          }
-
-        </small>
-
-        <div
-          class="row"
-          style="margin-top:7px"
-        >
-
-          <button
-            class="btn dark"
-            onclick="toggleCanje(
-              '${p.id}',
-              ${!p.active}
-            )"
-          >
-            ${
-              p.active
-                ? "Ocultar"
-                : "Publicar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deleteCanje('${p.id}')"
-          >
-            Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("") ||
-    '<div class="empty">No hay canjes cargados.</div>';
+return;
 }
 
-async function toggleCanje(
-  id,
-  value
-){
+const rows=r.data||[];
 
-  const r =
-    await db
-      .from("prizes")
-      .update({
-        active:value
-      })
-      .eq("id",id);
+$('canjesList').innerHTML=
+rows.map(p=>
+`<div class="item">
 
-  if(r.error)
-    alert(r.error.message);
+<strong>${esc(p.name)}</strong>
 
-  await loadCanjes();
+<br>
+
+<small>
+${esc(p.description||'')}
+ ·
+${Number(p.token_cost||p.cost_tokens||0)}
+ tokens
+ · stock
+${Number(p.stock??0)}
+ ·
+${p.active?'Activo':'Oculto'}
+</small>
+
+<div class="row" style="margin-top:7px">
+
+<button
+class="btn dark"
+onclick="toggleCanje(
+'${p.id}',
+${!p.active}
+)">
+${p.active?'Ocultar':'Publicar'}
+</button>
+
+<button
+class="btn red"
+onclick="deleteCanje('${p.id}')">
+Eliminar
+</button>
+
+</div>
+
+</div>`
+).join('')||
+'<div class="empty">No hay canjes cargados.</div>';
+
 }
+
+
+async function toggleCanje(id,v){
+
+const r=
+await db
+.from('prizes')
+.update({active:v})
+.eq('id',id);
+
+if(r.error)
+alert(r.error.message);
+
+await loadCanjes();
+
+}
+
 
 async function deleteCanje(id){
 
-  if(!confirm(
-    "¿Eliminar canje?"
-  )) return;
+if(!confirm('¿Eliminar canje?'))
+return;
 
-  const r =
-    await db
-      .from("prizes")
-      .delete()
-      .eq("id",id);
+const r=
+await db
+.from('prizes')
+.delete()
+.eq('id',id);
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+if(r.error)
+return alert(r.error.message);
 
-  await loadCanjes();
+await loadCanjes();
+
 }
 
-$("photoFile")
-  .addEventListener(
-    "change",
-    () => {
 
-      const f =
-        $("photoFile")
-          .files[0];
+$('photoFile').addEventListener(
+'change',
+()=>{
 
-      if(!f){
+const f=
+$('photoFile').files[0];
 
-        $("preview")
-          .classList
-          .add("hidden");
+if(!f){
 
-        return;
-      }
+$('preview').classList.add('hidden');
+return;
 
-      if(!f.type.startsWith("image/")){
+}
 
-        alert(
-          "Elegí una imagen."
-        );
+if(!f.type.startsWith('image/')){
 
-        return;
-      }
+$('preview').classList.add('hidden');
 
-      if(
-        f.size >
-        8 * 1024 * 1024
-      ){
+return alert(
+'Elegí una imagen.'
+);
 
-        alert(
-          "Máximo 8 MB."
-        );
+}
 
-        return;
-      }
+if(f.size>8*1024*1024){
 
-      $("preview").src =
-        URL.createObjectURL(f);
+$('preview').classList.add('hidden');
 
-      $("preview")
-        .classList
-        .remove("hidden");
-    }
-  );
+return alert(
+'Máximo 8 MB.'
+);
+
+}
+
+$('preview').src=
+URL.createObjectURL(f);
+
+$('preview').classList.remove('hidden');
+
+}
+);
+
 
 async function uploadPhoto(){
 
-  const f =
-    $("photoFile")
-      .files[0];
+const f=
+$('photoFile').files[0];
 
-  if(!f)
-    return msg(
-      "photoMsg",
-      "❌ Elegí una foto."
-    );
+if(!f)
+return msg(
+'photoMsg',
+'❌ Elegí una foto.'
+);
 
-  if(
-    f.size >
-    8 * 1024 * 1024
-  )
-    return msg(
-      "photoMsg",
-      "❌ Máximo 8 MB."
-    );
+if(f.size>8*1024*1024)
+return msg(
+'photoMsg',
+'❌ Máximo 8 MB.'
+);
 
-  const s =
-    await db.auth.getSession();
+const s=
+await db.auth.getSession();
 
-  if(!s.data?.session)
-    return msg(
-      "photoMsg",
-      "❌ Sesión vencida."
-    );
+if(!s.data?.session)
+return msg(
+'photoMsg',
+'❌ Sesión vencida.'
+);
 
-  try{
+try{
 
-    msg(
-      "photoMsg",
-      "⏳ Subiendo..."
-    );
+msg(
+'photoMsg',
+'⏳ Subiendo...',
+true
+);
 
-    const ext =
-      (
-        f.name
-          .split(".")
-          .pop() ||
-        "jpg"
-      )
-      .toLowerCase()
-      .replace(
-        /[^a-z0-9]/g,
-        ""
-      ) || "jpg";
+const ext=
+(f.name.split('.').pop()||'jpg')
+.toLowerCase()
+.replace(/[^a-z0-9]/g,'')||
+'jpg';
 
-    const path =
-      "public/" +
-      Date.now() +
-      "-" +
-      (
-        crypto.randomUUID
-          ? crypto.randomUUID()
-          : Math.random()
-              .toString(36)
-              .slice(2)
-      ) +
-      "." +
-      ext;
+const randomId=
+window.crypto&&
+typeof crypto.randomUUID==='function'
+?
+crypto.randomUUID()
+:
+Math.random().toString(36).slice(2);
 
-    const up =
-      await db
-        .storage
-        .from("Galeria")
-        .upload(
-          path,
-          f,
-          {
-            contentType:f.type,
-            cacheControl:"3600",
-            upsert:false
-          }
-        );
+const path=
+'public/'+
+Date.now()+
+'-'+
+randomId+
+'.'+
+ext;
 
-    if(up.error)
-      throw up.error;
-
-    const url =
-      db
-        .storage
-        .from("Galeria")
-        .getPublicUrl(path)
-        .data
-        .publicUrl;
-
-    const ins =
-      await db
-        .from("galeria_fotos")
-        .insert({
-          titulo:
-            $("photoTitle")
-              .value
-              .trim() ||
-            f.name,
-
-          categoria:"galeria",
-
-          ruta:path,
-
-          url
-        });
-
-    if(ins.error){
-
-      await db
-        .storage
-        .from("Galeria")
-        .remove([path]);
-
-      throw ins.error;
-    }
-
-    msg(
-      "photoMsg",
-      "✅ Foto subida y publicada.",
-      true
-    );
-
-    $("photoFile").value="";
-    $("photoTitle").value="";
-
-    $("preview")
-      .classList
-      .add("hidden");
-
-    await loadGallery();
-    await loadMetrics();
-
-  }catch(e){
-
-    console.error(e);
-
-    msg(
-      "photoMsg",
-      "❌ " +
-      (
-        e.message ||
-        "No se pudo subir la foto."
-      )
-    );
-  }
+const up=
+await db
+.storage
+.from('Galeria')
+.upload(
+path,
+f,
+{
+contentType:f.type,
+cacheControl:'3600',
+upsert:false
 }
+);
+
+if(up.error)
+throw up.error;
+
+const url=
+db
+.storage
+.from('Galeria')
+.getPublicUrl(path)
+.data
+.publicUrl;
+
+const ins=
+await db
+.from('galeria_fotos')
+.insert({
+titulo:
+$('photoTitle').value.trim()||
+f.name,
+categoria:'galeria',
+ruta:path,
+url
+});
+
+if(ins.error){
+
+await db
+.storage
+.from('Galeria')
+.remove([path]);
+
+throw ins.error;
+
+}
+
+msg(
+'photoMsg',
+'✅ Foto subida y publicada.',
+true
+);
+
+$('photoFile').value='';
+$('photoTitle').value='';
+$('preview').classList.add('hidden');
+
+await loadGallery();
+await loadMetrics();
+
+}
+catch(e){
+
+console.error(e);
+
+msg(
+'photoMsg',
+'❌ '+
+(e.message||
+'No se pudo subir la foto.')
+);
+
+}
+
+}
+
 
 async function loadGallery(){
 
-  const r =
-    await db
-      .from("galeria_fotos")
-      .select(
-        "id,titulo,categoria,ruta,url,created_at,creado_en"
-      )
-      .order(
-        "created_at",
-        {ascending:false}
-      );
+const r=
+await db
+.from('galeria_fotos')
+.select(
+'id,titulo,categoria,ruta,url,created_at,creado_en'
+)
+.order(
+'created_at',
+{ascending:false}
+);
 
-  if(r.error){
+if(r.error){
 
-    $("galleryList").innerHTML =
-      '<div class="notice">❌ ' +
-      esc(r.error.message) +
-      "</div>";
+$('galleryList').innerHTML=
+'<div class="notice">❌ '+
+esc(r.error.message)+
+'</div>';
 
-    return;
-  }
+return;
 
-  const rows =
-    r.data || [];
-
-  $("mF").textContent =
-    rows.length;
-
-  $("galleryList").innerHTML =
-    rows.map(p => {
-
-      const u =
-        p.url ||
-        (
-          p.ruta
-            ? db
-                .storage
-                .from("Galeria")
-                .getPublicUrl(
-                  p.ruta
-                )
-                .data
-                .publicUrl
-            : ""
-        );
-
-      return `
-
-        <figure>
-
-          ${
-            u
-              ? `<img
-                  src="${esc(u)}"
-                  alt="${esc(
-                    p.titulo ||
-                    "Foto"
-                  )}"
-                >`
-              : ""
-          }
-
-          <figcaption>
-
-            <small>
-              ${esc(
-                p.titulo || ""
-              )}
-            </small>
-
-            <button
-              class="btn red"
-              style="
-                padding:4px 7px;
-                float:right
-              "
-              onclick="deletePhoto(
-                '${p.id}',
-                '${esc(p.ruta || "")}'
-              )"
-            >
-              ×
-            </button>
-
-          </figcaption>
-
-        </figure>
-      `;
-
-    }).join("") ||
-    '<div class="empty">No hay fotos.</div>';
 }
 
-async function deletePhoto(
-  id,
-  path
-){
+const rows=r.data||[];
 
-  if(!confirm(
-    "¿Eliminar foto?"
-  )) return;
+$('mF').textContent=rows.length;
 
-  const r =
-    await db
-      .from("galeria_fotos")
-      .delete()
-      .eq("id",id);
+$('galleryList').innerHTML=
+rows.map(p=>{
 
-  if(r.error)
-    return alert(
-      r.error.message
-    );
+const u=
+p.url||
+(
+(p.ruta||'')
+?
+db
+.storage
+.from('Galeria')
+.getPublicUrl(p.ruta)
+.data
+.publicUrl
+:
+''
+);
 
-  if(path){
+return `
+<figure>
 
-    await db
-      .storage
-      .from("Galeria")
-      .remove([path]);
-  }
+${u?
+`<img
+src="${esc(u)}"
+alt="${esc(p.titulo||'Foto')}"
+>`
+:''}
 
-  await loadGallery();
-  await loadMetrics();
+<figcaption>
+
+<small>
+${esc(p.titulo||'')}
+</small>
+
+<button
+class="btn red"
+style="padding:4px 7px;float:right"
+onclick="deletePhoto(
+'${p.id}',
+'${esc(p.ruta||'')}'
+)">
+×
+</button>
+
+</figcaption>
+
+</figure>
+`;
+
+}).join('')||
+'<div class="empty">No hay fotos.</div>';
+
 }
+
+
+async function deletePhoto(id,path){
+
+if(!confirm('¿Eliminar foto?'))
+return;
+
+const r=
+await db
+.from('galeria_fotos')
+.delete()
+.eq('id',id);
+
+if(r.error)
+return alert(r.error.message);
+
+if(path){
+
+await db
+.storage
+.from('Galeria')
+.remove([path]);
+
+}
+
+await loadGallery();
+await loadMetrics();
+
+}
+
 
 async function loadMetrics(){
 
-  const [
-    r,
-    p,
-    pr,
-    f
-  ] =
-    await Promise.allSettled([
+const [
+r,
+p,
+pr,
+f
+]=await Promise.allSettled([
 
-      db
-        .from("reservas")
-        .select("id,estado"),
+db
+.from('reservas')
+.select('id,estado'),
 
-      db
-        .from("pedidos")
-        .select("id,estado"),
+db
+.from('pedidos')
+.select('id,estado'),
 
-      db
-        .from("productos")
-        .select("id"),
+db
+.from('productos')
+.select('id'),
 
-      db
-        .from("galeria_fotos")
-        .select("id")
+db
+.from('galeria_fotos')
+.select('id')
 
-    ]);
+]);
 
-  if(
-    r.status === "fulfilled"
-  ){
+if(r.status==='fulfilled')
+$('mR').textContent=
+(r.value.data||[])
+.filter(
+x=>x.estado==='pendiente'
+).length;
 
-    $("mR").textContent =
-      (r.value.data || [])
-        .filter(
-          x =>
-            x.estado ===
-            "pendiente"
-        )
-        .length;
-  }
+if(p.status==='fulfilled')
+$('mP').textContent=
+(r=p.value.data||[])
+.filter(
+x=>[
+'pendiente',
+'confirmado',
+'preparando',
+'listo'
+].includes(x.estado)
+).length;
 
-  if(
-    p.status === "fulfilled"
-  ){
+if(pr.status==='fulfilled')
+$('mProd').textContent=
+(pr.value.data||[]).length;
 
-    $("mP").textContent =
-      (p.value.data || [])
-        .filter(
-          x =>
-            [
-              "pendiente",
-              "confirmado",
-              "preparando",
-              "listo"
-            ].includes(
-              x.estado
-            )
-        )
-        .length;
-  }
+if(f.status==='fulfilled')
+$('mF').textContent=
+(f.value.data||[]).length;
 
-  if(
-    pr.status === "fulfilled"
-  ){
-
-    $("mProd").textContent =
-      (pr.value.data || [])
-        .length;
-  }
-
-  if(
-    f.status === "fulfilled"
-  ){
-
-    $("mF").textContent =
-      (f.value.data || [])
-        .length;
-  }
 }
+
 
 async function refreshAll(){
 
-  $("dashMsg")
-    .textContent =
-    "Actualizando...";
+$('dashMsg').textContent=
+'Actualizando...';
 
-  await Promise.allSettled([
+await Promise.allSettled([
+loadMetrics(),
+loadReservations(),
+loadOrders(),
+loadProducts(),
+loadPromos(),
+loadCanjes(),
+loadGallery()
+]);
 
-    loadMetrics(),
-    loadReservations(),
-    loadOrders(),
-    loadProducts(),
-    loadPromos(),
-    loadCanjes(),
-    loadGallery()
+$('dashMsg').textContent=
+'✅ Datos actualizados.';
 
-  ]);
-
-  $("dashMsg")
-    .textContent =
-    "✅ Datos actualizados.";
-
-  await checkNew();
 }
+
 
 async function checkNew(){
 
-  const [
-    r,
-    p
-  ] =
-    await Promise.allSettled([
+const [
+r,
+p
+]=await Promise.allSettled([
 
-      db
-        .from("reservas")
-        .select(
-          "id,nombre,fecha,hora"
-        )
-        .eq(
-          "estado",
-          "pendiente"
-        )
-        .or(
-          "notificacion_vista.is.false,notificacion_vista.is.null"
-        ),
+db
+.from('reservas')
+.select('id,nombre,fecha,hora')
+.eq('estado','pendiente')
+.eq('notificacion_vista',false),
 
-      db
-        .from("pedidos")
-        .select(
-          "id,nombre_cliente"
-        )
-        .eq(
-          "estado",
-          "pendiente"
-        )
-        .or(
-          "notificacion_vista.is.false,notificacion_vista.is.null"
-        )
+db
+.from('pedidos')
+.select('id,nombre_cliente')
+.eq('estado','pendiente')
+.eq('notificacion_vista',false)
 
-    ]);
+]);
 
-  const rn =
-    r.status === "fulfilled"
-      ? r.value.data || []
-      : [];
+const rn=
+r.status==='fulfilled'
+?
+(r.value.data||[])
+:
+[];
 
-  const pn =
-    p.status === "fulfilled"
-      ? p.value.data || []
-      : [];
+const pn=
+p.status==='fulfilled'
+?
+(p.value.data||[])
+:
+[];
 
-  if(rn.length || pn.length){
+if(rn.length||pn.length){
 
-    $("newAlert")
-      .textContent =
-      `🔔 Nuevos: ${rn.length} reserva(s) y ${pn.length} pedido(s).`;
+$('newAlert').textContent=
+`🔔 Nuevos: ${rn.length} reserva(s) y ${pn.length} pedido(s).`;
 
-    $("newAlert")
-      .classList
-      .remove("hidden");
+$('newAlert')
+.classList
+.remove('hidden');
 
-  }else{
+}else{
 
-    $("newAlert")
-      .classList
-      .add("hidden");
-  }
+$('newAlert')
+.classList
+.add('hidden');
+
 }
+
+}
+
+
+let realtimeChannel=null;
+let notificationTimer=null;
 
 function startRealtime(){
 
-  try{
+if(realtimeChannel)
+return;
 
-    db
-      .channel("pool-beach-admin")
+try{
 
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"reservas"
-        },
-        async () => {
+realtimeChannel=
+db
+.channel('pool-beach-admin')
 
-          await loadReservations();
-          await loadMetrics();
-          await checkNew();
-
-        }
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"pedidos"
-        },
-        async () => {
-
-          await loadOrders();
-          await loadMetrics();
-          await checkNew();
-
-        }
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"productos"
-        },
-        loadProducts
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"promociones"
-        },
-        loadPromos
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"galeria_fotos"
-        },
-        loadGallery
-      )
-
-      .on(
-        "postgres_changes",
-        {
-          event:"*",
-          schema:"public",
-          table:"prizes"
-        },
-        loadCanjes
-      )
-
-      .subscribe();
-
-  }catch(e){
-
-    console.warn(e);
-  }
-
-  setInterval(
-    checkNew,
-    15000
-  );
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'reservas'
+},
+async()=>{
+await loadReservations();
+await loadMetrics();
+await checkNew();
 }
+)
+
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'pedidos'
+},
+async()=>{
+await loadOrders();
+await loadMetrics();
+await checkNew();
+}
+)
+
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'productos'
+},
+loadProducts
+)
+
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'promociones'
+},
+loadPromos
+)
+
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'galeria_fotos'
+},
+loadGallery
+)
+
+.on(
+'postgres_changes',
+{
+event:'*',
+schema:'public',
+table:'prizes'
+},
+loadCanjes
+)
+
+.subscribe();
+
+}
+catch(e){
+
+console.warn(
+'Realtime no disponible:',
+e
+);
+
+}
+
+if(!notificationTimer){
+
+notificationTimer=
+setInterval(
+checkNew,
+15000
+);
+
+}
+
+}
+
+
+window.addEventListener(
+'unhandledrejection',
+e=>{
+
+console.error(
+e.reason||e
+);
+
+if(
+$('app')&&
+!$('app').classList.contains('hidden')
+){
+
+msg(
+'dashMsg',
+'❌ '+
+(
+e.reason?.message||
+'Ocurrió un error inesperado.'
+)
+);
+
+}
+
+}
+);
+
 
 enter();
 
