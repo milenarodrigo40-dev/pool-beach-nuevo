@@ -7,275 +7,3727 @@
 <meta name="theme-color" content="#071923">
 <meta name="application-name" content="Pool & Beach Games">
 <meta name="description" content="Pool & Beach Games Puerto Pirámides. Juegos, duelos, torneos, trivia, puntos, tokens, ranking y premios.">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
 <style>
-:root{--bg:#071923;--bg2:#0c2633;--card:#102f3e;--card2:#12394a;--text:#f5fbff;--muted:#a9c4cf;--primary:#31d7ff;--green:#42e695;--yellow:#ffd166;--red:#ff647c;--border:rgba(255,255,255,.10);--shadow:0 15px 40px rgba(0,0,0,.25);--radius:22px}
-*{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:Arial,Helvetica,sans-serif;background:radial-gradient(circle at top right,rgba(49,215,255,.13),transparent 30%),linear-gradient(180deg,var(--bg),#041018 100%);color:var(--text);min-height:100vh}
-button,input,select{font:inherit}
-button{cursor:pointer}
-button:disabled{cursor:not-allowed;opacity:.5}
-a{color:inherit;text-decoration:none}
-.container{width:min(1180px,94%);margin:auto}
-header{position:sticky;top:0;z-index:100;backdrop-filter:blur(16px);background:rgba(4,16,24,.90);border-bottom:1px solid var(--border)}
-.header-inner{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:15px}
-.logo{font-size:21px;font-weight:900;white-space:nowrap}
-.logo span{color:var(--primary)}
-.header-stats{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.badge{padding:8px 11px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--border);font-size:13px;font-weight:700}
-.hero{padding:55px 0 35px}
-.hero-box{border:1px solid var(--border);background:linear-gradient(135deg,rgba(18,57,74,.96),rgba(6,27,38,.96));border-radius:30px;padding:38px;box-shadow:var(--shadow);overflow:hidden;position:relative}
-.hero-box:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-100px;top:-100px;background:rgba(49,215,255,.10)}
-.hero h1{font-size:clamp(34px,7vw,68px);line-height:.95;margin-bottom:18px}
-.hero h1 span{color:var(--primary)}
-.hero p{max-width:700px;color:var(--muted);font-size:17px;line-height:1.6}
-.hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:25px}
-section{padding:30px 0}
-.section-title{margin-bottom:18px}
-.section-title h2{font-size:28px}
-.section-title p{color:var(--muted);margin-top:6px}
-.profile{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px}
-.stat small{display:block;color:var(--muted);margin-bottom:7px}
-.stat strong{font-size:27px}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
-.card{background:linear-gradient(180deg,var(--card),#0a2531);border:1px solid var(--border);border-radius:var(--radius);padding:21px;box-shadow:0 10px 30px rgba(0,0,0,.13)}
-.game-icon{width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:30px;background:rgba(49,215,255,.10);margin-bottom:14px}
-.card h3{font-size:20px;margin-bottom:7px}
-.card p{color:var(--muted);line-height:1.5}
-.reward{margin:15px 0;display:flex;gap:8px;flex-wrap:wrap}
-.reward span{background:rgba(255,255,255,.07);border-radius:999px;padding:7px 10px;font-size:12px}
-.btn{border:0;border-radius:14px;padding:13px 18px;font-weight:900;transition:.2s}
-.btn:hover:not(:disabled){transform:translateY(-2px)}
-.btn-primary{background:var(--primary);color:#03131a}
-.btn-secondary{background:rgba(255,255,255,.08);color:var(--text);border:1px solid var(--border)}
-.btn-green{background:var(--green);color:#052016}
-.btn-yellow{background:var(--yellow);color:#251b00}
-.btn-red{background:var(--red);color:white}
-.duel-layout,.tournament-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.duel-status{margin:12px 0;padding:13px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border)}
-.duel-list{display:grid;gap:10px;margin-top:15px}
-.duel-item{background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px;padding:15px;display:flex;justify-content:space-between;align-items:center;gap:12px}
-.score-input{width:100%;padding:13px;border-radius:13px;border:1px solid var(--border);background:#061923;color:white;outline:none}
-.score-input:focus{border-color:var(--primary)}
-.tournament-card{position:relative}
-.tournament-status{position:absolute;right:15px;top:15px;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:900;background:rgba(66,230,149,.13);color:var(--green)}
-.tournament-info{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:15px 0}
-.info-box{background:rgba(255,255,255,.05);border-radius:12px;padding:10px}
-.info-box small{color:var(--muted);display:block}
-.info-box strong{display:block;margin-top:3px}
-.match{background:rgba(255,255,255,.04);border:1px solid var(--border);padding:14px;border-radius:15px;margin-bottom:10px}
-.match-header{display:flex;justify-content:space-between;color:var(--muted);font-size:12px;margin-bottom:10px}
-.player-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0}
-.trivia-box{max-width:800px;margin:auto}
-.trivia-question{font-size:24px;line-height:1.3;margin:20px 0}
-.answers{display:grid;gap:10px}
-.answer{width:100%;text-align:left;padding:16px;border-radius:15px;border:1px solid var(--border);background:rgba(255,255,255,.05);color:white;font-weight:700}
-.answer:hover:not(:disabled){background:rgba(49,215,255,.12);border-color:rgba(49,215,255,.4)}
-.answer.correct{background:rgba(66,230,149,.20);border-color:var(--green)}
-.answer.wrong{background:rgba(255,100,124,.18);border-color:var(--red)}
-.ranking{display:grid;gap:8px}
-.rank-row{display:grid;grid-template-columns:50px 1fr auto auto;align-items:center;gap:10px;padding:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:15px}
-.rank-number{font-size:21px;font-weight:900}
-.rank-name{font-weight:800}
-.rank-points,.rank-tokens{font-size:13px;color:var(--muted)}
-.prize-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
-.prize{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px}
-.prize-icon{font-size:35px;margin-bottom:10px}
-.media{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:16px;margin:-2px 0 14px;border:1px solid var(--border);background:#071923}
-.media-fallback{width:100%;aspect-ratio:16/9;display:grid;place-items:center;border-radius:16px;margin:-2px 0 14px;background:rgba(49,215,255,.08);font-size:52px;border:1px solid var(--border)}
-.table-box{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:15px}
-.table-code{font-size:28px;font-weight:900;color:var(--primary)}
-.qr{background:white;padding:10px;border-radius:15px;display:inline-flex}
-#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%) translateY(100px);opacity:0;z-index:999;background:#102f3e;border:1px solid var(--border);padding:14px 18px;border-radius:14px;box-shadow:var(--shadow);transition:.3s;max-width:90%;text-align:center}
-#toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-.loading,.empty{color:var(--muted);padding:15px 0}
-footer{margin-top:50px;border-top:1px solid var(--border);padding:30px 0;color:var(--muted);text-align:center}
+:root{
+  --bg:#071923;
+  --bg2:#0c2633;
+  --card:#102f3e;
+  --card2:#12394a;
+  --text:#f5fbff;
+  --muted:#a9c4cf;
+  --primary:#31d7ff;
+  --green:#42e695;
+  --yellow:#ffd166;
+  --red:#ff647c;
+  --border:rgba(255,255,255,.10);
+  --shadow:0 15px 40px rgba(0,0,0,.25);
+  --radius:22px
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0
+}
+
+html{
+  scroll-behavior:smooth
+}
+
+body{
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at top right,rgba(49,215,255,.13),transparent 30%),
+    linear-gradient(180deg,var(--bg),#041018 100%);
+  color:var(--text);
+  min-height:100vh
+}
+
+button,input,select,textarea{
+  font:inherit
+}
+
+button{
+  cursor:pointer
+}
+
+button:disabled{
+  cursor:not-allowed;
+  opacity:.5
+}
+
+a{
+  color:inherit;
+  text-decoration:none
+}
+
+.container{
+  width:min(1180px,94%);
+  margin:auto
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:100;
+  backdrop-filter:blur(16px);
+  background:rgba(4,16,24,.90);
+  border-bottom:1px solid var(--border)
+}
+
+.header-inner{
+  min-height:70px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px
+}
+
+.logo{
+  font-size:21px;
+  font-weight:900;
+  white-space:nowrap
+}
+
+.logo span{
+  color:var(--primary)
+}
+
+.header-stats{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+  justify-content:flex-end
+}
+
+.badge{
+  padding:8px 11px;
+  border-radius:999px;
+  background:rgba(255,255,255,.07);
+  border:1px solid var(--border);
+  font-size:13px;
+  font-weight:700
+}
+
+.hero{
+  padding:55px 0 35px
+}
+
+.hero-box{
+  border:1px solid var(--border);
+  background:linear-gradient(135deg,rgba(18,57,74,.96),rgba(6,27,38,.96));
+  border-radius:30px;
+  padding:38px;
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  position:relative
+}
+
+.hero-box:after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border-radius:50%;
+  right:-100px;
+  top:-100px;
+  background:rgba(49,215,255,.10)
+}
+
+.hero h1{
+  font-size:clamp(34px,7vw,68px);
+  line-height:.95;
+  margin-bottom:18px
+}
+
+.hero h1 span{
+  color:var(--primary)
+}
+
+.hero p{
+  max-width:700px;
+  color:var(--muted);
+  font-size:17px;
+  line-height:1.6
+}
+
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:25px
+}
+
+section{
+  padding:30px 0
+}
+
+.section-title{
+  margin-bottom:18px
+}
+
+.section-title h2{
+  font-size:28px
+}
+
+.section-title p{
+  color:var(--muted);
+  margin-top:6px
+}
+
+.profile{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px
+}
+
+.stat{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:20px
+}
+
+.stat small{
+  display:block;
+  color:var(--muted);
+  margin-bottom:7px
+}
+
+.stat strong{
+  font-size:27px
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px
+}
+
+.card{
+  background:linear-gradient(180deg,var(--card),#0a2531);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:21px;
+  box-shadow:0 10px 30px rgba(0,0,0,.13)
+}
+
+.game-icon{
+  width:58px;
+  height:58px;
+  border-radius:18px;
+  display:grid;
+  place-items:center;
+  font-size:30px;
+  background:rgba(49,215,255,.10);
+  margin-bottom:14px
+}
+
+.card h3{
+  font-size:20px;
+  margin-bottom:7px
+}
+
+.card p{
+  color:var(--muted);
+  line-height:1.5
+}
+
+.reward{
+  margin:15px 0;
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap
+}
+
+.reward span{
+  background:rgba(255,255,255,.07);
+  border-radius:999px;
+  padding:7px 10px;
+  font-size:12px
+}
+
+.btn{
+  border:0;
+  border-radius:14px;
+  padding:13px 18px;
+  font-weight:900;
+  transition:.2s
+}
+
+.btn:hover:not(:disabled){
+  transform:translateY(-2px)
+}
+
+.btn-primary{
+  background:var(--primary);
+  color:#03131a
+}
+
+.btn-secondary{
+  background:rgba(255,255,255,.08);
+  color:var(--text);
+  border:1px solid var(--border)
+}
+
+.btn-green{
+  background:var(--green);
+  color:#052016
+}
+
+.btn-yellow{
+  background:var(--yellow);
+  color:#251b00
+}
+
+.btn-red{
+  background:var(--red);
+  color:white
+}
+
+.duel-layout,
+.tournament-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px
+}
+
+.duel-status{
+  margin:12px 0;
+  padding:13px;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border)
+}
+
+.duel-list{
+  display:grid;
+  gap:10px;
+  margin-top:15px
+}
+
+.duel-item{
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:15px;
+  padding:15px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px
+}
+
+.score-input{
+  width:100%;
+  padding:13px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:#061923;
+  color:white;
+  outline:none
+}
+
+.score-input:focus{
+  border-color:var(--primary)
+}
+
+.tournament-card{
+  position:relative
+}
+
+.tournament-status{
+  position:absolute;
+  right:15px;
+  top:15px;
+  padding:6px 9px;
+  border-radius:999px;
+  font-size:11px;
+  font-weight:900;
+  background:rgba(66,230,149,.13);
+  color:var(--green)
+}
+
+.tournament-info{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:15px 0
+}
+
+.info-box{
+  background:rgba(255,255,255,.05);
+  border-radius:12px;
+  padding:10px
+}
+
+.info-box small{
+  color:var(--muted);
+  display:block
+}
+
+.info-box strong{
+  display:block;
+  margin-top:3px
+}
+
+.match{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  padding:14px;
+  border-radius:15px;
+  margin-bottom:10px
+}
+
+.match-header{
+  display:flex;
+  justify-content:space-between;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:10px
+}
+
+.player-row{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:7px 0
+}
+
+.trivia-box{
+  max-width:800px;
+  margin:auto
+}
+
+.trivia-question{
+  font-size:24px;
+  line-height:1.3;
+  margin:20px 0
+}
+
+.answers{
+  display:grid;
+  gap:10px
+}
+
+.answer{
+  width:100%;
+  text-align:left;
+  padding:16px;
+  border-radius:15px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.05);
+  color:white;
+  font-weight:700
+}
+
+.answer:hover:not(:disabled){
+  background:rgba(49,215,255,.12);
+  border-color:rgba(49,215,255,.4)
+}
+
+.answer.correct{
+  background:rgba(66,230,149,.20);
+  border-color:var(--green)
+}
+
+.answer.wrong{
+  background:rgba(255,100,124,.18);
+  border-color:var(--red)
+}
+
+.ranking{
+  display:grid;
+  gap:8px
+}
+
+.rank-row{
+  display:grid;
+  grid-template-columns:50px 1fr auto auto;
+  align-items:center;
+  gap:10px;
+  padding:14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  border-radius:15px
+}
+
+.rank-number{
+  font-size:21px;
+  font-weight:900
+}
+
+.rank-name{
+  font-weight:800
+}
+
+.rank-points,
+.rank-tokens{
+  font-size:13px;
+  color:var(--muted)
+}
+
+.prize-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:13px
+}
+
+.prize{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px
+}
+
+.prize-icon{
+  font-size:35px;
+  margin-bottom:10px
+}
+
+.media{
+  width:100%;
+  aspect-ratio:16/9;
+  object-fit:cover;
+  border-radius:16px;
+  margin:-2px 0 14px;
+  border:1px solid var(--border);
+  background:#071923
+}
+
+.media-fallback{
+  width:100%;
+  aspect-ratio:16/9;
+  display:grid;
+  place-items:center;
+  border-radius:16px;
+  margin:-2px 0 14px;
+  background:rgba(49,215,255,.08);
+  font-size:52px;
+  border:1px solid var(--border)
+}
+
+.table-box{
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px
+}
+
+.table-code{
+  font-size:28px;
+  font-weight:900;
+  color:var(--primary)
+}
+
+.qr{
+  background:white;
+  padding:10px;
+  border-radius:15px;
+  display:inline-flex
+}
+
+#toast{
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translateX(-50%) translateY(100px);
+  opacity:0;
+  z-index:999;
+  background:#102f3e;
+  border:1px solid var(--border);
+  padding:14px 18px;
+  border-radius:14px;
+  box-shadow:var(--shadow);
+  transition:.3s;
+  max-width:90%;
+  text-align:center
+}
+
+#toast.show{
+  transform:translateX(-50%) translateY(0);
+  opacity:1
+}
+
+.loading,
+.empty{
+  color:var(--muted);
+  padding:15px 0
+}
+
+footer{
+  margin-top:50px;
+  border-top:1px solid var(--border);
+  padding:30px 0;
+  color:var(--muted);
+  text-align:center
+}
+
 @media(max-width:850px){
-.grid{grid-template-columns:1fr 1fr}
-.profile{grid-template-columns:1fr 1fr}
-.prize-grid{grid-template-columns:1fr 1fr}
-.duel-layout,.tournament-layout{grid-template-columns:1fr}
+  .grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .profile{
+    grid-template-columns:1fr 1fr
+  }
+
+  .prize-grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .duel-layout,
+  .tournament-layout{
+    grid-template-columns:1fr
+  }
 }
+
 @media(max-width:560px){
-.hero{padding-top:25px}
-.hero-box{padding:25px 20px;border-radius:23px}
-.grid{grid-template-columns:1fr}
-.profile{grid-template-columns:1fr 1fr}
-.prize-grid{grid-template-columns:1fr 1fr}
-.header-inner{align-items:flex-start;padding:12px 0}
-.header-stats{max-width:190px}
-.badge{font-size:11px;padding:6px 8px}
-.rank-row{grid-template-columns:38px 1fr auto}
-.rank-tokens{display:none}
-.tournament-info{grid-template-columns:1fr 1fr}
+  .hero{
+    padding-top:25px
+  }
+
+  .hero-box{
+    padding:25px 20px;
+    border-radius:23px
+  }
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .profile{
+    grid-template-columns:1fr 1fr
+  }
+
+  .prize-grid{
+    grid-template-columns:1fr 1fr
+  }
+
+  .header-inner{
+    align-items:flex-start;
+    padding:12px 0
+  }
+
+  .header-stats{
+    max-width:190px
+  }
+
+  .badge{
+    font-size:11px;
+    padding:6px 8px
+  }
+
+  .rank-row{
+    grid-template-columns:38px 1fr auto
+  }
+
+  .rank-tokens{
+    display:none
+  }
+
+  .tournament-info{
+    grid-template-columns:1fr 1fr
+  }
 }
-.map-card{margin-top:18px}
-.map-wrap{border:1px solid var(--border);border-radius:18px;overflow:hidden;background:#eaf8fb}
-.map-wrap img{display:block;width:100%;height:auto;min-height:260px;object-fit:cover}
-.map-note{margin-top:10px;color:var(--muted);font-size:12px}
+
+.map-card{
+  margin-top:18px
+}
+
+.map-wrap{
+  border:1px solid var(--border);
+  border-radius:18px;
+  overflow:hidden;
+  background:#eaf8fb
+}
+
+.map-wrap img{
+  display:block;
+  width:100%;
+  height:auto;
+  min-height:260px;
+  object-fit:cover
+}
+
+.map-note{
+  margin-top:10px;
+  color:var(--muted);
+  font-size:12px
+}
 
 /* PEDIDOS */
-.pedidos-app{background:linear-gradient(180deg,#eaf7fa,#f7fbfc)}
-.pedido-layout{display:grid;grid-template-columns:1.15fr .85fr;gap:18px;align-items:start}
-.pedido-panel{background:white;border:1px solid #dce8eb;border-radius:22px;padding:21px;box-shadow:0 8px 25px rgba(0,0,0,.06)}
-.pedido-producto{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #e5ecef}
-.pedido-producto:last-child{border-bottom:0}
-.pedido-producto strong{color:#063c55;display:block}
-.pedido-producto small{color:#687a82}
-.btn-pedir{border:0;border-radius:11px;padding:10px 13px;background:#087c9e;color:#fff;font-weight:900;cursor:pointer;white-space:nowrap}
-.carrito-linea{display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-bottom:1px solid #e5ecef}
-.carrito-controles{display:flex;align-items:center;gap:7px;margin-top:6px}
-.carrito-controles button{width:28px;height:28px;border:0;border-radius:7px;background:#eaf7fa;cursor:pointer;font-weight:900}
-.pedido-total{display:flex;justify-content:space-between;font-size:21px;font-weight:900;color:#063c55;padding:15px 0}
-.entrega-box{background:#f2f8fa;border-radius:14px;padding:13px;margin:10px 0}
-.entrega-box label{display:block;margin:8px 0;color:#314b55}
-.entrega-box input[type=text],.pedido-form input,.pedido-form textarea{width:100%;padding:12px;border:1px solid #d6e1e5;border-radius:10px;font:inherit}
-.pedido-form{display:grid;gap:9px}
-.pedido-form textarea{min-height:70px;resize:vertical}
-.pedido-msg{min-height:24px;text-align:center;font-weight:900;margin-top:8px}
-.pedido-vacio{padding:20px;text-align:center;color:#687a82}
-@media(max-width:800px){.pedido-layout{grid-template-columns:1fr}}
+
+.pedidos-app{
+  background:linear-gradient(180deg,#eaf7fa,#f7fbfc)
+}
+
+.pedido-layout{
+  display:grid;
+  grid-template-columns:1.15fr .85fr;
+  gap:18px;
+  align-items:start
+}
+
+.pedido-panel{
+  background:white;
+  border:1px solid #dce8eb;
+  border-radius:22px;
+  padding:21px;
+  box-shadow:0 8px 25px rgba(0,0,0,.06)
+}
+
+.pedido-producto{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  padding:13px 0;
+  border-bottom:1px solid #e5ecef
+}
+
+.pedido-producto:last-child{
+  border-bottom:0
+}
+
+.pedido-producto strong{
+  color:#063c55;
+  display:block
+}
+
+.pedido-producto small{
+  color:#687a82
+}
+
+.btn-pedir{
+  border:0;
+  border-radius:11px;
+  padding:10px 13px;
+  background:#087c9e;
+  color:#fff;
+  font-weight:900;
+  cursor:pointer;
+  white-space:nowrap
+}
+
+.carrito-linea{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 0;
+  border-bottom:1px solid #e5ecef
+}
+
+.carrito-controles{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-top:6px
+}
+
+.carrito-controles button{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:7px;
+  background:#eaf7fa;
+  cursor:pointer;
+  font-weight:900
+}
+
+.pedido-total{
+  display:flex;
+  justify-content:space-between;
+  font-size:21px;
+  font-weight:900;
+  color:#063c55;
+  padding:15px 0
+}
+
+.entrega-box{
+  background:#f2f8fa;
+  border-radius:14px;
+  padding:13px;
+  margin:10px 0
+}
+
+.entrega-box label{
+  display:block;
+  margin:8px 0;
+  color:#314b55
+}
+
+.entrega-box input[type=text],
+.pedido-form input,
+.pedido-form textarea{
+  width:100%;
+  padding:12px;
+  border:1px solid #d6e1e5;
+  border-radius:10px;
+  font:inherit
+}
+
+.pedido-form{
+  display:grid;
+  gap:9px
+}
+
+.pedido-form textarea{
+  min-height:70px;
+  resize:vertical
+}
+
+.pedido-msg{
+  margin-top:10px;
+  padding:11px;
+  border-radius:10px;
+  background:#f2f8fa;
+  color:#31515d;
+  display:none
+}
+
+.pedido-msg.show{
+  display:block
+}
+
+.pedido-msg.ok{
+  background:#e6faef;
+  color:#12653e
+}
+
+.pedido-msg.error{
+  background:#fff0f2;
+  color:#9e263b
+}
+
+.pedido-section{
+  background:#f7fbfc;
+  color:#173d4d;
+  margin-left:calc((100vw - 100%)/-2);
+  margin-right:calc((100vw - 100%)/-2);
+  padding-left:max(3%,calc((100vw - 1180px)/2));
+  padding-right:max(3%,calc((100vw - 1180px)/2));
+}
+
+@media(max-width:850px){
+  .pedido-layout{
+    grid-template-columns:1fr
+  }
+}
+
+@media(max-width:560px){
+  .pedido-panel{
+    padding:15px
+  }
+
+  .pedido-producto{
+    align-items:flex-start
+  }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<div class="container header-inner">
-<div class="logo">POOL <span>&</span> BEACH</div>
-<div class="header-stats">
-<div class="badge" id="tableBadge">Mesa —</div>
-<div class="badge">🎮 Games</div>
-<div class="badge" id="profileBadge">Invitado</div>
-</div>
-</div>
+  <div class="container header-inner">
+    <a href="#inicio" class="logo">POOL <span>&</span> BEACH</a>
+
+    <div class="header-stats">
+      <span class="badge" id="profileName">Jugador</span>
+      <span class="badge">⭐ <b id="profilePoints">0</b> pts</span>
+      <span class="badge">🪙 <b id="profileTokens">0</b></span>
+    </div>
+  </div>
 </header>
 
 <main>
 
-<section class="hero">
-<div class="container">
-<div class="hero-box">
-<h1>POOL <span>&</span> BEACH<br>GAMES</h1>
-<p>Jugá, competí, sumá puntos, participá en duelos y torneos, subí en el ranking y canjeá premios.</p>
-<div class="hero-actions">
-<button class="btn btn-primary" onclick="scrollToId('juegos')">🎮 Ver juegos</button>
-<button class="btn btn-secondary" onclick="scrollToId('pedidos')">🍔 Hacer pedido</button>
-<button class="btn btn-secondary" onclick="scrollToId('duelos')">⚔️ Duelos</button>
-<button class="btn btn-secondary" onclick="scrollToId('torneos')">🏆 Torneos</button>
-</div>
-</div>
-</div>
+<section id="inicio" class="hero">
+  <div class="container">
+    <div class="hero-box">
+      <h1>POOL <span>&</span> BEACH<br>GAMES</h1>
+
+      <p>
+        Jugá, competí, sumá puntos y fichas, participá en duelos y torneos,
+        respondé la trivia y canjeá tus premios.
+      </p>
+
+      <div class="hero-actions">
+        <button class="btn btn-primary" onclick="scrollToId('juegos')">
+          🎮 Jugar ahora
+        </button>
+
+        <button class="btn btn-secondary" onclick="scrollToId('ranking')">
+          🏆 Ver ranking
+        </button>
+
+        <button class="btn btn-secondary" onclick="surpriseGame()">
+          🎲 Sorprendeme
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="perfil">
-<div class="container">
-<div class="section-title">
-<h2>Tu perfil</h2>
-<p>Ingresá para guardar tus puntos, tokens, duelos y torneos.</p>
-</div>
-<div class="profile">
-<div class="stat"><small>Jugador</small><strong id="profileName">Invitado</strong></div>
-<div class="stat"><small>Puntos</small><strong id="profilePoints">0</strong></div>
-<div class="stat"><small>Tokens</small><strong id="profileTokens">0</strong></div>
-<div class="stat"><small>Ranking</small><strong id="profileRank">—</strong></div>
-</div>
-<div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:15px">
-<button class="btn btn-primary" id="loginBtn" onclick="loginGuest()">🎮 Entrar como jugador</button>
-<button class="btn btn-secondary" id="logoutBtn" onclick="logout()" style="display:none">Cerrar sesión</button>
-<button class="btn btn-secondary" id="changeNameBtn" onclick="changeDisplayName()" style="display:none">✏️ Cambiar nombre</button>
-</div>
-</div>
-</section>
+  <div class="container">
+    <div class="section-title">
+      <h2>Tu perfil</h2>
+      <p>Tu progreso en Pool & Beach Games.</p>
+    </div>
 
-<section id="mesa">
-<div class="container">
-<div class="section-title">
-<h2>Tu mesa</h2>
-<p>Escaneá el QR de tu mesa para identificarla automáticamente.</p>
-</div>
-<div class="card table-box">
-<div>
-<div class="table-code" id="tableNumber">Mesa —</div>
-<p id="tableInfo">No se detectó una mesa.</p>
-</div>
-<div class="qr"><canvas id="qrCanvas"></canvas></div>
-</div>
-</div>
+    <div class="profile">
+      <div class="stat">
+        <small>Apodo</small>
+        <strong id="profileNameLarge">Jugador</strong>
+      </div>
+
+      <div class="stat">
+        <small>Puntos</small>
+        <strong id="profilePointsLarge">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Fichas</small>
+        <strong id="profileTokensLarge">0</strong>
+      </div>
+
+      <div class="stat">
+        <small>Acciones</small>
+        <button class="btn btn-secondary" onclick="changeDisplayName()">
+          ✏️ Cambiar apodo
+        </button>
+      </div>
+    </div>
+  </div>
 </section>
 
 <section id="juegos">
-<div class="container">
-<div class="section-title">
-<h2>🎮 Juegos</h2>
-<p>Elegí una experiencia y empezá a jugar.</p>
-</div>
-<div id="gamesGrid" class="grid">
-<div class="loading">Cargando juegos...</div>
-</div>
-</div>
+  <div class="container">
+    <div class="section-title">
+      <h2>🎮 Juegos</h2>
+      <p>Elegí un juego y empezá a sumar.</p>
+    </div>
+
+    <div id="gamesGrid" class="grid">
+      <div class="loading">Cargando juegos...</div>
+    </div>
+  </div>
 </section>
 
-<section id="pedidos" class="pedidos-app">
-<div class="container">
-<div class="section-title">
-<h2>🍔 Pedidos</h2>
-<p>Elegí tus productos y enviá el pedido directamente al local.</p>
-</div>
+<section id="duelos">
+  <div class="container">
+    <div class="section-title">
+      <h2>⚔️ Duelos</h2>
+      <p>Desafiá a otro jugador.</p>
+    </div>
 
-<div class="pedido-layout">
+    <div class="duel-layout">
+      <div class="card">
+        <h3>Crear duelo</h3>
+        <p>Creá un desafío para que otro jugador pueda unirse.</p>
 
-<div class="pedido-panel">
-<h3 style="color:#063c55;margin-bottom:10px">Menú</h3>
-<div id="pedidoProductos">
-<div class="pedido-vacio">Cargando productos...</div>
-</div>
-</div>
+        <div style="margin-top:15px">
+          <button class="btn btn-primary" onclick="createDuel()">
+            ⚔️ Crear duelo
+          </button>
+        </div>
 
-<div class="pedido-panel">
-<h3 style="color:#063c55;margin-bottom:10px">🛒 Tu pedido</h3>
+        <div id="duelStatus" class="duel-status">
+          No tenés un duelo activo.
+        </div>
+      </div>
 
-<div id="pedidoCarrito">
-<div class="pedido-vacio">Todavía no agregaste productos.</div>
-</div>
-
-<div class="pedido-total">
-<span>Total</span>
-<span id="pedidoTotal">$0</span>
-</div>
-
-<div class="entrega-box">
-<strong style="color:#063c55">Forma de entrega</strong>
-
-<label>
-<input type="radio" name="tipoEntregaPedido" value="retiro" checked onchange="tipoEntregaPedido()">
- Retiro en el local
-</label>
-
-<label>
-<input type="radio" name="tipoEntregaPedido" value="delivery" onchange="tipoEntregaPedido()">
- Delivery
-</label>
-
-<div id="direccionPedidoWrap" style="display:none;margin-top:8px">
-<input id="pedidoDireccion" type="text" placeholder="Dirección para el delivery">
-</div>
-</div>
-
-<form class="pedido-form" id="pedidoForm">
-<input id="pedidoNombre" type="text" placeholder="Nombre" required>
-<input id="pedidoTelefono" type="tel" placeholder="Teléfono" required>
-<textarea id="pedidoNotas" placeholder="Notas del pedido (opcional)"></textarea>
-<button class="btn-pedir" type="submit">📲 Enviar pedido</button>
-</form>
-
-<div id="pedidoMensaje" class="pedido-msg"></div>
-</div>
-
-</div>
-</div>
+      <div class="card">
+        <h3>Duelos disponibles</h3>
+        <div id="duelList" class="duel-list">
+          <div class="empty">Cargando duelos...</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </section>
+
+<section id="torneos">
+  <div class="container">
+    <div class="section-title">
+      <h2>🏆 Torneos</h2>
+      <p>Inscribite y competí por el primer puesto.</p>
+    </div>
+
+    <div class="tournament-layout">
+      <div id="tournamentsList">
+        <div class="loading">Cargando torneos...</div>
+      </div>
+
+      <div class="card">
+        <h3>Mis partidos</h3>
+        <div id="myMatches" style="margin-top:15px">
+          <div class="empty">
+            Seleccioná un torneo para ver tus partidos.
+          </div>
+        </div>
+
+        <h3 style="margin-top:25px">Tabla del torneo</h3>
+        <div id="tournamentStandings" class="ranking" style="margin-top:12px">
+          <div class="empty">Seleccioná un torneo.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="trivia">
+  <div class="container">
+    <div class="section-title">
+      <h2>🧠 Trivia</h2>
+      <p>Respondé preguntas y sumá puntos.</p>
+    </div>
+
+    <div class="card trivia-box">
+      <div id="triviaStatus" class="duel-status">
+        Presioná comenzar para jugar.
+      </div>
+
+      <div id="triviaQuestion" class="trivia-question">
+        ¿Listo para la trivia?
+      </div>
+
+      <div id="triviaAnswers" class="answers"></div>
+
+      <div style="margin-top:18px">
+        <button id="triviaStartBtn" class="btn btn-primary" onclick="startTrivia()">
+          🧠 Comenzar trivia
+        </button>
+
+        <button id="triviaNextBtn"
+                class="btn btn-green"
+                style="display:none"
+                onclick="nextTriviaQuestion()">
+          Siguiente
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="ranking">
+  <div class="container">
+    <div class="section-title">
+      <h2>🥇 Ranking</h2>
+      <p>Los mejores jugadores de Pool & Beach Games.</p>
+    </div>
+
+    <div class="card">
+      <div id="rankingList" class="ranking">
+        <div class="loading">Cargando ranking...</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="premios">
+  <div class="container">
+    <div class="section-title">
+      <h2>🎁 Premios</h2>
+      <p>Usá tus fichas para canjear premios.</p>
+    </div>
+
+    <div id="prizesGrid" class="prize-grid">
+      <div class="loading">Cargando premios...</div>
+    </div>
+  </div>
+</section>
+
+<section id="promos">
+  <div class="container">
+    <div class="section-title">
+      <h2>🔥 Promociones</h2>
+      <p>Promociones disponibles.</p>
+    </div>
+
+    <div id="promosGrid" class="grid">
+      <div class="loading">Cargando promociones...</div>
+    </div>
+  </div>
+</section>
+
+<section id="galeria">
+  <div class="container">
+    <div class="section-title">
+      <h2>📸 Galería</h2>
+      <p>Viví Pool & Beach.</p>
+    </div>
+
+    <div id="galleryGrid" class="grid">
+      <div class="loading">Cargando fotos...</div>
+    </div>
+  </div>
+</section>
+
+<section id="mesas">
+  <div class="container">
+    <div class="section-title">
+      <h2>🎱 Mesas</h2>
+      <p>Escaneá el QR de tu mesa para entrar directamente.</p>
+    </div>
+
+    <div id="tableInfo" class="card">
+      <div class="empty">Detectando mesa...</div>
+    </div>
+  </div>
+</section>
+
+<section id="reservas">
+  <div class="container">
+    <div class="section-title">
+      <h2>📅 Reservas</h2>
+      <p>Reservá tu lugar en Pool & Beach.</p>
+    </div>
+
+    <div class="card">
+      <form id="reservationForm" class="pedido-form">
+
+        <label for="resNombre">Nombre</label>
+        <input id="resNombre" required minlength="2" maxlength="100">
+
+        <label for="resTelefono">Teléfono</label>
+        <input id="resTelefono" required minlength="6" maxlength="40">
+
+        <label for="resFecha">Fecha</label>
+        <input id="resFecha" type="date" required>
+
+        <label for="resHora">Hora</label>
+        <input id="resHora" type="time" required>
+
+        <label for="resServicio">Servicio</label>
+        <input id="resServicio" required minlength="2" maxlength="100"
+               placeholder="Pool, cena, evento...">
+
+        <label for="resPersonas">Cantidad de personas</label>
+        <input id="resPersonas" type="number" min="1" max="50" value="1" required>
+
+        <label for="resNotas">Notas</label>
+        <textarea id="resNotas" maxlength="500"
+                  placeholder="Información adicional"></textarea>
+
+        <button class="btn btn-primary" type="submit">
+          📅 Enviar reserva
+        </button>
+
+        <div id="reservationMsg" class="pedido-msg"></div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<section id="pedidos" class="pedido-section">
+  <div class="container">
+
+    <div class="section-title">
+      <h2>🛒 Pedidos</h2>
+      <p>Pedí desde la web.</p>
+    </div>
+
+    <div class="pedido-layout">
+
+      <div class="pedido-panel">
+        <h3>🍔 Menú</h3>
+
+        <div id="pedidosProductos">
+          <div class="empty">Cargando productos...</div>
+        </div>
+      </div>
+
+      <div class="pedido-panel">
+
+        <h3>🛒 Tu pedido</h3>
+
+        <div id="carrito">
+          <div class="empty">
+            Todavía no agregaste productos.
+          </div>
+        </div>
+
+        <div class="pedido-total">
+          <span>Total</span>
+          <span id="carritoTotal">$0</span>
+        </div>
+
+        <div class="entrega-box">
+
+          <label>
+            <input type="radio"
+                   name="tipoEntrega"
+                   value="retiro"
+                   checked
+                   onchange="updateDeliveryUI()">
+            Retiro en el local
+          </label>
+
+          <label>
+            <input type="radio"
+                   name="tipoEntrega"
+                   value="delivery"
+                   onchange="updateDeliveryUI()">
+            Delivery
+          </label>
+
+          <div id="direccionBox" style="display:none">
+            <label>Dirección</label>
+            <input id="pedidoDireccion"
+                   type="text"
+                   maxlength="250"
+                   placeholder="Dirección de entrega">
+          </div>
+        </div>
+
+        <form id="pedidoForm" class="pedido-form">
+
+          <label>Nombre</label>
+          <input id="pedidoNombre" required minlength="2" maxlength="100">
+
+          <label>Teléfono</label>
+          <input id="pedidoTelefono" required minlength="6" maxlength="40">
+
+          <label>Notas</label>
+          <textarea id="pedidoNotas"
+                    maxlength="500"
+                    placeholder="Aclaraciones del pedido"></textarea>
+
+          <button class="btn-pedir" type="submit">
+            🛒 Enviar pedido
+          </button>
+
+          <div id="pedidoMsg" class="pedido-msg"></div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="horarios">
+  <div class="container">
+    <div class="section-title">
+      <h2>🕒 Horarios</h2>
+    </div>
+
+    <div class="card">
+      <p>
+        <strong>Local:</strong> 12:00 a 15:00 y 19:00 a 03:30.
+      </p>
+
+      <p style="margin-top:8px">
+        <strong>Cocina:</strong> 12:00 a 15:00 y 20:00 a 01:00.
+      </p>
+    </div>
+  </div>
+</section>
+
+<section id="contacto">
+  <div class="container">
+    <div class="section-title">
+      <h2>📍 Contacto</h2>
+      <p>Puerto Pirámides</p>
+    </div>
+
+    <div class="card">
+      <p>
+        Pool & Beach — Puerto Pirámides.
+      </p>
+
+      <div class="map-card">
+        <div class="map-wrap">
+          <iframe
+            title="Mapa Puerto Pirámides"
+            src="https://www.google.com/maps?q=Puerto%20Pir%C3%A1mides%2C%20Chubut%2C%20Argentina&output=embed"
+            width="100%"
+            height="320"
+            style="border:0"
+            loading="lazy">
+          </iframe>
+        </div>
+
+        <p class="map-note">
+          Reservamos el derecho de admisión y permanencia.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="container">
+    <p>POOL & BEACH GAMES</p>
+    <p style="margin-top:6px">
+      Puerto Pirámides · Todos los derechos reservados
+    </p>
+  </div>
+</footer>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL = "https://YOUR_PROJECT.supabase.co";
+const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
+
+const db = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+let currentUser = null;
+let currentProfile = null;
+let currentTournament = null;
+
+let triviaState = {
+  questions: [],
+  index: 0,
+  score: 0,
+  gameId: null,
+  answered: false
+};
+
+let cart = [];
+
+const $ = id => document.getElementById(id);
+
+function escapeHtml(value){
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function safeUrl(value){
+  const u = String(value || "").trim();
+
+  if(!u)return "";
+
+  try{
+    const parsed = new URL(u, location.href);
+
+    if(
+      parsed.protocol === "http:" ||
+      parsed.protocol === "https:"
+    ){
+      return parsed.href;
+    }
+
+    return "";
+  }catch{
+    return "";
+  }
+}
+
+function toast(message){
+  const el = $("toast");
+
+  if(!el)return;
+
+  el.textContent = message;
+  el.classList.add("show");
+
+  clearTimeout(window.__toastTimer);
+
+  window.__toastTimer = setTimeout(()=>{
+    el.classList.remove("show");
+  },3000);
+}
+
+function rpcError(error,fallback){
+  console.error(error);
+  toast(error?.message || fallback);
+}
+
+function scrollToId(id){
+  const el = $(id);
+
+  if(el){
+    el.scrollIntoView({
+      behavior:"smooth",
+      block:"start"
+    });
+  }
+}
+
+function mediaHtml(url,alt,icon="🖼️"){
+  const safe = safeUrl(url);
+
+  if(!safe){
+    return `<div class="media-fallback">${escapeHtml(icon)}</div>`;
+  }
+
+  return `
+    <img
+      class="media"
+      src="${escapeHtml(safe)}"
+      alt="${escapeHtml(alt || "")}"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+      onerror="this.outerHTML='<div class=&quot;media-fallback&quot;>🖼️</div>'">
+  `;
+}
+
+function updateProfileUI(){
+
+  const name =
+    currentProfile?.display_name ||
+    currentProfile?.nombre ||
+    "Jugador";
+
+  const points =
+    Number(
+      currentProfile?.points ??
+      currentProfile?.puntos ??
+      0
+    );
+
+  const tokens =
+    Number(
+      currentProfile?.tokens ??
+      currentProfile?.token_balance ??
+      0
+    );
+
+  $("profileName").textContent = name;
+  $("profileNameLarge").textContent = name;
+
+  $("profilePoints").textContent = points;
+  $("profilePointsLarge").textContent = points;
+
+  $("profileTokens").textContent = tokens;
+  $("profileTokensLarge").textContent = tokens;
+}
+
+async function ensureAuth(){
+
+  const sessionResult =
+    await db.auth.getSession();
+
+  if(sessionResult.error){
+    console.warn(sessionResult.error);
+  }
+
+  currentUser =
+    sessionResult.data?.session?.user || null;
+
+  if(!currentUser){
+    const signIn =
+      await db.auth.signInAnonymously();
+
+    if(signIn.error){
+      console.warn(
+        "Anonymous auth:",
+        signIn.error
+      );
+
+      return false;
+    }
+
+    currentUser = signIn.data.user;
+  }
+
+  return !!currentUser;
+}
+
+async function loadProfile(){
+
+  if(!currentUser)return;
+
+  const {data,error} =
+    await db.rpc(
+      "get_or_create_profile"
+    );
+
+  if(error){
+    console.warn(
+      "Perfil:",
+      error
+    );
+
+    currentProfile = {
+      display_name:"Jugador",
+      points:0,
+      tokens:0
+    };
+  }else{
+    currentProfile = data;
+  }
+
+  updateProfileUI();
+}
+
+async function loadGames(){
+
+  const grid = $("gamesGrid");
+
+  const {data,error} =
+    await db
+      .from("games")
+      .select("*")
+      .eq("active",true)
+      .order("name");
+
+  if(error){
+    console.warn(error);
+    grid.innerHTML =
+      '<div class="empty">No se pudieron cargar los juegos.</div>';
+    return;
+  }
+
+  if(!data?.length){
+    grid.innerHTML =
+      '<div class="empty">No hay juegos disponibles.</div>';
+    return;
+  }
+
+  grid.innerHTML =
+    data.map(game => {
+
+      const id = game.id;
+      const name =
+        game.name ??
+        game.nombre ??
+        "Juego";
+
+      const description =
+        game.description ??
+        game.descripcion ??
+        "";
+
+      const icon =
+        game.icon ??
+        game.emoji ??
+        "🎮";
+
+      const points =
+        Number(
+          game.points ??
+          game.puntos ??
+          0
+        );
+
+      const tokens =
+        Number(
+          game.tokens ??
+          game.fichas ??
+          0
+        );
+
+      const image =
+        game.image_url ??
+        game.image ??
+        "";
+
+      return `
+        <article class="card">
+
+          ${mediaHtml(
+            image,
+            name,
+            icon
+          )}
+
+          <div class="game-icon">
+            ${escapeHtml(icon)}
+          </div>
+
+          <h3>${escapeHtml(name)}</h3>
+
+          <p>
+            ${escapeHtml(description)}
+          </p>
+
+          <div class="reward">
+            <span>⭐ ${points} pts</span>
+            <span>🪙 ${tokens} fichas</span>
+          </div>
+
+          <button
+            class="btn btn-primary"
+            onclick="playSimpleGame('${escapeHtml(id)}')">
+            🎮 Jugar
+          </button>
+
+        </article>
+      `;
+    }).join("");
+}
+
+async function playSimpleGame(gameId){
+
+  const {data,error} =
+    await db.rpc(
+      "play_game",
+      {
+        p_game_id:gameId
+      }
+    );
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo iniciar el juego."
+    );
+    return;
+  }
+
+  toast(
+    `🎮 Juego registrado. +${Number(data?.points ?? 0)} pts`
+  );
+
+  await loadProfile();
+  await loadRanking();
+}
+
+async function createDuel(){
+
+  const {data,error} =
+    await db.rpc("create_duel");
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo crear el duelo."
+    );
+    return;
+  }
+
+  const id =
+    data?.id ??
+    data?.duel_id ??
+    data;
+
+  $("duelStatus").innerHTML = `
+    <strong>⚔️ Duelo creado</strong>
+    <p style="margin-top:6px;color:var(--muted)">
+      Código:
+      <strong style="color:var(--primary)">
+        ${escapeHtml(id)}
+      </strong>
+    </p>
+  `;
+
+  toast("⚔️ Duelo creado.");
+  await loadDuels();
+}
+
+async function loadDuels(){
+
+  const container =
+    $("duelList");
+
+  const {data,error} =
+    await db.rpc(
+      "get_waiting_duels"
+    );
+
+  if(error){
+    console.warn(error);
+
+    container.innerHTML =
+      '<div class="empty">No se pudieron cargar los duelos.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay duelos esperando.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map(d => {
+
+      const id =
+        d.id ??
+        d.duel_id;
+
+      const player =
+        d.player_name ??
+        d.display_name ??
+        d.nombre ??
+        "Jugador";
+
+      const created =
+        d.created_at ??
+        d.creado_en ??
+        "";
+
+      return `
+        <div class="duel-item">
+
+          <div>
+            <strong>⚔️ Duelo</strong>
+            <p style="color:var(--muted);margin-top:4px">
+              ${escapeHtml(player)}
+            </p>
+
+            ${
+              created
+                ? `<small>${escapeHtml(created)}</small>`
+                : ""
+            }
+          </div>
+
+          <button
+            class="btn btn-green"
+            onclick="joinDuel('${escapeHtml(id)}')">
+            Unirme
+          </button>
+
+        </div>
+      `;
+    }).join("");
+}
+
+async function joinDuel(duelId){
+
+  const {data,error} =
+    await db.rpc(
+      "join_duel",
+      {
+        p_duel_id:duelId
+      }
+    );
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo unir al duelo."
+    );
+    return;
+  }
+
+  toast("⚔️ ¡Te uniste al duelo!");
+
+  $("duelStatus").innerHTML =
+    "⚔️ Duelo activo. Registrá tu resultado cuando corresponda.";
+
+  await loadDuels();
+  await loadProfile();
+}
+
+async function submitDuel(matchId){
+
+  const input =
+    $(`duelScore_${matchId}`);
+
+  if(!input)return;
+
+  const score =
+    Number(input.value);
+
+  if(
+    !Number.isFinite(score) ||
+    score < 0
+  ){
+    toast("Ingresá una puntuación válida.");
+    return;
+  }
+
+  const {data,error} =
+    await db.rpc(
+      "submit_duel_score",
+      {
+        p_match_id:matchId,
+        p_score:score
+      }
+    );
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo registrar el resultado."
+    );
+    return;
+  }
+
+  toast("⚔️ Resultado registrado.");
+
+  await loadDuels();
+  await loadProfile();
+  await loadRanking();
+}
+
+async function loadTournaments(){
+
+  const container =
+    $("tournamentsList");
+
+  const {data,error} =
+    await db
+      .from("tournaments")
+      .select("*")
+      .order("created_at",{ascending:false});
+
+  if(error){
+    console.warn(error);
+
+    container.innerHTML =
+      '<div class="empty">No se pudieron cargar los torneos.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay torneos cargados.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map(t => {
+
+      const id = t.id;
+
+      const name =
+        t.name ??
+        t.nombre ??
+        "Torneo";
+
+      const description =
+        t.description ??
+        t.descripcion ??
+        "";
+
+      const status =
+        t.status ??
+        t.estado ??
+        "open";
+
+      const entry =
+        Number(
+          t.entry_fee ??
+          t.inscription_fee ??
+          t.precio_inscripcion ??
+          0
+        );
+
+      const prize =
+        Number(
+          t.prize ??
+          t.prize_amount ??
+          t.premio ??
+          0
+        );
+
+      const maxPlayers =
+        Number(
+          t.max_players ??
+          t.cupo ??
+          0
+        );
+
+      return `
+        <article class="card tournament-card">
+
+          <span class="tournament-status">
+            ${escapeHtml(status)}
+          </span>
+
+          <h3>🏆 ${escapeHtml(name)}</h3>
+
+          <p>
+            ${escapeHtml(description)}
+          </p>
+
+          <div class="tournament-info">
+
+            <div class="info-box">
+              <small>Inscripción</small>
+              <strong>
+                ${entry
+                  ? `$${entry.toLocaleString("es-AR")}`
+                  : "Gratis"}
+              </strong>
+            </div>
+
+            <div class="info-box">
+              <small>Premio</small>
+              <strong>
+                ${prize
+                  ? `$${prize.toLocaleString("es-AR")}`
+                  : "—"}
+              </strong>
+            </div>
+
+            <div class="info-box">
+              <small>Cupo</small>
+              <strong>
+                ${maxPlayers || "—"}
+              </strong>
+            </div>
+
+          </div>
+
+          <button
+            class="btn btn-primary"
+            onclick="joinTournament('${escapeHtml(id)}')">
+            🏆 Inscribirme
+          </button>
+
+          <button
+            class="btn btn-secondary"
+            style="margin-left:6px"
+            onclick="selectTournament('${escapeHtml(id)}')">
+            Ver torneo
+          </button>
+
+        </article>
+      `;
+    }).join("");
+}
+
+async function joinTournament(tournamentId){
+
+  const {data,error} =
+    await db.rpc(
+      "join_tournament",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo realizar la inscripción."
+    );
+    return;
+  }
+
+  toast("🏆 ¡Inscripción realizada!");
+
+  await loadProfile();
+  await selectTournament(tournamentId);
+}
+
+async function selectTournament(tournamentId){
+
+  currentTournament =
+    tournamentId;
+
+  await Promise.allSettled([
+    loadTournamentMatches(tournamentId),
+    loadTournamentStandings(tournamentId)
+  ]);
+
+  scrollToId("torneos");
+}
+
+async function loadTournamentMatches(tournamentId){
+
+  const container =
+    $("myMatches");
+
+  const {data,error} =
+    await db.rpc(
+      "get_tournament_matches",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
+
+  if(error){
+
+    console.warn(error);
+
+    container.innerHTML =
+      '<div class="empty">No se pudieron cargar los partidos.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">Todavía no hay partidos generados.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map(m => {
+
+      const id =
+        m.id ??
+        m.match_id;
+
+      const p1 =
+        m.player1_name ??
+        m.player_1_name ??
+        "Jugador 1";
+
+      const p2 =
+        m.player2_name ??
+        m.player_2_name ??
+        "Jugador 2";
+
+      const s1 =
+        m.player1_score ??
+        m.score1 ??
+        "—";
+
+      const s2 =
+        m.player2_score ??
+        m.score2 ??
+        "—";
+
+      const round =
+        m.round ??
+        m.round_number ??
+        "Ronda";
+
+      const status =
+        m.status ??
+        "pending";
+
+      const can =
+        ["pending","active"].includes(
+          String(status).toLowerCase()
+        ) &&
+        currentUser &&
+        (
+          String(m.player1_id || "") ===
+            String(currentUser.id) ||
+          String(m.player2_id || "") ===
+            String(currentUser.id)
+        );
+
+      return `
+        <div class="match">
+
+          <div class="match-header">
+            <span>${escapeHtml(round)}</span>
+            <span>${escapeHtml(status)}</span>
+          </div>
+
+          <div class="player-row">
+            <span>${escapeHtml(p1)}</span>
+            <strong>${escapeHtml(s1)}</strong>
+          </div>
+
+          <div class="player-row">
+            <span>${escapeHtml(p2)}</span>
+            <strong>${escapeHtml(s2)}</strong>
+          </div>
+
+          ${
+            can
+              ? `
+                <div style="margin-top:10px">
+
+                  <input
+                    id="tournamentScore_${escapeHtml(id)}"
+                    class="score-input"
+                    type="number"
+                    min="0"
+                    placeholder="Tu puntuación">
+
+                  <button
+                    class="btn btn-green"
+                    style="margin-top:8px"
+                    onclick="submitTournamentScore('${escapeHtml(id)}')">
+                    Registrar resultado
+                  </button>
+
+                </div>
+              `
+              : ""
+          }
+
+        </div>
+      `;
+    }).join("");
+}
+
+async function submitTournamentScore(matchId){
+
+  const input =
+    $(`tournamentScore_${matchId}`);
+
+  if(!input)return;
+
+  const score =
+    Number(input.value);
+
+  if(
+    !Number.isFinite(score) ||
+    score < 0
+  ){
+    toast("Ingresá una puntuación válida.");
+    return;
+  }
+
+  const {data,error} =
+    await db.rpc(
+      "submit_tournament_score",
+      {
+        p_match_id:matchId,
+        p_score:score
+      }
+    );
+
+  if(error){
+    rpcError(
+      error,
+      "No se pudo registrar el resultado."
+    );
+    return;
+  }
+
+  toast("🏆 Resultado registrado.");
+
+  await Promise.allSettled([
+    loadTournamentMatches(currentTournament),
+    loadTournamentStandings(currentTournament),
+    loadProfile()
+  ]);
+}
+
+async function loadTournamentStandings(tournamentId){
+
+  const container =
+    $("tournamentStandings");
+
+  const {data,error} =
+    await db.rpc(
+      "get_tournament_standings",
+      {
+        p_tournament_id:tournamentId
+      }
+    );
+
+  if(error){
+
+    console.warn(error);
+
+    container.innerHTML =
+      '<div class="empty">No se pudo cargar la tabla.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">Todavía no hay jugadores en la tabla.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map((r,i)=>{
+
+      const pos =
+        Number(
+          r.ranking_position ??
+          i + 1
+        );
+
+      const name =
+        r.display_name ??
+        r.player_name ??
+        r.nombre ??
+        "Jugador";
+
+      const score =
+        Number(
+          r.score ??
+          r.points ??
+          r.puntos ??
+          0
+        );
+
+      const status =
+        r.status ??
+        "registered";
+
+      return `
+        <div class="rank-row">
+
+          <div class="rank-number">
+            ${pos}
+          </div>
+
+          <div class="rank-name">
+            ${escapeHtml(name)}
+          </div>
+
+          <div class="rank-points">
+            🏆 ${score} victorias
+          </div>
+
+          <div class="rank-tokens">
+            📌 ${escapeHtml(status)}
+          </div>
+
+        </div>
+      `;
+    }).join("");
+}
+
+async function loadRanking(){
+
+  const container =
+    $("rankingList");
+
+  try{
+
+    const {data,error} =
+      await db.rpc(
+        "get_public_ranking"
+      );
+
+    if(error)throw error;
+
+    renderRanking(data || []);
+
+  }catch(e){
+
+    console.warn(
+      "Ranking RPC:",
+      e
+    );
+
+    container.innerHTML =
+      '<div class="empty">El ranking no está disponible en este momento.</div>';
+  }
+}
+
+function renderRanking(data){
+
+  const c =
+    $("rankingList");
+
+  if(!data?.length){
+
+    c.innerHTML =
+      '<div class="empty">Todavía no hay jugadores en el ranking.</div>';
+
+    return;
+  }
+
+  c.innerHTML =
+    data.map((r,i)=>{
+
+      const name =
+        r.display_name ??
+        r.player_name ??
+        r.nombre ??
+        "Jugador";
+
+      const points =
+        Number(
+          r.points ??
+          r.puntos ??
+          0
+        );
+
+      const tokens =
+        Number(
+          r.tokens ??
+          r.token_balance ??
+          0
+        );
+
+      let medal =
+        i + 1;
+
+      if(i === 0)medal="🥇";
+      if(i === 1)medal="🥈";
+      if(i === 2)medal="🥉";
+
+      return `
+        <div class="rank-row">
+
+          <div class="rank-number">
+            ${medal}
+          </div>
+
+          <div class="rank-name">
+            ${escapeHtml(name)}
+          </div>
+
+          <div class="rank-points">
+            ⭐ ${points} pts
+          </div>
+
+          <div class="rank-tokens">
+            🪙 ${tokens}
+          </div>
+
+        </div>
+      `;
+    }).join("");
+}
+
+async function loadPrizes(){
+
+  const grid =
+    $("prizesGrid");
+
+  const {data,error} =
+    await db
+      .from("prizes")
+      .select("*")
+      .eq("active",true)
+      .order(
+        "token_cost",
+        {ascending:true}
+      );
+
+  if(error){
+
+    console.warn(error);
+
+    grid.innerHTML =
+      '<div class="empty">No se pudieron cargar los premios.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    grid.innerHTML =
+      '<div class="empty">Todavía no hay premios cargados.</div>';
+
+    return;
+  }
+
+  grid.innerHTML =
+    data.map(p=>{
+
+      const id =
+        p.id;
+
+      const name =
+        p.name ??
+        p.nombre ??
+        "Premio";
+
+      const image =
+        p.image_url ??
+        p.image ??
+        "";
+
+      const desc =
+        p.description ??
+        p.descripcion ??
+        "";
+
+      const cost =
+        p.cost_tokens ??
+        p.token_cost ??
+        p.tokens ??
+        0;
+
+      const icon =
+        p.icon ??
+        p.emoji ??
+        "🎁";
+
+      return `
+        <article class="prize">
+
+          ${mediaHtml(
+            image,
+            name,
+            icon
+          )}
+
+          <div class="prize-icon">
+            ${escapeHtml(icon)}
+          </div>
+
+          <h3>
+            ${escapeHtml(name)}
+          </h3>
+
+          <p style="color:var(--muted);margin:8px 0 14px">
+            ${escapeHtml(desc)}
+          </p>
+
+          <div class="reward">
+            <span>
+              🪙 ${cost} tokens
+            </span>
+          </div>
+
+          <button
+            class="btn btn-yellow"
+            onclick="redeemPrize('${escapeHtml(id)}')">
+            Canjear
+          </button>
+
+        </article>
+      `;
+    }).join("");
+}
+
+async function redeemPrize(prizeId){
+
+  if(
+    !confirm(
+      "¿Querés canjear este premio?"
+    )
+  ){
+    return;
+  }
+
+  const {data,error} =
+    await db.rpc(
+      "redeem_prize",
+      {
+        p_prize_id:prizeId
+      }
+    );
+
+  if(error){
+
+    rpcError(
+      error,
+      "No se pudo realizar el canje."
+    );
+
+    return;
+  }
+
+  toast(
+    "🎁 ¡Premio canjeado correctamente!"
+  );
+
+  await loadProfile();
+  await loadPrizes();
+}
+
+async function startTrivia(){
+
+  triviaState = {
+    questions:[],
+    index:0,
+    score:0,
+    gameId:null,
+    answered:false
+  };
+
+  const start =
+    await db.rpc(
+      "start_trivia_game"
+    );
+
+  if(start.error){
+
+    rpcError(
+      start.error,
+      "No se pudo iniciar la trivia."
+    );
+
+    return;
+  }
+
+  triviaState.gameId =
+    start.data?.id ??
+    start.data?.game_id ??
+    start.data;
+
+  const {data,error} =
+    await db
+      .from("trivia_questions")
+      .select("*")
+      .eq("active",true);
+
+  if(error){
+
+    rpcError(
+      error,
+      "No se pudieron cargar las preguntas."
+    );
+
+    return;
+  }
+
+  if(!data?.length){
+
+    toast(
+      "No hay preguntas disponibles."
+    );
+
+    return;
+  }
+
+  triviaState.questions =
+    [...data]
+      .sort(()=>Math.random()-.5)
+      .slice(0,10);
+
+  $("triviaStartBtn").style.display =
+    "none";
+
+  $("triviaNextBtn").style.display =
+    "none";
+
+  renderTriviaQuestion();
+}
+
+function renderTriviaQuestion(){
+
+  const q =
+    triviaState.questions[
+      triviaState.index
+    ];
+
+  if(!q)return;
+
+  triviaState.answered =
+    false;
+
+  const question =
+    q.question ??
+    q.pregunta ??
+    q.text ??
+    "";
+
+  let options =
+    q.options ??
+    q.opciones ??
+    q.answers ??
+    [];
+
+  if(typeof options === "string"){
+
+    try{
+      options =
+        JSON.parse(options);
+    }catch{
+      options =
+        options
+          .split("\n")
+          .map(x=>x.trim())
+          .filter(Boolean);
+    }
+  }
+
+  if(!Array.isArray(options)){
+    options=[];
+  }
+
+  $("triviaStatus").textContent =
+    `Pregunta ${triviaState.index + 1} de ${triviaState.questions.length} · Puntos: ${triviaState.score}`;
+
+  $("triviaQuestion").textContent =
+    question;
+
+  $("triviaAnswers").innerHTML =
+    options.map((option,i)=>`
+      <button
+        class="answer"
+        onclick="answerTrivia(${i})">
+        ${escapeHtml(option)}
+      </button>
+    `).join("");
+
+  $("triviaNextBtn").style.display =
+    "none";
+}
+
+async function answerTrivia(answerIndex){
+
+  if(triviaState.answered)return;
+
+  triviaState.answered =
+    true;
+
+  const q =
+    triviaState.questions[
+      triviaState.index
+    ];
+
+  const correct =
+    Number(
+      q.correct_index ??
+      q.correctIndex ??
+      q.respuesta_correcta ??
+      q.answer_index ??
+      0
+    );
+
+  const buttons =
+    [...document.querySelectorAll(
+      "#triviaAnswers .answer"
+    )];
+
+  buttons.forEach((button,index)=>{
+
+    button.disabled =
+      true;
+
+    if(index === correct){
+      button.classList.add("correct");
+    }
+
+    if(index === answerIndex &&
+       index !== correct){
+
+      button.classList.add("wrong");
+    }
+  });
+
+  if(answerIndex === correct){
+
+    triviaState.score +=
+      Number(
+        q.points ??
+        q.puntos ??
+        10
+      );
+
+    toast("✅ ¡Correcto!");
+  }else{
+
+    toast("❌ Incorrecto.");
+  }
+
+  const {error} =
+    await db.rpc(
+      "answer_trivia",
+      {
+        p_game_id:triviaState.gameId,
+        p_question_id:q.id,
+        p_answer_index:answerIndex
+      }
+    );
+
+  if(error){
+    console.warn(
+      "answer_trivia:",
+      error
+    );
+  }
+
+  if(
+    triviaState.index <
+    triviaState.questions.length - 1
+  ){
+
+    $("triviaNextBtn").style.display =
+      "inline-block";
+
+  }else{
+
+    $("triviaStatus").textContent =
+      `🏁 Trivia terminada · ${triviaState.score} puntos`;
+
+    $("triviaNextBtn").textContent =
+      "Terminar";
+
+    $("triviaNextBtn").style.display =
+      "inline-block";
+  }
+}
+
+function nextTriviaQuestion(){
+
+  if(
+    triviaState.index >=
+    triviaState.questions.length - 1
+  ){
+
+    $("triviaQuestion").textContent =
+      `🏁 Terminaste con ${triviaState.score} puntos.`;
+
+    $("triviaAnswers").innerHTML = "";
+
+    $("triviaNextBtn").style.display =
+      "none";
+
+    $("triviaStartBtn").style.display =
+      "inline-block";
+
+    loadProfile();
+    loadRanking();
+
+    return;
+  }
+
+  triviaState.index++;
+
+  renderTriviaQuestion();
+}
+
+async function surpriseGame(){
+
+  const {data,error} =
+    await db
+      .from("games")
+      .select("id,name")
+      .eq("active",true);
+
+  if(error || !data?.length){
+
+    toast(
+      "No hay juegos disponibles en este momento."
+    );
+
+    return;
+  }
+
+  const chosen =
+    data[
+      Math.floor(
+        Math.random()*data.length
+      )
+    ];
+
+  const name =
+    String(chosen.name || "");
+
+  if(/trivia/i.test(name)){
+
+    scrollToId("trivia");
+    startTrivia();
+    return;
+  }
+
+  if(/duelo/i.test(name)){
+
+    scrollToId("duelos");
+    createDuel();
+    return;
+  }
+
+  const card =
+    [...document.querySelectorAll(
+      "#gamesGrid article"
+    )].find(
+      x =>
+        x.textContent.includes(name)
+    );
+
+  if(card){
+
+    card.scrollIntoView({
+      behavior:"smooth",
+      block:"center"
+    });
+
+    card.animate(
+      [
+        {transform:"scale(1)"},
+        {transform:"scale(1.03)"},
+        {transform:"scale(1)"}
+      ],
+      {duration:500}
+    );
+  }
+
+  toast(
+    "🎲 Te toca: " + name
+  );
+}
+
+async function changeDisplayName(){
+
+  const current =
+    currentProfile?.display_name ?? "";
+
+  const value =
+    window.prompt(
+      "Elegí tu apodo (máximo 24 caracteres):",
+      current
+    );
+
+  if(value === null)return;
+
+  const name =
+    value.trim();
+
+  if(!name){
+
+    toast(
+      "El apodo no puede estar vacío."
+    );
+
+    return;
+  }
+
+  if(name.length > 24){
+
+    toast(
+      "El apodo puede tener hasta 24 caracteres."
+    );
+
+    return;
+  }
+
+  const {data,error} =
+    await db.rpc(
+      "set_display_name",
+      {
+        p_display_name:name
+      }
+    );
+
+  if(error){
+
+    rpcError(
+      error,
+      "No se pudo guardar el apodo."
+    );
+
+    return;
+  }
+
+  currentProfile =
+    data;
+
+  updateProfileUI();
+
+  toast(
+    "✅ Apodo actualizado."
+  );
+}
+
+async function loadPromos(){
+
+  const grid =
+    $("promosGrid");
+
+  if(!grid)return;
+
+  const {data,error} =
+    await db
+      .from("promociones")
+      .select(
+        "id,titulo,descripcion,precio,image_url,created_at"
+      )
+      .eq("activa",true)
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(error){
+
+    console.warn(
+      "Promociones:",
+      error
+    );
+
+    grid.innerHTML =
+      '<div class="empty">No se pudieron cargar las promociones.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    grid.innerHTML =
+      '<div class="empty">No hay promociones cargadas.</div>';
+
+    return;
+  }
+
+  grid.innerHTML =
+    data.map(p=>{
+
+      const name =
+        p.titulo ||
+        "Promoción";
+
+      const u =
+        safeUrl(p.image_url);
+
+      return `
+        <article class="card">
+
+          ${
+            u
+              ? `
+                <img
+                  class="media"
+                  src="${escapeHtml(u)}"
+                  alt="${escapeHtml(name)}"
+                  loading="lazy"
+                  referrerpolicy="no-referrer">
+              `
+              : ""
+          }
+
+          <h3>
+            🔥 ${escapeHtml(name)}
+          </h3>
+
+          <p>
+            ${escapeHtml(
+              p.descripcion || ""
+            )}
+          </p>
+
+          ${
+            p.precio != null
+              ? `
+                <div class="reward">
+                  <span>
+                    ${Number(
+                      p.precio
+                    ).toLocaleString(
+                      "es-AR",
+                      {
+                        style:"currency",
+                        currency:"ARS",
+                        maximumFractionDigits:0
+                      }
+                    )}
+                  </span>
+                </div>
+              `
+              : ""
+          }
+
+        </article>
+      `;
+    }).join("");
+}
+
+async function loadGallery(){
+
+  const grid =
+    $("galleryGrid");
+
+  if(!grid)return;
+
+  const {data,error} =
+    await db
+      .from("galeria_fotos")
+      .select(
+        "id,titulo,url,creado_en"
+      )
+      .order(
+        "creado_en",
+        {ascending:false}
+      )
+      .limit(60);
+
+  if(error){
+
+    console.warn(
+      "Galería:",
+      error
+    );
+
+    grid.innerHTML =
+      '<div class="empty">No se pudo cargar la galería.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    grid.innerHTML =
+      '<div class="empty">Todavía no hay fotos publicadas.</div>';
+
+    return;
+  }
+
+  grid.innerHTML =
+    data.map(x=>{
+
+      const u =
+        safeUrl(x.url);
+
+      return u
+        ? `
+          <article class="card">
+            <img
+              class="media"
+              src="${escapeHtml(u)}"
+              alt="${escapeHtml(
+                x.titulo || "Pool & Beach"
+              )}"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              onerror="this.style.display='none'">
+
+            ${
+              x.titulo
+                ? `<p>${escapeHtml(x.titulo)}</p>`
+                : ""
+            }
+          </article>
+        `
+        : "";
+    }).join("")
+    ||
+    '<div class="empty">Todavía no hay fotos publicadas.</div>';
+}
+
+async function loadProductsForOrders(){
+
+  const container =
+    $("pedidosProductos");
+
+  const {data,error} =
+    await db
+      .from("productos")
+      .select("*")
+      .eq("activo",true)
+      .order("categoria")
+      .order("nombre");
+
+  if(error){
+
+    console.warn(
+      "Productos:",
+      error
+    );
+
+    container.innerHTML =
+      '<div class="empty">No se pudieron cargar los productos.</div>';
+
+    return;
+  }
+
+  if(!data?.length){
+
+    container.innerHTML =
+      '<div class="empty">No hay productos disponibles.</div>';
+
+    return;
+  }
+
+  container.innerHTML =
+    data.map(p=>{
+
+      const id =
+        p.id;
+
+      const name =
+        p.nombre ??
+        p.name ??
+        "Producto";
+
+      const desc =
+        p.descripcion ??
+        p.description ??
+        "";
+
+      const price =
+        Number(
+          p.precio ??
+          p.price ??
+          0
+        );
+
+      return `
+        <div class="pedido-producto">
+
+          <div>
+            <strong>
+              ${escapeHtml(name)}
+            </strong>
+
+            ${
+              desc
+                ? `<small>${escapeHtml(desc)}</small>`
+                : ""
+            }
+
+            <div style="margin-top:5px;color:#087c9e;font-weight:900">
+              $${price.toLocaleString("es-AR")}
+            </div>
+          </div>
+
+          <button
+            class="btn-pedir"
+            onclick="addToCart('${escapeHtml(id)}','${escapeHtml(name)}',${price})">
+            Agregar
+          </button>
+
+        </div>
+      `;
+    }).join("");
+}
+
+function addToCart(id,name,price){
+
+  const existing =
+    cart.find(
+      x => String(x.id) === String(id)
+    );
+
+  if(existing){
+
+    existing.quantity++;
+  }else{
+
+    cart.push({
+      id,
+      name,
+      price,
+      quantity:1
+    });
+  }
+
+  renderCart();
+
+  toast(
+    "🛒 Producto agregado."
+  );
+}
+
+function changeCartQuantity(id,delta){
+
+  const item =
+    cart.find(
+      x => String(x.id) === String(id)
+    );
+
+  if(!item)return;
+
+  item.quantity += delta;
+
+  if(item.quantity <= 0){
+
+    cart =
+      cart.filter(
+        x => String(x.id) !== String(id)
+      );
+  }
+
+  renderCart();
+}
+
+function renderCart(){
+
+  const container =
+    $("carrito");
+
+  if(!cart.length){
+
+    container.innerHTML =
+      '<div class="empty">Todavía no agregaste productos.</div>';
+
+    $("carritoTotal").textContent =
+      "$0";
+
+    return;
+  }
+
+  let total = 0;
+
+  container.innerHTML =
+    cart.map(item=>{
+
+      const subtotal =
+        item.price *
+        item.quantity;
+
+      total += subtotal;
+
+      return `
+        <div class="carrito-linea">
+
+          <div>
+            <strong>
+              ${escapeHtml(item.name)}
+            </strong>
+
+            <div class="carrito-controles">
+
+              <button
+                onclick="changeCartQuantity('${escapeHtml(item.id)}',-1)">
+                −
+              </button>
+
+              <span>
+                ${item.quantity}
+              </span>
+
+              <button
+                onclick="changeCartQuantity('${escapeHtml(item.id)}',1)">
+                +
+              </button>
+
+            </div>
+          </div>
+
+          <strong>
+            $${subtotal.toLocaleString("es-AR")}
+          </strong>
+
+        </div>
+      `;
+    }).join("");
+
+  $("carritoTotal").textContent =
+    `$${total.toLocaleString("es-AR")}`;
+}
+
+function updateDeliveryUI(){
+
+  const type =
+    document.querySelector(
+      'input[name="tipoEntrega"]:checked'
+    )?.value ||
+    "retiro";
+
+  $("direccionBox").style.display =
+    type === "delivery"
+      ? "block"
+      : "none";
+}
+
+async function submitOrder(event){
+
+  event.preventDefault();
+
+  const msg =
+    $("pedidoMsg");
+
+  if(!cart.length){
+
+    msg.textContent =
+      "❌ Agregá al menos un producto.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  const nombre =
+    $("pedidoNombre").value.trim();
+
+  const telefono =
+    $("pedidoTelefono").value.trim();
+
+  const notas =
+    $("pedidoNotas").value.trim();
+
+  const tipoEntrega =
+    document.querySelector(
+      'input[name="tipoEntrega"]:checked'
+    )?.value ||
+    "retiro";
+
+  const direccion =
+    $("pedidoDireccion").value.trim();
+
+  if(
+    nombre.length < 2 ||
+    nombre.length > 100
+  ){
+
+    msg.textContent =
+      "❌ Revisá el nombre.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  if(
+    telefono.length < 6 ||
+    telefono.length > 40
+  ){
+
+    msg.textContent =
+      "❌ Revisá el teléfono.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  if(
+    tipoEntrega === "delivery" &&
+    (
+      direccion.length < 5 ||
+      direccion.length > 250
+    )
+  ){
+
+    msg.textContent =
+      "❌ Ingresá una dirección válida.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  const items =
+    cart.map(x=>({
+      id:x.id,
+      nombre:x.name,
+      precio:x.price,
+      cantidad:x.quantity
+    }));
+
+  const total =
+    cart.reduce(
+      (sum,x)=>
+        sum + x.price*x.quantity,
+      0
+    );
+
+  const button =
+    $("pedidoForm")
+      .querySelector("button[type=submit]");
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Enviando...";
+
+  try{
+
+    const {error} =
+      await db
+        .from("pedidos")
+        .insert({
+          nombre_cliente:nombre,
+          telefono,
+          tipo_entrega:tipoEntrega,
+          direccion:
+            tipoEntrega === "delivery"
+              ? direccion
+              : null,
+          items,
+          total,
+          notas
+        });
+
+    if(error)throw error;
+
+    msg.textContent =
+      "✅ Pedido enviado correctamente. ¡Gracias!";
+
+    msg.className =
+      "pedido-msg show ok";
+
+    cart = [];
+
+    renderCart();
+
+    $("pedidoForm").reset();
+
+    document.querySelector(
+      'input[name="tipoEntrega"][value="retiro"]'
+    ).checked = true;
+
+    updateDeliveryUI();
+
+  }catch(error){
+
+    console.error(error);
+
+    msg.textContent =
+      "❌ No se pudo enviar el pedido: " +
+      (error?.message || "Error desconocido");
+
+    msg.className =
+      "pedido-msg show error";
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "🛒 Enviar pedido";
+  }
+}
+
+async function submitReservation(event){
+
+  event.preventDefault();
+
+  const msg =
+    $("reservationMsg");
+
+  const payload = {
+    nombre:$("resNombre").value.trim(),
+    telefono:$("resTelefono").value.trim(),
+    fecha:$("resFecha").value,
+    hora:$("resHora").value,
+    servicio:$("resServicio").value.trim(),
+    cantidad_personas:Number(
+      $("resPersonas").value
+    ),
+    notas:$("resNotas").value.trim()
+  };
+
+  if(
+    payload.nombre.length < 2 ||
+    payload.nombre.length > 100
+  ){
+
+    msg.textContent =
+      "❌ Revisá el nombre.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  if(
+    payload.telefono.length < 6 ||
+    payload.telefono.length > 40
+  ){
+
+    msg.textContent =
+      "❌ Revisá el teléfono.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  if(!payload.fecha || !payload.hora){
+
+    msg.textContent =
+      "❌ Seleccioná fecha y hora.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  if(
+    payload.cantidad_personas < 1 ||
+    payload.cantidad_personas > 50
+  ){
+
+    msg.textContent =
+      "❌ Cantidad de personas inválida.";
+
+    msg.className =
+      "pedido-msg show error";
+
+    return;
+  }
+
+  const button =
+    $("reservationForm")
+      .querySelector("button[type=submit]");
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Enviando...";
+
+  try{
+
+    const {error} =
+      await db
+        .from("reservas")
+        .insert(payload);
+
+    if(error)throw error;
+
+    msg.textContent =
+      "✅ Reserva enviada correctamente.";
+
+    msg.className =
+      "pedido-msg show ok";
+
+    $("reservationForm").reset();
+
+  }catch(error){
+
+    console.error(error);
+
+    msg.textContent =
+      "❌ No se pudo enviar la reserva: " +
+      (error?.message || "Error desconocido");
+
+    msg.className =
+      "pedido-msg show error";
+
+  }finally{
+
+    button.disabled =
+      false;
+
+    button.textContent =
+      "📅 Enviar reserva";
+  }
+}
+
+async function loadMesa(){
+
+  const params =
+    new URLSearchParams(
+      location.search
+    );
+
+  const mesa =
+    params.get("mesa");
+
+  const container =
+    $("tableInfo");
+
+  if(!mesa){
+
+    container.innerHTML = `
+      <div class="empty">
+        Entrá desde el QR de una mesa para identificarla.
+      </div>
+    `;
+
+    return;
+  }
+
+  const {data,error} =
+    await db
+      .from("tables_pool")
+      .select("*")
+      .eq("table_number",Number(mesa))
+      .maybeSingle();
+
+  if(error){
+
+    console.warn(error);
+
+    container.innerHTML = `
+      <div class="empty">
+        No se pudo identificar la mesa.
+      </div>
+    `;
+
+    return;
+  }
+
+  if(!data){
+
+    container.innerHTML = `
+      <div class="empty">
+        La mesa ${escapeHtml(mesa)} no existe.
+      </div>
+    `;
+
+    return;
+  }
+
+  container.innerHTML = `
+    <div class="table-box">
+
+      <div>
+        <small>Mesa</small>
+        <div class="table-code">
+          🎱 ${escapeHtml(
+            data.name ||
+            "Mesa " + mesa
+          )}
+        </div>
+
+        <p style="margin-top:8px;color:var(--muted)">
+          Mesa identificada correctamente.
+        </p>
+      </div>
+
+      <div class="qr">
+        <canvas
+          id="mesaQrCanvas"
+          width="180"
+          height="180">
+        </canvas>
+      </div>
+
+    </div>
+  `;
+
+  if(window.QRious){
+
+    new QRious({
+      element:$("mesaQrCanvas"),
+      value:location.href,
+      size:180,
+      level:"H",
+      background:"white",
+      foreground:"black"
+    });
+  }
+}
+
+function setupRealtime(){
+
+  try{
+
+    db
+      .channel("pool-beach-live")
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"duel_matches"
+        },
+        loadDuels
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"tournament_matches"
+        },
+        async()=>{
+          if(currentTournament){
+            await loadTournamentMatches(
+              currentTournament
+            );
+
+            await loadTournamentStandings(
+              currentTournament
+            );
+          }
+        }
+      )
+
+      .subscribe();
+
+  }catch(e){
+
+    console.warn(
+      "Realtime:",
+      e
+    );
+  }
+}
+
+async function init(){
+
+  const authenticated =
+    await ensureAuth();
+
+  if(!authenticated){
+
+    toast(
+      "No se pudo iniciar la sesión del jugador."
+    );
+
+    return;
+  }
+
+  await loadProfile();
+
+  await Promise.allSettled([
+    loadGames(),
+    loadDuels(),
+    loadTournaments(),
+    loadRanking(),
+    loadPrizes(),
+    loadPromos(),
+    loadGallery(),
+    loadProductsForOrders(),
+    loadMesa()
+  ]);
+
+  setupRealtime();
+}
+
+$("pedidoForm")
+  .addEventListener(
+    "submit",
+    submitOrder
+  );
+
+$("reservationForm")
+  .addEventListener(
+    "submit",
+    submitReservation
+  );
+
+setInterval(async()=>{
+
+  try{
+
+    await Promise.allSettled([
+      loadDuels(),
+      loadRanking()
+    ]);
+
+    if(currentTournament){
+
+      await Promise.allSettled([
+        loadTournamentMatches(
+          currentTournament
+        ),
+        loadTournamentStandings(
+          currentTournament
+        )
+      ]);
+    }
+
+  }catch(e){
+
+    console.warn(e);
+  }
+
+},15000);
+
+function createDuelUI(){
+  return createDuel();
+}
+
+Object.assign(window,{
+  startTrivia,
+  answerTrivia,
+  nextTriviaQuestion,
+  createDuel,
+  createDuelUI,
+  joinDuel,
+  submitDuel,
+  loadDuels,
+  joinTournament,
+  selectTournament,
+  submitTournamentScore,
+  redeemPrize,
+  playSimpleGame,
+  scrollToId,
+  surpriseGame,
+  changeDisplayName,
+  addToCart,
+  changeCartQuantity,
+  renderCart,
+  updateDeliveryUI
+});
+
+</script>
+
+<script>
+document.documentElement.dataset.appVersion =
+  "FINAL-2026-09-07-FINAL-PEDIDOS-IMAGENES";
+</script>
+
+</body>
+</html>
