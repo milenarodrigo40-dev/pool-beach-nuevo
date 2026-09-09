@@ -3,45 +3,59 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Pool & Beach | Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
 <style>
 :root{
   --bg:#06131e;
-  --p:#0c2333;
-  --p2:#123149;
-  --line:#24536a;
-  --sky:#62dcff;
+  --p:#0d2939;
+  --p2:#12364a;
+  --line:#28556b;
+  --sky:#5edcff;
+  --green:#62e6a1;
   --gold:#ffd166;
-  --green:#67e7a2;
   --red:#ff7182;
-  --txt:#f5fbff;
-  --muted:#9ab5c5
+  --txt:#f4fbff;
+  --muted:#9db9c7
 }
 
 *{box-sizing:border-box}
 
 body{
   margin:0;
-  background:radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
+  background:linear-gradient(180deg,#0b2a3a,#031018);
   color:var(--txt);
-  font:14px system-ui,-apple-system,Segoe UI,sans-serif
+  font:14px system-ui,-apple-system,Segoe UI,Arial,sans-serif
 }
 
 .app{
-  max-width:1180px;
+  width:min(1200px,94%);
   margin:auto;
-  padding:14px 14px 60px
+  padding:14px 0 60px
+}
+
+.card{
+  background:linear-gradient(145deg,var(--p2),var(--p));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:0 10px 25px #0004
+}
+
+.login{
+  max-width:430px;
+  margin:8vh auto
 }
 
 .top{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:10px
+  gap:12px
 }
 
 .brand{
@@ -51,112 +65,97 @@ body{
 
 .brand span{color:var(--sky)}
 
-.status,.badge{
-  border:1px solid var(--line);
-  border-radius:99px;
-  padding:6px 10px;
-  color:var(--sky);
-  font-size:11px
-}
-
-.top-actions,.row{
+.actions,.row{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
   align-items:center
 }
 
-.hero,.card{
-  background:linear-gradient(145deg,var(--p2),var(--p));
+.status{
+  padding:7px 10px;
+  border-radius:99px;
   border:1px solid var(--line);
-  border-radius:18px;
-  padding:17px;
-  box-shadow:0 10px 25px #0004
+  color:var(--sky);
+  font-size:11px
 }
 
-.hero{margin-top:14px}
+.btn,.tab{
+  border:0;
+  border-radius:12px;
+  padding:11px 14px;
+  font-weight:900;
+  cursor:pointer
+}
 
-.hero h1{margin:0 0 5px}
+.btn{
+  background:var(--sky);
+  color:#05202c
+}
 
-.muted,small{color:var(--muted)}
+.btn.dark,.tab{
+  background:#102c3d;
+  color:var(--txt);
+  border:1px solid var(--line)
+}
+
+.btn.green{
+  background:var(--green);
+  color:#052116
+}
+
+.btn.gold{
+  background:var(--gold);
+  color:#2c2200
+}
+
+.btn.red{
+  background:var(--red);
+  color:#fff
+}
+
+.hero{
+  margin:14px 0
+}
+
+.hero h1{
+  margin:0 0 5px
+}
+
+.muted,small{
+  color:var(--muted)
+}
 
 .tabs{
   display:flex;
-  gap:8px;
-  overflow-x:auto;
-  overflow-y:hidden;
-  margin:14px 0;
-  padding:3px 2px 8px;
-  scrollbar-width:thin;
+  gap:7px;
+  overflow:auto;
+  padding:4px 0 9px;
   position:sticky;
   top:0;
-  z-index:20;
-  background:#06131eE8;
-  backdrop-filter:blur(8px)
-}
-
-.tab,.btn{
-  border-radius:12px;
-  padding:11px 13px;
-  border:1px solid var(--line);
-  font-weight:900;
-  cursor:pointer;
-  min-height:42px
-}
-
-.tab:focus-visible,
-.btn:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible{
-  outline:2px solid var(--sky);
-  outline-offset:2px
+  z-index:10;
+  background:#06131ee8;
+  backdrop-filter:blur(10px)
 }
 
 .tab{
-  background:#0b2130;
-  color:var(--txt);
   white-space:nowrap
 }
 
 .tab.active{
   background:var(--sky);
-  color:#052031
-}
-
-.btn{
-  background:var(--sky);
-  color:#052031;
-  border:0
-}
-
-.btn.gold{background:var(--gold)}
-.btn.green{background:var(--green)}
-.btn.red{background:var(--red)}
-.btn.dark{
-  background:#15364b;
-  color:var(--txt)
+  color:#05202c
 }
 
 .view{
-  display:none;
-  animation:fadeIn .16s ease
+  display:none
 }
 
-.view.active{display:block}
-
-@keyframes fadeIn{
-  from{
-    opacity:.65;
-    transform:translateY(3px)
-  }
-  to{
-    opacity:1;
-    transform:none
-  }
+.view.active{
+  display:block
 }
 
-.cards,.grid2,.grid3{
+.cards,.grid2{
   display:grid;
   gap:11px
 }
@@ -169,26 +168,37 @@ select:focus-visible{
   grid-template-columns:1fr 1fr
 }
 
-.grid3{
-  grid-template-columns:repeat(3,1fr)
+.metric{
+  padding:15px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#092031
+}
+
+.metric small{
+  color:var(--muted)
 }
 
 .metric b{
   display:block;
-  font-size:30px;
-  margin-top:3px
+  font-size:29px;
+  margin-top:4px
 }
-
-.metric small{display:block}
 
 .input,select,textarea{
   width:100%;
   padding:11px;
-  border-radius:11px;
+  border:1px solid var(--line);
+  border-radius:10px;
   background:#061722;
   color:var(--txt);
-  border:1px solid var(--line);
-  margin:5px 0 8px
+  margin:5px 0 8px;
+  font:inherit
+}
+
+textarea{
+  min-height:80px;
+  resize:vertical
 }
 
 label{
@@ -198,51 +208,66 @@ label{
   margin-top:7px
 }
 
-textarea{min-height:80px}
-
-.table-wrap{overflow:auto}
+.table-wrap{
+  overflow:auto
+}
 
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:720px
+  min-width:820px
 }
 
 th,td{
   padding:10px;
-  border-bottom:1px solid #234456;
+  border-bottom:1px solid #234759;
   text-align:left;
   vertical-align:top
 }
 
-th{color:var(--muted)}
-
-.notice{
-  padding:10px;
-  border-radius:12px;
-  background:#102a3b;
-  border:1px solid #26536b;
-  margin:7px 0
-}
-
-.empty{
-  text-align:center;
-  padding:20px;
+th{
   color:var(--muted)
 }
 
-.hidden{display:none!important}
+.notice{
+  padding:10px;
+  border-radius:11px;
+  background:#102b3c;
+  border:1px solid var(--line);
+  margin:7px 0
+}
+
+.msg{
+  min-height:20px;
+  margin-top:8px
+}
+
+.ok{
+  color:var(--green)
+}
+
+.error{
+  color:var(--red)
+}
+
+.hidden{
+  display:none!important
+}
+
+.item{
+  padding:12px 0;
+  border-bottom:1px solid #214657
+}
+
+.item:last-child{
+  border:0
+}
 
 .thumb{
   width:100%;
-  height:130px;
+  max-height:190px;
   object-fit:cover;
-  border-radius:10px
-}
-
-.login{
-  max-width:430px;
-  margin:8vh auto
+  border-radius:12px
 }
 
 .gallery{
@@ -251,88 +276,88 @@ th{color:var(--muted)}
   gap:10px
 }
 
-.gallery figure{margin:0}
+.gallery figure{
+  margin:0;
+  border:1px solid var(--line);
+  border-radius:13px;
+  padding:9px
+}
 
 .gallery img{
   width:100%;
   aspect-ratio:1;
   object-fit:cover;
-  border-radius:12px
+  border-radius:10px
 }
 
-.gallery figcaption{
-  font-size:11px;
+.alert{
+  background:#3a2730;
+  border:1px solid var(--red);
+  color:#fff;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:12px
+}
+
+.checkbox{
+  display:flex;
+  gap:8px;
+  align-items:center
+}
+
+.checkbox input{
+  width:auto;
+  margin:0
+}
+
+.empty{
   color:var(--muted);
-  padding-top:4px
+  padding:10px 0
 }
 
 @media(max-width:850px){
   .cards{
-    grid-template-columns:repeat(2,1fr)
+    grid-template-columns:1fr 1fr
   }
 }
 
-@media(max-width:600px){
+@media(max-width:650px){
 
-  .cards,
   .grid2,
-  .grid3,
-  .gallery{
+  .gallery,
+  .cards{
     grid-template-columns:1fr
   }
 
-  .app{padding:10px}
-
-  .hero{padding:14px}
-
-  .hero h1{font-size:24px}
-
-  .top{align-items:flex-start}
-
-  .top-actions{width:100%}
-
-  .top-actions .btn{
-    flex:1;
-    text-align:center
+  .top{
+    align-items:flex-start;
+    flex-direction:column
   }
 
-  .tabs{
-    margin-left:-2px;
-    margin-right:-2px
+  .top .actions{
+    width:100%
   }
 
-  .tab{flex:0 0 auto}
-
-  .card{
-    padding:14px;
-    border-radius:15px
+  .top .actions .btn{
+    flex:1
   }
 
-  table{min-width:680px}
-
-  .btn{
-    width:auto;
-    min-width:42px
+  .app{
+    width:94%
   }
-
 }
 </style>
 </head>
 
 <body>
 
-<div id="loginScreen" class="login card">
+<div id="login" class="login card">
 
-  <div
-    class="brand"
-    style="text-align:center"
-  >
+  <div class="brand">
     POOL <span>&</span> BEACH
   </div>
 
-  <h2 style="text-align:center">
-    ⚙️ Administración
-  </h2>
+  <h2>🔐 Administración</h2>
 
   <p class="notice">
     Ingresá con una cuenta autorizada de administrador o staff.
@@ -341,64 +366,61 @@ th{color:var(--muted)}
   <form id="loginForm">
 
     <label>Email</label>
+
     <input
-      id="loginEmail"
+      id="email"
       class="input"
       type="email"
+      autocomplete="username"
       required
-      autocomplete="email"
     >
 
     <label>Contraseña</label>
+
     <input
-      id="loginPassword"
+      id="password"
       class="input"
       type="password"
-      required
       autocomplete="current-password"
+      required
     >
 
-    <button class="btn">
+    <button
+      class="btn"
+      type="submit"
+    >
       Iniciar sesión
     </button>
 
-    <p
-      id="loginMessage"
-      class="notice hidden"
-    ></p>
+    <p id="loginMsg" class="msg hidden"></p>
 
   </form>
 
 </div>
 
-<div id="adminApp" class="app hidden">
+<div id="app" class="app hidden">
 
   <div class="top">
 
     <div>
-
       <div class="brand">
         POOL <span>&</span> BEACH
       </div>
 
-      <small>
-        Panel de administración
+      <small id="userInfo">
+        Panel administrativo
       </small>
-
     </div>
 
-    <div class="top-actions">
+    <div class="actions">
 
-      <span
-        id="connection"
-        class="status"
-      >
-        CONECTANDO
+      <span id="status" class="status">
+        CONECTADO
       </span>
 
       <a
-        class="btn dark"
         href="index.html"
+        class="btn dark"
       >
         Ver sitio
       </a>
@@ -407,76 +429,76 @@ th{color:var(--muted)}
         id="logout"
         class="btn red"
       >
-        Cerrar
+        Cerrar sesión
       </button>
 
     </div>
 
   </div>
 
-  <section class="hero">
+  <div id="newAlert" class="alert hidden"></div>
 
-    <h1>📊 Control total</h1>
+  <section class="hero card">
+
+    <h1>📊 Administración</h1>
 
     <p class="muted">
-      Reservas, pedidos, juegos, trivia, premios, torneos, mesas y fotos.
-      Los cambios se reflejan en el sitio público al actualizar.
+      Reservas, pedidos, productos, promociones,
+      canjes y fotos. Las actividades del local son
+      promocionales: no hay sistema de juegos.
     </p>
 
   </section>
 
   <nav class="tabs">
 
-    <button class="tab active" data-v="dashboard">
+    <button
+      class="tab active"
+      data-view="dashboard"
+    >
       🏠 Inicio
     </button>
 
-    <button class="tab" data-v="reservas">
+    <button
+      class="tab"
+      data-view="reservas"
+    >
       📅 Reservas
     </button>
 
-    <button class="tab" data-v="pedidos">
+    <button
+      class="tab"
+      data-view="pedidos"
+    >
       🛒 Pedidos
     </button>
 
-    <button class="tab" data-v="productos">
+    <button
+      class="tab"
+      data-view="productos"
+    >
       🍔 Productos
     </button>
 
-    <button class="tab" data-v="promociones">
+    <button
+      class="tab"
+      data-view="promos"
+    >
       🔥 Promos
     </button>
 
-    <button class="tab" data-v="juegos">
-      🎮 Juegos
+    <button
+      class="tab"
+      data-view="canjes"
+    >
+      🎁 Canjes
     </button>
 
-    <button class="tab" data-v="trivia">
-      🧠 Trivia
-    </button>
-
-    <button class="tab" data-v="premios">
-      🎁 Premios
-    </button>
-
-    <button class="tab" data-v="torneos">
-      🏆 Torneos
-    </button>
-
-    <button class="tab" data-v="duelo">
-      ⚔️ Duelo
-    </button>
-
-    <button class="tab" data-v="fotos">
+    <button
+      class="tab"
+      data-view="fotos"
+    >
       📸 Fotos
-    </button>
-
-    <button class="tab" data-v="imagenes">
-      🖼️ Imágenes
-    </button>
-
-    <button class="tab" data-v="mesas">
-      🎱 Mesas
     </button>
 
   </nav>
@@ -501,34 +523,31 @@ th{color:var(--muted)}
         </div>
 
         <div class="card metric">
-          <small>Torneos abiertos</small>
-          <b id="mT">0</b>
+          <small>Productos</small>
+          <b id="mProd">0</b>
         </div>
 
         <div class="card metric">
-          <small>Fotos publicadas</small>
+          <small>Fotos</small>
           <b id="mF">0</b>
         </div>
 
       </div>
 
-      <div
-        class="card"
-        style="margin-top:11px"
-      >
+      <div class="card">
 
         <button
           class="btn"
           onclick="refreshAll()"
         >
-          🔄 Actualizar todo ahora
+          🔄 Actualizar todo
         </button>
 
         <div
-          id="activity"
-          class="empty"
+          id="dashMsg"
+          class="notice"
         >
-          Cargando...
+          Panel listo.
         </div>
 
       </div>
@@ -542,21 +561,40 @@ th{color:var(--muted)}
 
       <div class="card">
 
-        <h2>📅 Reservas</h2>
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2>📅 Reservas</h2>
+
+          <button
+            class="btn dark"
+            onclick="loadReservations()"
+          >
+            Actualizar
+          </button>
+
+        </div>
 
         <div class="table-wrap">
 
           <table>
 
             <thead>
+
               <tr>
-                <th>Fecha/hora</th>
+                <th>Fecha</th>
+                <th>Hora</th>
                 <th>Cliente</th>
-                <th>Servicio</th>
+                <th>Teléfono</th>
                 <th>Personas</th>
+                <th>Servicio</th>
+                <th>Mesa</th>
                 <th>Estado</th>
                 <th></th>
               </tr>
+
             </thead>
 
             <tbody id="reservasTable"></tbody>
@@ -576,25 +614,43 @@ th{color:var(--muted)}
 
       <div class="card">
 
-        <h2>🛒 Pedidos</h2>
+        <div
+          class="row"
+          style="justify-content:space-between"
+        >
+
+          <h2>🛒 Pedidos</h2>
+
+          <button
+            class="btn dark"
+            onclick="loadOrders()"
+          >
+            Actualizar
+          </button>
+
+        </div>
 
         <div class="table-wrap">
 
           <table>
 
             <thead>
+
               <tr>
                 <th>Fecha</th>
                 <th>Cliente</th>
                 <th>Teléfono</th>
-                <th>Tipo</th>
+                <th>Entrega</th>
+                <th>Dirección</th>
+                <th>Items</th>
                 <th>Total</th>
                 <th>Estado</th>
                 <th></th>
               </tr>
+
             </thead>
 
-            <tbody id="pedidosTable"></tbody>
+            <tbody id="ordersTable"></tbody>
 
           </table>
 
@@ -613,51 +669,48 @@ th{color:var(--muted)}
 
         <div class="card">
 
-          <h2>🍔 Nuevo producto</h2>
+          <h2>🍔 Producto</h2>
 
           <label>Nombre</label>
-          <input id="prodName" class="input">
+          <input id="pn" class="input">
 
           <label>Categoría</label>
           <input
-            id="prodCat"
+            id="pc"
             class="input"
             placeholder="Pizza, hamburguesa, bebida..."
           >
 
           <label>Descripción</label>
-          <textarea id="prodDesc" class="input"></textarea>
+          <textarea id="pd" class="input"></textarea>
 
           <label>Precio</label>
           <input
-            id="prodPrice"
+            id="pp"
             class="input"
             type="number"
             min="0"
-            step="0.01"
           >
 
-          <div class="row">
-
-            <button
-              class="btn gold"
-              onclick="createProduct()"
+          <label class="checkbox">
+            <input
+              id="pa"
+              type="checkbox"
+              checked
             >
-              Guardar producto
-            </button>
+            Activo y disponible
+          </label>
 
-            <button
-              class="btn dark"
-              onclick="loadProducts()"
-            >
-              🔄 Actualizar
-            </button>
-
-          </div>
+          <button
+            class="btn gold"
+            onclick="createProduct()"
+          >
+            Guardar producto
+          </button>
 
           <p
             id="prodMsg"
-            class="notice hidden"
+            class="msg hidden"
           ></p>
 
         </div>
@@ -675,7 +728,7 @@ th{color:var(--muted)}
     </section>
 
     <section
-      id="promociones"
+      id="promos"
       class="view"
     >
 
@@ -683,7 +736,7 @@ th{color:var(--muted)}
 
         <div class="card">
 
-          <h2>🔥 Nueva promoción</h2>
+          <h2>🔥 Promoción</h2>
 
           <label>Título</label>
           <input id="promoTitle" class="input">
@@ -691,36 +744,33 @@ th{color:var(--muted)}
           <label>Descripción</label>
           <textarea id="promoDesc" class="input"></textarea>
 
-          <label>Precio (opcional)</label>
+          <label>Precio opcional</label>
           <input
             id="promoPrice"
             class="input"
             type="number"
             min="0"
-            step="0.01"
           >
 
-          <div class="row">
-
-            <button
-              class="btn gold"
-              onclick="createPromotion()"
+          <label class="checkbox">
+            <input
+              id="promoActive"
+              type="checkbox"
+              checked
             >
-              Guardar promoción
-            </button>
+            Publicada
+          </label>
 
-            <button
-              class="btn dark"
-              onclick="loadPromotions()"
-            >
-              🔄 Actualizar
-            </button>
-
-          </div>
+          <button
+            class="btn gold"
+            onclick="createPromo()"
+          >
+            Guardar promoción
+          </button>
 
           <p
             id="promoMsg"
-            class="notice hidden"
+            class="msg hidden"
           ></p>
 
         </div>
@@ -729,7 +779,7 @@ th{color:var(--muted)}
 
           <h2>Promociones actuales</h2>
 
-          <div id="promotionsList"></div>
+          <div id="promosList"></div>
 
         </div>
 
@@ -738,7 +788,7 @@ th{color:var(--muted)}
     </section>
 
     <section
-      id="juegos"
+      id="canjes"
       class="view"
     >
 
@@ -746,331 +796,67 @@ th{color:var(--muted)}
 
         <div class="card">
 
-          <h2>🎮 Nuevo juego</h2>
+          <h2>🎁 Nuevo canje</h2>
+
+          <p class="muted">
+            Administrá las opciones de canje sin activar
+            ningún sistema de juegos.
+          </p>
 
           <label>Nombre</label>
-          <input id="gName" class="input">
+          <input id="cn" class="input">
 
           <label>Descripción</label>
-          <textarea id="gDesc" class="input"></textarea>
+          <textarea id="cd" class="input"></textarea>
 
-          <div class="grid2">
-
-            <div>
-              <label>Icono</label>
-              <input
-                id="gIcon"
-                class="input"
-                value="🎮"
-              >
-            </div>
-
-            <div>
-              <label>Puntos</label>
-              <input
-                id="gPoints"
-                class="input"
-                type="number"
-                value="10"
-              >
-            </div>
-
-          </div>
-
-          <label>Fichas</label>
-
+          <label>Costo en tokens</label>
           <input
-            id="gTokens"
-            class="input"
-            type="number"
-            value="5"
-          >
-
-          <button
-            class="btn gold"
-            onclick="createGame()"
-          >
-            Guardar juego
-          </button>
-
-          <button
-            class="btn dark"
-            onclick="loadGames()"
-          >
-            🔄 Actualizar
-          </button>
-
-          <p
-            id="gMsg"
-            class="notice hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Juegos actuales</h2>
-
-          <div id="gamesList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="trivia"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🧠 Nueva pregunta</h2>
-
-          <label>Pregunta</label>
-          <textarea id="qText" class="input"></textarea>
-
-          <label>Opciones — una por línea</label>
-
-          <textarea
-            id="qOptions"
-            class="input"
-            placeholder="Opción A
-Opción B
-Opción C
-Opción D"
-          ></textarea>
-
-          <label>
-            Índice correcto (0 = primera)
-          </label>
-
-          <input
-            id="qCorrect"
-            class="input"
-            type="number"
-            min="0"
-            value="0"
-          >
-
-          <button
-            class="btn gold"
-            onclick="createQuestion()"
-          >
-            Guardar pregunta
-          </button>
-
-          <button
-            class="btn dark"
-            onclick="loadTrivia()"
-          >
-            🔄 Actualizar
-          </button>
-
-          <p
-            id="qMsg"
-            class="notice hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Preguntas cargadas</h2>
-
-          <div id="questionsList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="premios"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🎁 Nuevo premio</h2>
-
-          <label>Nombre</label>
-          <input id="pName" class="input">
-
-          <label>Descripción</label>
-          <textarea id="pDesc" class="input"></textarea>
-
-          <label>Costo en fichas</label>
-          <input
-            id="pCost"
+            id="cc"
             class="input"
             type="number"
             min="1"
-          >
-
-          <label>Stock</label>
-
-          <input
-            id="pStock"
-            class="input"
-            type="number"
-            min="0"
             value="1"
           >
 
-          <button
-            class="btn gold"
-            onclick="createPrize()"
-          >
-            Guardar premio
-          </button>
-
-          <button
-            class="btn dark"
-            onclick="loadPrizes()"
-          >
-            🔄 Actualizar
-          </button>
-
-          <p
-            id="pMsg"
-            class="notice hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Premios actuales</h2>
-
-          <div id="prizesList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="torneos"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🏆 Crear torneo</h2>
-
-          <label>Nombre</label>
-          <input id="tName" class="input">
-
-          <label>Juego / tipo</label>
+          <label>Stock</label>
           <input
-            id="tGame"
-            class="input"
-            value="Pool"
-          >
-
-          <label>Fecha y hora</label>
-
-          <input
-            id="tDate"
-            class="input"
-            type="datetime-local"
-          >
-
-          <label>Máximo jugadores</label>
-
-          <input
-            id="tMax"
-            class="input"
-            type="number"
-            min="2"
-            value="16"
-          >
-
-          <label>Inscripción en fichas</label>
-
-          <input
-            id="tEntry"
+            id="cs"
             class="input"
             type="number"
             min="0"
             value="0"
           >
 
-          <button
-            class="btn gold"
-            onclick="createTournament()"
-          >
-            Crear torneo
-          </button>
+          <label class="checkbox">
+            <input
+              id="ca"
+              type="checkbox"
+              checked
+            >
+            Activo
+          </label>
 
           <button
-            class="btn dark"
-            onclick="loadTournaments()"
+            class="btn gold"
+            onclick="createCanje()"
           >
-            🔄 Actualizar
+            Guardar canje
           </button>
 
           <p
-            id="tMsg"
-            class="notice hidden"
+            id="canjeMsg"
+            class="msg hidden"
           ></p>
 
         </div>
 
         <div class="card">
 
-          <h2>Torneos</h2>
+          <h2>Canjes actuales</h2>
 
-          <div id="tournamentsList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="duelo"
-      class="view"
-    >
-
-      <div class="card">
-
-        <div
-          class="row"
-          style="justify-content:space-between"
-        >
-
-          <div>
-
-            <h2>⚔️ Duelo</h2>
-
-            <p class="muted">
-              Supervisá duelos, puntajes y resultados en tiempo real.
-            </p>
-
-          </div>
-
-          <button
-            class="btn dark"
-            onclick="loadDuels()"
-          >
-            🔄 Actualizar duelos
-          </button>
+          <div id="canjesList"></div>
 
         </div>
-
-        <div id="duelsList"></div>
 
       </div>
 
@@ -1085,12 +871,12 @@ Opción D"
 
         <div class="card">
 
-          <h2>📸 Cargar foto desde el teléfono</h2>
+          <h2>📸 Subir foto</h2>
 
           <p class="muted">
-            Elegí una imagen de tu galería.
-            Se sube directamente a Supabase Storage,
-            carpeta Galeria.
+            Elegí una foto directamente desde el celular
+            o la galería. Se guarda en el bucket
+            <strong>Galeria</strong>.
           </p>
 
           <label>Título</label>
@@ -1098,10 +884,10 @@ Opción D"
           <input
             id="photoTitle"
             class="input"
-            placeholder="Ej. Noche de Pool & Beach"
+            placeholder="Ej.: Local, pool, comida..."
           >
 
-          <label>Archivo</label>
+          <label>Foto</label>
 
           <input
             id="photoFile"
@@ -1110,23 +896,23 @@ Opción D"
             accept="image/jpeg,image/png,image/webp,image/gif"
           >
 
-          <button
-            class="btn gold"
-            onclick="uploadPhoto()"
+          <img
+            id="preview"
+            class="thumb hidden"
+            alt="Vista previa"
           >
-            ⬆️ Subir y publicar
-          </button>
 
           <button
-            class="btn dark"
-            onclick="loadGallery()"
+            class="btn green"
+            type="button"
+            onclick="uploadPhoto()"
           >
-            🔄 Actualizar
+            ⬆️ Subir foto
           </button>
 
           <p
             id="photoMsg"
-            class="notice hidden"
+            class="msg hidden"
           ></p>
 
         </div>
@@ -1146,2995 +932,1536 @@ Opción D"
 
     </section>
 
-    <section
-      id="imagenes"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🖼️ Cargar imagen a un contenido</h2>
-
-          <p class="muted">
-            Elegí desde tu teléfono una imagen para un juego,
-            pregunta de trivia, torneo o premio.
-            Se guarda en Supabase Storage y actualiza automáticamente
-            la imagen del contenido.
-          </p>
-
-          <label>Sección</label>
-
-          <select
-            id="mediaType"
-            class="input"
-          >
-            <option value="productos">🍔 Productos</option>
-            <option value="promociones">🔥 Promos</option>
-            <option value="games">🎮 Juegos</option>
-            <option value="trivia_questions">🧠 Trivia</option>
-            <option value="tournaments">🏆 Torneos</option>
-            <option value="prizes">🎁 Premios</option>
-          </select>
-
-          <label>Contenido</label>
-
-          <select
-            id="mediaItem"
-            class="input"
-          ></select>
-
-          <label>Imagen desde el teléfono</label>
-
-          <input
-            id="mediaFile"
-            class="input"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif"
-          >
-
-          <img
-            id="mediaPreview"
-            class="thumb hidden"
-            alt="Vista previa"
-          >
-
-          <div class="row">
-
-            <button
-              id="uploadMediaBtn"
-              class="btn gold"
-              type="button"
-              onclick="uploadMedia()"
-            >
-              📷 Subir imagen
-            </button>
-
-            <button
-              class="btn dark"
-              type="button"
-              onclick="clearMediaForm()"
-            >
-              Limpiar
-            </button>
-
-            <button
-              class="btn dark"
-              type="button"
-              onclick="loadMediaItems()"
-            >
-              🔄 Actualizar
-            </button>
-
-          </div>
-
-          <p
-            id="mediaMessage"
-            class="notice hidden"
-          ></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Imagen actual</h2>
-
-          <div
-            id="mediaCurrent"
-            class="empty"
-          >
-            Seleccioná un contenido.
-          </div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section
-      id="mesas"
-      class="view"
-    >
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🎱 Crear / configurar mesa</h2>
-
-          <label>Número de mesa</label>
-
-          <input
-            id="mesaNumero"
-            class="input"
-            type="number"
-            min="1"
-            placeholder="1"
-          >
-
-          <label>Nombre</label>
-
-          <input
-            id="mesaNombre"
-            class="input"
-            placeholder="Mesa 1"
-          >
-
-          <button
-            class="btn gold"
-            onclick="createMesa()"
-          >
-            ➕ Crear mesa
-          </button>
-
-          <button
-            class="btn dark"
-            onclick="loadMesas()"
-          >
-            🔄 Actualizar
-          </button>
-
-          <p
-            id="mesaMsg"
-            class="notice hidden"
-          ></p>
-
-          <div class="notice">
-            Después de crearla, el panel genera el QR automáticamente.
-            Podés descargarlo o imprimirlo.
-          </div>
-
-        </div>
-
-        <div class="card">
-
-          <div
-            class="row"
-            style="justify-content:space-between"
-          >
-
-            <h2>📱 QRs de mesas</h2>
-
-            <button
-              class="btn"
-              onclick="loadMesas()"
-            >
-              🔄 Actualizar
-            </button>
-
-          </div>
-
-          <div id="mesasList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
   </main>
 
 </div>
 
 <script>
 
-const SB_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+const SUPABASE_URL=
+  'https://nmpakeovqkdajtswjpgm.supabase.co';
 
-const SB_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const SUPABASE_KEY=
+  'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
 
-const db =
+const db=
   window.supabase.createClient(
-    SB_URL,
-    SB_KEY
+    SUPABASE_URL,
+    SUPABASE_KEY
   );
 
-const $ =
-  id=>document.getElementById(id);
+const $=id=>
+  document.getElementById(id);
 
-let reservations=[];
-let orders=[];
-let adminRealtimeStarted=false;
-
-const esc =
-  v=>String(v??'')
-    .replaceAll('&','&amp;')
-    .replaceAll('<','&lt;')
-    .replaceAll('>','&gt;')
-    .replaceAll('"','&quot;')
-    .replaceAll("'",'&#039;');
-
-const safeUrl =
-  v=>{
-    try{
-      const u=
-        new URL(
-          String(v??''),
-          location.href
-        );
-
-      return
-        ['http:','https:']
-          .includes(u.protocol)
-          ? u.href
-          : '';
-
-    }catch{
-      return '';
+const money=n=>
+  new Intl.NumberFormat(
+    'es-AR',
+    {
+      style:'currency',
+      currency:'ARS',
+      maximumFractionDigits:0
     }
-  };
+  ).format(Number(n)||0);
 
-const msg =
-  (id,text)=>{
-    const e=$(id);
+const esc=v=>
+  String(v??'').replace(
+    /[&<>"']/g,
+    c=>({
+      '&':'&amp;',
+      '<':'&lt;',
+      '>':'&gt;',
+      '"':'&quot;',
+      "'":'&#039;'
+    }[c])
+  );
 
-    if(!e)return;
+function msg(id,text,ok=false){
 
-    e.textContent=text;
+  const e=$(id);
 
-    e.classList.remove('hidden');
+  e.textContent=text;
 
-    setTimeout(
-      ()=>e.classList.add('hidden'),
-      4500
+  e.className=
+    'msg '+
+    (ok?'ok':'error');
+
+  e.classList.remove('hidden');
+}
+
+function showView(view){
+
+  document
+    .querySelectorAll('.tab')
+    .forEach(x=>
+      x.classList.toggle(
+        'active',
+        x.dataset.view===view
+      )
     );
-  };
-
-const money =
-  v=>'$'+
-    Number(v||0)
-      .toLocaleString('es-AR');
-
-function show(view){
 
   document
     .querySelectorAll('.view')
-    .forEach(
-      x=>x.classList.toggle(
+    .forEach(x=>
+      x.classList.toggle(
         'active',
         x.id===view
       )
     );
 
-  document
-    .querySelectorAll('.tab')
-    .forEach(
-      x=>x.classList.toggle(
-        'active',
-        x.dataset.v===view
-      )
-    );
-
-  const functions={
-
-    productos:loadProducts,
-    promociones:loadPromotions,
-    juegos:loadGames,
-    trivia:loadTrivia,
-    premios:loadPrizes,
-    torneos:loadTournaments,
-    fotos:loadGallery,
-    imagenes:loadMediaItems,
-    mesas:loadMesas,
-    reservas:loadReservations,
-    pedidos:loadOrders
-
-  };
-
-  const fn=functions[view];
-
-  if(fn)fn();
-
+  if(view==='reservas')loadReservations();
+  if(view==='pedidos')loadOrders();
+  if(view==='productos')loadProducts();
+  if(view==='promos')loadPromos();
+  if(view==='canjes')loadCanjes();
+  if(view==='fotos')loadGallery();
 }
 
 document
   .querySelectorAll('.tab')
-  .forEach(
-    button=>{
-      button.onclick=
-        ()=>show(button.dataset.v);
-    }
+  .forEach(t=>
+    t.addEventListener(
+      'click',
+      ()=>showView(t.dataset.view)
+    )
   );
 
-$('loginForm').onsubmit =
-  async event=>{
+/* =========================
+   AUTENTICACIÓN
+========================= */
 
-    event.preventDefault();
+async function requireAdmin(){
 
-    const result =
+  const s=
+    await db.auth.getSession();
+
+  if(!s.data?.session){
+    throw new Error(
+      'Sesión no iniciada.'
+    );
+  }
+
+  const p=
+    await db
+      .from('profiles')
+      .select(
+        'role,display_name'
+      )
+      .eq(
+        'id',
+        s.data.session.user.id
+      )
+      .maybeSingle();
+
+  if(p.error)throw p.error;
+
+  if(
+    !p.data ||
+    !['admin','staff'].includes(
+      p.data.role
+    )
+  ){
+    throw new Error(
+      'La cuenta ingresó a Supabase, pero no tiene rol admin/staff en profiles.'
+    );
+  }
+
+  $('userInfo').textContent=
+    (
+      p.data.display_name ||
+      s.data.session.user.email
+    )+
+    ' · '+
+    p.data.role;
+}
+
+async function enter(){
+
+  try{
+
+    await requireAdmin();
+
+    $('login').classList.add(
+      'hidden'
+    );
+
+    $('app').classList.remove(
+      'hidden'
+    );
+
+    await refreshAll();
+
+    startRealtime();
+
+  }catch(e){
+
+    $('login').classList.remove(
+      'hidden'
+    );
+
+    $('app').classList.add(
+      'hidden'
+    );
+
+    msg(
+      'loginMsg',
+      '❌ '+(
+        e.message ||
+        'No se pudo iniciar sesión.'
+      )
+    );
+  }
+}
+
+$('loginForm').addEventListener(
+  'submit',
+  async e=>{
+
+    e.preventDefault();
+
+    const r=
       await db.auth.signInWithPassword({
-
-        email:
-          $('loginEmail')
-            .value
-            .trim(),
-
-        password:
-          $('loginPassword')
-            .value
-
+        email:$('email').value.trim(),
+        password:$('password').value
       });
 
-    if(result.error){
+    if(r.error){
 
       return msg(
-        'loginMessage',
-        '❌ Email o contraseña incorrectos.'
+        'loginMsg',
+        '❌ '+r.error.message
       );
-
     }
 
-    await initAdmin();
+    await enter();
+  }
+);
 
-  };
-
-$('logout').onclick =
+$('logout').onclick=
   async()=>{
-
     await db.auth.signOut();
-
     location.reload();
-
   };
 
-async function init(){
-
-  const result =
-    await db.auth.getSession();
-
-  if(result.error){
-
-    msg(
-      'loginMessage',
-      '❌ Error de autenticación: ' +
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  if(result.data.session){
-
-    await initAdmin();
-
-  }
-
-}
-
-async function initAdmin(){
-
-  const session =
-    await db.auth.getSession();
-
-  if(
-    session.error ||
-    !session.data?.session
-  ){
-
-    $('loginScreen')
-      .classList
-      .remove('hidden');
-
-    $('adminApp')
-      .classList
-      .add('hidden');
-
-    msg(
-      'loginMessage',
-      '❌ La sesión no está disponible. Volvé a iniciar sesión.'
-    );
-
-    return;
-
-  }
-
-  const admin =
-    await db.rpc(
-      'is_admin_or_staff'
-    );
-
-  if(
-    admin.error ||
-    admin.data!==true
-  ){
-
-    await db.auth.signOut();
-
-    $('loginScreen')
-      .classList
-      .remove('hidden');
-
-    $('adminApp')
-      .classList
-      .add('hidden');
-
-    msg(
-      'loginMessage',
-      '❌ La cuenta no tiene permisos de administrador/staff.'
-    );
-
-    return;
-
-  }
-
-  $('loginScreen')
-    .classList
-    .add('hidden');
-
-  $('adminApp')
-    .classList
-    .remove('hidden');
-
-  $('connection').textContent =
-    '● CONECTADO';
-
-  if(!adminRealtimeStarted){
-
-    subscribeRealtime();
-
-    adminRealtimeStarted=true;
-
-  }
-
-  await refreshAll();
-
-}
-
-async function refreshAll(){
-
-  await Promise.all([
-
-    loadReservations(),
-    loadOrders(),
-    loadProducts(),
-    loadPromotions(),
-    loadTournaments(),
-    loadGallery(),
-    loadGames(),
-    loadTrivia(),
-    loadPrizes(),
-    loadMesas(),
-    loadDuels()
-
-  ]);
-
-  $('mR').textContent =
-    reservations.filter(
-      x=>
-        String(x.estado||'')
-          .toLowerCase()==='pendiente'
-    ).length;
-
-  $('mP').textContent =
-    orders.filter(
-      x=>
-        String(x.estado||'')
-          .toLowerCase()==='pendiente'
-    ).length;
-
-  $('mT').textContent =
-    document
-      .querySelectorAll(
-        '#tournamentsList .notice'
-      )
-      .length;
-
-  $('mF').textContent =
-    document
-      .querySelectorAll(
-        '#galleryList figure'
-      )
-      .length;
-
-  $('activity').textContent =
-    '✅ Datos actualizados correctamente.';
-
-}
+/* =========================
+   RESERVAS
+========================= */
 
 async function loadReservations(){
 
-  const result =
+  const r=
     await db
       .from('reservas')
       .select('*')
-      .order('fecha')
-      .order('hora')
-      .limit(100);
+      .order(
+        'fecha',
+        {ascending:true}
+      )
+      .order(
+        'hora',
+        {ascending:true}
+      );
 
-  if(result.error)return;
+  if(r.error){
 
-  reservations =
-    result.data||[];
+    $('reservasTable').innerHTML=
+      '<tr><td colspan="9">❌ '+
+      esc(r.error.message)+
+      '</td></tr>';
 
-  $('reservasTable').innerHTML =
-    reservations
-      .map(x=>`
+    return;
+  }
 
+  const rows=r.data||[];
+
+  $('mR').textContent=
+    rows.filter(
+      x=>x.estado==='pendiente'
+    ).length;
+
+  $('reservasTable').innerHTML=
+
+    rows.map(x=>{
+
+      const m=
+        (
+          String(
+            x.notas||''
+          ).match(
+            /\[MESA_POOL:(1|2|3)\]/
+          )||[]
+        )[1]||'—';
+
+      return `
         <tr>
 
-          <td>
-            ${esc(x.fecha)}
-            <br>
-            ${esc(x.hora)}
-          </td>
+          <td>${esc(x.fecha||'')}</td>
 
-          <td>
-            <b>${esc(x.nombre)}</b>
-            <br>
-            <small>${esc(x.telefono)}</small>
-          </td>
+          <td>${esc(x.hora||'')}</td>
 
-          <td>${esc(x.servicio)}</td>
+          <td>${esc(x.nombre||'')}</td>
 
-          <td>${esc(x.cantidad_personas)}</td>
+          <td>${esc(x.telefono||'')}</td>
 
-          <td>${esc(x.estado)}</td>
+          <td>${esc(x.cantidad_personas||'')}</td>
+
+          <td>${esc(x.servicio||'')}</td>
+
+          <td>${m}</td>
 
           <td>
 
-            <button
-              class="btn green"
-              onclick="setReserva('${x.id}','confirmada')"
+            <select
+              onchange="updateReservation('${x.id}',this.value)"
             >
-              ✓
-            </button>
+
+              <option
+                ${x.estado==='pendiente'?'selected':''}
+              >
+                pendiente
+              </option>
+
+              <option
+                ${x.estado==='confirmada'?'selected':''}
+              >
+                confirmada
+              </option>
+
+              <option
+                ${x.estado==='cancelada'?'selected':''}
+              >
+                cancelada
+              </option>
+
+            </select>
+
+          </td>
+
+          <td>
 
             <button
               class="btn red"
-              onclick="setReserva('${x.id}','cancelada')"
+              onclick="deleteReservation('${x.id}')"
             >
-              ×
+              Eliminar
             </button>
 
           </td>
 
         </tr>
+      `;
 
-      `)
-      .join('') ||
+    }).join('')
 
-    '<tr><td colspan="6" class="empty">No hay reservas.</td></tr>';
-
+    ||
+    '<tr><td colspan="9">No hay reservas.</td></tr>';
 }
 
-async function setReserva(id,estado){
+async function updateReservation(
+  id,
+  state
+){
 
-  const result =
+  const r=
     await db
       .from('reservas')
-      .update({estado})
+      .update({
+        estado:state
+      })
       .eq('id',id);
 
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
+  if(r.error){
+    alert(r.error.message);
   }
 
-  await refreshAll();
+  await loadReservations();
+  await loadMetrics();
+}
 
+async function deleteReservation(id){
+
+  if(
+    !confirm(
+      '¿Eliminar reserva?'
+    )
+  )return;
+
+  const r=
+    await db
+      .from('reservas')
+      .delete()
+      .eq('id',id);
+
+  if(r.error){
+    return alert(
+      r.error.message
+    );
+  }
+
+  await loadReservations();
+  await loadMetrics();
+}
+
+/* =========================
+   PEDIDOS
+========================= */
+
+function itemsText(items){
+
+  return Array.isArray(items)
+
+    ? items.map(i=>
+        `${i.cantidad||0}× ${
+          i.nombre_producto||
+          'Producto'
+        } — ${
+          money(i.subtotal||0)
+        }`
+      ).join('\n')
+
+    : JSON.stringify(
+        items||[]
+      );
 }
 
 async function loadOrders(){
 
-  const result =
+  const r=
     await db
       .from('pedidos')
-      .select('*')
-      .order(
-        'created_at',
-        {ascending:false}
-      )
-      .limit(100);
-
-  const el=$('pedidosTable');
-
-  if(result.error){
-
-    orders=[];
-
-    el.innerHTML =
-      `<tr>
-        <td colspan="7" class="empty">
-          ❌ No se pudieron cargar los pedidos:
-          ${esc(result.error.message)}
-        </td>
-      </tr>`;
-
-    return;
-
-  }
-
-  orders =
-    result.data||[];
-
-  el.innerHTML =
-    orders
-      .map(x=>{
-
-        const items =
-          Array.isArray(x.items)
-            ? x.items
-            : [];
-
-        const detalle =
-          items.length
-            ? items
-                .map(
-                  i=>
-                    `${i.cantidad||1}× ${i.nombre_producto||i.nombre||'Producto'}`
-                )
-                .join(', ')
-            : '';
-
-        const fecha =
-          x.created_at
-            ? new Date(
-                x.created_at
-              ).toLocaleString(
-                'es-AR'
-              )
-            : '—';
-
-        return `
-
-          <tr>
-
-            <td>
-              ${esc(fecha)}
-            </td>
-
-            <td>
-              <b>
-                ${esc(
-                  x.nombre_cliente||'—'
-                )}
-              </b>
-
-              ${
-                x.mesa
-                  ? `<br>
-                     <small>
-                       🎱 Mesa ${esc(x.mesa)}
-                     </small>`
-                  : ''
-              }
-
-            </td>
-
-            <td>
-              ${esc(
-                x.telefono||'—'
-              )}
-            </td>
-
-            <td>
-              ${esc(
-                x.tipo_entrega||
-                x.tipo||
-                '—'
-              )}
-
-              ${
-                x.direccion
-                  ? `<br>
-                     <small>
-                       📍 ${esc(x.direccion)}
-                     </small>`
-                  : ''
-              }
-
-            </td>
-
-            <td>
-
-              <b>
-                ${money(x.total)}
-              </b>
-
-              ${
-                detalle
-                  ? `<br>
-                     <small>
-                       ${esc(detalle)}
-                     </small>`
-                  : ''
-              }
-
-              ${
-                x.notas
-                  ? `<br>
-                     <small>
-                       📝 ${esc(x.notas)}
-                     </small>`
-                  : ''
-              }
-
-            </td>
-
-            <td>
-              <b>
-                ${esc(
-                  x.estado||
-                  'pendiente'
-                )}
-              </b>
-            </td>
-
-            <td>
-
-              <div class="row">
-
-                <button
-                  class="btn green"
-                  onclick="setPedido('${x.id}','confirmado')"
-                >
-                  ✓ Confirmar
-                </button>
-
-                <button
-                  class="btn dark"
-                  onclick="setPedido('${x.id}','preparando')"
-                >
-                  🍳 Preparar
-                </button>
-
-                <button
-                  class="btn red"
-                  onclick="setPedido('${x.id}','cancelado')"
-                >
-                  × Cancelar
-                </button>
-
-              </div>
-
-            </td>
-
-          </tr>
-
-        `;
-
-      })
-      .join('') ||
-
-    '<tr><td colspan="7" class="empty">No hay pedidos.</td></tr>';
-
-}
-
-async function setPedido(id,estado){
-
-  const result =
-    await db
-      .from('pedidos')
-      .update({estado})
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await refreshAll();
-
-}
-
-async function loadProducts(){
-
-  const result =
-    await db
-      .from('productos')
       .select('*')
       .order(
         'created_at',
         {ascending:false}
       );
 
-  const data =
-    result.data||[];
+  if(r.error){
 
-  const el=
-    $('productsList');
-
-  if(!el)return;
-
-  if(result.error){
-
-    el.innerHTML =
-      '<div class="notice">❌ '+
-      esc(result.error.message)+
-      '</div>';
+    $('ordersTable').innerHTML=
+      '<tr><td colspan="9">❌ '+
+      esc(r.error.message)+
+      '</td></tr>';
 
     return;
-
   }
 
-  el.innerHTML =
-    data
-      .map(x=>`
+  const rows=r.data||[];
 
-        <div class="notice">
+  $('mP').textContent=
+    rows.filter(
+      x=>[
+        'pendiente',
+        'confirmado',
+        'preparando',
+        'listo'
+      ].includes(x.estado)
+    ).length;
 
-          <b>
-            🍔 ${esc(x.nombre)}
-          </b>
+  $('ordersTable').innerHTML=
 
-          ·
-          $${Number(
-            x.precio||0
-          ).toLocaleString('es-AR')}
+    rows.map(o=>`
 
-          <br>
+      <tr>
 
-          <small>
-            ${esc(x.categoria)}
-            ·
-            ${esc(x.descripcion||'')}
-          </small>
+        <td>
+          ${esc(o.created_at||'')}
+        </td>
 
-          <br>
+        <td>
+          ${esc(
+            o.nombre_cliente||''
+          )}
+        </td>
+
+        <td>
+          ${esc(
+            o.telefono||''
+          )}
+        </td>
+
+        <td>
+          ${esc(
+            o.tipo_entrega||
+            o.tipo||
+            ''
+          )}
+        </td>
+
+        <td>
+          ${esc(
+            o.direccion||
+            '—'
+          )}
+        </td>
+
+        <td>
+
+          <pre
+            style="
+              white-space:pre-wrap;
+              margin:0
+            "
+          >${esc(
+            itemsText(o.items)
+          )}</pre>
+
+        </td>
+
+        <td>
+          ${money(o.total)}
+        </td>
+
+        <td>
+
+          <select
+            onchange="updateOrder('${o.id}',this.value)"
+          >
+
+            ${
+              [
+                'pendiente',
+                'confirmado',
+                'preparando',
+                'listo',
+                'entregado',
+                'cancelado'
+              ].map(s=>
+                `<option
+                  ${o.estado===s?'selected':''}
+                >
+                  ${s}
+                </option>`
+              ).join('')
+            }
+
+          </select>
+
+        </td>
+
+        <td>
 
           <button
-            class="btn ${
-              x.activo
-                ? 'red'
-                : 'green'
-            }"
-            onclick="toggleProduct(
-              '${x.id}',
-              ${!x.activo}
-            )"
+            class="btn dark"
+            onclick="viewOrder('${o.id}')"
           >
-            ${
-              x.activo
-                ? 'Desactivar'
-                : 'Activar'
-            }
+            Ver
           </button>
 
           <button
             class="btn red"
-            onclick="deleteProduct('${x.id}')"
+            onclick="deleteOrder('${o.id}')"
           >
-            🗑️ Eliminar
+            Eliminar
           </button>
 
-        </div>
+        </td>
 
-      `)
-      .join('') ||
+      </tr>
 
-    '<div class="empty">No hay productos.</div>';
+    `).join('')
 
+    ||
+    '<tr><td colspan="9">No hay pedidos.</td></tr>';
 }
+
+async function updateOrder(
+  id,
+  state
+){
+
+  const r=
+    await db
+      .from('pedidos')
+      .update({
+        estado:state
+      })
+      .eq('id',id);
+
+  if(r.error){
+    alert(r.error.message);
+  }
+
+  await loadOrders();
+  await loadMetrics();
+}
+
+async function deleteOrder(id){
+
+  if(
+    !confirm(
+      '¿Eliminar pedido?'
+    )
+  )return;
+
+  const r=
+    await db
+      .from('pedidos')
+      .delete()
+      .eq('id',id);
+
+  if(r.error){
+
+    return alert(
+      r.error.message
+    );
+  }
+
+  await loadOrders();
+  await loadMetrics();
+}
+
+async function viewOrder(id){
+
+  const r=
+    await db
+      .from('pedidos')
+      .select('*')
+      .eq('id',id)
+      .single();
+
+  if(r.error){
+
+    return alert(
+      r.error.message
+    );
+  }
+
+  const o=r.data;
+
+  alert(
+    `Pedido de ${
+      o.nombre_cliente||'cliente'
+    }\n\n${
+      itemsText(o.items)
+    }\n\nNotas: ${
+      o.notas||
+      'Sin notas'
+    }`
+  );
+}
+
+/* =========================
+   PRODUCTOS
+========================= */
 
 async function createProduct(){
 
-  const nombre=
-    $('prodName')
-      .value
-      .trim();
-
-  const categoria=
-    $('prodCat')
-      .value
-      .trim();
-
-  const precio=
-    Number(
-      $('prodPrice').value
-    );
-
-  if(
-    !nombre ||
-    !categoria ||
-    !Number.isFinite(precio) ||
-    precio<0
-  ){
-
-    return msg(
-      'prodMsg',
-      '❌ Completá nombre, categoría y precio.'
-    );
-
-  }
-
-  const result =
-    await db
-      .from('productos')
-      .insert({
-
-        nombre,
-        categoria,
-
-        descripcion:
-          $('prodDesc')
-            .value
-            .trim(),
-
-        precio,
-
-        disponible:true,
-
-        activo:true
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'prodMsg',
-      '❌ '+result.error.message
-    );
-
-  }
-
-  $('prodName').value='';
-  $('prodCat').value='';
-  $('prodDesc').value='';
-  $('prodPrice').value='';
-
-  msg(
-    'prodMsg',
-    '✅ Producto guardado.'
-  );
-
-  loadProducts();
-
-}
-
-async function toggleProduct(
-  id,
-  activo
-){
-
-  const result =
-    await db
-      .from('productos')
-      .update({
-        activo,
-        disponible:activo
-      })
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo cambiar el estado: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  loadProducts();
-
-}
-
-async function deleteProduct(id){
-
-  if(
-    !confirm(
-      '¿Eliminar este producto? Esta acción no se puede deshacer.'
-    )
-  )return;
-
-  const result =
-    await db
-      .from('productos')
-      .delete()
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo eliminar el producto: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  loadProducts();
-
-}
-
-async function loadPromotions(){
-
-  const result =
-    await db
-      .from('promociones')
-      .select('*')
-      .order(
-        'created_at',
-        {ascending:false}
-      );
-
-  const data =
-    result.data||[];
-
-  const el=
-    $('promotionsList');
-
-  if(!el)return;
-
-  if(result.error){
-
-    el.innerHTML =
-      '<div class="notice">❌ '+
-      esc(result.error.message)+
-      '</div>';
-
-    return;
-
-  }
-
-  el.innerHTML =
-    data
-      .map(x=>`
-
-        <div class="notice">
-
-          <b>
-            🔥 ${esc(x.titulo)}
-          </b>
-
-          ${
-            x.precio!=null
-              ? ' · $'+
-                Number(
-                  x.precio
-                ).toLocaleString(
-                  'es-AR'
-                )
-              : ''
-          }
-
-          <br>
-
-          <small>
-            ${esc(x.descripcion||'')}
-          </small>
-
-          <br>
-
-          <button
-            class="btn ${
-              x.activa
-                ? 'red'
-                : 'green'
-            }"
-            onclick="togglePromotion(
-              '${x.id}',
-              ${!x.activa}
-            )"
-          >
-            ${
-              x.activa
-                ? 'Desactivar'
-                : 'Activar'
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deletePromotion('${x.id}')"
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      `)
-      .join('') ||
-
-    '<div class="empty">No hay promociones.</div>';
-
-}
-
-async function createPromotion(){
-
-  const titulo=
-    $('promoTitle')
-      .value
-      .trim();
-
-  if(!titulo){
-
-    return msg(
-      'promoMsg',
-      '❌ Falta el título.'
-    );
-
-  }
-
-  const raw=
-    $('promoPrice')
-      .value
-      .trim();
-
-  const precio=
-    raw===''
-      ? null
-      : Number(raw);
-
-  if(
-    precio!==null &&
-    (
-      !Number.isFinite(precio) ||
-      precio<0
-    )
-  ){
-
-    return msg(
-      'promoMsg',
-      '❌ Precio inválido.'
-    );
-
-  }
-
-  const result =
-    await db
-      .from('promociones')
-      .insert({
-
-        titulo,
-
-        descripcion:
-          $('promoDesc')
-            .value
-            .trim(),
-
-        precio,
-
-        activa:true
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'promoMsg',
-      '❌ '+result.error.message
-    );
-
-  }
-
-  $('promoTitle').value='';
-  $('promoDesc').value='';
-  $('promoPrice').value='';
-
-  msg(
-    'promoMsg',
-    '✅ Promoción guardada.'
-  );
-
-  loadPromotions();
-
-}
-
-async function togglePromotion(
-  id,
-  activa
-){
-
-  const result =
-    await db
-      .from('promociones')
-      .update({activa})
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo cambiar el estado: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  loadPromotions();
-
-}
-
-async function deletePromotion(id){
-
-  if(
-    !confirm(
-      '¿Eliminar esta promoción? Esta acción no se puede deshacer.'
-    )
-  )return;
-
-  const result =
-    await db
-      .from('promociones')
-      .delete()
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo eliminar la promoción: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  loadPromotions();
-
-}
-
-async function loadGames(){
-
-  const result =
-    await db
-      .from('games')
-      .select('*')
-      .order('created_at');
-
-  const data =
-    result.data||[];
-
-  $('gamesList').innerHTML =
-    data
-      .map(x=>`
-
-        <div class="notice">
-
-          <b>
-            ${esc(x.icon||'🎮')}
-            ${esc(x.name)}
-          </b>
-
-          ·
-          ${x.points_reward||0} pts
-          ·
-          ${x.tokens_reward||0} fichas
-
-          <br>
-
-          <small>
-            ${esc(x.description||'')}
-          </small>
-
-          <br>
-
-          <button
-            class="btn ${
-              x.active
-                ? 'red'
-                : 'green'
-            }"
-            onclick="toggleGame(
-              '${x.id}',
-              ${!x.active}
-            )"
-          >
-            ${
-              x.active
-                ? 'Desactivar'
-                : 'Activar'
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deleteGame('${x.id}')"
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      `)
-      .join('') ||
-
-    '<div class="empty">No hay juegos.</div>';
-
-}
-
-async function toggleGame(id,active){
-
-  const result =
-    await db
-      .from('games')
-      .update({active})
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  loadGames();
-
-}
-
-async function deleteGame(id){
-
-  if(
-    !confirm(
-      '¿Eliminar este juego? Esta acción no se puede deshacer.'
-    )
-  )return;
-
-  const result =
-    await db
-      .from('games')
-      .delete()
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo eliminar el juego: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await loadGames();
-
-  msg(
-    'gMsg',
-    '✅ Juego eliminado.'
-  );
-
-}
-
-async function createGame(){
-
   const name=
-    $('gName')
-      .value
-      .trim();
+    $('pn').value.trim();
 
   if(!name){
 
     return msg(
-      'gMsg',
+      'prodMsg',
       '❌ Falta el nombre.'
     );
-
   }
 
-  const result =
+  const payload={
+    nombre:name,
+    categoria:
+      $('pc').value.trim()||
+      'General',
+    descripcion:
+      $('pd').value.trim(),
+    precio:
+      Number(
+        $('pp').value||0
+      ),
+    activo:
+      $('pa').checked,
+    disponible:
+      $('pa').checked
+  };
+
+  const r=
     await db
-      .from('games')
-      .insert({
+      .from('productos')
+      .insert(payload);
 
-        name,
-
-        description:
-          $('gDesc')
-            .value
-            .trim(),
-
-        icon:
-          $('gIcon')
-            .value
-            .trim() ||
-          '🎮',
-
-        points_reward:
-          Number(
-            $('gPoints').value
-          )||0,
-
-        tokens_reward:
-          Number(
-            $('gTokens').value
-          )||0,
-
-        active:true
-
-      });
-
-  if(result.error){
+  if(r.error){
 
     return msg(
-      'gMsg',
-      '❌ '+result.error.message
+      'prodMsg',
+      '❌ '+r.error.message
     );
-
   }
 
   msg(
-    'gMsg',
-    '✅ Juego guardado.'
+    'prodMsg',
+    '✅ Producto guardado.',
+    true
   );
 
-  $('gName').value='';
+  [
+    'pn',
+    'pc',
+    'pd',
+    'pp'
+  ].forEach(
+    id=>$(id).value=''
+  );
 
-  loadGames();
+  $('pa').checked=true;
 
+  await loadProducts();
+  await loadMetrics();
 }
 
-async function loadTrivia(){
+async function loadProducts(){
 
-  const result =
+  const r=
     await db
-      .from('trivia_questions')
+      .from('productos')
       .select('*')
-      .order(
-        'created_at',
-        {ascending:false}
-      )
-      .limit(100);
+      .order('categoria')
+      .order('nombre');
 
-  const data =
-    result.data||[];
+  if(r.error){
 
-  $('questionsList').innerHTML =
-    data
-      .map(x=>`
+    $('productsList').innerHTML=
+      '<div class="notice">❌ '+
+      esc(r.error.message)+
+      '</div>';
 
-        <div class="notice">
+    return;
+  }
 
-          <b>
-            ${esc(x.question)}
-          </b>
+  const rows=r.data||[];
 
-          <br>
+  $('mProd').textContent=
+    rows.length;
 
-          <small>
-            ${esc(
-              JSON.stringify(
-                x.options
-              )
-            )}
-            · correcta:
-            ${x.correct_index}
-          </small>
+  $('productsList').innerHTML=
 
-          <br>
+    rows.map(p=>
+      `<div class="item">
+
+        <strong>
+          ${esc(p.nombre)}
+        </strong>
+
+        <div
+          class="row"
+          style="margin-top:5px"
+        >
+
+          <input
+            id="price-${p.id}"
+            class="input"
+            style="max-width:150px;margin:0"
+            type="number"
+            min="0"
+            value="${Number(p.precio)||0}"
+          >
+
+          <button
+            class="btn"
+            onclick="saveProduct('${p.id}')"
+          >
+            Guardar precio
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="toggleProduct(
+              '${p.id}',
+              ${!(p.activo&&p.disponible)}
+            )"
+          >
+            ${
+              p.activo&&p.disponible
+                ?'Ocultar'
+                :'Publicar'
+            }
+          </button>
 
           <button
             class="btn red"
-            onclick="deleteQuestion('${x.id}')"
+            onclick="deleteProduct('${p.id}')"
           >
             Eliminar
           </button>
 
         </div>
 
-      `)
-      .join('') ||
+        <small>
+          ${esc(p.categoria||'General')}
+          ·
+          ${
+            p.activo&&p.disponible
+              ?'Disponible'
+              :'Oculto'
+          }
+        </small>
 
-    '<div class="empty">No hay preguntas.</div>';
+      </div>`
+    ).join('')
 
+    ||
+    '<div class="empty">No hay productos.</div>';
 }
 
-async function createQuestion(){
+async function saveProduct(id){
 
-  const question=
-    $('qText')
-      .value
-      .trim();
-
-  const options=
-    $('qOptions')
-      .value
-      .split('\n')
-      .map(x=>x.trim())
-      .filter(Boolean);
-
-  const correct=
+  const v=
     Number(
-      $('qCorrect').value
+      $('price-'+id).value
     );
 
-  if(
-    !question ||
-    options.length<2 ||
-    correct<0 ||
-    correct>=options.length
-  ){
+  if(v<0){
 
-    return msg(
-      'qMsg',
-      '❌ Completá pregunta, opciones e índice correcto.'
+    return alert(
+      'El precio no puede ser negativo.'
     );
-
   }
 
-  const result =
+  const r=
     await db
-      .from('trivia_questions')
-      .insert({
+      .from('productos')
+      .update({
+        precio:v
+      })
+      .eq('id',id);
 
-        question,
+  if(r.error){
 
-        options,
-
-        correct_index:correct,
-
-        active:true
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'qMsg',
-      '❌ '+result.error.message
+    return alert(
+      r.error.message
     );
-
   }
 
-  msg(
-    'qMsg',
-    '✅ Pregunta guardada.'
-  );
-
-  $('qText').value='';
-  $('qOptions').value='';
-
-  loadTrivia();
-
+  await loadProducts();
 }
 
-async function deleteQuestion(id){
+async function toggleProduct(
+  id,
+  v
+){
+
+  const r=
+    await db
+      .from('productos')
+      .update({
+        activo:v,
+        disponible:v
+      })
+      .eq('id',id);
+
+  if(r.error){
+
+    alert(r.error.message);
+  }
+
+  await loadProducts();
+}
+
+async function deleteProduct(id){
 
   if(
     !confirm(
-      '¿Eliminar pregunta?'
+      '¿Eliminar producto?'
     )
   )return;
 
-  const result =
+  const r=
     await db
-      .from('trivia_questions')
+      .from('productos')
       .delete()
       .eq('id',id);
 
-  if(result.error){
+  if(r.error){
 
-    alert(
-      result.error.message
+    return alert(
+      r.error.message
     );
-
-    return;
-
   }
 
-  loadTrivia();
-
+  await loadProducts();
+  await loadMetrics();
 }
 
-async function loadPrizes(){
+/* =========================
+   PROMOCIONES
+========================= */
 
-  const result =
+async function createPromo(){
+
+  const title=
+    $('promoTitle').value.trim();
+
+  if(!title){
+
+    return msg(
+      'promoMsg',
+      '❌ Falta el título.'
+    );
+  }
+
+  const payload={
+    titulo:title,
+    descripcion:
+      $('promoDesc').value.trim(),
+    precio:
+      $('promoPrice').value
+        ?Number(
+          $('promoPrice').value
+        )
+        :null,
+    activa:
+      $('promoActive').checked
+  };
+
+  const r=
     await db
-      .from('prizes')
+      .from('promociones')
+      .insert(payload);
+
+  if(r.error){
+
+    return msg(
+      'promoMsg',
+      '❌ '+r.error.message
+    );
+  }
+
+  msg(
+    'promoMsg',
+    '✅ Promoción guardada.',
+    true
+  );
+
+  $('promoTitle').value='';
+  $('promoDesc').value='';
+  $('promoPrice').value='';
+  $('promoActive').checked=true;
+
+  await loadPromos();
+}
+
+async function loadPromos(){
+
+  const r=
+    await db
+      .from('promociones')
       .select('*')
       .order(
         'created_at',
         {ascending:false}
       );
 
-  const data =
-    result.data||[];
+  if(r.error){
 
-  $('prizesList').innerHTML =
-    data
-      .map(x=>`
-
-        <div class="notice">
-
-          ${
-            x.image_url
-              ? `<img
-                   class="thumb"
-                   src="${esc(x.image_url)}"
-                 >`
-              : ''
-          }
-
-          <b>
-            🎁 ${esc(x.name)}
-          </b>
-
-          ·
-          ${x.token_cost} fichas
-          · stock ${x.stock??0}
-
-          <br>
-
-          <button
-            class="btn ${
-              x.active
-                ? 'red'
-                : 'green'
-            }"
-            onclick="togglePrize(
-              '${x.id}',
-              ${!x.active}
-            )"
-          >
-            ${
-              x.active
-                ? 'Desactivar'
-                : 'Activar'
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deletePrize('${x.id}')"
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      `)
-      .join('') ||
-
-    '<div class="empty">No hay premios.</div>';
-
-}
-
-async function togglePrize(id,active){
-
-  const result =
-    await db
-      .from('prizes')
-      .update({active})
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  loadPrizes();
-
-}
-
-async function deletePrize(id){
-
-  if(
-    !confirm(
-      '¿Eliminar este premio? Esta acción no se puede deshacer.'
-    )
-  )return;
-
-  const result =
-    await db
-      .from('prizes')
-      .delete()
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo eliminar el premio: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await loadPrizes();
-
-  msg(
-    'pMsg',
-    '✅ Premio eliminado.'
-  );
-
-}
-
-async function createPrize(){
-
-  const name=
-    $('pName')
-      .value
-      .trim();
-
-  const cost=
-    Number(
-      $('pCost').value
-    );
-
-  if(
-    !name ||
-    cost<1
-  ){
-
-    return msg(
-      'pMsg',
-      '❌ Nombre y costo son obligatorios.'
-    );
-
-  }
-
-  const result =
-    await db
-      .from('prizes')
-      .insert({
-
-        name,
-
-        description:
-          $('pDesc')
-            .value
-            .trim(),
-
-        token_cost:cost,
-
-        stock:
-          Number(
-            $('pStock').value
-          )||0,
-
-        active:true
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'pMsg',
-      '❌ '+result.error.message
-    );
-
-  }
-
-  msg(
-    'pMsg',
-    '✅ Premio guardado.'
-  );
-
-  $('pName').value='';
-
-  loadPrizes();
-
-}
-
-async function loadTournaments(){
-
-  const result =
-    await db
-      .from('tournaments')
-      .select('*')
-      .order('starts_at');
-
-  const data =
-    result.data||[];
-
-  $('tournamentsList').innerHTML =
-    data
-      .map(x=>`
-
-        <div class="notice">
-
-          ${
-            x.image_url
-              ? `<img
-                   class="thumb"
-                   src="${esc(x.image_url)}"
-                 >`
-              : ''
-          }
-
-          <b>
-            🏆 ${esc(x.name)}
-          </b>
-
-          <br>
-
-          ${esc(x.game_type)}
-          ·
-          ${x.entry_tokens} fichas
-          ·
-          máx. ${x.max_players||'∞'}
-          ·
-          ${esc(x.status)}
-
-          <br>
-
-          <button
-            class="btn dark"
-            onclick="setTournament(
-              '${x.id}',
-              '${x.status==='open'
-                ? 'cancelled'
-                : 'open'}'
-            )"
-          >
-            ${
-              x.status==='open'
-                ? 'Cerrar'
-                : 'Abrir'
-            }
-          </button>
-
-          <button
-            class="btn red"
-            onclick="deleteTournament('${x.id}')"
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      `)
-      .join('') ||
-
-    '<div class="empty">No hay torneos.</div>';
-
-}
-
-async function setTournament(
-  id,
-  status
-){
-
-  const result =
-    await db
-      .from('tournaments')
-      .update({status})
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  loadTournaments();
-
-}
-
-async function deleteTournament(id){
-
-  if(
-    !confirm(
-      '¿Eliminar este torneo? Esta acción no se puede deshacer.'
-    )
-  )return;
-
-  const result =
-    await db
-      .from('tournaments')
-      .delete()
-      .eq('id',id);
-
-  if(result.error){
-
-    alert(
-      'No se pudo eliminar el torneo: '+
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await loadTournaments();
-
-  msg(
-    'tMsg',
-    '✅ Torneo eliminado.'
-  );
-
-}
-
-async function createTournament(){
-
-  const name=
-    $('tName')
-      .value
-      .trim();
-
-  const date=
-    $('tDate').value;
-
-  if(!name||!date){
-
-    return msg(
-      'tMsg',
-      '❌ Nombre y fecha son obligatorios.'
-    );
-
-  }
-
-  const result =
-    await db
-      .from('tournaments')
-      .insert({
-
-        name,
-
-        game_type:
-          $('tGame')
-            .value
-            .trim() ||
-          'Pool',
-
-        starts_at:
-          new Date(
-            date
-          ).toISOString(),
-
-        max_players:
-          Number(
-            $('tMax').value
-          )||16,
-
-        entry_tokens:
-          Number(
-            $('tEntry').value
-          )||0,
-
-        status:'open'
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'tMsg',
-      '❌ '+result.error.message
-    );
-
-  }
-
-  msg(
-    'tMsg',
-    '✅ Torneo creado.'
-  );
-
-  loadTournaments();
-
-}
-
-async function loadDuels(){
-
-  const result =
-    await db
-      .from('duel_matches')
-      .select('*')
-      .order(
-        'created_at',
-        {ascending:false}
-      )
-      .limit(100);
-
-  if(result.error){
-
-    $('duelsList').innerHTML =
+    $('promosList').innerHTML=
       '<div class="notice">❌ '+
-      esc(result.error.message)+
+      esc(r.error.message)+
       '</div>';
 
     return;
-
   }
 
-  const data=
-    result.data||[];
+  const rows=r.data||[];
 
-  $('duelsList').innerHTML =
-    data
-      .map(x=>`
+  $('promosList').innerHTML=
 
-        <div class="notice">
+    rows.map(p=>
+      `<div class="item">
 
-          <b>
-            ⚔️ Duelo
-            ${esc(
-              String(x.id)
-                .slice(0,8)
-            )}
-          </b>
+        <strong>
+          ${esc(p.titulo)}
+        </strong>
 
-          <br>
+        <br>
 
-          <small>
-            Estado:
-            ${esc(x.status||'—')}
-            · creado:
+        <small>
+          ${esc(p.descripcion||'')}
+          ${
+            p.precio!=null
+              ?' · '+money(p.precio)
+              :''
+          }
+          ·
+          ${
+            p.activa
+              ?'Publicada'
+              :'Oculta'
+          }
+        </small>
+
+        <div
+          class="row"
+          style="margin-top:7px"
+        >
+
+          <button
+            class="btn dark"
+            onclick="togglePromo(
+              '${p.id}',
+              ${!p.activa}
+            )"
+          >
             ${
-              x.created_at
-                ? esc(
-                    new Date(
-                      x.created_at
-                    ).toLocaleString(
-                      'es-AR'
-                    )
-                  )
-                : '—'
+              p.activa
+                ?'Ocultar'
+                :'Publicar'
             }
-          </small>
+          </button>
 
-          <br>
-
-          Jugador 1:
-          <b>
-            ${esc(
-              x.player1_id||'—'
-            )}
-          </b>
-          ·
-          ${x.player1_score??0}
-          puntos
-
-          ${
-            x.player1_score_submitted
-              ? ' ✓'
-              : ''
-          }
-
-          <br>
-
-          Jugador 2:
-          <b>
-            ${esc(
-              x.player2_id||'—'
-            )}
-          </b>
-          ·
-          ${x.player2_score??0}
-          puntos
-
-          ${
-            x.player2_score_submitted
-              ? ' ✓'
-              : ''
-          }
-
-          <br>
-
-          Ganador:
-          <b>
-            ${esc(
-              x.winner_id||'—'
-            )}
-          </b>
+          <button
+            class="btn red"
+            onclick="deletePromo('${p.id}')"
+          >
+            Eliminar
+          </button>
 
         </div>
 
-      `)
-      .join('') ||
+      </div>`
+    ).join('')
 
-    '<div class="empty">No hay duelos.</div>';
-
+    ||
+    '<div class="empty">No hay promociones.</div>';
 }
 
-const MEDIA_CONFIG={
-
-  productos:{
-    table:'productos',
-    label:'Productos',
-    name:r=>r.nombre||'Producto',
-    folder:'productos'
-  },
-
-  promociones:{
-    table:'promociones',
-    label:'Promociones',
-    name:r=>r.titulo||'Promoción',
-    folder:'promociones'
-  },
-
-  games:{
-    table:'games',
-    label:'Juegos',
-    name:r=>r.name||'Juego',
-    folder:'games'
-  },
-
-  trivia_questions:{
-    table:'trivia_questions',
-    label:'Trivia',
-    name:r=>r.question||'Pregunta',
-    folder:'trivia'
-  },
-
-  tournaments:{
-    table:'tournaments',
-    label:'Torneos',
-    name:r=>r.name||'Torneo',
-    folder:'tournaments'
-  },
-
-  prizes:{
-    table:'prizes',
-    label:'Premios',
-    name:r=>r.name||'Premio',
-    folder:'prizes'
-  }
-
-};
-
-function mediaMsg(
-  text,
-  hide=false
+async function togglePromo(
+  id,
+  v
 ){
 
-  const el=
-    $('mediaMessage');
-
-  if(!el)return;
-
-  el.textContent=text;
-
-  el.classList.toggle(
-    'hidden',
-    hide
-  );
-
-}
-
-function safeMediaUrl(v){
-
-  try{
-
-    const u=
-      new URL(
-        String(v||'')
-      );
-
-    return
-      ['http:','https:']
-        .includes(u.protocol)
-        ? u.href
-        : '';
-
-  }catch{
-
-    return '';
-
-  }
-
-}
-
-function previewMedia(input){
-
-  const file=
-    input?.files?.[0];
-
-  const img=
-    $('mediaPreview');
-
-  if(!file){
-
-    img.classList.add(
-      'hidden'
-    );
-
-    return;
-
-  }
-
-  if(
-    !file.type.startsWith(
-      'image/'
-    )
-  ){
-
-    mediaMsg(
-      '❌ Seleccioná una imagen.'
-    );
-
-    input.value='';
-
-    return;
-
-  }
-
-  if(
-    file.size >
-    8*1024*1024
-  ){
-
-    mediaMsg(
-      '❌ La imagen supera 8 MB.'
-    );
-
-    input.value='';
-
-    img.classList.add(
-      'hidden'
-    );
-
-    return;
-
-  }
-
-  img.src=
-    URL.createObjectURL(
-      file
-    );
-
-  img.classList.remove(
-    'hidden'
-  );
-
-  mediaMsg('',true);
-
-}
-
-async function loadMediaItems(){
-
-  const type=
-    $('mediaType')?.value;
-
-  const cfg=
-    MEDIA_CONFIG[type];
-
-  const sel=
-    $('mediaItem');
-
-  if(!cfg||!sel)return;
-
-  sel.innerHTML=
-    '<option value="">Cargando...</option>';
-
-  const result =
+  const r=
     await db
-      .from(cfg.table)
-      .select('*')
-      .order(
-        'created_at',
-        {ascending:false}
-      )
-      .limit(100);
+      .from('promociones')
+      .update({
+        activa:v
+      })
+      .eq('id',id);
 
-  if(result.error){
+  if(r.error){
 
-    sel.innerHTML=
-      '<option value="">Error al cargar</option>';
-
-    mediaMsg(
-      '❌ No se pudieron cargar los contenidos: '+
-      result.error.message
-    );
-
-    renderCurrentMedia(null);
-
-    return;
-
+    alert(r.error.message);
   }
 
-  if(!result.data?.length){
-
-    sel.innerHTML=
-      '<option value="">No hay contenidos</option>';
-
-    window.__mediaRows=[];
-
-    renderCurrentMedia(null);
-
-    return;
-
-  }
-
-  window.__mediaRows=
-    result.data;
-
-  sel.innerHTML =
-    result.data
-      .map(x=>`
-
-        <option value="${esc(x.id)}">
-
-          ${esc(
-            String(
-              cfg.name(x)
-            )
-            .replace(/\s+/g,' ')
-            .slice(0,110)
-          )}
-
-          ${
-            x.image_url
-              ? ' · 🖼️'
-              : ''
-          }
-
-        </option>
-
-      `)
-      .join('');
-
-  sel.onchange =
-    ()=>renderCurrentMedia(
-      result.data.find(
-        x=>
-          String(x.id)===
-          String(sel.value)
-      )
-    );
-
-  renderCurrentMedia(
-    result.data[0]
-  );
-
+  await loadPromos();
 }
 
-function renderCurrentMedia(row){
-
-  const box=
-    $('mediaCurrent');
-
-  if(!box)return;
-
-  if(!row){
-
-    box.innerHTML=
-      '<div class="empty">No hay contenido seleccionado.</div>';
-
-    return;
-
-  }
-
-  const url=
-    safeMediaUrl(
-      row.image_url
-    );
-
-  box.innerHTML =
-    url
-
-      ? `<img
-           class="thumb"
-           src="${esc(url)}"
-           alt="Imagen actual"
-           loading="lazy"
-         >
-
-         <p
-           class="muted"
-           style="margin-top:8px;word-break:break-all"
-         >
-           ${esc(url)}
-         </p>
-
-         <button
-           class="btn red"
-           type="button"
-           onclick="removeCurrentMedia()"
-         >
-           🗑️ Eliminar imagen
-         </button>`
-
-      : '<div class="empty">Este contenido todavía no tiene imagen.</div>';
-
-}
-
-async function removeCurrentMedia(){
-
-  const type=
-    $('mediaType').value;
-
-  const cfg=
-    MEDIA_CONFIG[type];
-
-  const itemId=
-    $('mediaItem').value;
-
-  if(!cfg||!itemId){
-
-    return mediaMsg(
-      '❌ Seleccioná un contenido.'
-    );
-
-  }
+async function deletePromo(id){
 
   if(
     !confirm(
-      '¿Eliminar la imagen de este contenido?'
+      '¿Eliminar promoción?'
     )
   )return;
 
-  const selected=
-    window.__mediaRows
-      ?.find(
-        x=>
-          String(x.id)===
-          String(itemId)
-      );
-
-  const oldUrl=
-    selected?.image_url||
-    '';
-
-  const update =
+  const r=
     await db
-      .from(cfg.table)
-      .update({
-        image_url:null
-      })
-      .eq('id',itemId);
+      .from('promociones')
+      .delete()
+      .eq('id',id);
 
-  if(update.error){
+  if(r.error){
 
-    return mediaMsg(
-      '❌ No se pudo quitar la imagen: '+
-      update.error.message
+    return alert(
+      r.error.message
     );
-
   }
 
-  if(oldUrl){
-
-    try{
-
-      const marker=
-        '/storage/v1/object/public/Galeria/';
-
-      const index=
-        oldUrl.indexOf(
-          marker
-        );
-
-      if(index>=0){
-
-        const path=
-          decodeURIComponent(
-            oldUrl.slice(
-              index+
-              marker.length
-            )
-          );
-
-        await db
-          .storage
-          .from('Galeria')
-          .remove([path]);
-
-      }
-
-    }catch(error){
-
-      console.warn(
-        'Storage cleanup:',
-        error
-      );
-
-    }
-
-  }
-
-  mediaMsg(
-    '✅ Imagen eliminada.'
-  );
-
-  await loadMediaItems();
-
+  await loadPromos();
 }
 
-async function uploadMedia(){
+/* =========================
+   CANJES
+========================= */
 
-  const type=
-    $('mediaType').value;
+async function createCanje(){
 
-  const cfg=
-    MEDIA_CONFIG[type];
+  const name=
+    $('cn').value.trim();
 
-  const itemId=
-    $('mediaItem').value;
-
-  const file=
-    $('mediaFile')
-      .files[0];
-
-  if(!cfg||!itemId){
-
-    return mediaMsg(
-      '❌ Seleccioná un contenido.'
+  const cost=
+    Number(
+      $('cc').value||0
     );
 
-  }
+  if(!name){
 
-  if(!file){
-
-    return mediaMsg(
-      '❌ Elegí una imagen desde el teléfono.'
+    return msg(
+      'canjeMsg',
+      '❌ Falta el nombre.'
     );
-
   }
 
-  if(
-    !file.type.startsWith(
-      'image/'
-    )
-  ){
+  if(cost<1){
 
-    return mediaMsg(
-      '❌ El archivo debe ser una imagen.'
+    return msg(
+      'canjeMsg',
+      '❌ El costo debe ser mayor a 0.'
     );
-
   }
 
-  if(
-    file.size >
-    8*1024*1024
-  ){
+  const payload={
+    name:name,
+    description:
+      $('cd').value.trim(),
+    token_cost:cost,
+    cost_tokens:cost,
+    stock:
+      Number(
+        $('cs').value||0
+      ),
+    active:
+      $('ca').checked
+  };
 
-    return mediaMsg(
-      '❌ La imagen supera 8 MB.'
+  const r=
+    await db
+      .from('prizes')
+      .insert(payload);
+
+  if(r.error){
+
+    return msg(
+      'canjeMsg',
+      '❌ '+r.error.message
     );
-
   }
 
-  const session =
-    await db.auth.getSession();
-
-  if(
-    session.error ||
-    !session.data?.session
-  ){
-
-    return mediaMsg(
-      '❌ La sesión de administrador venció. Volvé a iniciar sesión.'
-    );
-
-  }
-
-  const ext =
-    (
-      file.name
-        .split('.')
-        .pop()||
-      'jpg'
-    )
-    .toLowerCase()
-    .replace(
-      /[^a-z0-9]/g,
-      ''
-    )||
-    'jpg';
-
-  const uid =
-    crypto.randomUUID
-      ? crypto.randomUUID()
-      : Date.now()+
-        '-' +
-        Math.random()
-          .toString(36)
-          .slice(2);
-
-  const path=
-    `content/${cfg.folder}/${itemId}/${uid}.${ext}`;
-
-  mediaMsg(
-    '⏳ Subiendo imagen...'
+  msg(
+    'canjeMsg',
+    '✅ Canje guardado.',
+    true
   );
 
-  $('uploadMediaBtn')
-    .disabled=true;
+  [
+    'cn',
+    'cd',
+    'cc',
+    'cs'
+  ].forEach(
+    id=>$(id).value=''
+  );
 
-  try{
+  $('cc').value=1;
+  $('cs').value=0;
+  $('ca').checked=true;
 
-    const upload =
-      await db
-        .storage
-        .from('Galeria')
-        .upload(
-          path,
-          file,
-          {
-            contentType:file.type,
-            cacheControl:'3600',
-            upsert:false
-          }
-        );
+  await loadCanjes();
+}
 
-    if(upload.error){
-      throw upload.error;
-    }
+async function loadCanjes(){
 
-    const url =
-      db
-        .storage
-        .from('Galeria')
-        .getPublicUrl(
-          path
-        )
-        .data
-        .publicUrl;
-
-    if(!url){
-
-      throw new Error(
-        'Supabase no devolvió una URL pública.'
-      );
-
-    }
-
-    const update =
-      await db
-        .from(cfg.table)
-        .update({
-          image_url:url
-        })
-        .eq(
-          'id',
-          itemId
-        );
-
-    if(update.error){
-      throw update.error;
-    }
-
-    mediaMsg(
-      '✅ Imagen subida y vinculada correctamente.'
-    );
-
-    $('mediaFile').value='';
-    $('mediaPreview').src='';
-    $('mediaPreview')
-      .classList
-      .add('hidden');
-
-    await loadMediaItems();
-
-  }catch(error){
-
-    try{
-
-      await db
-        .storage
-        .from('Galeria')
-        .remove([path]);
-
-    }catch(_){}
-
-    mediaMsg(
-      '❌ No se pudo subir la imagen: '+
-      (
-        error?.message||
-        'Error desconocido'
+  const r=
+    await db
+      .from('prizes')
+      .select(
+        'id,name,description,token_cost,cost_tokens,stock,active'
       )
-    );
+      .order(
+        'created_at',
+        {ascending:false}
+      );
 
-  }finally{
+  if(r.error){
 
-    $('uploadMediaBtn')
-      .disabled=false;
+    $('canjesList').innerHTML=
+      '<div class="notice">❌ '+
+      esc(r.error.message)+
+      '</div>';
 
+    return;
   }
 
+  const rows=r.data||[];
+
+  $('canjesList').innerHTML=
+
+    rows.map(p=>
+      `<div class="item">
+
+        <strong>
+          ${esc(p.name)}
+        </strong>
+
+        <br>
+
+        <small>
+          ${esc(p.description||'')}
+          ·
+          ${Number(
+            p.token_cost||
+            p.cost_tokens||
+            0
+          )}
+          tokens
+          · stock
+          ${Number(
+            p.stock??0
+          )}
+          ·
+          ${
+            p.active
+              ?'Activo'
+              :'Oculto'
+          }
+        </small>
+
+        <div
+          class="row"
+          style="margin-top:7px"
+        >
+
+          <button
+            class="btn dark"
+            onclick="toggleCanje(
+              '${p.id}',
+              ${!p.active}
+            )"
+          >
+            ${
+              p.active
+                ?'Ocultar'
+                :'Publicar'
+            }
+          </button>
+
+          <button
+            class="btn red"
+            onclick="deleteCanje('${p.id}')"
+          >
+            Eliminar
+          </button>
+
+        </div>
+
+      </div>`
+    ).join('')
+
+    ||
+    '<div class="empty">No hay canjes cargados.</div>';
 }
 
-function clearMediaForm(){
+async function toggleCanje(
+  id,
+  v
+){
 
-  $('mediaFile').value='';
-  $('mediaPreview').src='';
+  const r=
+    await db
+      .from('prizes')
+      .update({
+        active:v
+      })
+      .eq('id',id);
 
-  $('mediaPreview')
-    .classList
-    .add('hidden');
+  if(r.error){
 
-  mediaMsg('',true);
+    alert(r.error.message);
+  }
 
+  await loadCanjes();
 }
+
+async function deleteCanje(id){
+
+  if(
+    !confirm(
+      '¿Eliminar canje?'
+    )
+  )return;
+
+  const r=
+    await db
+      .from('prizes')
+      .delete()
+      .eq('id',id);
+
+  if(r.error){
+
+    return alert(
+      r.error.message
+    );
+  }
+
+  await loadCanjes();
+}
+
+/* =========================
+   FOTOS
+========================= */
+
+$('photoFile').addEventListener(
+  'change',
+  ()=>{
+
+    const f=
+      $('photoFile').files[0];
+
+    if(!f){
+
+      $('preview')
+        .classList
+        .add('hidden');
+
+      return;
+    }
+
+    if(!f.type.startsWith('image/')){
+
+      alert(
+        'Elegí una imagen.'
+      );
+
+      return;
+    }
+
+    if(f.size>8*1024*1024){
+
+      alert(
+        'Máximo 8 MB.'
+      );
+
+      return;
+    }
+
+    $('preview').src=
+      URL.createObjectURL(f);
+
+    $('preview')
+      .classList
+      .remove('hidden');
+  }
+);
 
 async function uploadPhoto(){
 
-  const file=
-    $('photoFile')
-      .files[0];
+  const f=
+    $('photoFile').files[0];
 
-  const title=
-    $('photoTitle')
-      .value
-      .trim()||
-    file?.name;
-
-  if(!file){
+  if(!f){
 
     return msg(
       'photoMsg',
-      '❌ Elegí una imagen.'
+      '❌ Elegí una foto.'
     );
-
   }
 
-  if(
-    !file.type.startsWith(
-      'image/'
-    )
-  ){
+  if(f.size>8*1024*1024){
 
     return msg(
       'photoMsg',
-      '❌ El archivo debe ser una imagen.'
+      '❌ Máximo 8 MB.'
     );
-
   }
 
-  if(
-    file.size >
-    8*1024*1024
-  ){
-
-    return msg(
-      'photoMsg',
-      '❌ La imagen supera 8 MB.'
-    );
-
-  }
-
-  const allowed=[
-    'image/jpeg',
-    'image/png',
-    'image/webp',
-    'image/gif'
-  ];
-
-  if(
-    !allowed.includes(
-      file.type
-    )
-  ){
-
-    return msg(
-      'photoMsg',
-      '❌ Formato no permitido. Usá JPG, PNG, WEBP o GIF.'
-    );
-
-  }
-
-  const session =
+  const s=
     await db.auth.getSession();
 
-  if(
-    session.error ||
-    !session.data?.session
-  ){
+  if(!s.data?.session){
 
     return msg(
       'photoMsg',
-      '❌ La sesión de administrador venció. Volvé a iniciar sesión.'
+      '❌ Sesión vencida.'
     );
-
   }
-
-  const ext=
-    (
-      file.name
-        .split('.')
-        .pop()||
-      'jpg'
-    )
-    .toLowerCase()
-    .replace(
-      /[^a-z0-9]/g,
-      ''
-    )||
-    'jpg';
-
-  const uid =
-    crypto.randomUUID
-      ? crypto.randomUUID()
-      : Date.now()+
-        '-' +
-        Math.random()
-          .toString(36)
-          .slice(2);
-
-  const path=
-    `public/${uid}.${ext}`;
-
-  msg(
-    'photoMsg',
-    '⏳ Subiendo foto...'
-  );
 
   try{
 
-    const upload =
-      await db
-        .storage
+    msg(
+      'photoMsg',
+      '⏳ Subiendo...'
+    );
+
+    const ext=
+      (
+        f.name
+          .split('.')
+          .pop()||
+        'jpg'
+      )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ''
+      )||
+      'jpg';
+
+    const path=
+      'public/' +
+      Date.now() +
+      '-' +
+      (
+        crypto.randomUUID
+          ?crypto.randomUUID()
+          :Math.random()
+            .toString(36)
+            .slice(2)
+      )+
+      '.'+
+      ext;
+
+    const up=
+      await db.storage
         .from('Galeria')
         .upload(
           path,
-          file,
+          f,
           {
-            contentType:file.type,
+            contentType:f.type,
             cacheControl:'3600',
             upsert:false
           }
         );
 
-    if(upload.error){
-      throw upload.error;
-    }
+    if(up.error)throw up.error;
 
-    const url =
-      db
-        .storage
+    const url=
+      db.storage
         .from('Galeria')
-        .getPublicUrl(
-          path
-        )
-        .data
-        .publicUrl;
+        .getPublicUrl(path)
+        .data.publicUrl;
 
-    if(!url){
-
-      throw new Error(
-        'No se obtuvo URL pública.'
-      );
-
-    }
-
-    const insert =
+    const ins=
       await db
         .from('galeria_fotos')
         .insert({
-
-          titulo:title,
-
+          titulo:
+            $('photoTitle')
+              .value
+              .trim()||
+            f.name,
           categoria:'galeria',
-
           ruta:path,
-
           url
-
         });
 
-    if(insert.error){
-      throw insert.error;
+    if(ins.error){
+
+      await db.storage
+        .from('Galeria')
+        .remove([path]);
+
+      throw ins.error;
     }
 
     msg(
       'photoMsg',
-      '✅ Foto publicada.'
+      '✅ Foto subida y publicada.',
+      true
     );
 
     $('photoFile').value='';
     $('photoTitle').value='';
 
-    loadGallery();
+    $('preview')
+      .classList
+      .add('hidden');
 
-  }catch(error){
+    await loadGallery();
+    await loadMetrics();
 
-    try{
+  }catch(e){
 
-      await db
-        .storage
-        .from('Galeria')
-        .remove([path]);
-
-    }catch(_){}
+    console.error(e);
 
     msg(
       'photoMsg',
-      '❌ No se pudo subir: '+
+      '❌ '+
       (
-        error?.message||
-        'Error desconocido'
+        e.message||
+        'No se pudo subir la foto.'
       )
     );
-
   }
-
 }
 
 async function loadGallery(){
 
-  const result =
+  const r=
     await db
       .from('galeria_fotos')
-      .select('*')
+      .select(
+        'id,titulo,categoria,ruta,url,created_at,creado_en'
+      )
       .order(
-        'creado_en',
+        'created_at',
         {ascending:false}
       );
 
-  if(result.error){
+  if(r.error){
 
-    return msg(
-      'photoMsg',
-      '❌ No se pudo cargar la galería: '+
-      result.error.message
-    );
+    $('galleryList').innerHTML=
+      '<div class="notice">❌ '+
+      esc(r.error.message)+
+      '</div>';
 
+    return;
   }
 
-  const data=
-    result.data||[];
+  const rows=r.data||[];
 
-  $('galleryList').innerHTML =
-    data
-      .map(x=>{
+  $('mF').textContent=
+    rows.length;
 
-        const url=
-          safeUrl(x.url);
+  $('galleryList').innerHTML=
 
-        return `
+    rows.map(p=>{
 
-          <figure>
+      const u=
+        p.url||
+        (
+          p.ruta
+            ?db.storage
+              .from('Galeria')
+              .getPublicUrl(
+                p.ruta
+              )
+              .data.publicUrl
+            :''
+        );
 
-            ${
-              url
-                ? `<img
-                    src="${esc(url)}"
-                    alt="${esc(x.titulo)}"
-                    loading="lazy"
-                  >`
-                : '<div class="empty">📸 Imagen no disponible</div>'
-            }
+      return `
+        <figure>
 
-            <figcaption>
+          ${
+            u
+              ? `<img
+                  src="${esc(u)}"
+                  alt="${esc(
+                    p.titulo||'Foto'
+                  )}"
+                >`
+              :''
+          }
 
-              ${esc(x.titulo)}
+          <figcaption>
 
-              <button
-                class="btn red"
-                style="padding:4px 7px;float:right"
-                onclick="deletePhoto(
-                  '${esc(x.id)}',
-                  '${esc(x.ruta)}'
-                )"
-              >
-                ×
-              </button>
+            <small>
+              ${esc(
+                p.titulo||''
+              )}
+            </small>
 
-            </figcaption>
+            <button
+              class="btn red"
+              style="
+                padding:4px 7px;
+                float:right
+              "
+              onclick="deletePhoto(
+                '${p.id}',
+                '${esc(p.ruta||'')}'
+              )"
+            >
+              ×
+            </button>
 
-          </figure>
+          </figcaption>
 
-        `;
+        </figure>
+      `;
 
-      })
-      .join('') ||
+    }).join('')
 
+    ||
     '<div class="empty">No hay fotos.</div>';
-
 }
 
 async function deletePhoto(
@@ -4144,610 +2471,305 @@ async function deletePhoto(
 
   if(
     !confirm(
-      '¿Eliminar esta foto?'
+      '¿Eliminar foto?'
     )
   )return;
 
-  const deletion =
+  const r=
     await db
       .from('galeria_fotos')
       .delete()
       .eq('id',id);
 
-  if(deletion.error){
+  if(r.error){
 
-    alert(
-      deletion.error.message
+    return alert(
+      r.error.message
     );
-
-    return;
-
   }
 
   if(path){
 
-    await db
-      .storage
+    await db.storage
       .from('Galeria')
       .remove([path]);
-
   }
 
-  loadGallery();
-
+  await loadGallery();
+  await loadMetrics();
 }
 
-async function loadMesas(){
+/* =========================
+   MÉTRICAS
+========================= */
 
-  const result =
-    await db
-      .from('tables_pool')
-      .select('*')
-      .order('table_number');
+async function loadMetrics(){
 
-  if(result.error){
+  const [
+    r,
+    p,
+    pr,
+    f
+  ]=
+    await Promise.allSettled([
 
-    $('mesasList').innerHTML =
-      '<div class="notice">❌ '+
-      esc(result.error.message)+
-      '</div>';
+      db
+        .from('reservas')
+        .select('id,estado'),
 
-    return;
+      db
+        .from('pedidos')
+        .select('id,estado'),
 
+      db
+        .from('productos')
+        .select('id'),
+
+      db
+        .from('galeria_fotos')
+        .select('id')
+
+    ]);
+
+  if(r.status==='fulfilled'){
+
+    $('mR').textContent=
+      (r.value.data||[])
+        .filter(
+          x=>x.estado==='pendiente'
+        )
+        .length;
   }
 
-  const data=
-    result.data||[];
+  if(p.status==='fulfilled'){
 
-  $('mesasList').innerHTML =
-    data
-      .map(x=>{
+    $('mP').textContent=
+      (p.value.data||[])
+        .filter(
+          x=>[
+            'pendiente',
+            'confirmado',
+            'preparando',
+            'listo'
+          ].includes(x.estado)
+        )
+        .length;
+  }
 
-        const url =
-          `${location.origin}${location.pathname.replace(
-            'admin.html',
-            'index.html'
-          )}?mesa=${encodeURIComponent(
-            x.table_number
-          )}`;
+  if(pr.status==='fulfilled'){
 
-        return `
+    $('mProd').textContent=
+      (pr.value.data||[]).length;
+  }
 
-          <div class="notice">
+  if(f.status==='fulfilled'){
 
-            <div
-              class="row"
-              style="justify-content:space-between"
-            >
-
-              <div>
-
-                <b>
-                  🎱 Mesa ${x.table_number}
-                </b>
-
-                <br>
-
-                <small>
-                  ${esc(x.name||'')}
-                  ·
-                  ${
-                    x.active
-                      ? 'ACTIVA'
-                      : 'INACTIVA'
-                  }
-                </small>
-
-              </div>
-
-              <span class="status">
-                QR
-              </span>
-
-            </div>
-
-            <div
-              style="
-                background:white;
-                border-radius:12px;
-                padding:10px;
-                width:max-content;
-                margin:10px 0
-              "
-            >
-
-              <canvas
-                id="qr-${x.id}"
-                width="180"
-                height="180"
-              ></canvas>
-
-            </div>
-
-            <small
-              style="word-break:break-all"
-            >
-              ${esc(url)}
-            </small>
-
-            <div
-              class="row"
-              style="margin-top:10px"
-            >
-
-              <a
-                class="btn dark"
-                target="_blank"
-                href="${esc(url)}"
-              >
-                Abrir acceso
-              </a>
-
-              <button
-                class="btn green"
-                onclick="downloadMesaQR(
-                  '${x.id}',
-                  ${x.table_number}
-                )"
-              >
-                ⬇️ Descargar QR
-              </button>
-
-              <button
-                class="btn gold"
-                onclick="printMesaQR(
-                  '${x.id}',
-                  ${x.table_number}
-                )"
-              >
-                🖨️ Imprimir
-              </button>
-
-              <button
-                class="btn ${
-                  x.active
-                    ? 'red'
-                    : 'green'
-                }"
-                onclick="toggleMesa(
-                  '${x.id}',
-                  ${!x.active}
-                )"
-              >
-                ${
-                  x.active
-                    ? 'Desactivar'
-                    : 'Activar'
-                }
-              </button>
-
-            </div>
-
-          </div>
-
-        `;
-
-      })
-      .join('') ||
-
-    '<div class="empty">No hay mesas.</div>';
-
-  data.forEach(x=>{
-
-    const canvas=
-      $('qr-'+x.id);
-
-    if(
-      canvas &&
-      window.QRious
-    ){
-
-      new QRious({
-
-        element:canvas,
-
-        value:
-          `${location.origin}${location.pathname.replace(
-            'admin.html',
-            'index.html'
-          )}?mesa=${encodeURIComponent(
-            x.table_number
-          )}`,
-
-        size:180,
-
-        level:'H',
-
-        background:'white',
-
-        foreground:'black'
-
-      });
-
-    }
-
-  });
-
+    $('mF').textContent=
+      (f.value.data||[]).length;
+  }
 }
 
-async function createMesa(){
+/* =========================
+   ACTUALIZAR TODO
+========================= */
 
-  const n=
-    Number(
-      $('mesaNumero').value
-    );
+async function refreshAll(){
 
-  const name=
-    $('mesaNombre')
-      .value
-      .trim()||
-    `Mesa ${n}`;
+  $('dashMsg').textContent=
+    'Actualizando...';
+
+  await Promise.allSettled([
+
+    loadMetrics(),
+    loadReservations(),
+    loadOrders(),
+    loadProducts(),
+    loadPromos(),
+    loadCanjes(),
+    loadGallery()
+
+  ]);
+
+  $('dashMsg').textContent=
+    '✅ Datos actualizados.';
+}
+
+/* =========================
+   NOTIFICACIONES
+========================= */
+
+async function checkNew(){
+
+  const [
+    r,
+    p
+  ]=
+    await Promise.allSettled([
+
+      db
+        .from('reservas')
+        .select(
+          'id,nombre,fecha,hora'
+        )
+        .eq(
+          'estado',
+          'pendiente'
+        )
+        .eq(
+          'notificacion_vista',
+          false
+        ),
+
+      db
+        .from('pedidos')
+        .select(
+          'id,nombre_cliente'
+        )
+        .eq(
+          'estado',
+          'pendiente'
+        )
+        .eq(
+          'notificacion_vista',
+          false
+        )
+
+    ]);
+
+  const rn=
+    r.status==='fulfilled'
+      ?(r.value.data||[])
+      :[];
+
+  const pn=
+    p.status==='fulfilled'
+      ?(p.value.data||[])
+      :[];
 
   if(
-    !Number.isInteger(n)||
-    n<1
+    rn.length||
+    pn.length
   ){
 
-    return msg(
-      'mesaMsg',
-      '❌ Ingresá un número de mesa válido.'
-    );
+    $('newAlert').textContent=
+      `🔔 Nuevos: ${
+        rn.length
+      } reserva(s) y ${
+        pn.length
+      } pedido(s).`;
 
+    $('newAlert')
+      .classList
+      .remove('hidden');
+
+  }else{
+
+    $('newAlert')
+      .classList
+      .add('hidden');
+  }
+}
+
+/* =========================
+   TIEMPO REAL
+========================= */
+
+function startRealtime(){
+
+  try{
+
+    db
+      .channel(
+        'pool-beach-admin'
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'reservas'
+        },
+        async()=>{
+          await loadReservations();
+          await loadMetrics();
+          await checkNew();
+        }
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'pedidos'
+        },
+        async()=>{
+          await loadOrders();
+          await loadMetrics();
+          await checkNew();
+        }
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'productos'
+        },
+        loadProducts
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'promociones'
+        },
+        loadPromos
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'galeria_fotos'
+        },
+        loadGallery
+      )
+
+      .on(
+        'postgres_changes',
+        {
+          event:'*',
+          schema:'public',
+          table:'prizes'
+        },
+        loadCanjes
+      )
+
+      .subscribe();
+
+  }catch(e){
+
+    console.warn(e);
   }
 
-  const exists =
-    await db
-      .from('tables_pool')
-      .select('id')
-      .eq('table_number',n)
-      .maybeSingle();
-
-  if(exists.error){
-
-    return msg(
-      'mesaMsg',
-      '❌ No se pudo verificar la mesa: '+
-      exists.error.message
-    );
-
-  }
-
-  if(exists.data){
-
-    return msg(
-      'mesaMsg',
-      '❌ Esa mesa ya existe.'
-    );
-
-  }
-
-  const result =
-    await db
-      .from('tables_pool')
-      .insert({
-
-        table_number:n,
-
-        name,
-
-        active:true
-
-      });
-
-  if(result.error){
-
-    return msg(
-      'mesaMsg',
-      '❌ '+result.error.message
-    );
-
-  }
-
-  msg(
-    'mesaMsg',
-    '✅ Mesa creada y QR generado.'
+  setInterval(
+    checkNew,
+    15000
   );
-
-  $('mesaNumero').value='';
-  $('mesaNombre').value='';
-
-  loadMesas();
-
 }
 
-async function toggleMesa(
-  id,
-  active
-){
+/* =========================
+   INICIO ADMIN
+========================= */
 
-  const result =
-    await db
-      .from('tables_pool')
-      .update({active})
-      .eq('id',id);
+enter();
 
-  if(result.error){
-
-    alert(
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  loadMesas();
-
-}
-
-function mesaUrl(number){
-
-  return `${location.origin}${location.pathname.replace(
-    'admin.html',
-    'index.html'
-  )}?mesa=${encodeURIComponent(
-    number
-  )}`;
-
-}
-
-function downloadMesaQR(
-  id,
-  number
-){
-
-  const canvas=
-    $('qr-'+id);
-
-  if(!canvas)return;
-
-  const link=
-    document.createElement('a');
-
-  link.download=
-    `QR-Mesa-${number}.png`;
-
-  link.href=
-    canvas.toDataURL(
-      'image/png'
-    );
-
-  link.click();
-
-}
-
-function printMesaQR(
-  id,
-  number
-){
-
-  const canvas=
-    $('qr-'+id);
-
-  if(!canvas)return;
-
-  const win=
-    window.open(
-      '',
-      '_blank',
-      'width=500,height=650'
-    );
-
-  if(!win)return;
-
-  win.document.write(`
-
-    <html>
-
-      <head>
-        <title>
-          QR Mesa ${number}
-        </title>
-      </head>
-
-      <body
-        onload="window.print()"
-        style="
-          font-family:Arial;
-          text-align:center;
-          padding:30px
-        "
-      >
-
-        <h1>POOL & BEACH</h1>
-
-        <h2>
-          Mesa ${number}
-        </h2>
-
-        <img
-          src="${canvas.toDataURL('image/png')}"
-          style="
-            width:320px;
-            height:320px
-          "
-        >
-
-        <p>
-          Escaneá para entrar a Pool & Beach Games
-        </p>
-
-      </body>
-
-    </html>
-
-  `);
-
-  win.document.close();
-
-}
-
-function subscribeRealtime(){
-
-  db
-    .channel('pool-beach-admin')
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'reservas'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'pedidos'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'productos'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'promociones'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'games'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'trivia_questions'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'prizes'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'tournaments'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'galeria_fotos'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'duel_matches'
-      },
-      refreshAll
-    )
-
-    .on(
-      'postgres_changes',
-      {
-        event:'*',
-        schema:'public',
-        table:'tables_pool'
-      },
-      refreshAll
-    )
-
-    .subscribe();
-
-}
-
-Object.assign(
-  window,
-  {
-    createProduct,
-    deleteProduct,
-    toggleProduct,
-    createPromotion,
-    deletePromotion,
-    togglePromotion,
-    createGame,
-    deleteGame,
-    toggleGame,
-    createQuestion,
-    deleteQuestion,
-    createPrize,
-    deletePrize,
-    togglePrize,
-    createTournament,
-    deleteTournament,
-    setTournament,
-    uploadPhoto,
-    deletePhoto,
-    uploadMedia,
-    removeCurrentMedia,
-    loadMediaItems,
-    previewMedia,
-    clearMediaForm,
-    loadGallery,
-    loadMesas,
-    createMesa,
-    toggleMesa,
-    downloadMesaQR,
-    printMesaQR,
-    refreshAll,
-    loadDuels,
-    setReserva,
-    setPedido
-  }
-);
-
-init();
-
-</script>
-
-<script>
-document.documentElement.dataset.appVersion =
-  "FINAL-2026-09-09-PEDIDOS-CARRITO-CORREGIDO";
 </script>
 
 </body>
