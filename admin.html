@@ -1,348 +1,383 @@
 <!doctype html>
 <html lang="es">
+
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Pool & Beach | Administración</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
-
 :root{
   --bg:#06131e;
-  --card:#0d2939;
-  --card2:#12364a;
-  --line:#28556b;
-  --sky:#5edcff;
-  --green:#62e6a1;
+  --p:#0c2333;
+  --p2:#123149;
+  --line:#24536a;
+  --sky:#62dcff;
   --gold:#ffd166;
+  --green:#67e7a2;
   --red:#ff7182;
-  --text:#f4fbff;
-  --muted:#9db9c7;
+  --txt:#f5fbff;
+  --muted:#9ab5c5
 }
 
-html,body{
-  margin:0;
-  padding:0;
-  min-height:100%;
+*{
+  box-sizing:border-box
 }
 
 body{
-  background:linear-gradient(180deg,#0b2a3a,#031018);
-  color:var(--text);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  margin:0;
+  background:
+    radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
+  color:var(--txt);
+  font:14px system-ui,-apple-system,Segoe UI,sans-serif
 }
 
-button,input,select,textarea{
-  font:inherit;
-}
-
-button{
-  -webkit-tap-highlight-color:transparent;
-}
-
-.hidden{
-  display:none!important;
-}
-
-.wrap{
-  width:min(1200px,94%);
+.app{
+  max-width:1180px;
   margin:auto;
-  padding:18px 0 50px;
-}
-
-.card{
-  background:linear-gradient(145deg,var(--card2),var(--card));
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:18px;
-  box-shadow:0 12px 30px #0005;
-}
-
-.login{
-  width:min(430px,94%);
-  margin:8vh auto;
-}
-
-.logo{
-  font-size:25px;
-  font-weight:950;
-  text-align:center;
-  margin-bottom:8px;
-}
-
-.logo span{
-  color:var(--sky);
-}
-
-h1,h2,h3{
-  margin-top:0;
-}
-
-label{
-  display:block;
-  color:var(--muted);
-  font-size:13px;
-  margin:10px 0 5px;
-}
-
-input,select,textarea{
-  width:100%;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#061722;
-  color:var(--text);
-  padding:11px;
-  outline:none;
-}
-
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:var(--sky);
-  box-shadow:0 0 0 2px #5edcff22;
-}
-
-input[type="checkbox"]{
-  width:auto;
-  margin-right:6px;
-}
-
-textarea{
-  min-height:90px;
-  resize:vertical;
-}
-
-.btn{
-  border:0;
-  border-radius:11px;
-  padding:11px 15px;
-  font-weight:900;
-  cursor:pointer;
-  background:var(--sky);
-  color:#05202c;
-}
-
-.btn:disabled{
-  opacity:.55;
-  cursor:not-allowed;
-}
-
-.btn.dark{
-  background:#102c3d;
-  color:var(--text);
-  border:1px solid var(--line);
-}
-
-.btn.green{
-  background:var(--green);
-  color:#052116;
-}
-
-.btn.gold{
-  background:var(--gold);
-  color:#2c2200;
-}
-
-.btn.red{
-  background:var(--red);
-  color:#fff;
-}
-
-.btn.small-btn{
-  padding:7px 10px;
-  font-size:12px;
-}
-
-.notice{
-  border:1px solid var(--line);
-  border-radius:11px;
-  padding:10px;
-  background:#102b3c;
-  color:var(--text);
-  margin:10px 0;
-}
-
-.notice.error{
-  border-color:var(--red);
-  background:#381a24;
-}
-
-.notice.success{
-  border-color:var(--green);
-  background:#103628;
+  padding:14px 14px 60px
 }
 
 .top{
   display:flex;
   justify-content:space-between;
-  gap:15px;
   align-items:center;
+  gap:10px
 }
 
-.actions,
+.brand{
+  font-size:23px;
+  font-weight:950
+}
+
+.brand span{
+  color:var(--sky)
+}
+
+.status,
+.badge{
+  border:1px solid var(--line);
+  border-radius:99px;
+  padding:6px 10px;
+  color:var(--sky);
+  font-size:11px
+}
+
+.top-actions,
 .row{
   display:flex;
   gap:8px;
   flex-wrap:wrap;
-  align-items:center;
+  align-items:center
 }
 
-.status{
-  font-size:11px;
+.hero,
+.card{
+  background:linear-gradient(145deg,var(--p2),var(--p));
   border:1px solid var(--line);
-  border-radius:99px;
-  padding:7px 10px;
-  color:var(--sky);
+  border-radius:18px;
+  padding:17px;
+  box-shadow:0 10px 25px #0004
 }
 
 .hero{
-  margin:15px 0;
+  margin-top:14px
+}
+
+.hero h1{
+  margin:0 0 5px
+}
+
+.muted,
+small{
+  color:var(--muted)
 }
 
 .tabs{
   display:flex;
-  gap:7px;
-  overflow:auto;
+  gap:8px;
+  overflow-x:auto;
+  overflow-y:hidden;
+  margin:14px 0;
+  padding:3px 2px 8px;
+  scrollbar-width:thin;
   position:sticky;
   top:0;
-  z-index:5;
-  padding:5px 0 10px;
-  background:#06131ee8;
-  backdrop-filter:blur(8px);
+  z-index:20;
+  background:#06131eE8;
+  backdrop-filter:blur(8px)
+}
+
+.tab,
+.btn{
+  border-radius:12px;
+  padding:11px 13px;
+  border:1px solid var(--line);
+  font-weight:900;
+  cursor:pointer;
+  min-height:42px
+}
+
+.tab:focus-visible,
+.btn:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible{
+  outline:2px solid var(--sky);
+  outline-offset:2px
 }
 
 .tab{
-  white-space:nowrap;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#102c3d;
-  color:var(--text);
-  padding:10px 13px;
-  font-weight:900;
-  cursor:pointer;
+  background:#0b2130;
+  color:var(--txt);
+  white-space:nowrap
 }
 
 .tab.active{
   background:var(--sky);
-  color:#05202c;
+  color:#052031
+}
+
+.btn{
+  background:var(--sky);
+  color:#052031;
+  border:0
+}
+
+.btn.gold{
+  background:var(--gold)
+}
+
+.btn.green{
+  background:var(--green)
+}
+
+.btn.red{
+  background:var(--red)
+}
+
+.btn.dark{
+  background:#15364b;
+  color:var(--txt)
 }
 
 .view{
   display:none;
+  animation:fadeIn .16s ease
 }
 
 .view.active{
-  display:block;
+  display:block
+}
+
+@keyframes fadeIn{
+  from{
+    opacity:.65;
+    transform:translateY(3px)
+  }
+
+  to{
+    opacity:1;
+    transform:none
+  }
+}
+
+.cards,
+.grid2,
+.grid3{
+  display:grid;
+  gap:11px
 }
 
 .cards{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:11px;
-}
-
-.metric b{
-  font-size:29px;
-  display:block;
-  margin-top:4px;
+  grid-template-columns:repeat(4,1fr)
 }
 
 .grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:11px;
+  grid-template-columns:1fr 1fr
+}
+
+.grid3{
+  grid-template-columns:repeat(3,1fr)
+}
+
+.metric b{
+  display:block;
+  font-size:30px;
+  margin-top:3px
+}
+
+.metric small{
+  display:block
+}
+
+.input,
+select,
+textarea{
+  width:100%;
+  padding:11px;
+  border-radius:11px;
+  background:#061722;
+  color:var(--txt);
+  border:1px solid var(--line);
+  margin:5px 0 8px
+}
+
+label{
+  display:block;
+  color:var(--muted);
+  font-size:12px;
+  margin-top:7px
+}
+
+textarea{
+  min-height:80px
 }
 
 .table-wrap{
-  overflow:auto;
+  overflow:auto
 }
 
 table{
   width:100%;
   border-collapse:collapse;
-  min-width:850px;
+  min-width:720px
 }
 
-th,td{
+th,
+td{
   padding:10px;
-  border-bottom:1px solid #234759;
+  border-bottom:1px solid #234456;
   text-align:left;
-  vertical-align:top;
+  vertical-align:top
 }
 
 th{
-  color:var(--muted);
+  color:var(--muted)
 }
 
-.item{
-  padding:12px 0;
-  border-bottom:1px solid #214657;
+.notice{
+  padding:10px;
+  border-radius:12px;
+  background:#102a3b;
+  border:1px solid #26536b;
+  margin:7px 0
 }
 
-.item:last-child{
-  border-bottom:0;
+.empty{
+  text-align:center;
+  padding:20px;
+  color:var(--muted)
+}
+
+.hidden{
+  display:none!important
+}
+
+.thumb{
+  width:100%;
+  height:130px;
+  object-fit:cover;
+  border-radius:10px
+}
+
+.login{
+  max-width:430px;
+  margin:8vh auto
 }
 
 .gallery{
   display:grid;
   grid-template-columns:repeat(3,1fr);
-  gap:10px;
+  gap:10px
 }
 
 .gallery figure{
-  margin:0;
+  margin:0
 }
 
 .gallery img{
   width:100%;
   aspect-ratio:1;
   object-fit:cover;
-  border-radius:12px;
-  display:block;
+  border-radius:12px
 }
 
-.small{
-  font-size:12px;
+.gallery figcaption{
+  font-size:11px;
   color:var(--muted);
+  padding-top:4px
 }
 
-.empty{
-  color:var(--muted);
-  padding:15px 0;
-}
-
-.price{
-  font-weight:900;
-  color:var(--gold);
-}
-
-@media(max-width:800px){
+@media(max-width:850px){
   .cards{
-    grid-template-columns:1fr 1fr;
+    grid-template-columns:repeat(2,1fr)
   }
 }
 
-@media(max-width:620px){
-  .top{
-    align-items:flex-start;
-    flex-direction:column;
-  }
+@media(max-width:600px){
 
-  .actions{
-    width:100%;
-  }
-
-  .actions .btn{
-    flex:1;
-  }
-
+  .cards,
   .grid2,
-  .gallery,
-  .cards{
-    grid-template-columns:1fr;
+  .grid3,
+  .gallery{
+    grid-template-columns:1fr
+  }
+
+  .app{
+    padding:10px
+  }
+
+  .hero{
+    padding:14px
+  }
+
+  .hero h1{
+    font-size:24px
+  }
+
+  .top{
+    align-items:flex-start
+  }
+
+  .top-actions{
+    width:100%
+  }
+
+  .top-actions .btn{
+    flex:1;
+    text-align:center
+  }
+
+  .tabs{
+    margin-left:-2px;
+    margin-right:-2px
+  }
+
+  .tab{
+    flex:0 0 auto
+  }
+
+  .card{
+    padding:14px;
+    border-radius:15px
+  }
+
+  table{
+    min-width:680px
+  }
+
+  .qr-box{
+    justify-content:center
+  }
+
+  .btn{
+    width:auto;
+    min-width:42px
   }
 }
 </style>
@@ -350,13 +385,11 @@ th{
 
 <body>
 
-<!-- =========================
-     LOGIN
-========================= -->
+<div id="loginScreen" class="login card">
 
-<div id="login" class="card login">
-
-  <div class="logo">
+  <div
+    class="brand"
+    style="text-align:center">
     POOL <span>&</span> BEACH
   </div>
 
@@ -365,608 +398,938 @@ th{
   </h2>
 
   <p class="notice">
-    Ingresá con el email y la contraseña de tu cuenta de administrador.
+    Ingresá con una cuenta autorizada de administrador o staff.
   </p>
 
   <form id="loginForm">
 
-    <label for="email">
-      Email
-    </label>
+    <label>Email</label>
 
     <input
-      id="email"
+      id="loginEmail"
+      class="input"
       type="email"
-      autocomplete="username"
       required
-    >
+      autocomplete="email">
 
-    <label for="password">
-      Contraseña
-    </label>
+    <label>Contraseña</label>
 
     <input
-      id="password"
+      id="loginPassword"
+      class="input"
       type="password"
-      autocomplete="current-password"
       required
-    >
+      autocomplete="current-password">
 
     <button
-      id="loginButton"
       class="btn"
-      type="submit"
-      style="width:100%;margin-top:12px"
-    >
+      style="width:100%">
       Iniciar sesión
     </button>
 
-    <div
-      id="loginMsg"
-      class="notice hidden"
-    ></div>
+    <p
+      id="loginMessage"
+      class="notice hidden">
+    </p>
 
   </form>
 
 </div>
 
+<div id="adminApp" class="app hidden">
 
-<!-- =========================
-     PANEL
-========================= -->
-
-<main id="app" class="wrap hidden">
-
-  <header class="top">
+  <div class="top">
 
     <div>
-
-      <div
-        class="logo"
-        style="text-align:left;margin:0"
-      >
+      <div class="brand">
         POOL <span>&</span> BEACH
       </div>
 
-      <div class="small">
-        Panel administrativo
-      </div>
-
+      <small>
+        Panel de administración
+      </small>
     </div>
 
-    <div class="actions">
+    <div class="top-actions">
 
       <span
-        id="status"
-        class="status"
-      >
+        id="connection"
+        class="status">
         CONECTANDO
       </span>
 
       <a
         class="btn dark"
-        href="index.html"
-      >
+        href="index.html">
         Ver sitio
       </a>
 
       <button
         id="logout"
-        class="btn red"
-        type="button"
-      >
-        Cerrar sesión
+        class="btn red">
+        Cerrar
       </button>
 
     </div>
 
-  </header>
+  </div>
 
+  <section class="hero">
 
-  <section class="card hero">
+    <h1>📊 Control total</h1>
 
-    <h1>
-      📊 Administración
-    </h1>
-
-    <div class="small">
-      Gestioná reservas, pedidos, productos,
-      promociones y galería.
-    </div>
+    <p class="muted">
+      Reservas, pedidos, juegos, trivia, premios,
+      torneos, mesas y fotos.
+      Los cambios se reflejan en el sitio público al actualizar.
+    </p>
 
   </section>
 
-
-  <!-- =========================
-       TABS
-  ========================= -->
-
   <nav class="tabs">
 
-    <button
-      class="tab active"
-      type="button"
-      data-view="dashboard"
-    >
+    <button class="tab active" data-v="dashboard">
       🏠 Inicio
     </button>
 
-    <button
-      class="tab"
-      type="button"
-      data-view="reservas"
-    >
+    <button class="tab" data-v="reservas">
       📅 Reservas
     </button>
 
-    <button
-      class="tab"
-      type="button"
-      data-view="pedidos"
-    >
+    <button class="tab" data-v="pedidos">
       🛒 Pedidos
     </button>
 
-    <button
-      class="tab"
-      type="button"
-      data-view="productos"
-    >
+    <button class="tab" data-v="productos">
       🍔 Productos
     </button>
 
-    <button
-      class="tab"
-      type="button"
-      data-view="promos"
-    >
-      🔥 Promociones
+    <button class="tab" data-v="promociones">
+      🔥 Promos
     </button>
 
-    <button
-      class="tab"
-      type="button"
-      data-view="fotos"
-    >
-      📸 Galería
+    <button class="tab" data-v="juegos">
+      🎮 Juegos
+    </button>
+
+    <button class="tab" data-v="trivia">
+      🧠 Trivia
+    </button>
+
+    <button class="tab" data-v="premios">
+      🎁 Premios
+    </button>
+
+    <button class="tab" data-v="torneos">
+      🏆 Torneos
+    </button>
+
+    <button class="tab" data-v="duelo">
+      ⚔️ Duelo
+    </button>
+
+    <button class="tab" data-v="fotos">
+      📸 Fotos
+    </button>
+
+    <button class="tab" data-v="imagenes">
+      🖼️ Imágenes
+    </button>
+
+    <button class="tab" data-v="mesas">
+      🎱 Mesas
     </button>
 
   </nav>
 
+  <main>
 
-  <!-- =========================
-       DASHBOARD
-  ========================= -->
+    <section
+      id="dashboard"
+      class="view active">
 
-  <section
-    id="dashboard"
-    class="view active"
-  >
+      <div class="cards">
 
-    <div class="cards">
-
-      <div class="card metric">
-        <div class="small">
-          Reservas pendientes
+        <div class="card metric">
+          <small>Reservas pendientes</small>
+          <b id="mR">0</b>
         </div>
-        <b id="mR">0</b>
-      </div>
 
-      <div class="card metric">
-        <div class="small">
-          Pedidos pendientes
+        <div class="card metric">
+          <small>Pedidos pendientes</small>
+          <b id="mP">0</b>
         </div>
-        <b id="mP">0</b>
-      </div>
 
-      <div class="card metric">
-        <div class="small">
-          Productos
+        <div class="card metric">
+          <small>Torneos abiertos</small>
+          <b id="mT">0</b>
         </div>
-        <b id="mProd">0</b>
-      </div>
 
-      <div class="card metric">
-        <div class="small">
-          Fotos
+        <div class="card metric">
+          <small>Fotos publicadas</small>
+          <b id="mF">0</b>
         </div>
-        <b id="mF">0</b>
+
       </div>
-
-    </div>
-
-    <div
-      class="card"
-      style="margin-top:11px"
-    >
-
-      <button
-        id="refreshButton"
-        class="btn"
-        type="button"
-      >
-        🔄 Actualizar todo
-      </button>
 
       <div
-        id="dashMsg"
-        class="notice"
-      >
-        Panel listo.
-      </div>
+        class="card"
+        style="margin-top:11px">
 
-    </div>
+        <button
+          class="btn"
+          onclick="refreshAll()">
+          🔄 Actualizar todo ahora
+        </button>
 
-  </section>
-
-
-  <!-- =========================
-       RESERVAS
-  ========================= -->
-
-  <section
-    id="reservas"
-    class="view"
-  >
-
-    <div class="card">
-
-      <h2>
-        📅 Reservas
-      </h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Personas</th>
-              <th>Servicio</th>
-              <th>Estado</th>
-              <th>Notas</th>
-              <th>Acciones</th>
-            </tr>
-
-          </thead>
-
-          <tbody id="reservasTable"></tbody>
-
-        </table>
+        <div
+          id="activity"
+          class="empty">
+          Cargando...
+        </div>
 
       </div>
 
-    </div>
+    </section>
 
-  </section>
-
-
-  <!-- =========================
-       PEDIDOS
-  ========================= -->
-
-  <section
-    id="pedidos"
-    class="view"
-  >
-
-    <div class="card">
-
-      <h2>
-        🛒 Pedidos
-      </h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Entrega</th>
-              <th>Total</th>
-              <th>Estado</th>
-              <th>Detalle</th>
-              <th>Acciones</th>
-            </tr>
-
-          </thead>
-
-          <tbody id="ordersTable"></tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PRODUCTOS
-  ========================= -->
-
-  <section
-    id="productos"
-    class="view"
-  >
-
-    <div class="grid2">
+    <section
+      id="reservas"
+      class="view">
 
       <div class="card">
 
-        <h2>
-          🍔 Nuevo producto
-        </h2>
+        <h2>📅 Reservas</h2>
 
-        <label for="pn">
-          Nombre
-        </label>
+        <div class="table-wrap">
 
-        <input id="pn">
+          <table>
 
-        <label for="pc">
-          Categoría
-        </label>
+            <thead>
 
-        <input
-          id="pc"
-          placeholder="Pizza, hamburguesa, bebida..."
-        >
+              <tr>
+                <th>Fecha/hora</th>
+                <th>Cliente</th>
+                <th>Servicio</th>
+                <th>Personas</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
 
-        <label for="pd">
-          Descripción
-        </label>
+            </thead>
 
-        <textarea id="pd"></textarea>
+            <tbody id="reservasTable">
+            </tbody>
 
-        <label for="pp">
-          Precio
-        </label>
+          </table>
 
-        <input
-          id="pp"
-          type="number"
-          min="0"
-        >
+        </div>
 
-        <label>
+      </div>
+
+    </section>
+
+    <section
+      id="pedidos"
+      class="view">
+
+      <div class="card">
+
+        <h2>🛒 Pedidos</h2>
+
+        <div class="table-wrap">
+
+          <table>
+
+            <thead>
+
+              <tr>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Teléfono</th>
+                <th>Tipo</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th></th>
+              </tr>
+
+            </thead>
+
+            <tbody id="pedidosTable">
+            </tbody>
+
+          </table>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="productos"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🍔 Nuevo producto</h2>
+
+          <label>Nombre</label>
+          <input id="prodName" class="input">
+
+          <label>Categoría</label>
           <input
-            id="pa"
-            type="checkbox"
-            checked
-          >
-          Activo y disponible
-        </label>
+            id="prodCat"
+            class="input"
+            placeholder="Pizza, hamburguesa, bebida...">
 
-        <button
-          id="createProductButton"
-          class="btn gold"
-          type="button"
-          style="margin-top:10px"
-        >
-          Guardar producto
-        </button>
+          <label>Descripción</label>
+          <textarea
+            id="prodDesc"
+            class="input">
+          </textarea>
 
-        <div
-          id="prodMsg"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>
-          Productos actuales
-        </h2>
-
-        <div id="productsList"></div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PROMOCIONES
-  ========================= -->
-
-  <section
-    id="promos"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>
-          🔥 Nueva promoción
-        </h2>
-
-        <label for="promoTitle">
-          Título
-        </label>
-
-        <input id="promoTitle">
-
-        <label for="promoDesc">
-          Descripción
-        </label>
-
-        <textarea id="promoDesc"></textarea>
-
-        <label for="promoPrice">
-          Precio opcional
-        </label>
-
-        <input
-          id="promoPrice"
-          type="number"
-          min="0"
-        >
-
-        <label>
+          <label>Precio</label>
           <input
-            id="promoActive"
-            type="checkbox"
-            checked
-          >
-          Publicada
-        </label>
+            id="prodPrice"
+            class="input"
+            type="number"
+            min="0"
+            step="0.01">
+
+          <div class="row">
+
+            <button
+              class="btn gold"
+              onclick="createProduct()">
+              Guardar producto
+            </button>
+
+            <button
+              class="btn dark"
+              onclick="loadProducts()">
+              🔄 Actualizar
+            </button>
+
+          </div>
+
+          <p
+            id="prodMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Productos actuales</h2>
+
+          <div id="productsList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="promociones"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🔥 Nueva promoción</h2>
+
+          <label>Título</label>
+          <input id="promoTitle" class="input">
+
+          <label>Descripción</label>
+          <textarea
+            id="promoDesc"
+            class="input">
+          </textarea>
+
+          <label>Precio (opcional)</label>
+
+          <input
+            id="promoPrice"
+            class="input"
+            type="number"
+            min="0"
+            step="0.01">
+
+          <div class="row">
+
+            <button
+              class="btn gold"
+              onclick="createPromotion()">
+              Guardar promoción
+            </button>
+
+            <button
+              class="btn dark"
+              onclick="loadPromotions()">
+              🔄 Actualizar
+            </button>
+
+          </div>
+
+          <p
+            id="promoMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Promociones actuales</h2>
+
+          <div id="promotionsList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="juegos"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🎮 Nuevo juego</h2>
+
+          <label>Nombre</label>
+          <input id="gName" class="input">
+
+          <label>Descripción</label>
+          <textarea
+            id="gDesc"
+            class="input">
+          </textarea>
+
+          <div class="grid2">
+
+            <div>
+
+              <label>Icono</label>
+
+              <input
+                id="gIcon"
+                class="input"
+                value="🎮">
+
+            </div>
+
+            <div>
+
+              <label>Puntos</label>
+
+              <input
+                id="gPoints"
+                class="input"
+                type="number"
+                value="10">
+
+            </div>
+
+          </div>
+
+          <label>Fichas</label>
+
+          <input
+            id="gTokens"
+            class="input"
+            type="number"
+            value="5">
+
+          <button
+            class="btn gold"
+            onclick="createGame()">
+            Guardar juego
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="loadGames()">
+            🔄 Actualizar
+          </button>
+
+          <p
+            id="gMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Juegos actuales</h2>
+
+          <div id="gamesList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="trivia"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🧠 Nueva pregunta</h2>
+
+          <label>Pregunta</label>
+
+          <textarea
+            id="qText"
+            class="input">
+          </textarea>
+
+          <label>
+            Opciones — una por línea
+          </label>
+
+          <textarea
+            id="qOptions"
+            class="input"
+            placeholder="Opción A
+Opción B
+Opción C
+Opción D">
+          </textarea>
+
+          <label>
+            Índice correcto (0 = primera)
+          </label>
+
+          <input
+            id="qCorrect"
+            class="input"
+            type="number"
+            min="0"
+            value="0">
+
+          <button
+            class="btn gold"
+            onclick="createQuestion()">
+            Guardar pregunta
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="loadTrivia()">
+            🔄 Actualizar
+          </button>
+
+          <p
+            id="qMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Preguntas cargadas</h2>
+
+          <div id="questionsList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="premios"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🎁 Nuevo premio</h2>
+
+          <label>Nombre</label>
+          <input id="prizeName" class="input">
+
+          <label>Descripción</label>
+          <textarea
+            id="prizeDesc"
+            class="input">
+          </textarea>
+
+          <label>Tokens necesarios</label>
+
+          <input
+            id="prizeCost"
+            class="input"
+            type="number"
+            min="0">
+
+          <label>Icono</label>
+
+          <input
+            id="prizeIcon"
+            class="input"
+            value="🎁">
+
+          <button
+            class="btn gold"
+            onclick="createPrize()">
+            Guardar premio
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="loadPrizes()">
+            🔄 Actualizar
+          </button>
+
+          <p
+            id="prizeMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Premios actuales</h2>
+
+          <div id="prizesList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="torneos"
+      class="view">
+
+      <div class="grid2">
+
+        <div class="card">
+
+          <h2>🏆 Nuevo torneo</h2>
+
+          <label>Nombre</label>
+          <input id="tournamentName" class="input">
+
+          <label>Descripción</label>
+
+          <textarea
+            id="tournamentDesc"
+            class="input">
+          </textarea>
+
+          <label>Inscripción</label>
+
+          <input
+            id="tournamentEntry"
+            class="input"
+            type="number"
+            min="0">
+
+          <label>Premio</label>
+
+          <input
+            id="tournamentPrize"
+            class="input"
+            type="number"
+            min="0">
+
+          <label>Cupo máximo</label>
+
+          <input
+            id="tournamentMax"
+            class="input"
+            type="number"
+            min="2"
+            value="16">
+
+          <button
+            class="btn gold"
+            onclick="createTournament()">
+            Guardar torneo
+          </button>
+
+          <button
+            class="btn dark"
+            onclick="loadTournaments()">
+            🔄 Actualizar
+          </button>
+
+          <p
+            id="tournamentMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Torneos actuales</h2>
+
+          <div id="tournamentsList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+    <section
+      id="duelo"
+      class="view">
+
+      <div class="card">
+
+        <h2>⚔️ Duelos</h2>
 
         <button
-          id="createPromoButton"
-          class="btn gold"
-          type="button"
-          style="margin-top:10px"
-        >
-          Guardar promoción
+          class="btn dark"
+          onclick="loadDuels()">
+          🔄 Actualizar
         </button>
 
         <div
-          id="promoMsg"
-          class="notice hidden"
-        ></div>
+          id="duelsList"
+          style="margin-top:12px">
+        </div>
 
       </div>
 
+    </section>
 
-      <div class="card">
+    <section
+      id="fotos"
+      class="view">
 
-        <h2>
-          Promociones actuales
-        </h2>
+      <div class="grid2">
 
-        <div id="promosList"></div>
+        <div class="card">
 
-      </div>
+          <h2>📸 Subir foto</h2>
 
-    </div>
+          <label>Título</label>
 
-  </section>
+          <input
+            id="photoTitle"
+            class="input"
+            placeholder="Ej. Noche de torneo">
 
+          <label>Imagen</label>
 
-  <!-- =========================
-       GALERÍA
-  ========================= -->
+          <input
+            id="photoFile"
+            class="input"
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif">
 
-  <section
-    id="fotos"
-    class="view"
-  >
+          <button
+            class="btn gold"
+            onclick="uploadPhoto()">
+            📸 Publicar foto
+          </button>
 
-    <div class="grid2">
+          <p
+            id="photoMsg"
+            class="notice hidden">
+          </p>
 
-      <div class="card">
+        </div>
 
-        <h2>
-          📸 Subir foto
-        </h2>
+        <div class="card">
 
-        <label for="photoTitle">
-          Título
-        </label>
+          <h2>Fotos publicadas</h2>
 
-        <input id="photoTitle">
+          <div
+            id="galleryList"
+            class="gallery">
+          </div>
 
-        <label for="photoFile">
-          Imagen
-        </label>
-
-        <input
-          id="photoFile"
-          type="file"
-          accept="image/*"
-        >
-
-        <div
-          id="preview"
-          style="margin-top:10px"
-        ></div>
-
-        <button
-          id="uploadPhotoButton"
-          class="btn green"
-          type="button"
-          style="margin-top:10px"
-        >
-          Subir imagen
-        </button>
-
-        <div
-          id="photoMsg"
-          class="notice hidden"
-        ></div>
+        </div>
 
       </div>
 
+    </section>
 
-      <div class="card">
+    <section
+      id="imagenes"
+      class="view">
 
-        <h2>
-          Galería actual
-        </h2>
+      <div class="grid2">
 
-        <div
-          id="galleryList"
-          class="gallery"
-        ></div>
+        <div class="card">
+
+          <h2>🖼️ Imagen de contenido</h2>
+
+          <label>Contenido</label>
+
+          <select id="mediaType">
+            <option value="products">
+              Producto
+            </option>
+
+            <option value="promotions">
+              Promoción
+            </option>
+
+            <option value="games">
+              Juego
+            </option>
+
+            <option value="prizes">
+              Premio
+            </option>
+          </select>
+
+          <label>Seleccionar contenido</label>
+
+          <select id="mediaItem"></select>
+
+          <label>Imagen</label>
+
+          <input
+            id="mediaFile"
+            class="input"
+            type="file"
+            accept="image/*">
+
+          <img
+            id="mediaPreview"
+            class="thumb hidden"
+            alt="Vista previa">
+
+          <div class="row">
+
+            <button
+              id="uploadMediaBtn"
+              class="btn gold"
+              onclick="uploadMedia()">
+              🖼️ Subir imagen
+            </button>
+
+            <button
+              class="btn dark"
+              onclick="clearMediaForm()">
+              Limpiar
+            </button>
+
+          </div>
+
+          <p
+            id="mediaMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Imagen actual</h2>
+
+          <div id="mediaCurrent">
+            <div class="empty">
+              Seleccioná un contenido.
+            </div>
+          </div>
+
+        </div>
 
       </div>
 
-    </div>
+    </section>
 
-  </section>
+    <section
+      id="mesas"
+      class="view">
 
-</main>
+      <div class="grid2">
 
+        <div class="card">
+
+          <h2>🎱 Nueva mesa</h2>
+
+          <label>Número</label>
+
+          <input
+            id="mesaNumero"
+            class="input"
+            type="number"
+            min="1">
+
+          <label>Nombre</label>
+
+          <input
+            id="mesaNombre"
+            class="input"
+            placeholder="Mesa 1">
+
+          <button
+            class="btn gold"
+            onclick="createMesa()">
+            Crear mesa + QR
+          </button>
+
+          <p
+            id="mesaMsg"
+            class="notice hidden">
+          </p>
+
+        </div>
+
+        <div class="card">
+
+          <h2>Mesas actuales</h2>
+
+          <div id="mesasList"></div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+</div>
 
 <script>
-"use strict";
-
-/* =========================================================
-   CONFIGURACIÓN SUPABASE
-========================================================= */
 
 const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+  "https://YOUR_PROJECT.supabase.co";
 
-const SUPABASE_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const SUPABASE_ANON_KEY =
+  "YOUR_SUPABASE_ANON_KEY";
 
-const sb = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY,
-  {
-    auth:{
-      persistSession:true,
-      autoRefreshToken:true,
-      detectSessionInUrl:true
-    }
-  }
-);
+const db =
+  supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
 
+const $ =
+  id => document.getElementById(id);
 
-/* =========================================================
-   HELPERS
-========================================================= */
+function esc(value){
 
-const $ = id => document.getElementById(id);
-
-function escapeHtml(value){
   return String(value ?? "")
     .replace(/&/g,"&amp;")
     .replace(/</g,"&lt;")
@@ -975,1444 +1338,2634 @@ function escapeHtml(value){
     .replace(/'/g,"&#039;");
 }
 
-function showMessage(id,text,type=""){
-  const el = $(id);
-  if(!el) return;
+function safeUrl(value){
 
-  el.textContent = text;
-  el.className = "notice";
+  const u =
+    String(value || "").trim();
 
-  if(type === "error"){
-    el.classList.add("error");
-  }
-
-  if(type === "success"){
-    el.classList.add("success");
-  }
-
-  el.classList.remove("hidden");
-}
-
-function hideMessage(id){
-  const el = $(id);
-  if(el){
-    el.classList.add("hidden");
-  }
-}
-
-function money(value){
-  if(value === null || value === undefined || value === ""){
-    return "";
-  }
-
-  const number = Number(value);
-
-  if(Number.isNaN(number)){
-    return escapeHtml(value);
-  }
-
-  return "$" + number.toLocaleString("es-AR");
-}
-
-function dateText(value){
-  if(!value) return "";
+  if(!u)return "";
 
   try{
-    return new Date(value).toLocaleString("es-AR");
+
+    const parsed =
+      new URL(u,location.href);
+
+    if(
+      parsed.protocol === "http:" ||
+      parsed.protocol === "https:"
+    ){
+      return parsed.href;
+    }
+
+    return "";
+
   }catch{
-    return String(value);
+
+    return "";
   }
 }
 
-function errorText(error){
-  if(!error) return "Error desconocido.";
+function msg(id,text,hide=false){
 
-  return (
-    error.message ||
-    error.error_description ||
-    error.details ||
-    "Ocurrió un error."
-  );
-}
+  const el =
+    $(id);
 
+  if(!el)return;
 
-/* =========================================================
-   LOGIN
-========================================================= */
+  if(hide){
 
-async function login(event){
-
-  if(event){
-    event.preventDefault();
-  }
-
-  const email = $("email").value.trim();
-  const password = $("password").value;
-
-  if(!email || !password){
-    showMessage(
-      "loginMsg",
-      "Completá el email y la contraseña.",
-      "error"
+    el.classList.add(
+      "hidden"
     );
+
+    el.textContent =
+      "";
+
     return;
   }
 
-  const button = $("loginButton");
+  el.classList.remove(
+    "hidden"
+  );
 
-  button.disabled = true;
-  button.textContent = "Ingresando...";
+  el.textContent =
+    text;
+}
 
-  hideMessage("loginMsg");
+function setConnection(text){
+
+  const el =
+    $("connection");
+
+  if(el){
+    el.textContent =
+      text;
+  }
+}
+
+function showLoginMessage(text){
+
+  const el =
+    $("loginMessage");
+
+  if(!el)return;
+
+  el.textContent =
+    text;
+
+  el.classList.remove(
+    "hidden"
+  );
+}
+
+function isAdmin(profile){
+
+  const role =
+    profile?.role;
+
+  return (
+    role === "admin" ||
+    role === "staff"
+  );
+}
+
+async function checkAuthorized(){
+
+  const {data,error} =
+    await db.auth.getUser();
+
+  if(error){
+    console.warn(error);
+    return null;
+  }
+
+  const user =
+    data?.user;
+
+  if(!user)return null;
+
+  const {data:profile,error:profileError} =
+    await db
+      .from("profiles")
+      .select("*")
+      .eq("id",user.id)
+      .maybeSingle();
+
+  if(profileError){
+
+    console.warn(
+      profileError
+    );
+
+    return null;
+  }
+
+  return {
+    user,
+    profile
+  };
+}
+
+async function login(event){
+
+  event.preventDefault();
+
+  const email =
+    $("loginEmail")
+      .value
+      .trim();
+
+  const password =
+    $("loginPassword")
+      .value;
+
+  if(!email || !password){
+
+    showLoginMessage(
+      "Ingresá email y contraseña."
+    );
+
+    return;
+  }
+
+  const button =
+    $("loginForm")
+      .querySelector("button");
+
+  button.disabled =
+    true;
+
+  button.textContent =
+    "Ingresando...";
 
   try{
 
     const {data,error} =
-      await sb.auth.signInWithPassword({
+      await db.auth.signInWithPassword({
         email,
         password
       });
 
-    if(error){
-      throw error;
-    }
+    if(error)throw error;
 
-    if(!data || !data.session){
+    const user =
+      data?.user;
+
+    if(!user){
+
       throw new Error(
-        "Supabase no devolvió una sesión válida."
+        "No se pudo obtener el usuario."
       );
     }
 
-    $("password").value = "";
+    const result =
+      await checkAuthorized();
 
-    await openPanel();
+    if(
+      !result ||
+      !isAdmin(result.profile)
+    ){
+
+      await db.auth.signOut();
+
+      showLoginMessage(
+        "La cuenta inició sesión, pero no tiene permisos de administrador o staff."
+      );
+
+      return;
+    }
+
+    showAdmin();
 
   }catch(error){
 
-    console.error("LOGIN ERROR:",error);
+    console.error(error);
 
-    showMessage(
-      "loginMsg",
-      "No se pudo iniciar sesión: " + errorText(error),
-      "error"
+    showLoginMessage(
+      error?.message ||
+      "No se pudo iniciar sesión."
     );
 
   }finally{
 
-    button.disabled = false;
-    button.textContent = "Iniciar sesión";
+    button.disabled =
+      false;
 
+    button.textContent =
+      "Iniciar sesión";
   }
 }
 
+function showAdmin(){
 
-/* =========================================================
-   ABRIR PANEL
-========================================================= */
+  $("loginScreen")
+    .classList
+    .add("hidden");
 
-let openingPanel = false;
+  $("adminApp")
+    .classList
+    .remove("hidden");
 
-async function openPanel(){
+  setConnection(
+    "CONECTADO"
+  );
 
-  if(openingPanel){
-    return;
-  }
-
-  openingPanel = true;
-
-  try{
-
-    $("login").classList.add("hidden");
-    $("app").classList.remove("hidden");
-
-    $("status").textContent = "CONECTADO";
-
-    await refreshAll();
-
-  }catch(error){
-
-    console.error("PANEL ERROR:",error);
-
-    $("status").textContent = "CONECTADO";
-
-    showMessage(
-      "dashMsg",
-      "Sesión iniciada, pero hubo un problema cargando los datos: " +
-      errorText(error),
-      "error"
-    );
-
-  }finally{
-
-    openingPanel = false;
-
-  }
+  refreshAll();
 }
-
-
-/* =========================================================
-   CERRAR SESIÓN
-========================================================= */
 
 async function logout(){
 
-  try{
-    await sb.auth.signOut();
-  }catch(error){
-    console.error("LOGOUT ERROR:",error);
-  }
+  await db.auth.signOut();
 
-  $("app").classList.add("hidden");
-  $("login").classList.remove("hidden");
+  $("adminApp")
+    .classList
+    .add("hidden");
 
-  $("status").textContent = "DESCONECTADO";
+  $("loginScreen")
+    .classList
+    .remove("hidden");
 
-  $("email").value = "";
-  $("password").value = "";
-
-  hideMessage("loginMsg");
+  setConnection(
+    "DESCONECTADO"
+  );
 }
-
-
-/* =========================================================
-   NAVEGACIÓN
-========================================================= */
 
 function setupTabs(){
 
-  document.querySelectorAll(".tab").forEach(button => {
+  document
+    .querySelectorAll(".tab")
+    .forEach(tab=>{
 
-    button.addEventListener("click",() => {
+      tab.addEventListener(
+        "click",
+        ()=>{
 
-      const view = button.dataset.view;
+          const view =
+            tab.dataset.v;
 
-      document.querySelectorAll(".tab")
-        .forEach(btn => btn.classList.remove("active"));
+          document
+            .querySelectorAll(".tab")
+            .forEach(x=>
+              x.classList.remove(
+                "active"
+              )
+            );
 
-      document.querySelectorAll(".view")
-        .forEach(section => section.classList.remove("active"));
+          document
+            .querySelectorAll(".view")
+            .forEach(x=>
+              x.classList.remove(
+                "active"
+              )
+            );
 
-      button.classList.add("active");
+          tab.classList.add(
+            "active"
+          );
 
-      const target = $(view);
+          const section =
+            $(view);
 
-      if(target){
-        target.classList.add("active");
-      }
+          if(section){
+            section.classList.add(
+              "active"
+            );
+          }
 
+          if(view === "reservas")
+            loadReservations();
+
+          if(view === "pedidos")
+            loadOrders();
+
+          if(view === "productos")
+            loadProducts();
+
+          if(view === "promociones")
+            loadPromotions();
+
+          if(view === "juegos")
+            loadGames();
+
+          if(view === "trivia")
+            loadTrivia();
+
+          if(view === "premios")
+            loadPrizes();
+
+          if(view === "torneos")
+            loadTournaments();
+
+          if(view === "duelo")
+            loadDuels();
+
+          if(view === "fotos")
+            loadGallery();
+
+          if(view === "imagenes")
+            loadMediaItems();
+
+          if(view === "mesas")
+            loadMesas();
+        }
+      );
     });
-
-  });
-
 }
-
-
-/* =========================================================
-   DASHBOARD
-========================================================= */
-
-async function loadDashboard(){
-
-  const results = await Promise.allSettled([
-
-    sb
-      .from("reservas")
-      .select("id,estado",{count:"exact",head:false})
-      .order("fecha",{ascending:false})
-      .limit(100),
-
-    sb
-      .from("pedidos")
-      .select("id,estado",{count:"exact",head:false})
-      .order("created_at",{ascending:false})
-      .limit(100),
-
-    sb
-      .from("productos")
-      .select("id",{count:"exact",head:false})
-      .limit(1000),
-
-    sb
-      .from("galeria_fotos")
-      .select("id",{count:"exact",head:false})
-      .limit(1000)
-
-  ]);
-
-  let reservas = [];
-  let pedidos = [];
-  let productos = [];
-  let fotos = [];
-
-  if(results[0].status === "fulfilled"){
-    const result = results[0].value;
-
-    if(!result.error){
-      reservas = result.data || [];
-    }
-  }
-
-  if(results[1].status === "fulfilled"){
-    const result = results[1].value;
-
-    if(!result.error){
-      pedidos = result.data || [];
-    }
-  }
-
-  if(results[2].status === "fulfilled"){
-    const result = results[2].value;
-
-    if(!result.error){
-      productos = result.data || [];
-    }
-  }
-
-  if(results[3].status === "fulfilled"){
-    const result = results[3].value;
-
-    if(!result.error){
-      fotos = result.data || [];
-    }
-  }
-
-  const pendingReservations =
-    reservas.filter(row =>
-      !["cancelada","cancelado","finalizada","finalizado","rechazada","rechazado"]
-        .includes(
-          String(row.estado || "").toLowerCase()
-        )
-    ).length;
-
-  const pendingOrders =
-    pedidos.filter(row =>
-      !["cancelado","cancelada","entregado","entregada","finalizado","finalizada"]
-        .includes(
-          String(row.estado || "").toLowerCase()
-        )
-    ).length;
-
-  $("mR").textContent = pendingReservations;
-  $("mP").textContent = pendingOrders;
-  $("mProd").textContent = productos.length;
-  $("mF").textContent = fotos.length;
-}
-
-
-/* =========================================================
-   RESERVAS
-========================================================= */
 
 async function loadReservations(){
 
-  const tbody = $("reservasTable");
+  const tbody =
+    $("reservasTable");
+
+  const {data,error} =
+    await db
+      .from("reservas")
+      .select("*")
+      .order(
+        "fecha",
+        {ascending:true}
+      )
+      .order(
+        "hora",
+        {ascending:true}
+      );
+
+  if(error){
+
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="6">
+          ❌ ${esc(error.message)}
+        </td>
+      </tr>`;
+
+    return;
+  }
+
+  const rows =
+    data || [];
 
   tbody.innerHTML =
-    '<tr><td colspan="8">Cargando...</td></tr>';
+    rows.map(r=>{
 
-  const {data,error} = await sb
-    .from("reservas")
-    .select("*")
-    .order("fecha",{ascending:false})
-    .order("hora",{ascending:false})
-    .limit(300);
+      return `
+        <tr>
 
-  if(error){
+          <td>
+            ${esc(r.fecha || "")}
+            <br>
+            ${esc(r.hora || "")}
+          </td>
 
-    tbody.innerHTML =
-      '<tr><td colspan="8">No se pudieron cargar las reservas.</td></tr>';
+          <td>
+            <strong>
+              ${esc(r.nombre || "")}
+            </strong>
 
-    console.error(error);
+            <br>
+            <small>
+              ${esc(r.telefono || "")}
+            </small>
+          </td>
 
-    return;
-  }
+          <td>
+            ${esc(r.servicio || "")}
+          </td>
 
-  if(!data || !data.length){
+          <td>
+            ${Number(
+              r.cantidad_personas || 1
+            )}
+          </td>
 
-    tbody.innerHTML =
-      '<tr><td colspan="8">No hay reservas.</td></tr>';
+          <td>
+            ${esc(
+              r.estado ||
+              r.Estado ||
+              "pendiente"
+            )}
+          </td>
 
-    return;
-  }
+          <td>
 
-  tbody.innerHTML = data.map(row => {
+            <button
+              class="btn green"
+              onclick="updateReservation('${esc(r.id)}','confirmada')">
+              ✓
+            </button>
 
-    const estado =
-      row.estado || "pendiente";
+            <button
+              class="btn red"
+              onclick="updateReservation('${esc(r.id)}','cancelada')">
+              ×
+            </button>
 
-    return `
-      <tr>
-        <td>
-          ${escapeHtml(row.fecha || "")}
-          <br>
-          <span class="small">
-            ${escapeHtml(row.hora || "")}
-          </span>
-        </td>
+          </td>
 
-        <td>
-          ${escapeHtml(row.nombre || "")}
-        </td>
+        </tr>
+      `;
 
-        <td>
-          ${escapeHtml(row.telefono || "")}
-        </td>
-
-        <td>
-          ${escapeHtml(row.cantidad_personas || "")}
-        </td>
-
-        <td>
-          ${escapeHtml(row.servicio || "")}
-        </td>
-
-        <td>
-          <select
-            onchange="changeReservationStatus(${JSON.stringify(row.id)},this.value)"
-          >
-            ${[
-              "pendiente",
-              "confirmada",
-              "cancelada",
-              "finalizada"
-            ].map(option => `
-              <option
-                value="${option}"
-                ${String(estado).toLowerCase() === option ? "selected" : ""}
-              >
-                ${option}
-              </option>
-            `).join("")}
-          </select>
-        </td>
-
-        <td>
-          ${escapeHtml(row.notas || "")}
-        </td>
-
-        <td>
-          <button
-            class="btn red small-btn"
-            type="button"
-            onclick="deleteReservation(${JSON.stringify(row.id)})"
-          >
-            Eliminar
-          </button>
-        </td>
-      </tr>
-    `;
-
-  }).join("");
+    }).join("")
+    ||
+    `<tr>
+      <td colspan="6">
+        No hay reservas.
+      </td>
+    </tr>`;
 }
 
-async function changeReservationStatus(id,status){
+async function updateReservation(id,status){
 
-  const {error} = await sb
-    .from("reservas")
-    .update({
-      estado:status
-    })
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("reservas")
+      .update({
+        estado:status
+      })
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo cambiar el estado:\n" +
-      errorText(error)
-    );
-
-    await loadReservations();
-    return;
-  }
-
-  await loadDashboard();
-}
-
-async function deleteReservation(id){
-
-  if(!confirm("¿Eliminar esta reserva?")){
-    return;
-  }
-
-  const {error} = await sb
-    .from("reservas")
-    .delete()
-    .eq("id",id);
-
-  if(error){
-
-    alert(
-      "No se pudo eliminar la reserva:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadReservations();
-  await loadDashboard();
+  loadReservations();
+  refreshDashboard();
 }
-
-
-/* =========================================================
-   PEDIDOS
-========================================================= */
 
 async function loadOrders(){
 
-  const tbody = $("ordersTable");
+  const tbody =
+    $("pedidosTable");
 
-  tbody.innerHTML =
-    '<tr><td colspan="8">Cargando...</td></tr>';
-
-  const {data,error} = await sb
-    .from("pedidos")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(300);
-
-  if(error){
-
-    tbody.innerHTML =
-      '<tr><td colspan="8">No se pudieron cargar los pedidos.</td></tr>';
-
-    console.error(error);
-
-    return;
-  }
-
-  if(!data || !data.length){
-
-    tbody.innerHTML =
-      '<tr><td colspan="8">No hay pedidos.</td></tr>';
-
-    return;
-  }
-
-  tbody.innerHTML = data.map(row => {
-
-    const estado =
-      String(row.estado || "pendiente").toLowerCase();
-
-    let detalle = "";
-
-    if(Array.isArray(row.items)){
-
-      detalle = row.items.map(item => {
-
-        if(typeof item === "string"){
-          return escapeHtml(item);
-        }
-
-        const nombre =
-          item.nombre ||
-          item.name ||
-          "Producto";
-
-        const cantidad =
-          item.cantidad ||
-          item.quantity ||
-          1;
-
-        return `
-          ${escapeHtml(nombre)}
-          × ${escapeHtml(cantidad)}
-        `;
-
-      }).join("<br>");
-
-    }else if(row.items){
-
-      detalle = escapeHtml(
-        JSON.stringify(row.items)
+  const {data,error} =
+    await db
+      .from("pedidos")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
       );
 
-    }else{
-
-      detalle = "—";
-
-    }
-
-    return `
-      <tr>
-
-        <td>
-          ${escapeHtml(dateText(row.created_at))}
-        </td>
-
-        <td>
-          ${escapeHtml(row.nombre_cliente || "")}
-        </td>
-
-        <td>
-          ${escapeHtml(row.telefono || "")}
-        </td>
-
-        <td>
-          ${escapeHtml(row.tipo_entrega || row.tipo || "")}
-          ${
-            row.direccion
-              ? "<br>" + escapeHtml(row.direccion)
-              : ""
-          }
-        </td>
-
-        <td class="price">
-          ${money(row.total)}
-        </td>
-
-        <td>
-
-          <select
-            onchange="changeOrderStatus(${JSON.stringify(row.id)},this.value)"
-          >
-
-            ${[
-              "pendiente",
-              "confirmado",
-              "preparando",
-              "listo",
-              "entregado",
-              "cancelado"
-            ].map(option => `
-              <option
-                value="${option}"
-                ${estado === option ? "selected" : ""}
-              >
-                ${option}
-              </option>
-            `).join("")}
-
-          </select>
-
-        </td>
-
-        <td>
-          ${detalle}
-          ${
-            row.notas
-              ? "<br><span class='small'>Notas: " +
-                escapeHtml(row.notas) +
-                "</span>"
-              : ""
-          }
-        </td>
-
-        <td>
-
-          <button
-            class="btn red small-btn"
-            type="button"
-            onclick="deleteOrder(${JSON.stringify(row.id)})"
-          >
-            Eliminar
-          </button>
-
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
-}
-
-async function changeOrderStatus(id,status){
-
-  const {error} = await sb
-    .from("pedidos")
-    .update({
-      estado:status
-    })
-    .eq("id",id);
-
   if(error){
 
-    alert(
-      "No se pudo cambiar el estado:\n" +
-      errorText(error)
-    );
-
-    await loadOrders();
+    tbody.innerHTML =
+      `<tr>
+        <td colspan="7">
+          ❌ ${esc(error.message)}
+        </td>
+      </tr>`;
 
     return;
   }
 
-  await loadDashboard();
+  tbody.innerHTML =
+    (data || [])
+      .map(p=>{
+
+        const total =
+          Number(
+            p.total || 0
+          );
+
+        return `
+          <tr>
+
+            <td>
+              ${esc(
+                p.created_at ||
+                p.creado_en ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                p.nombre_cliente ||
+                p.nombre ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                p.telefono ||
+                ""
+              )}
+            </td>
+
+            <td>
+              ${esc(
+                p.tipo_entrega ||
+                ""
+              )}
+            </td>
+
+            <td>
+              $${total.toLocaleString("es-AR")}
+            </td>
+
+            <td>
+              ${esc(
+                p.estado ||
+                "pendiente"
+              )}
+            </td>
+
+            <td>
+
+              <button
+                class="btn green"
+                onclick="updateOrder('${esc(p.id)}','confirmado')">
+                ✓
+              </button>
+
+              <button
+                class="btn red"
+                onclick="updateOrder('${esc(p.id)}','cancelado')">
+                ×
+              </button>
+
+            </td>
+
+          </tr>
+        `;
+
+      }).join("")
+      ||
+      `<tr>
+        <td colspan="7">
+          No hay pedidos.
+        </td>
+      </tr>`;
 }
 
-async function deleteOrder(id){
+async function updateOrder(id,status){
 
-  if(!confirm("¿Eliminar este pedido?")){
-    return;
-  }
-
-  const {error} = await sb
-    .from("pedidos")
-    .delete()
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("pedidos")
+      .update({
+        estado:status
+      })
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo eliminar el pedido:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadOrders();
-  await loadDashboard();
+  loadOrders();
+  refreshDashboard();
 }
-
-
-/* =========================================================
-   PRODUCTOS
-========================================================= */
 
 async function loadProducts(){
 
-  const list = $("productsList");
+  const container =
+    $("productsList");
 
-  list.innerHTML =
-    '<div class="empty">Cargando...</div>';
-
-  const {data,error} = await sb
-    .from("productos")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(500);
+  const {data,error} =
+    await db
+      .from("productos")
+      .select("*")
+      .order("categoria")
+      .order("nombre");
 
   if(error){
 
-    list.innerHTML =
-      '<div class="empty">No se pudieron cargar los productos.</div>';
-
-    console.error(error);
-
-    return;
-  }
-
-  if(!data || !data.length){
-
-    list.innerHTML =
-      '<div class="empty">Todavía no hay productos.</div>';
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
 
     return;
   }
 
-  list.innerHTML = data.map(row => `
+  container.innerHTML =
+    (data || [])
+      .map(p=>{
 
-    <div class="item">
+        const name =
+          p.nombre ??
+          p.name ??
+          "Producto";
 
-      <strong>
-        ${escapeHtml(row.nombre || "")}
-      </strong>
+        const price =
+          Number(
+            p.precio ??
+            p.price ??
+            0
+          );
 
-      <div class="small">
-        ${escapeHtml(row.categoria || "")}
-      </div>
+        const active =
+          p.activo ??
+          p.active ??
+          true;
 
-      ${
-        row.descripcion
-          ? `<div style="margin-top:5px">
-              ${escapeHtml(row.descripcion)}
-             </div>`
-          : ""
-      }
+        return `
+          <div class="notice">
 
-      <div class="price" style="margin-top:5px">
-        ${money(row.precio)}
-      </div>
+            <div
+              class="row"
+              style="justify-content:space-between">
 
-      <div class="small" style="margin-top:5px">
-        ${
-          row.disponible === false
-            ? "No disponible"
-            : "Disponible"
-        }
-        ·
-        ${
-          row.activo === false
-            ? "Inactivo"
-            : "Activo"
-        }
-      </div>
+              <div>
 
-      <div class="actions" style="margin-top:9px">
+                <b>
+                  ${esc(name)}
+                </b>
 
-        <button
-          class="btn dark small-btn"
-          type="button"
-          onclick="toggleProduct(${JSON.stringify(row.id)},${row.activo === false ? "true" : "false"},${row.disponible === false ? "true" : "false"})"
-        >
-          Cambiar estado
-        </button>
+                <br>
 
-        <button
-          class="btn red small-btn"
-          type="button"
-          onclick="deleteProduct(${JSON.stringify(row.id)})"
-        >
-          Eliminar
-        </button>
+                <small>
+                  ${esc(
+                    p.categoria ||
+                    ""
+                  )}
+                  ·
+                  $${price.toLocaleString("es-AR")}
+                </small>
 
-      </div>
+              </div>
 
-    </div>
+              <span class="status">
+                ${active
+                  ? "ACTIVO"
+                  : "INACTIVO"}
+              </span>
 
-  `).join("");
+            </div>
+
+            <p
+              class="muted"
+              style="margin-top:7px">
+              ${esc(
+                p.descripcion ||
+                p.description ||
+                ""
+              )}
+            </p>
+
+            <div
+              class="row"
+              style="margin-top:9px">
+
+              <button
+                class="btn ${active ? "red" : "green"}"
+                onclick="toggleProduct('${esc(p.id)}',${!active})">
+                ${active
+                  ? "Desactivar"
+                  : "Activar"}
+              </button>
+
+              <button
+                class="btn red"
+                onclick="deleteProduct('${esc(p.id)}')">
+                Eliminar
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay productos.</div>';
 }
 
 async function createProduct(){
 
-  const nombre = $("pn").value.trim();
-  const categoria = $("pc").value.trim();
-  const descripcion = $("pd").value.trim();
-  const precioValue = $("pp").value;
-  const activo = $("pa").checked;
+  const nombre =
+    $("prodName")
+      .value
+      .trim();
+
+  const categoria =
+    $("prodCat")
+      .value
+      .trim();
+
+  const descripcion =
+    $("prodDesc")
+      .value
+      .trim();
+
+  const precio =
+    Number(
+      $("prodPrice").value
+    );
 
   if(!nombre){
 
-    showMessage(
+    return msg(
       "prodMsg",
-      "Ingresá el nombre del producto.",
-      "error"
+      "❌ Ingresá un nombre."
     );
-
-    return;
   }
 
-  const precio =
-    precioValue === ""
-      ? null
-      : Number(precioValue);
+  if(!Number.isFinite(precio) || precio < 0){
 
-  const button = $("createProductButton");
+    return msg(
+      "prodMsg",
+      "❌ Ingresá un precio válido."
+    );
+  }
 
-  button.disabled = true;
-  button.textContent = "Guardando...";
-
-  try{
-
-    const {error} = await sb
+  const {error} =
+    await db
       .from("productos")
       .insert({
         nombre,
         categoria,
         descripcion,
         precio,
-        disponible:activo,
-        activo
+        activo:true
       });
 
-    if(error){
-      throw error;
-    }
+  if(error){
 
-    $("pn").value = "";
-    $("pc").value = "";
-    $("pd").value = "";
-    $("pp").value = "";
-    $("pa").checked = true;
-
-    showMessage(
+    return msg(
       "prodMsg",
-      "Producto guardado correctamente.",
-      "success"
+      "❌ " + error.message
     );
-
-    await loadProducts();
-    await loadDashboard();
-
-  }catch(error){
-
-    console.error(error);
-
-    showMessage(
-      "prodMsg",
-      "No se pudo guardar el producto: " +
-      errorText(error),
-      "error"
-    );
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Guardar producto";
-
   }
+
+  msg(
+    "prodMsg",
+    "✅ Producto guardado."
+  );
+
+  $("prodName").value="";
+  $("prodCat").value="";
+  $("prodDesc").value="";
+  $("prodPrice").value="";
+
+  loadProducts();
 }
 
-async function toggleProduct(id,activo,disponible){
+async function toggleProduct(id,active){
 
-  const {error} = await sb
-    .from("productos")
-    .update({
-      activo,
-      disponible
-    })
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("productos")
+      .update({
+        activo:active
+      })
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo cambiar el estado:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadProducts();
+  loadProducts();
 }
 
 async function deleteProduct(id){
 
-  if(!confirm("¿Eliminar este producto?")){
-    return;
-  }
+  if(
+    !confirm(
+      "¿Eliminar este producto?"
+    )
+  )return;
 
-  const {error} = await sb
-    .from("productos")
-    .delete()
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("productos")
+      .delete()
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo eliminar el producto:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadProducts();
-  await loadDashboard();
+  loadProducts();
 }
 
+async function loadPromotions(){
 
-/* =========================================================
-   PROMOCIONES
-========================================================= */
+  const container =
+    $("promotionsList");
 
-async function loadPromos(){
-
-  const list = $("promosList");
-
-  list.innerHTML =
-    '<div class="empty">Cargando...</div>';
-
-  const {data,error} = await sb
-    .from("promociones")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(500);
+  const {data,error} =
+    await db
+      .from("promociones")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
 
   if(error){
 
-    list.innerHTML =
-      '<div class="empty">No se pudieron cargar las promociones.</div>';
-
-    console.error(error);
-
-    return;
-  }
-
-  if(!data || !data.length){
-
-    list.innerHTML =
-      '<div class="empty">Todavía no hay promociones.</div>';
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
 
     return;
   }
 
-  list.innerHTML = data.map(row => `
+  container.innerHTML =
+    (data || [])
+      .map(p=>{
 
-    <div class="item">
+        const active =
+          p.activa ??
+          p.active ??
+          true;
 
-      <strong>
-        ${escapeHtml(row.titulo || "")}
-      </strong>
+        const price =
+          p.precio != null
+            ? Number(p.precio)
+            : null;
 
-      ${
-        row.descripcion
-          ? `<div style="margin-top:5px">
-              ${escapeHtml(row.descripcion)}
-             </div>`
-          : ""
-      }
+        return `
+          <div class="notice">
 
-      ${
-        row.precio !== null &&
-        row.precio !== undefined
-          ? `<div class="price" style="margin-top:5px">
-              ${money(row.precio)}
-             </div>`
-          : ""
-      }
+            <b>
+              🔥 ${esc(
+                p.titulo ||
+                p.title ||
+                "Promoción"
+              )}
+            </b>
 
-      <div class="small" style="margin-top:5px">
-        ${
-          row.activa
-            ? "🟢 Publicada"
-            : "🔴 Oculta"
-        }
-      </div>
+            <p
+              class="muted"
+              style="margin-top:6px">
+              ${esc(
+                p.descripcion ||
+                ""
+              )}
+            </p>
 
-      <div class="actions" style="margin-top:9px">
+            ${
+              price !== null
+                ? `
+                  <strong>
+                    $${price.toLocaleString("es-AR")}
+                  </strong>
+                `
+                : ""
+            }
 
-        <button
-          class="btn dark small-btn"
-          type="button"
-          onclick="togglePromo(${JSON.stringify(row.id)},${row.activa ? "false" : "true"})"
-        >
-          ${row.activa ? "Ocultar" : "Publicar"}
-        </button>
+            <div
+              class="row"
+              style="margin-top:9px">
 
-        <button
-          class="btn red small-btn"
-          type="button"
-          onclick="deletePromo(${JSON.stringify(row.id)})"
-        >
-          Eliminar
-        </button>
+              <button
+                class="btn ${active ? "red" : "green"}"
+                onclick="togglePromotion('${esc(p.id)}',${!active})">
+                ${active
+                  ? "Desactivar"
+                  : "Activar"}
+              </button>
 
-      </div>
+              <button
+                class="btn red"
+                onclick="deletePromotion('${esc(p.id)}')">
+                Eliminar
+              </button>
 
-    </div>
+            </div>
 
-  `).join("");
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay promociones.</div>';
 }
 
-async function createPromo(){
+async function createPromotion(){
 
-  const titulo = $("promoTitle").value.trim();
-  const descripcion = $("promoDesc").value.trim();
-  const precioValue = $("promoPrice").value;
-  const activa = $("promoActive").checked;
+  const titulo =
+    $("promoTitle")
+      .value
+      .trim();
+
+  const descripcion =
+    $("promoDesc")
+      .value
+      .trim();
+
+  const precioRaw =
+    $("promoPrice").value;
+
+  const precio =
+    precioRaw === ""
+      ? null
+      : Number(precioRaw);
 
   if(!titulo){
 
-    showMessage(
+    return msg(
       "promoMsg",
-      "Ingresá el título de la promoción.",
-      "error"
+      "❌ Ingresá un título."
     );
-
-    return;
   }
 
-  const precio =
-    precioValue === ""
-      ? null
-      : Number(precioValue);
+  if(
+    precio !== null &&
+    (!Number.isFinite(precio) || precio < 0)
+  ){
 
-  const button = $("createPromoButton");
+    return msg(
+      "promoMsg",
+      "❌ Precio inválido."
+    );
+  }
 
-  button.disabled = true;
-  button.textContent = "Guardando...";
-
-  try{
-
-    const {error} = await sb
+  const {error} =
+    await db
       .from("promociones")
       .insert({
         titulo,
         descripcion,
         precio,
-        activa
+        activa:true
       });
 
-    if(error){
-      throw error;
-    }
+  if(error){
 
-    $("promoTitle").value = "";
-    $("promoDesc").value = "";
-    $("promoPrice").value = "";
-    $("promoActive").checked = true;
-
-    showMessage(
+    return msg(
       "promoMsg",
-      "Promoción guardada correctamente.",
-      "success"
+      "❌ " + error.message
     );
-
-    await loadPromos();
-
-  }catch(error){
-
-    console.error(error);
-
-    showMessage(
-      "promoMsg",
-      "No se pudo guardar la promoción: " +
-      errorText(error),
-      "error"
-    );
-
-  }finally{
-
-    button.disabled = false;
-    button.textContent = "Guardar promoción";
-
   }
+
+  msg(
+    "promoMsg",
+    "✅ Promoción guardada."
+  );
+
+  $("promoTitle").value="";
+  $("promoDesc").value="";
+  $("promoPrice").value="";
+
+  loadPromotions();
 }
 
-async function togglePromo(id,activa){
+async function togglePromotion(id,active){
 
-  const {error} = await sb
-    .from("promociones")
-    .update({
-      activa
-    })
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("promociones")
+      .update({
+        activa:active
+      })
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo cambiar la promoción:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadPromos();
+  loadPromotions();
 }
 
-async function deletePromo(id){
+async function deletePromotion(id){
 
-  if(!confirm("¿Eliminar esta promoción?")){
-    return;
-  }
+  if(
+    !confirm(
+      "¿Eliminar esta promoción?"
+    )
+  )return;
 
-  const {error} = await sb
-    .from("promociones")
-    .delete()
-    .eq("id",id);
+  const {error} =
+    await db
+      .from("promociones")
+      .delete()
+      .eq("id",id);
 
   if(error){
 
     alert(
-      "No se pudo eliminar la promoción:\n" +
-      errorText(error)
+      error.message
     );
 
     return;
   }
 
-  await loadPromos();
+  loadPromotions();
 }
 
+async function loadGames(){
 
-/* =========================================================
-   GALERÍA
-========================================================= */
+  const container =
+    $("gamesList");
 
-function setupPhotoPreview(){
+  const {data,error} =
+    await db
+      .from("games")
+      .select("*")
+      .order("name");
 
-  $("photoFile").addEventListener("change",event => {
+  if(error){
 
-    const file = event.target.files?.[0];
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
 
-    $("preview").innerHTML = "";
+    return;
+  }
 
-    if(!file){
-      return;
-    }
+  container.innerHTML =
+    (data || [])
+      .map(g=>{
 
-    if(!file.type.startsWith("image/")){
+        const active =
+          g.active ??
+          true;
 
-      showMessage(
-        "photoMsg",
-        "El archivo seleccionado no es una imagen.",
-        "error"
+        return `
+          <div class="notice">
+
+            <b>
+              ${esc(
+                g.icon ||
+                "🎮"
+              )}
+              ${esc(
+                g.name ||
+                "Juego"
+              )}
+            </b>
+
+            <p
+              class="muted"
+              style="margin-top:6px">
+              ${esc(
+                g.description ||
+                ""
+              )}
+            </p>
+
+            <small>
+              ⭐ ${Number(g.points || 0)}
+              · 🪙 ${Number(g.tokens || 0)}
+            </small>
+
+            <div
+              class="row"
+              style="margin-top:9px">
+
+              <button
+                class="btn ${active ? "red" : "green"}"
+                onclick="toggleGame('${esc(g.id)}',${!active})">
+                ${active
+                  ? "Desactivar"
+                  : "Activar"}
+              </button>
+
+              <button
+                class="btn red"
+                onclick="deleteGame('${esc(g.id)}')">
+                Eliminar
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay juegos.</div>';
+}
+
+async function createGame(){
+
+  const name =
+    $("gName")
+      .value
+      .trim();
+
+  const description =
+    $("gDesc")
+      .value
+      .trim();
+
+  const icon =
+    $("gIcon")
+      .value
+      .trim() ||
+    "🎮";
+
+  const points =
+    Number(
+      $("gPoints").value
+    );
+
+  const tokens =
+    Number(
+      $("gTokens").value
+    );
+
+  if(!name){
+
+    return msg(
+      "gMsg",
+      "❌ Ingresá el nombre."
+    );
+  }
+
+  const {error} =
+    await db
+      .from("games")
+      .insert({
+        name,
+        description,
+        icon,
+        points,
+        tokens,
+        active:true
+      });
+
+  if(error){
+
+    return msg(
+      "gMsg",
+      "❌ " + error.message
+    );
+  }
+
+  msg(
+    "gMsg",
+    "✅ Juego guardado."
+  );
+
+  $("gName").value="";
+  $("gDesc").value="";
+
+  loadGames();
+}
+
+async function toggleGame(id,active){
+
+  const {error} =
+    await db
+      .from("games")
+      .update({
+        active
+      })
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadGames();
+}
+
+async function deleteGame(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este juego?"
+    )
+  )return;
+
+  const {error} =
+    await db
+      .from("games")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadGames();
+}
+
+async function loadTrivia(){
+
+  const container =
+    $("questionsList");
+
+  const {data,error} =
+    await db
+      .from("trivia_questions")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
       );
 
-      event.target.value = "";
-
-      return;
-    }
-
-    const url = URL.createObjectURL(file);
-
-    $("preview").innerHTML = `
-      <img
-        src="${url}"
-        alt="Vista previa"
-        style="
-          width:100%;
-          max-height:280px;
-          object-fit:cover;
-          border-radius:12px;
-        "
-      >
-    `;
-
-  });
-}
-
-async function loadGallery(){
-
-  const list = $("galleryList");
-
-  list.innerHTML =
-    '<div class="empty">Cargando...</div>';
-
-  const {data,error} = await sb
-    .from("galeria_fotos")
-    .select("*")
-    .order("creado_en",{ascending:false})
-    .limit(500);
-
-  let rows = data;
-
   if(error){
 
-    const fallback = await sb
-      .from("galeria_fotos")
-      .select("*")
-      .order("created_at",{ascending:false})
-      .limit(500);
-
-    if(fallback.error){
-
-      list.innerHTML =
-        '<div class="empty">No se pudo cargar la galería.</div>';
-
-      console.error(error);
-
-      return;
-    }
-
-    rows = fallback.data;
-  }
-
-  if(!rows || !rows.length){
-
-    list.innerHTML =
-      '<div class="empty">Todavía no hay fotos.</div>';
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
 
     return;
   }
 
-  list.innerHTML = rows.map(row => {
+  container.innerHTML =
+    (data || [])
+      .map(q=>{
 
-    const imageUrl =
-      row.url ||
-      row.image_url ||
-      "";
+        const question =
+          q.question ??
+          q.pregunta ??
+          q.text ??
+          "";
 
-    return `
-      <figure>
+        let options =
+          q.options ??
+          q.opciones ??
+          [];
 
-        ${
-          imageUrl
-            ? `
-              <img
-                src="${escapeHtml(imageUrl)}"
-                alt="${escapeHtml(row.titulo || "Foto")}"
-                loading="lazy"
-              >
-            `
-            : `
-              <div class="notice">
-                Sin URL de imagen
-              </div>
-            `
+        if(typeof options === "string"){
+
+          try{
+            options =
+              JSON.parse(options);
+          }catch{
+            options =
+              options.split("\n");
+          }
         }
 
-        <figcaption style="margin-top:7px">
+        const correct =
+          Number(
+            q.correct_index ??
+            q.correctIndex ??
+            0
+          );
 
-          <strong>
-            ${escapeHtml(row.titulo || "Sin título")}
-          </strong>
+        return `
+          <div class="notice">
 
-          ${
-            row.categoria
-              ? `
-                <div class="small">
-                  ${escapeHtml(row.categoria)}
-                </div>
-              `
-              : ""
-          }
+            <b>
+              ${esc(question)}
+            </b>
 
-          <button
-            class="btn red small-btn"
-            type="button"
-            style="margin-top:7px"
-            onclick="deletePhoto(${JSON.stringify(row.id)},${JSON.stringify(row.ruta || "")})"
-          >
-            Eliminar
-          </button>
+            <ol style="margin:8px 0 0 20px">
 
-        </figcaption>
+              ${
+                Array.isArray(options)
+                  ? options.map(
+                      (o,i)=>
+                        `<li ${
+                          i === correct
+                            ? 'style="font-weight:900"'
+                            : ""
+                        }>
+                          ${esc(o)}
+                        </li>`
+                    ).join("")
+                  : ""
+              }
 
-      </figure>
-    `;
+            </ol>
 
-  }).join("");
+            <button
+              class="btn red"
+              style="margin-top:9px"
+              onclick="deleteQuestion('${esc(q.id)}')">
+              Eliminar
+            </button>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay preguntas.</div>';
 }
 
-async function uploadPhoto(){
+async function createQuestion(){
 
-  const file = $("photoFile").files?.[0];
-  const title = $("photoTitle").value.trim();
+  const question =
+    $("qText")
+      .value
+      .trim();
+
+  const options =
+    $("qOptions")
+      .value
+      .split("\n")
+      .map(x=>x.trim())
+      .filter(Boolean);
+
+  const correct =
+    Number(
+      $("qCorrect").value
+    );
+
+  if(!question){
+
+    return msg(
+      "qMsg",
+      "❌ Ingresá la pregunta."
+    );
+  }
+
+  if(options.length < 2){
+
+    return msg(
+      "qMsg",
+      "❌ Ingresá al menos dos opciones."
+    );
+  }
+
+  if(
+    !Number.isInteger(correct) ||
+    correct < 0 ||
+    correct >= options.length
+  ){
+
+    return msg(
+      "qMsg",
+      "❌ Índice correcto inválido."
+    );
+  }
+
+  const {error} =
+    await db
+      .from("trivia_questions")
+      .insert({
+        question,
+        options,
+        correct_index:correct,
+        active:true
+      });
+
+  if(error){
+
+    return msg(
+      "qMsg",
+      "❌ " + error.message
+    );
+  }
+
+  msg(
+    "qMsg",
+    "✅ Pregunta guardada."
+  );
+
+  $("qText").value="";
+  $("qOptions").value="";
+  $("qCorrect").value="0";
+
+  loadTrivia();
+}
+
+async function deleteQuestion(id){
+
+  if(
+    !confirm(
+      "¿Eliminar esta pregunta?"
+    )
+  )return;
+
+  const {error} =
+    await db
+      .from("trivia_questions")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadTrivia();
+}
+
+async function loadPrizes(){
+
+  const container =
+    $("prizesList");
+
+  const {data,error} =
+    await db
+      .from("prizes")
+      .select("*")
+      .order(
+        "token_cost",
+        {ascending:true}
+      );
+
+  if(error){
+
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    (data || [])
+      .map(p=>{
+
+        const active =
+          p.active ??
+          true;
+
+        const cost =
+          Number(
+            p.token_cost ??
+            p.cost_tokens ??
+            0
+          );
+
+        return `
+          <div class="notice">
+
+            <b>
+              ${esc(
+                p.icon ||
+                "🎁"
+              )}
+              ${esc(
+                p.name ||
+                "Premio"
+              )}
+            </b>
+
+            <p
+              class="muted"
+              style="margin-top:6px">
+              ${esc(
+                p.description ||
+                ""
+              )}
+            </p>
+
+            <small>
+              🪙 ${cost} tokens
+            </small>
+
+            <div
+              class="row"
+              style="margin-top:9px">
+
+              <button
+                class="btn ${active ? "red" : "green"}"
+                onclick="togglePrize('${esc(p.id)}',${!active})">
+                ${active
+                  ? "Desactivar"
+                  : "Activar"}
+              </button>
+
+              <button
+                class="btn red"
+                onclick="deletePrize('${esc(p.id)}')">
+                Eliminar
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay premios.</div>';
+}
+
+async function createPrize(){
+
+  const name =
+    $("prizeName")
+      .value
+      .trim();
+
+  const description =
+    $("prizeDesc")
+      .value
+      .trim();
+
+  const token_cost =
+    Number(
+      $("prizeCost").value
+    );
+
+  const icon =
+    $("prizeIcon")
+      .value
+      .trim() ||
+    "🎁";
+
+  if(!name){
+
+    return msg(
+      "prizeMsg",
+      "❌ Ingresá el nombre."
+    );
+  }
+
+  if(
+    !Number.isFinite(token_cost) ||
+    token_cost < 0
+  ){
+
+    return msg(
+      "prizeMsg",
+      "❌ Cantidad de tokens inválida."
+    );
+  }
+
+  const {error} =
+    await db
+      .from("prizes")
+      .insert({
+        name,
+        description,
+        token_cost,
+        icon,
+        active:true
+      });
+
+  if(error){
+
+    return msg(
+      "prizeMsg",
+      "❌ " + error.message
+    );
+  }
+
+  msg(
+    "prizeMsg",
+    "✅ Premio guardado."
+  );
+
+  $("prizeName").value="";
+  $("prizeDesc").value="";
+  $("prizeCost").value="";
+
+  loadPrizes();
+}
+
+async function togglePrize(id,active){
+
+  const {error} =
+    await db
+      .from("prizes")
+      .update({
+        active
+      })
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadPrizes();
+}
+
+async function deletePrize(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este premio?"
+    )
+  )return;
+
+  const {error} =
+    await db
+      .from("prizes")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadPrizes();
+}
+
+async function loadTournaments(){
+
+  const container =
+    $("tournamentsList");
+
+  const {data,error} =
+    await db
+      .from("tournaments")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(error){
+
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    (data || [])
+      .map(t=>{
+
+        const active =
+          (
+            t.status ||
+            "open"
+          ) === "open";
+
+        return `
+          <div class="notice">
+
+            <b>
+              🏆 ${esc(
+                t.name ||
+                t.nombre ||
+                "Torneo"
+              )}
+            </b>
+
+            <p
+              class="muted"
+              style="margin-top:6px">
+              ${esc(
+                t.description ||
+                t.descripcion ||
+                ""
+              )}
+            </p>
+
+            <small>
+              Inscripción:
+              $${Number(
+                t.entry_fee ||
+                t.inscription_fee ||
+                0
+              ).toLocaleString("es-AR")}
+              · Premio:
+              $${Number(
+                t.prize ||
+                t.prize_amount ||
+                0
+              ).toLocaleString("es-AR")}
+            </small>
+
+            <div
+              class="row"
+              style="margin-top:9px">
+
+              <button
+                class="btn red"
+                onclick="deleteTournament('${esc(t.id)}')">
+                Eliminar
+              </button>
+
+            </div>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay torneos.</div>';
+}
+
+async function createTournament(){
+
+  const name =
+    $("tournamentName")
+      .value
+      .trim();
+
+  const description =
+    $("tournamentDesc")
+      .value
+      .trim();
+
+  const entry_fee =
+    Number(
+      $("tournamentEntry").value
+    );
+
+  const prize =
+    Number(
+      $("tournamentPrize").value
+    );
+
+  const max_players =
+    Number(
+      $("tournamentMax").value
+    );
+
+  if(!name){
+
+    return msg(
+      "tournamentMsg",
+      "❌ Ingresá el nombre."
+    );
+  }
+
+  if(
+    !Number.isInteger(max_players) ||
+    max_players < 2
+  ){
+
+    return msg(
+      "tournamentMsg",
+      "❌ Cupo máximo inválido."
+    );
+  }
+
+  const {error} =
+    await db
+      .from("tournaments")
+      .insert({
+        name,
+        description,
+        entry_fee:
+          Number.isFinite(entry_fee)
+            ? entry_fee
+            : 0,
+        prize:
+          Number.isFinite(prize)
+            ? prize
+            : 0,
+        max_players,
+        status:"open"
+      });
+
+  if(error){
+
+    return msg(
+      "tournamentMsg",
+      "❌ " + error.message
+    );
+  }
+
+  msg(
+    "tournamentMsg",
+    "✅ Torneo guardado."
+  );
+
+  $("tournamentName").value="";
+  $("tournamentDesc").value="";
+  $("tournamentEntry").value="";
+  $("tournamentPrize").value="";
+
+  loadTournaments();
+}
+
+async function deleteTournament(id){
+
+  if(
+    !confirm(
+      "¿Eliminar este torneo?"
+    )
+  )return;
+
+  const {error} =
+    await db
+      .from("tournaments")
+      .delete()
+      .eq("id",id);
+
+  if(error){
+
+    alert(
+      error.message
+    );
+
+    return;
+  }
+
+  loadTournaments();
+}
+
+async function loadDuels(){
+
+  const container =
+    $("duelsList");
+
+  const {data,error} =
+    await db
+      .from("duel_matches")
+      .select("*")
+      .order(
+        "created_at",
+        {ascending:false}
+      );
+
+  if(error){
+
+    container.innerHTML =
+      `<div class="notice">
+        ❌ ${esc(error.message)}
+      </div>`;
+
+    return;
+  }
+
+  container.innerHTML =
+    (data || [])
+      .map(d=>{
+
+        return `
+          <div class="notice">
+
+            <b>
+              ⚔️ Duelo
+            </b>
+
+            <p
+              class="muted"
+              style="margin-top:6px">
+
+              ${esc(
+                d.status ||
+                "pendiente"
+              )}
+
+            </p>
+
+          </div>
+        `;
+
+      }).join("")
+      ||
+      '<div class="empty">No hay duelos.</div>';
+}
+
+const MEDIA_CONFIG = {
+
+  products:{
+    table:"productos",
+    folder:"productos",
+    label:"Producto"
+  },
+
+  promotions:{
+    table:"promociones",
+    folder:"promociones",
+    label:"Promoción"
+  },
+
+  games:{
+    table:"games",
+    folder:"games",
+    label:"Juego"
+  },
+
+  prizes:{
+    table:"prizes",
+    folder:"prizes",
+    label:"Premio"
+  }
+
+};
+
+async function loadMediaItems(){
+
+  const type =
+    $("mediaType").value;
+
+  const cfg =
+    MEDIA_CONFIG[type];
+
+  const select =
+    $("mediaItem");
+
+  if(!cfg){
+
+    select.innerHTML="";
+    return;
+  }
+
+  const {data,error} =
+    await db
+      .from(cfg.table)
+      .select("*")
+      .order(
+        cfg.table === "productos"
+          ? "nombre"
+          : "name"
+      );
+
+  if(error){
+
+    select.innerHTML =
+      `<option>
+        Error: ${esc(error.message)}
+      </option>`;
+
+    return;
+  }
+
+  window.__mediaRows =
+    data || [];
+
+  select.innerHTML =
+    window.__mediaRows
+      .map(x=>{
+
+        const name =
+          x.nombre ||
+          x.name ||
+          x.titulo ||
+          "Contenido";
+
+        return `
+          <option value="${esc(x.id)}">
+            ${esc(name)}
+          </option>
+        `;
+      })
+      .join("")
+      ||
+      '<option value="">Sin contenidos</option>';
+
+  await loadCurrentMedia();
+}
+
+async function loadCurrentMedia(){
+
+  const type =
+    $("mediaType").value;
+
+  const cfg =
+    MEDIA_CONFIG[type];
+
+  const itemId =
+    $("mediaItem").value;
+
+  const container =
+    $("mediaCurrent");
+
+  if(!cfg || !itemId){
+
+    container.innerHTML =
+      '<div class="empty">Seleccioná un contenido.</div>';
+
+    return;
+  }
+
+  const selected =
+    window.__mediaRows?.find(
+      x =>
+        String(x.id) ===
+        String(itemId)
+    );
+
+  const url =
+    safeUrl(
+      selected?.image_url
+    );
+
+  container.innerHTML =
+    url
+      ? `
+        <img
+          class="thumb"
+          src="${esc(url)}"
+          alt="Imagen actual"
+          loading="lazy">
+
+        <p
+          class="muted"
+          style="margin-top:8px;word-break:break-all">
+          ${esc(url)}
+        </p>
+
+        <button
+          class="btn red"
+          type="button"
+          onclick="removeCurrentMedia()">
+          🗑️ Eliminar imagen
+        </button>
+      `
+      : `
+        <div class="empty">
+          Este contenido todavía no tiene imagen.
+        </div>
+      `;
+}
+
+async function removeCurrentMedia(){
+
+  const type =
+    $("mediaType").value;
+
+  const cfg =
+    MEDIA_CONFIG[type];
+
+  const itemId =
+    $("mediaItem").value;
+
+  if(!cfg || !itemId){
+
+    return msg(
+      "mediaMsg",
+      "❌ Seleccioná un contenido."
+    );
+  }
+
+  if(
+    !confirm(
+      "¿Eliminar la imagen de este contenido?"
+    )
+  )return;
+
+  const selected =
+    window.__mediaRows?.find(
+      x =>
+        String(x.id) ===
+        String(itemId)
+    );
+
+  const oldUrl =
+    selected?.image_url ||
+    "";
+
+  const upd =
+    await db
+      .from(cfg.table)
+      .update({
+        image_url:null
+      })
+      .eq("id",itemId);
+
+  if(upd.error){
+
+    return msg(
+      "mediaMsg",
+      "❌ No se pudo quitar la imagen: " +
+      upd.error.message
+    );
+  }
+
+  if(oldUrl){
+
+    try{
+
+      const marker =
+        "/storage/v1/object/public/Galeria/";
+
+      const i =
+        oldUrl.indexOf(marker);
+
+      if(i >= 0){
+
+        const path =
+          decodeURIComponent(
+            oldUrl.slice(
+              i + marker.length
+            )
+          );
+
+        await db
+          .storage
+          .from("Galeria")
+          .remove([path]);
+      }
+
+    }catch(e){
+
+      console.warn(
+        "Storage cleanup:",
+        e
+      );
+    }
+  }
+
+  msg(
+    "mediaMsg",
+    "✅ Imagen eliminada."
+  );
+
+  await loadMediaItems();
+}
+
+async function uploadMedia(){
+
+  const type =
+    $("mediaType").value;
+
+  const cfg =
+    MEDIA_CONFIG[type];
+
+  const itemId =
+    $("mediaItem").value;
+
+  const file =
+    $("mediaFile")
+      .files[0];
+
+  if(!cfg || !itemId){
+
+    return msg(
+      "mediaMsg",
+      "❌ Seleccioná un contenido."
+    );
+  }
 
   if(!file){
 
-    showMessage(
-      "photoMsg",
-      "Seleccioná una imagen.",
-      "error"
+    return msg(
+      "mediaMsg",
+      "❌ Elegí una imagen desde el teléfono."
     );
-
-    return;
   }
 
   if(!file.type.startsWith("image/")){
 
-    showMessage(
-      "photoMsg",
-      "El archivo debe ser una imagen.",
-      "error"
+    return msg(
+      "mediaMsg",
+      "❌ El archivo debe ser una imagen."
     );
-
-    return;
   }
 
-  const button = $("uploadPhotoButton");
+  if(
+    file.size >
+    8 * 1024 * 1024
+  ){
 
-  button.disabled = true;
-  button.textContent = "Subiendo...";
+    return msg(
+      "mediaMsg",
+      "❌ La imagen supera 8 MB."
+    );
+  }
+
+  const session =
+    await db.auth.getSession();
+
+  if(
+    session.error ||
+    !session.data?.session
+  ){
+
+    return msg(
+      "mediaMsg",
+      "❌ La sesión de administrador venció. Volvé a iniciar sesión."
+    );
+  }
+
+  const ext =
+    (
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg"
+    )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      ) ||
+    "jpg";
+
+  const uid =
+    crypto.randomUUID
+      ? crypto.randomUUID()
+      : Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2);
+
+  const path =
+    `content/${cfg.folder}/${itemId}/${uid}.${ext}`;
+
+  msg(
+    "mediaMsg",
+    "⏳ Subiendo imagen..."
+  );
+
+  $("uploadMediaBtn")
+    .disabled = true;
 
   try{
 
-    const extension =
-      file.name.includes(".")
-        ? file.name.split(".").pop().toLowerCase()
-        : "jpg";
-
-    const safeExtension =
-      extension.replace(/[^a-z0-9]/gi,"") || "jpg";
-
-    const filename =
-      Date.now() +
-      "-" +
-      Math.random().toString(36).slice(2,10) +
-      "." +
-      safeExtension;
-
-    const path =
-      "galeria/" + filename;
-
-    const {error:uploadError} =
-      await sb.storage
+    const up =
+      await db
+        .storage
         .from("Galeria")
         .upload(
           path,
           file,
           {
+            contentType:file.type,
             cacheControl:"3600",
-            upsert:false,
-            contentType:file.type
+            upsert:false
           }
         );
 
-    if(uploadError){
-      throw uploadError;
-    }
+    if(up.error)
+      throw up.error;
 
-    const {data:publicData} =
-      sb.storage
+    const url =
+      db
+        .storage
         .from("Galeria")
-        .getPublicUrl(path);
+        .getPublicUrl(path)
+        .data
+        .publicUrl;
 
-    const publicUrl =
-      publicData?.publicUrl || "";
-
-    if(!publicUrl){
+    if(!url){
 
       throw new Error(
-        "No se pudo obtener la URL pública de la imagen."
+        "Supabase no devolvió una URL pública."
       );
     }
 
-    const {error:dbError} =
-      await sb
-        .from("galeria_fotos")
-        .insert({
-          titulo:title || file.name,
-          categoria:"galeria",
-          ruta:path,
-          url:publicUrl
-        });
+    const upd =
+      await db
+        .from(cfg.table)
+        .update({
+          image_url:url
+        })
+        .eq("id",itemId);
 
-    if(dbError){
+    if(upd.error)
+      throw upd.error;
 
-      try{
-        await sb.storage
-          .from("Galeria")
-          .remove([path]);
-      }catch(removeError){
-        console.error(removeError);
-      }
-
-      throw dbError;
-    }
-
-    $("photoTitle").value = "";
-    $("photoFile").value = "";
-    $("preview").innerHTML = "";
-
-    showMessage(
-      "photoMsg",
-      "Imagen subida correctamente.",
-      "success"
+    msg(
+      "mediaMsg",
+      "✅ Imagen subida y vinculada correctamente."
     );
 
-    await loadGallery();
-    await loadDashboard();
+    $("mediaFile").value="";
+
+    $("mediaPreview").src="";
+    $("mediaPreview")
+      .classList
+      .add("hidden");
+
+    await loadMediaItems();
 
   }catch(error){
 
-    console.error("UPLOAD ERROR:",error);
+    try{
 
-    showMessage(
-      "photoMsg",
-      "No se pudo subir la imagen: " +
-      errorText(error),
-      "error"
+      await db
+        .storage
+        .from("Galeria")
+        .remove([path]);
+
+    }catch(_){}
+
+    msg(
+      "mediaMsg",
+      "❌ No se pudo subir la imagen: " +
+      (
+        error?.message ||
+        "Error desconocido"
+      )
     );
 
   }finally{
 
-    button.disabled = false;
-    button.textContent = "Subir imagen";
-
+    $("uploadMediaBtn")
+      .disabled = false;
   }
+}
+
+function clearMediaForm(){
+
+  $("mediaFile").value="";
+
+  $("mediaPreview").src="";
+
+  $("mediaPreview")
+    .classList
+    .add("hidden");
+
+  msg(
+    "mediaMsg",
+    "",
+    true
+  );
+}
+
+async function uploadPhoto(){
+
+  const file =
+    $("photoFile")
+      .files[0];
+
+  const title =
+    $("photoTitle")
+      .value
+      .trim() ||
+    file?.name;
+
+  if(!file){
+
+    return msg(
+      "photoMsg",
+      "❌ Elegí una imagen."
+    );
+  }
+
+  if(!file.type.startsWith("image/")){
+
+    return msg(
+      "photoMsg",
+      "❌ El archivo debe ser una imagen."
+    );
+  }
+
+  if(
+    file.size >
+    8 * 1024 * 1024
+  ){
+
+    return msg(
+      "photoMsg",
+      "❌ La imagen supera 8 MB."
+    );
+  }
+
+  const allowed = [
+    "image/jpeg",
+    "image/png",
+    "image/webp",
+    "image/gif"
+  ];
+
+  if(
+    !allowed.includes(file.type)
+  ){
+
+    return msg(
+      "photoMsg",
+      "❌ Formato no permitido. Usá JPG, PNG, WEBP o GIF."
+    );
+  }
+
+  const session =
+    await db.auth.getSession();
+
+  if(
+    session.error ||
+    !session.data?.session
+  ){
+
+    return msg(
+      "photoMsg",
+      "❌ La sesión de administrador venció. Volvé a iniciar sesión."
+    );
+  }
+
+  const ext =
+    (
+      file.name
+        .split(".")
+        .pop() ||
+      "jpg"
+    )
+      .toLowerCase()
+      .replace(
+        /[^a-z0-9]/g,
+        ""
+      ) ||
+    "jpg";
+
+  const uid =
+    crypto.randomUUID
+      ? crypto.randomUUID()
+      : Date.now() +
+        "-" +
+        Math.random()
+          .toString(36)
+          .slice(2);
+
+  const path =
+    `public/${uid}.${ext}`;
+
+  msg(
+    "photoMsg",
+    "⏳ Subiendo foto..."
+  );
+
+  try{
+
+    const up =
+      await db
+        .storage
+        .from("Galeria")
+        .upload(
+          path,
+          file,
+          {
+            contentType:file.type,
+            cacheControl:"3600",
+            upsert:false
+          }
+        );
+
+    if(up.error)
+      throw up.error;
+
+    const url =
+      db
+        .storage
+        .from("Galeria")
+        .getPublicUrl(path)
+        .data
+        .publicUrl;
+
+    if(!url){
+
+      throw new Error(
+        "No se obtuvo URL pública."
+      );
+    }
+
+    const ins =
+      await db
+        .from("galeria_fotos")
+        .insert({
+          titulo:title,
+          categoria:"galeria",
+          ruta:path,
+          url
+        });
+
+    if(ins.error)
+      throw ins.error;
+
+    msg(
+      "photoMsg",
+      "✅ Foto publicada."
+    );
+
+    $("photoFile").value="";
+    $("photoTitle").value="";
+
+    loadGallery();
+
+  }catch(error){
+
+    try{
+
+      await db
+        .storage
+        .from("Galeria")
+        .remove([path]);
+
+    }catch(_){}
+
+    msg(
+      "photoMsg",
+      "❌ No se pudo subir: " +
+      (
+        error?.message ||
+        "Error desconocido"
+      )
+    );
+  }
+}
+
+async function loadGallery(){
+
+  const r =
+    await db
+      .from("galeria_fotos")
+      .select("*")
+      .order(
+        "creado_en",
+        {ascending:false}
+      );
+
+  if(r.error){
+
+    return msg(
+      "photoMsg",
+      "❌ No se pudo cargar la galería: " +
+      r.error.message
+    );
+  }
+
+  const a =
+    r.data || [];
+
+  $("galleryList").innerHTML =
+    a.map(x=>{
+
+      const url =
+        safeUrl(x.url);
+
+      return `
+        <figure>
+
+          ${
+            url
+              ? `
+                <img
+                  src="${esc(url)}"
+                  alt="${esc(
+                    x.titulo ||
+                    ""
+                  )}"
+                  loading="lazy">
+              `
+              : `
+                <div class="empty">
+                  📸 Imagen no disponible
+                </div>
+              `
+          }
+
+          <figcaption>
+
+            ${esc(
+              x.titulo ||
+              ""
+            )}
+
+            <button
+              class="btn red"
+              style="padding:4px 7px;float:right"
+              onclick="deletePhoto('${esc(x.id)}','${esc(x.ruta)}')">
+              ×
+            </button>
+
+          </figcaption>
+
+        </figure>
+      `;
+
+    }).join("")
+    ||
+    '<div class="empty">No hay fotos.</div>';
 }
 
 async function deletePhoto(id,path){
 
-  if(!confirm("¿Eliminar esta foto?")){
-    return;
-  }
+  if(
+    !confirm(
+      "¿Eliminar esta foto?"
+    )
+  )return;
 
-  const {error} = await sb
-    .from("galeria_fotos")
-    .delete()
-    .eq("id",id);
+  const d =
+    await db
+      .from("galeria_fotos")
+      .delete()
+      .eq("id",id);
 
-  if(error){
+  if(d.error){
 
     alert(
-      "No se pudo eliminar la foto:\n" +
-      errorText(error)
+      d.error.message
     );
 
     return;
@@ -2420,190 +3973,731 @@ async function deletePhoto(id,path){
 
   if(path){
 
-    const {error:storageError} =
-      await sb.storage
-        .from("Galeria")
-        .remove([path]);
-
-    if(storageError){
-      console.warn(
-        "No se pudo eliminar el archivo del Storage:",
-        storageError
-      );
-    }
+    await db
+      .storage
+      .from("Galeria")
+      .remove([path]);
   }
 
-  await loadGallery();
-  await loadDashboard();
+  loadGallery();
 }
 
+async function loadMesas(){
 
-/* =========================================================
-   ACTUALIZAR TODO
-========================================================= */
+  const r =
+    await db
+      .from("tables_pool")
+      .select("*")
+      .order("table_number");
+
+  if(r.error){
+
+    $("mesasList").innerHTML =
+      `<div class="notice">
+        ❌ ${esc(r.error.message)}
+      </div>`;
+
+    return;
+  }
+
+  const a =
+    r.data || [];
+
+  $("mesasList").innerHTML =
+    a.map(x=>{
+
+      const url =
+        `${location.origin}${location.pathname.replace(
+          "admin.html",
+          "index.html"
+        )}?mesa=${encodeURIComponent(
+          x.table_number
+        )}`;
+
+      return `
+        <div class="notice">
+
+          <div
+            class="row"
+            style="justify-content:space-between">
+
+            <div>
+
+              <b>
+                🎱 Mesa ${esc(
+                  x.table_number
+                )}
+              </b>
+
+              <br>
+
+              <small>
+                ${esc(
+                  x.name || ""
+                )}
+                ·
+                ${x.active
+                  ? "ACTIVA"
+                  : "INACTIVA"}
+              </small>
+
+            </div>
+
+            <span class="status">
+              QR
+            </span>
+
+          </div>
+
+          <div
+            style="background:white;border-radius:12px;padding:10px;width:max-content;margin:10px 0">
+
+            <canvas
+              id="qr-${esc(x.id)}"
+              width="180"
+              height="180">
+            </canvas>
+
+          </div>
+
+          <small
+            style="word-break:break-all">
+            ${esc(url)}
+          </small>
+
+          <div
+            class="row"
+            style="margin-top:10px">
+
+            <a
+              class="btn dark"
+              target="_blank"
+              href="${esc(url)}">
+              Abrir acceso
+            </a>
+
+            <button
+              class="btn green"
+              onclick="downloadMesaQR('${esc(x.id)}',${Number(x.table_number)})">
+              ⬇️ Descargar QR
+            </button>
+
+            <button
+              class="btn gold"
+              onclick="printMesaQR('${esc(x.id)}',${Number(x.table_number)})">
+              🖨️ Imprimir
+            </button>
+
+            <button
+              class="btn ${x.active ? "red" : "green"}"
+              onclick="toggleMesa('${esc(x.id)}',${!x.active})">
+              ${x.active
+                ? "Desactivar"
+                : "Activar"}
+            </button>
+
+          </div>
+
+        </div>
+      `;
+
+    }).join("")
+    ||
+    '<div class="empty">No hay mesas.</div>';
+
+  a.forEach(x=>{
+
+    const c =
+      $("qr-"+x.id);
+
+    if(
+      c &&
+      window.QRious
+    ){
+
+      new QRious({
+        element:c,
+        value:
+          `${location.origin}${location.pathname.replace(
+            "admin.html",
+            "index.html"
+          )}?mesa=${encodeURIComponent(
+            x.table_number
+          )}`,
+        size:180,
+        level:"H",
+        background:"white",
+        foreground:"black"
+      });
+    }
+  });
+}
+
+async function createMesa(){
+
+  const n =
+    Number(
+      $("mesaNumero").value
+    );
+
+  const name =
+    $("mesaNombre")
+      .value
+      .trim() ||
+    `Mesa ${n}`;
+
+  if(
+    !Number.isInteger(n) ||
+    n < 1
+  ){
+
+    return msg(
+      "mesaMsg",
+      "❌ Ingresá un número de mesa válido."
+    );
+  }
+
+  const exists =
+    await db
+      .from("tables_pool")
+      .select("id")
+      .eq("table_number",n)
+      .maybeSingle();
+
+  if(exists.error){
+
+    return msg(
+      "mesaMsg",
+      "❌ No se pudo verificar la mesa: " +
+      exists.error.message
+    );
+  }
+
+  if(exists.data){
+
+    return msg(
+      "mesaMsg",
+      "❌ Esa mesa ya existe."
+    );
+  }
+
+  const r =
+    await db
+      .from("tables_pool")
+      .insert({
+        table_number:n,
+        name,
+        active:true
+      });
+
+  if(r.error){
+
+    return msg(
+      "mesaMsg",
+      "❌ " + r.error.message
+    );
+  }
+
+  msg(
+    "mesaMsg",
+    "✅ Mesa creada y QR generado."
+  );
+
+  $("mesaNumero").value="";
+  $("mesaNombre").value="";
+
+  loadMesas();
+}
+
+async function toggleMesa(id,active){
+
+  const r =
+    await db
+      .from("tables_pool")
+      .update({
+        active
+      })
+      .eq("id",id);
+
+  if(r.error){
+
+    alert(
+      r.error.message
+    );
+
+    return;
+  }
+
+  loadMesas();
+}
+
+function mesaUrl(number){
+
+  return `${location.origin}${location.pathname.replace(
+    "admin.html",
+    "index.html"
+  )}?mesa=${encodeURIComponent(number)}`;
+}
+
+function downloadMesaQR(id,number){
+
+  const c =
+    $("qr-"+id);
+
+  if(!c)return;
+
+  const a =
+    document.createElement("a");
+
+  a.download =
+    `QR-Mesa-${number}.png`;
+
+  a.href =
+    c.toDataURL(
+      "image/png"
+    );
+
+  a.click();
+}
+
+function printMesaQR(id,number){
+
+  const c =
+    $("qr-"+id);
+
+  if(!c)return;
+
+  const w =
+    window.open(
+      "",
+      "_blank",
+      "width=500,height=650"
+    );
+
+  if(!w)return;
+
+  w.document.write(`
+    <html>
+
+      <head>
+        <title>
+          QR Mesa ${number}
+        </title>
+      </head>
+
+      <body
+        onload="window.print()"
+        style="
+          font-family:Arial;
+          text-align:center;
+          padding:30px">
+
+        <h1>
+          POOL & BEACH
+        </h1>
+
+        <h2>
+          Mesa ${number}
+        </h2>
+
+        <img
+          src="${c.toDataURL("image/png")}"
+          style="
+            width:320px;
+            height:320px">
+
+        <p>
+          Escaneá para entrar a
+          Pool & Beach Games
+        </p>
+
+      </body>
+
+    </html>
+  `);
+
+  w.document.close();
+}
+
+async function refreshDashboard(){
+
+  const [
+    reservations,
+    orders,
+    tournaments,
+    photos
+  ] =
+    await Promise.allSettled([
+
+      db
+        .from("reservas")
+        .select("id,estado"),
+
+      db
+        .from("pedidos")
+        .select("id,estado"),
+
+      db
+        .from("tournaments")
+        .select("id,status")
+        .eq("status","open"),
+
+      db
+        .from("galeria_fotos")
+        .select("id")
+    ]);
+
+  const rv =
+    reservations.status === "fulfilled"
+      ? reservations.value.data || []
+      : [];
+
+  const od =
+    orders.status === "fulfilled"
+      ? orders.value.data || []
+      : [];
+
+  const tr =
+    tournaments.status === "fulfilled"
+      ? tournaments.value.data || []
+      : [];
+
+  const ph =
+    photos.status === "fulfilled"
+      ? photos.value.data || []
+      : [];
+
+  $("mR").textContent =
+    rv.filter(
+      x =>
+        !["confirmada","cancelada","completada"]
+          .includes(
+            String(
+              x.estado ||
+              ""
+            ).toLowerCase()
+          )
+    ).length;
+
+  $("mP").textContent =
+    od.filter(
+      x =>
+        !["confirmado","cancelado","completado"]
+          .includes(
+            String(
+              x.estado ||
+              ""
+            ).toLowerCase()
+          )
+    ).length;
+
+  $("mT").textContent =
+    tr.length;
+
+  $("mF").textContent =
+    ph.length;
+
+  $("activity").innerHTML = `
+    <div class="notice">
+      Última actualización:
+      ${new Date().toLocaleString("es-AR")}
+    </div>
+  `;
+}
 
 async function refreshAll(){
 
-  $("status").textContent = "ACTUALIZANDO";
+  setConnection(
+    "ACTUALIZANDO"
+  );
+
+  await Promise.allSettled([
+
+    refreshDashboard(),
+    loadReservations(),
+    loadOrders(),
+    loadProducts(),
+    loadPromotions(),
+    loadGames(),
+    loadTrivia(),
+    loadPrizes(),
+    loadTournaments(),
+    loadDuels(),
+    loadGallery(),
+    loadMediaItems(),
+    loadMesas()
+
+  ]);
+
+  setConnection(
+    "CONECTADO"
+  );
+}
+
+function subscribeRealtime(){
 
   try{
 
-    await Promise.all([
-      loadDashboard(),
-      loadReservations(),
-      loadOrders(),
-      loadProducts(),
-      loadPromos(),
-      loadGallery()
-    ]);
+    db
+      .channel(
+        "pool-beach-admin"
+      )
 
-    $("status").textContent = "CONECTADO";
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"reservas"
+        },
+        refreshAll
+      )
 
-    showMessage(
-      "dashMsg",
-      "Datos actualizados correctamente.",
-      "success"
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"pedidos"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"productos"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"promociones"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"games"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"trivia_questions"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"prizes"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"tournaments"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"galeria_fotos"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"duel_matches"
+        },
+        refreshAll
+      )
+
+      .on(
+        "postgres_changes",
+        {
+          event:"*",
+          schema:"public",
+          table:"tables_pool"
+        },
+        refreshAll
+      )
+
+      .subscribe();
+
+  }catch(e){
+
+    console.warn(
+      "Realtime:",
+      e
     );
-
-  }catch(error){
-
-    console.error("REFRESH ERROR:",error);
-
-    $("status").textContent = "CONECTADO";
-
-    showMessage(
-      "dashMsg",
-      "La sesión está activa, pero algunos datos no pudieron cargarse: " +
-      errorText(error),
-      "error"
-    );
-
   }
 }
-
-
-/* =========================================================
-   INICIALIZACIÓN
-========================================================= */
 
 async function init(){
 
   setupTabs();
-  setupPhotoPreview();
 
-  $("loginForm").addEventListener(
-    "submit",
-    login
-  );
+  $("loginForm")
+    .addEventListener(
+      "submit",
+      login
+    );
 
-  $("logout").addEventListener(
-    "click",
-    logout
-  );
+  $("logout")
+    .addEventListener(
+      "click",
+      logout
+    );
 
-  $("refreshButton").addEventListener(
-    "click",
-    refreshAll
-  );
+  $("mediaType")
+    .addEventListener(
+      "change",
+      loadMediaItems
+    );
 
-  $("createProductButton").addEventListener(
-    "click",
-    createProduct
-  );
+  $("mediaItem")
+    .addEventListener(
+      "change",
+      loadCurrentMedia
+    );
 
-  $("createPromoButton").addEventListener(
-    "click",
-    createPromo
-  );
+  $("mediaFile")
+    .addEventListener(
+      "change",
+      ()=>{
+        const file =
+          $("mediaFile")
+            .files[0];
 
-  $("uploadPhotoButton").addEventListener(
-    "click",
-    uploadPhoto
-  );
+        const preview =
+          $("mediaPreview");
 
-  try{
+        if(!file){
 
-    const {
-      data:{
-        session
+          preview.src="";
+          preview.classList.add(
+            "hidden"
+          );
+
+          return;
+        }
+
+        const url =
+          URL.createObjectURL(
+            file
+          );
+
+        preview.src =
+          url;
+
+        preview.classList.remove(
+          "hidden"
+        );
       }
-    } = await sb.auth.getSession();
-
-    if(session){
-
-      await openPanel();
-
-    }else{
-
-      $("login").classList.remove("hidden");
-      $("app").classList.add("hidden");
-      $("status").textContent = "DESCONECTADO";
-
-    }
-
-  }catch(error){
-
-    console.error(
-      "SESSION CHECK ERROR:",
-      error
     );
 
-    $("login").classList.remove("hidden");
-    $("app").classList.add("hidden");
+  const result =
+    await checkAuthorized();
 
-    showMessage(
-      "loginMsg",
-      "No se pudo comprobar la sesión. Intentá iniciar sesión nuevamente.",
-      "error"
+  if(
+    result &&
+    isAdmin(result.profile)
+  ){
+
+    showAdmin();
+
+  }else{
+
+    setConnection(
+      "NO AUTORIZADO"
     );
-
   }
+
+  subscribeRealtime();
 }
 
-
-/* =========================================================
-   CAMBIOS DE AUTENTICACIÓN
-========================================================= */
-
-sb.auth.onAuthStateChange(
-  (event,session) => {
-
-    console.log(
-      "AUTH EVENT:",
-      event,
-      !!session
-    );
-
-    if(event === "SIGNED_OUT"){
-
-      $("app").classList.add("hidden");
-      $("login").classList.remove("hidden");
-      $("status").textContent = "DESCONECTADO";
-
-    }
-
+Object.assign(
+  window,
+  {
+    createProduct,
+    deleteProduct,
+    toggleProduct,
+    createPromotion,
+    deletePromotion,
+    togglePromotion,
+    createGame,
+    deleteGame,
+    toggleGame,
+    createQuestion,
+    deleteQuestion,
+    createPrize,
+    deletePrize,
+    togglePrize,
+    createTournament,
+    deleteTournament,
+    uploadPhoto,
+    deletePhoto,
+    uploadMedia,
+    removeCurrentMedia,
+    loadProducts,
+    loadPromotions,
+    loadGames,
+    loadTrivia,
+    loadPrizes,
+    loadTournaments,
+    loadDuels,
+    loadGallery,
+    loadMediaItems,
+    loadMesas,
+    createMesa,
+    toggleMesa,
+    downloadMesaQR,
+    printMesaQR,
+    refreshAll,
+    updateReservation,
+    updateOrder
   }
 );
 
-
-/* =========================================================
-   ARRANQUE
-========================================================= */
-
-if(document.readyState === "loading"){
-
-  document.addEventListener(
-    "DOMContentLoaded",
-    init
-  );
-
-}else{
-
-  init();
-
-}
+init();
 
 </script>
 
+<script>
+document.documentElement.dataset.appVersion =
+  "FINAL-2026-09-07-PEDIDOS-STORAGE-IMAGENES";
+</script>
+
 </body>
-</html> 
+</html>
