@@ -5,1324 +5,676 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Pool & Beach | Puerto Pirámides</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-:root{
-  --bg:#06131e;
-  --card:#0c2333;
-  --card2:#123149;
-  --line:#24536a;
-  --sky:#62dcff;
-  --gold:#ffd166;
-  --ok:#67e7a2;
-  --bad:#ff7182;
-  --txt:#f5fbff;
-  --muted:#9ab5c5
-}
-
-*{box-sizing:border-box}
-
-html{scroll-behavior:smooth}
-
-body{
-  margin:0;
-  background:radial-gradient(circle at 20% 0%,#16415a,#06131e 48%,#03080d);
-  color:var(--txt);
-  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif
-}
-
-a{
-  color:inherit;
-  text-decoration:none
-}
-
-header{
-  position:sticky;
-  top:0;
-  z-index:50;
-  background:#030c13ee;
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line)
-}
-
-.nav{
-  max-width:1200px;
-  margin:auto;
-  padding:11px 14px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px
-}
-
-.logo{
-  font-size:21px;
-  font-weight:950
-}
-
-.logo span{
-  color:var(--sky)
-}
-
-nav{
-  display:flex;
-  gap:7px;
-  overflow:auto
-}
-
-nav a{
-  white-space:nowrap;
-  padding:8px 10px;
-  border:1px solid var(--line);
-  border-radius:10px;
-  font-size:13px
-}
-
-main{
-  max-width:1200px;
-  margin:auto;
-  padding:0 14px 60px
-}
-
-.hero{
-  min-height:470px;
-  display:grid;
-  place-items:center;
-  text-align:center;
-  padding:55px 8px
-}
-
-.hero h1{
-  font-size:clamp(44px,9vw,86px);
-  line-height:.92;
-  margin:0 0 18px;
-  font-weight:1000
-}
-
-.hero h1 span{
-  color:var(--sky)
-}
-
-.hero p{
-  max-width:760px;
-  color:var(--muted);
-  font-size:18px;
-  line-height:1.6
-}
-
-.buttons,
-.actions{
-  display:flex;
-  flex-wrap:wrap;
-  justify-content:center;
-  gap:9px;
-  margin-top:22px
-}
-
-.btn,
-button{
-  display:inline-flex;
-  align-items:center;
-  justify-content:center;
-  min-height:43px;
-  padding:10px 15px;
-  border-radius:12px;
-  border:1px solid var(--line);
-  background:var(--sky);
-  color:#05202f;
-  font-weight:900;
-  cursor:pointer
-}
-
-.btn.dark,
-button.dark{
-  background:#15364b;
-  color:var(--txt)
-}
-
-.btn.gold,
-button.gold{
-  background:var(--gold);
-  color:#261c00
-}
-
-.btn.danger,
-button.danger{
-  background:var(--bad);
-  color:#260811
-}
-
-section{
-  padding:42px 0
-}
-
-.title{
-  margin-bottom:18px
-}
-
-.title h2{
-  margin:0 0 6px;
-  font-size:29px
-}
-
-.title p{
-  margin:0;
-  color:var(--muted)
-}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:13px
-}
-
-.card{
-  background:linear-gradient(145deg,var(--card2),var(--card));
-  border:1px solid var(--line);
-  border-radius:18px;
-  padding:17px;
-  box-shadow:0 12px 30px #0004
-}
-
-.card h3{
-  margin-top:0
-}
-
-.muted{
-  color:var(--muted)
-}
-
-.price{
-  color:var(--gold);
-  font-weight:950;
-  font-size:20px
-}
-
-.menu{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:13px
-}
-
-.item{
-  display:flex;
-  justify-content:space-between;
-  gap:12px;
-  padding:12px 0;
-  border-bottom:1px solid #234456
-}
-
-.item:last-child{
-  border-bottom:0
-}
-
-.item small{
-  display:block;
-  color:var(--muted);
-  margin-top:3px
-}
-
-form{
-  display:grid;
-  gap:10px
-}
-
-label{
-  font-size:13px;
-  color:var(--muted)
-}
-
-input,
-select,
-textarea{
-  width:100%;
-  padding:12px;
-  border:1px solid var(--line);
-  border-radius:11px;
-  background:#061722;
-  color:var(--txt);
-  font:inherit
-}
-
-textarea{
-  min-height:90px;
-  resize:vertical
-}
-
-.status{
-  display:none;
-  padding:11px;
-  border-radius:11px
-}
-
-.status.show{
-  display:block
-}
-
-.status.ok{
-  color:var(--ok);
-  background:#0d3025;
-  border:1px solid #286c52
-}
-
-.status.error{
-  color:var(--bad);
-  background:#351923;
-  border:1px solid #743142
-}
-
-.notice{
-  padding:11px;
-  border-radius:11px;
-  background:#102a3b;
-  border:1px solid #28556c
-}
-
-.map{
-  overflow:hidden;
-  border:1px solid var(--line);
-  border-radius:18px
-}
-
-.map img{
-  display:block;
-  width:100%;
-  max-height:450px;
-  object-fit:cover
-}
-
-footer{
-  border-top:1px solid var(--line);
-  padding:28px 14px;
-  text-align:center;
-  color:var(--muted)
-}
-
-@media(max-width:850px){
-  .grid{
-    grid-template-columns:repeat(2,1fr)
-  }
-}
-
-@media(max-width:600px){
-  .nav{
-    align-items:flex-start;
-    flex-direction:column
-  }
-
-  .grid,
-  .menu{
-    grid-template-columns:1fr
-  }
-
-  .hero{
-    min-height:400px
-  }
-
-  .item{
-    align-items:flex-start
-  }
-}
+:root{--bg:#06131e;--card:#0c2333;--card2:#123149;--line:#24536a;--sky:#62dcff;--gold:#ffd166;--ok:#67e7a2;--bad:#ff7182;--txt:#f5fbff;--muted:#9ab5c5}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0%,#16415a,#06131e 48%,#03080d);color:var(--txt);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}a{color:inherit;text-decoration:none}
+header{position:sticky;top:0;z-index:50;background:#030c13ee;backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav{max-width:1200px;margin:auto;padding:11px 14px;display:flex;align-items:center;justify-content:space-between;gap:12px}.logo{font-size:21px;font-weight:950}.logo span{color:var(--sky)}nav{display:flex;gap:7px;overflow:auto}nav a{white-space:nowrap;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:13px}
+main{max-width:1200px;margin:auto;padding:0 14px 60px}.hero{min-height:470px;display:grid;place-items:center;text-align:center;padding:55px 8px}.hero h1{font-size:clamp(44px,9vw,86px);line-height:.92;margin:0 0 18px;font-weight:1000}.hero h1 span{color:var(--sky)}.hero p{max-width:760px;color:var(--muted);font-size:18px;line-height:1.6}.buttons,.actions{display:flex;flex-wrap:wrap;justify-content:center;gap:9px;margin-top:22px}.btn,button{display:inline-flex;align-items:center;justify-content:center;min-height:43px;padding:10px 15px;border-radius:12px;border:1px solid var(--line);background:var(--sky);color:#05202f;font-weight:900;cursor:pointer}.btn.dark,button.dark{background:#15364b;color:var(--txt)}.btn.gold,button.gold{background:var(--gold);color:#261c00}.btn.danger,button.danger{background:var(--bad);color:#260811}
+section{padding:42px 0}.title{margin-bottom:18px}.title h2{margin:0 0 6px;font-size:29px}.title p{margin:0;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:13px}.card{background:linear-gradient(145deg,var(--card2),var(--card));border:1px solid var(--line);border-radius:18px;padding:17px;box-shadow:0 12px 30px #0004}.card h3{margin-top:0}.muted{color:var(--muted)}.price{color:var(--gold);font-weight:950;font-size:20px}.menu{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.item{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #234456}.item:last-child{border-bottom:0}.item small{display:block;color:var(--muted);margin-top:3px}
+form{display:grid;gap:10px}label{font-size:13px;color:var(--muted)}input,select,textarea{width:100%;padding:12px;border:1px solid var(--line);border-radius:11px;background:#061722;color:var(--txt);font:inherit}textarea{min-height:90px;resize:vertical}.status{display:none;padding:11px;border-radius:11px}.status.show{display:block}.status.ok{color:var(--ok);background:#0d3025;border:1px solid #286c52}.status.error{color:var(--bad);background:#351923;border:1px solid #743142}.notice{padding:11px;border-radius:11px;background:#102a3b;border:1px solid #28556c}
+.map{overflow:hidden;border:1px solid var(--line);border-radius:18px}.map img{display:block;width:100%;max-height:450px;object-fit:cover}footer{border-top:1px solid var(--line);padding:28px 14px;text-align:center;color:var(--muted)}
+@media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:600px){.nav{align-items:flex-start;flex-direction:column}.grid,.menu{grid-template-columns:1fr}.hero{min-height:400px}.item{align-items:flex-start}}
 </style>
 </head>
-
 <body>
-
-<header>
-  <div class="nav">
-    <div class="logo">POOL <span>&</span> BEACH</div>
-
-    <nav>
-      <a href="#inicio">Inicio</a>
-      <a href="#menu">Menú</a>
-      <a href="#promos">Promos</a>
-      <a href="#reservas">Reservas</a>
-      <a href="#pedidos">Pedidos</a>
-      <a href="#contacto">Contacto</a>
-    </nav>
-  </div>
-</header>
+<header><div class="nav"><div class="logo">POOL <span>&</span> BEACH</div><nav>
+<a href="#inicio">Inicio</a><a href="#menu">Menú</a><a href="#promos">Promos</a><a href="#reservas">Reservas</a><a href="#pedidos">Pedidos</a><a href="#contacto">Contacto</a>
+</nav></div></header>
 
 <main>
-
 <section id="inicio" class="hero">
-  <div>
-    <h1>POOL <span>&</span> BEACH</h1>
-
-    <p>
-      Pool, cartas, dados, fútbol, música, amigos y familia,
-      comida y playa en Puerto Pirámides.
-    </p>
-
-    <div class="buttons">
-      <a class="btn gold" href="#reservas">📅 Reservar</a>
-      <a class="btn" href="#pedidos">🛵 Pedir comida</a>
-    </div>
-  </div>
+<div>
+<h1>POOL <span>&</span> BEACH</h1>
+<p>Pool, cartas, dados, fútbol, música, amigos y familia, comida y playa en Puerto Pirámides.</p>
+<div class="buttons">
+<a class="btn gold" href="#reservas">📅 Reservar</a>
+<a class="btn" href="#pedidos">🛵 Pedir comida</a>
+</div>
+</div>
 </section>
 
 <section>
-  <div class="title">
-    <h2>🎱 El lugar</h2>
-    <p>
-      Un espacio para disfrutar con amigos o en familia.
-      Las actividades y juegos se muestran como parte de la propuesta
-      del lugar; no hay sistema de juegos dentro de esta web.
-    </p>
-  </div>
-
-  <div class="grid">
-
-    <div class="card">
-      <h3>🎱 Pool</h3>
-      <p class="muted">
-        Mesas de pool disponibles para reservar.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>🃏 Cartas y dados</h3>
-      <p class="muted">
-        Para compartir y pasar un buen rato.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>⚽ Música y fútbol</h3>
-      <p class="muted">
-        Ambiente para disfrutar, comer y quedarse.
-      </p>
-    </div>
-
-  </div>
+<div class="title">
+<h2>🎱 El lugar</h2>
+<p>Un espacio para disfrutar con amigos o en familia. Las actividades y juegos se muestran como parte de la propuesta del lugar; no hay sistema de juegos dentro de esta web.</p>
+</div>
+<div class="grid">
+<div class="card">
+<h3>🎱 Pool</h3>
+<p class="muted">Mesas de pool disponibles para reservar.</p>
+</div>
+<div class="card">
+<h3>🃏 Cartas y dados</h3>
+<p class="muted">Para compartir y pasar un buen rato.</p>
+</div>
+<div class="card">
+<h3>⚽ Música y fútbol</h3>
+<p class="muted">Ambiente para disfrutar, comer y quedarse.</p>
+</div>
+</div>
 </section>
 
 <section id="menu">
-  <div class="title">
-    <h2>🍔 Menú</h2>
-    <p>
-      Productos y precios actualizados desde Administración.
-    </p>
-  </div>
-
-  <div id="menuPublico" class="menu">
-    <div class="card">Cargando menú…</div>
-  </div>
+<div class="title">
+<h2>🍔 Menú</h2>
+<p>Productos y precios actualizados desde Administración.</p>
+</div>
+<div id="menuPublico" class="menu">
+<div class="card">Cargando menú…</div>
+</div>
 </section>
 
 <section id="promos">
-  <div class="title">
-    <h2>🔥 Promociones</h2>
-    <p>Promociones vigentes.</p>
-  </div>
-
-  <div id="promosPublicas" class="grid">
-    <div class="card">Cargando promociones…</div>
-  </div>
+<div class="title">
+<h2>🔥 Promociones</h2>
+<p>Promociones vigentes.</p>
+</div>
+<div id="promosPublicas" class="grid">
+<div class="card">Cargando promociones…</div>
+</div>
 </section>
 
 <section id="reservas">
+<div class="title">
+<h2>📅 Reservas</h2>
+<p>Reservá tu lugar. Para pool hay exactamente 3 mesas disponibles: elegí Mesa 1, 2 o 3.</p>
+</div>
 
-  <div class="title">
-    <h2>📅 Reservas</h2>
+<div class="card">
+<form id="reservaForm">
 
-    <p>
-      Reservá tu lugar. Para pool hay exactamente 3 mesas disponibles:
-      elegí Mesa 1, 2 o 3.
-    </p>
-  </div>
+<div>
+<label>Nombre</label>
+<input id="resNombre" minlength="2" maxlength="100" required>
+</div>
 
-  <div class="card">
+<div>
+<label>Teléfono</label>
+<input id="resTelefono" minlength="6" maxlength="40" required inputmode="tel">
+</div>
 
-    <form id="reservaForm">
+<div>
+<label>Fecha</label>
+<input id="resFecha" type="date" required>
+</div>
 
-      <div>
-        <label>Nombre</label>
-        <input
-          id="resNombre"
-          minlength="2"
-          maxlength="100"
-          required
-        >
-      </div>
+<div>
+<label>Hora</label>
+<input id="resHora" type="time" required>
+</div>
 
-      <div>
-        <label>Teléfono</label>
-        <input
-          id="resTelefono"
-          minlength="6"
-          maxlength="40"
-          required
-          inputmode="tel"
-        >
-      </div>
+<div>
+<label>Servicio</label>
+<select id="resServicio">
+<option>Almuerzo</option>
+<option selected>Cena</option>
+<option>Pool</option>
+<option>Evento</option>
+</select>
+</div>
 
-      <div>
-        <label>Fecha</label>
-        <input id="resFecha" type="date" required>
-      </div>
+<div id="mesaPoolWrap" style="display:none">
+<label>Mesa de pool</label>
+<select id="mesaPool">
+<option value="1">Mesa de pool 1</option>
+<option value="2">Mesa de pool 2</option>
+<option value="3">Mesa de pool 3</option>
+</select>
+<small class="muted">La disponibilidad se verifica al confirmar la reserva.</small>
+</div>
 
-      <div>
-        <label>Hora</label>
-        <input id="resHora" type="time" required>
-      </div>
+<div>
+<label>Personas</label>
+<input id="resPersonas" type="number" min="1" max="50" value="2" required>
+</div>
 
-      <div>
-        <label>Servicio</label>
+<div>
+<label>Notas</label>
+<textarea id="resNotas" maxlength="1000"></textarea>
+</div>
 
-        <select id="resServicio">
-          <option>Almuerzo</option>
-          <option selected>Cena</option>
-          <option>Pool</option>
-          <option>Evento</option>
-        </select>
-      </div>
+<button type="submit">Enviar reserva</button>
+<div id="resStatus" class="status"></div>
 
-      <div id="mesaPoolWrap" style="display:none">
-
-        <label>Mesa de pool</label>
-
-        <select id="mesaPool">
-          <option value="1">Mesa de pool 1</option>
-          <option value="2">Mesa de pool 2</option>
-          <option value="3">Mesa de pool 3</option>
-        </select>
-
-        <small class="muted">
-          La disponibilidad se verifica al enviar la reserva.
-        </small>
-
-      </div>
-
-      <div>
-        <label>Personas</label>
-
-        <input
-          id="resPersonas"
-          type="number"
-          min="1"
-          max="50"
-          value="2"
-          required
-        >
-      </div>
-
-      <div>
-        <label>Notas</label>
-        <textarea id="resNotas" maxlength="1000"></textarea>
-      </div>
-
-      <button type="submit">
-        Enviar reserva
-      </button>
-
-      <div id="resStatus" class="status"></div>
-
-    </form>
-
-  </div>
-
+</form>
+</div>
 </section>
 
 <section id="pedidos">
+<div class="title">
+<h2>🛒 Pedidos</h2>
+<p>Elegí productos y enviá el pedido. Delivery: $3.000.</p>
+</div>
 
-  <div class="title">
-    <h2>🛒 Pedidos</h2>
+<div class="card">
 
-    <p>
-      Elegí productos y enviá el pedido.
-      Delivery: $3.000.
-    </p>
-  </div>
+<div id="pedidoCatalogo" class="menu"></div>
 
-  <div class="card">
+<div id="carritoResumen" class="notice" style="margin:14px 0">
+Carrito vacío.
+</div>
 
-    <div id="pedidoCatalogo" class="menu"></div>
+<form id="pedidoForm">
 
-    <div
-      id="carritoResumen"
-      class="notice"
-      style="margin:14px 0"
-    >
-      Carrito vacío.
-    </div>
+<div>
+<label>Nombre</label>
+<input id="pedidoNombre" minlength="2" maxlength="100" required>
+</div>
 
-    <form id="pedidoForm">
+<div>
+<label>Teléfono</label>
+<input id="pedidoTelefono" minlength="6" maxlength="40" required inputmode="tel">
+</div>
 
-      <div>
-        <label>Nombre</label>
-        <input
-          id="pedidoNombre"
-          minlength="2"
-          maxlength="100"
-          required
-        >
-      </div>
+<div>
+<label>Entrega</label>
+<select id="pedidoEntrega">
+<option value="retiro">Retiro en el negocio</option>
+<option value="delivery">Delivery</option>
+</select>
+</div>
 
-      <div>
-        <label>Teléfono</label>
-        <input
-          id="pedidoTelefono"
-          minlength="6"
-          maxlength="40"
-          required
-          inputmode="tel"
-        >
-      </div>
+<div id="direccionWrap" style="display:none">
+<label>Dirección</label>
+<input id="pedidoDireccion" maxlength="250">
+</div>
 
-      <div>
-        <label>Entrega</label>
+<div>
+<label>Notas</label>
+<textarea id="pedidoNotas" maxlength="1000"></textarea>
+</div>
 
-        <select id="pedidoEntrega">
-          <option value="retiro">
-            Retiro en el negocio
-          </option>
+<button type="submit">Enviar pedido</button>
+<div id="pedidoStatus" class="status"></div>
 
-          <option value="delivery">
-            Delivery
-          </option>
-        </select>
-      </div>
-
-      <div id="direccionWrap" style="display:none">
-        <label>Dirección</label>
-        <input
-          id="pedidoDireccion"
-          maxlength="250"
-        >
-      </div>
-
-      <div>
-        <label>Notas</label>
-        <textarea id="pedidoNotas" maxlength="1000"></textarea>
-      </div>
-
-      <button type="submit">
-        Enviar pedido
-      </button>
-
-      <div id="pedidoStatus" class="status"></div>
-
-    </form>
-
-  </div>
-
+</form>
+</div>
 </section>
 
 <section id="contacto">
+<div class="title">
+<h2>📍 Puerto Pirámides</h2>
+<p>Pool & Beach</p>
+</div>
 
-  <div class="title">
-    <h2>📍 Puerto Pirámides</h2>
-    <p>Pool & Beach</p>
-  </div>
+<div class="grid">
 
-  <div class="grid">
+<div class="card">
+<h3>🕐 Horarios</h3>
+<p class="muted">
+Local: 12:00–15:00 y 19:00–03:30<br>
+Cocina: 20:00–01:00
+</p>
+</div>
 
-    <div class="card">
-      <h3>🕐 Horarios</h3>
+<div class="card">
+<h3>🛵 Delivery</h3>
+<p class="muted">Costo de envío: $3.000.</p>
+</div>
 
-      <p class="muted">
-        Local: 12:00–15:00 y 19:00–03:30<br>
-        Cocina: 20:00–01:00
-      </p>
-    </div>
+<div class="card">
+<h3>🔐 Administración</h3>
+<p class="muted">Acceso privado para cuentas autorizadas.</p>
+<a class="btn dark" href="admin.html">Panel admin</a>
+</div>
 
-    <div class="card">
-      <h3>🛵 Delivery</h3>
-
-      <p class="muted">
-        Costo de envío: $3.000.
-      </p>
-    </div>
-
-    <div class="card">
-      <h3>🔐 Administración</h3>
-
-      <p class="muted">
-        Acceso privado para cuentas autorizadas.
-      </p>
-
-      <a class="btn dark" href="admin.html">
-        Panel admin
-      </a>
-    </div>
-
-  </div>
-
-  <div class="map" style="margin-top:14px">
-    <img
-      src="mapa-guia.svg"
-      alt="Mapa guía de Puerto Pirámides"
-    >
-  </div>
-
+</div>
 </section>
-
 </main>
 
-<footer>
-  POOL & BEACH · Puerto Pirámides ·
-  Reservado el derecho de admisión y permanencia.
-</footer>
+<footer>POOL & BEACH · Puerto Pirámides · Reservado el derecho de admisión y permanencia.</footer>
 
 <script>
+const SUPABASE_URL="https://nmpakeovqkdajtswjpgm.supabase.co";
+const SUPABASE_ANON_KEY="sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
 
-const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+const sb=window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_ANON_KEY
+);
 
-const SUPABASE_ANON_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+let productos=[];
+let carrito=[];
 
-const sb =
-  window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+const $=id=>document.getElementById(id);
 
-let productos = [];
-let carrito = [];
-
-const $ = id =>
-  document.getElementById(id);
-
-const money = n =>
-  new Intl.NumberFormat("es-AR", {
-    style:"currency",
-    currency:"ARS",
-    maximumFractionDigits:0
-  }).format(Number(n)||0);
+const money=n=>
+new Intl.NumberFormat("es-AR",{
+style:"currency",
+currency:"ARS",
+maximumFractionDigits:0
+}).format(Number(n)||0);
 
 function esc(v){
-  return String(v ?? "").replace(
-    /[&<>"']/g,
-    c => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[c])
-  );
+return String(v??"").replace(
+/[&<>"']/g,
+c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
+)
 }
 
 function attr(v){
-  return esc(v);
+return esc(v)
 }
 
 function status(el,text,ok=false){
-  el.textContent = text;
-  el.className =
-    "status show " + (ok ? "ok" : "error");
+el.textContent=text;
+el.className="status show "+(ok?"ok":"error")
 }
 
 async function cargarMenu(){
+const r=await sb
+.from("productos")
+.select("id,nombre,categoria,descripcion,precio,disponible,activo")
+.eq("activo",true)
+.eq("disponible",true)
+.order("categoria")
+.order("nombre");
 
-  const r = await sb
-    .from("productos")
-    .select(
-      "id,nombre,categoria,descripcion,precio,image_url,disponible,activo"
-    )
-    .eq("activo",true)
-    .eq("disponible",true)
-    .order("categoria")
-    .order("nombre");
+if(r.error){
+$("menuPublico").innerHTML="<div class='card'>No se pudo cargar el menú.</div>";
+$("pedidoCatalogo").innerHTML="<div class='card'>No se pudo cargar el catálogo.</div>";
+console.warn(r.error);
+return
+}
 
-  if(r.error){
-
-    $("menuPublico").innerHTML =
-      "<div class='card'>No se pudo cargar el menú.</div>";
-
-    $("pedidoCatalogo").innerHTML =
-      "<div class='card'>No se pudo cargar el catálogo.</div>";
-
-    console.warn(r.error);
-    return;
-  }
-
-  productos = r.data || [];
-
-  renderMenu();
-  renderCatalogo();
+productos=r.data||[];
+renderMenu();
+renderCatalogo()
 }
 
 function renderMenu(){
+const box=$("menuPublico");
 
-  const box = $("menuPublico");
+if(!productos.length){
+box.innerHTML="<div class='card'><h3>Menú</h3><p class='muted'>No hay productos publicados en este momento.</p></div>";
+return
+}
 
-  if(!productos.length){
+const grupos={};
 
-    box.innerHTML =
-      "<div class='card'>" +
-      "<h3>Menú</h3>" +
-      "<p class='muted'>" +
-      "No hay productos publicados en este momento." +
-      "</p></div>";
+productos.forEach(p=>
+(grupos[p.categoria||"Menú"]??=[]).push(p)
+);
 
-    return;
-  }
-
-  const grupos = {};
-
-  productos.forEach(p =>
-    (grupos[p.categoria || "Menú"] ??= [])
-      .push(p)
-  );
-
-  box.innerHTML =
-    Object.entries(grupos)
-      .map(([cat,arr]) => `
-        <div class="card">
-
-          <h3>${esc(cat)}</h3>
-
-          ${arr.map(p => `
-            <div class="item">
-
-              <div>
-                <b>${esc(p.nombre)}</b>
-
-                ${
-                  p.descripcion
-                    ? `<small>${esc(p.descripcion)}</small>`
-                    : ""
-                }
-              </div>
-
-              <strong class="price">
-                ${money(p.precio)}
-              </strong>
-
-            </div>
-          `).join("")}
-
-        </div>
-      `)
-      .join("");
+box.innerHTML=Object.entries(grupos).map(
+([cat,arr])=>
+`<div class="card">
+<h3>${esc(cat)}</h3>
+${arr.map(p=>
+`<div class="item">
+<div>
+<b>${esc(p.nombre)}</b>
+${p.descripcion?`<small>${esc(p.descripcion)}</small>`:""}
+</div>
+<strong class="price">${money(p.precio)}</strong>
+</div>`
+).join("")}
+</div>`
+).join("")
 }
 
 function renderCatalogo(){
+const box=$("pedidoCatalogo");
 
-  const box = $("pedidoCatalogo");
-
-  if(!productos.length){
-
-    box.innerHTML =
-      "<p class='muted'>" +
-      "No hay productos disponibles para pedido." +
-      "</p>";
-
-    return;
-  }
-
-  box.innerHTML =
-    productos.map(p => `
-      <div class="card">
-
-        <h3>${esc(p.nombre)}</h3>
-
-        ${
-          p.descripcion
-            ? `<p class="muted">${esc(p.descripcion)}</p>`
-            : ""
-        }
-
-        <div class="price">
-          ${money(p.precio)}
-        </div>
-
-        <button
-          type="button"
-          onclick="addCart('${p.id}')"
-        >
-          Agregar
-        </button>
-
-      </div>
-    `).join("");
+if(!productos.length){
+box.innerHTML="<p class='muted'>No hay productos disponibles para pedido.</p>";
+return
 }
 
-window.addCart = id => {
+box.innerHTML=productos.map(p=>
+`<div class="card">
+<h3>${esc(p.nombre)}</h3>
+${p.descripcion?`<p class="muted">${esc(p.descripcion)}</p>`:""}
+<div class="price">${money(p.precio)}</div>
+<button type="button" onclick="addCart('${p.id}')">Agregar</button>
+</div>`
+).join("")
+}
 
-  const p = productos.find(x => x.id === id);
+window.addCart=id=>{
+const p=productos.find(x=>x.id===id);
+if(!p)return;
 
-  if(!p)return;
+const x=carrito.find(i=>i.id===id);
 
-  const x =
-    carrito.find(i => i.id === id);
+if(x)x.qty++;
+else carrito.push({
+id:p.id,
+nombre:p.nombre,
+precio:Number(p.precio),
+qty:1
+});
 
-  if(x){
-    x.qty++;
-  }else{
-    carrito.push({
-      id:p.id,
-      nombre:p.nombre,
-      precio:Number(p.precio),
-      qty:1
-    });
-  }
-
-  renderCart();
+renderCart()
 };
 
-window.removeCart = id => {
+window.removeCart=id=>{
+const x=carrito.find(i=>i.id===id);
+if(!x)return;
 
-  const x =
-    carrito.find(i => i.id === id);
+x.qty--;
 
-  if(!x)return;
+if(x.qty<=0){
+carrito=carrito.filter(i=>i.id!==id)
+}
 
-  x.qty--;
-
-  if(x.qty <= 0){
-    carrito =
-      carrito.filter(i => i.id !== id);
-  }
-
-  renderCart();
+renderCart()
 };
 
 function renderCart(){
+const subtotal=carrito.reduce(
+(s,i)=>s+i.precio*i.qty,
+0
+);
 
-  const subtotal =
-    carrito.reduce(
-      (s,i) =>
-        s + i.precio * i.qty,
-      0
-    );
+const delivery=
+$("pedidoEntrega").value==="delivery"&&carrito.length
+?3000
+:0;
 
-  const delivery =
-    $("pedidoEntrega").value === "delivery" &&
-    carrito.length
-      ? 3000
-      : 0;
+const total=subtotal+delivery;
 
-  const total =
-    subtotal + delivery;
-
-  $("carritoResumen").innerHTML =
-    carrito.length
-      ? carrito.map(i => `
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            gap:8px;
-            margin:6px 0
-          ">
-
-            <span>
-              ${i.qty}× ${esc(i.nombre)}
-            </span>
-
-            <span>
-              ${money(i.precio*i.qty)}
-
-              <button
-                type="button"
-                class="dark"
-                onclick="removeCart('${i.id}')"
-              >
-                −
-              </button>
-            </span>
-
-          </div>
-        `).join("") +
-
-        `<hr>
-         <b>Subtotal: ${money(subtotal)}</b><br>
-         <b>Envío: ${money(delivery)}</b><br>
-         <b>Total: ${money(total)}</b>`
-
-      : "Carrito vacío.";
+$("carritoResumen").innerHTML=carrito.length
+?
+carrito.map(i=>
+`<div style="display:flex;justify-content:space-between;gap:8px;margin:6px 0">
+<span>${i.qty}× ${esc(i.nombre)}</span>
+<span>
+${money(i.precio*i.qty)}
+<button type="button" class="dark" onclick="removeCart('${i.id}')">−</button>
+</span>
+</div>`
+).join("")
++
+`<hr>
+<b>Subtotal: ${money(subtotal)}</b><br>
+<b>Envío: ${money(delivery)}</b><br>
+<b>Total: ${money(total)}</b>`
+:"Carrito vacío."
 }
 
-$("pedidoEntrega")
-  .addEventListener("change",() => {
+$("pedidoEntrega").addEventListener(
+"change",
+()=>{
+$("direccionWrap").style.display=
+$("pedidoEntrega").value==="delivery"
+?"block"
+:"none";
 
-    $("direccionWrap").style.display =
-      $("pedidoEntrega").value === "delivery"
-        ? "block"
-        : "none";
+renderCart()
+}
+);
 
-    renderCart();
-  });
+$("resServicio").addEventListener(
+"change",
+()=>{
+$("mesaPoolWrap").style.display=
+$("resServicio").value==="Pool"
+?"block"
+:"none"
+}
+);
 
-$("resServicio")
-  .addEventListener("change",() => {
+function hoy(){
+const d=new Date();
+const y=d.getFullYear();
+const m=String(d.getMonth()+1).padStart(2,"0");
+const day=String(d.getDate()).padStart(2,"0");
 
-    $("mesaPoolWrap").style.display =
-      $("resServicio").value === "Pool"
-        ? "block"
-        : "none";
-  });
+return `${y}-${m}-${day}`
+}
 
-const hoy = () =>
-  new Date().toISOString().slice(0,10);
+$("resFecha").min=hoy();
 
-$("resFecha").min = hoy();
+$("reservaForm").addEventListener(
+"submit",
+async e=>{
+e.preventDefault();
 
-async function mesaPoolDisponible(
-  fecha,
-  hora,
-  mesa
+const st=$("resStatus");
+
+const servicio=$("resServicio").value;
+const fecha=$("resFecha").value;
+const hora=$("resHora").value;
+
+try{
+
+if(!fecha||fecha<hoy()){
+return status(
+st,
+"La fecha de reserva no puede ser anterior a hoy."
+)
+}
+
+if(!hora){
+return status(st,"Elegí un horario.")
+}
+
+const nombre=$("resNombre").value.trim();
+const telefono=$("resTelefono").value.trim();
+const personas=Number($("resPersonas").value);
+
+if(nombre.length<2){
+return status(st,"Ingresá tu nombre.")
+}
+
+if(telefono.length<6){
+return status(st,"Ingresá un teléfono válido.")
+}
+
+if(
+!Number.isInteger(personas)||
+personas<1||
+personas>50
 ){
-
-  const r = await sb
-    .from("reservas")
-    .select("id,notas")
-    .eq("fecha",fecha)
-    .eq("hora",hora)
-    .eq("servicio","Pool")
-    .not("estado","eq","cancelada");
-
-  if(r.error){
-    throw r.error;
-  }
-
-  const marca =
-    `[MESA_POOL:${mesa}]`;
-
-  return !(r.data || [])
-    .some(x =>
-      String(x.notas || "")
-        .includes(marca)
-    );
+return status(
+st,
+"La cantidad de personas debe estar entre 1 y 50."
+)
 }
 
-$("reservaForm")
-  .addEventListener("submit",async e => {
-
-    e.preventDefault();
-
-    const st =
-      $("resStatus");
-
-    const servicio =
-      $("resServicio").value;
-
-    const fecha =
-      $("resFecha").value;
-
-    const hora =
-      $("resHora").value;
-
-    try{
-
-      if(fecha < hoy()){
-
-        return status(
-          st,
-          "La fecha de reserva no puede ser anterior a hoy."
-        );
-      }
-
-      let notas =
-        $("resNotas")
-          .value
-          .trim();
-
-      if(servicio === "Pool"){
-
-        const mesa =
-          $("mesaPool").value;
-
-        const disponible =
-          await mesaPoolDisponible(
-            fecha,
-            hora,
-            mesa
-          );
-
-        if(!disponible){
-
-          return status(
-            st,
-            "Esa mesa de pool ya está reservada para ese horario. Elegí otra mesa o consultá otro horario."
-          );
-        }
-
-        notas =
-          `[MESA_POOL:${mesa}]` +
-          (notas ? " " + notas : "");
-      }
-
-      const payload = {
-
-        nombre:
-          $("resNombre")
-            .value
-            .trim(),
-
-        telefono:
-          $("resTelefono")
-            .value
-            .trim(),
-
-        fecha,
-
-        hora,
-
-        servicio,
-
-        cantidad_personas:
-          Number(
-            $("resPersonas").value
-          ),
-
-        estado:"pendiente",
-
-        notas,
-
-        notificacion_vista:false
-      };
-
-      const r =
-        await sb
-          .from("reservas")
-          .insert(payload);
-
-      if(r.error){
-        throw r.error;
-      }
-
-      status(
-        st,
-        "¡Reserva enviada correctamente! Quedó pendiente de confirmación.",
-        true
-      );
-
-      e.target.reset();
-
-      $("resPersonas").value = 2;
-
-      $("mesaPoolWrap")
-        .style.display = "none";
-
-      $("resFecha").min = hoy();
-
-    }catch(x){
-
-      console.error(x);
-
-      status(
-        st,
-        "No se pudo enviar la reserva: " +
-        (x.message ||
-        "verificá los datos e intentá nuevamente.")
-      );
-    }
-
-  });
-
-$("pedidoForm")
-  .addEventListener("submit",async e => {
-
-    e.preventDefault();
-
-    const st =
-      $("pedidoStatus");
-
-    if(!carrito.length){
-
-      return status(
-        st,
-        "Agregá al menos un producto."
-      );
-    }
-
-    const tipo =
-      $("pedidoEntrega").value;
-
-    const dir =
-      $("pedidoDireccion")
-        .value
-        .trim();
-
-    if(
-      tipo === "delivery" &&
-      dir.length < 5
-    ){
-
-      return status(
-        st,
-        "Para delivery tenés que indicar una dirección."
-      );
-    }
-
-    try{
-
-      const items =
-        carrito.map(i => ({
-          producto_id:i.id,
-          nombre_producto:i.nombre,
-          cantidad:i.qty,
-          precio_unitario:i.precio,
-          subtotal:i.qty*i.precio
-        }));
-
-      const subtotal =
-        items.reduce(
-          (s,i) =>
-            s + i.subtotal,
-          0
-        );
-
-      const envio =
-        tipo === "delivery"
-          ? 3000
-          : 0;
-
-      const total =
-        subtotal + envio;
-
-      const payload = {
-
-        nombre_cliente:
-          $("pedidoNombre")
-            .value
-            .trim(),
-
-        telefono:
-          $("pedidoTelefono")
-            .value
-            .trim(),
-
-        tipo:tipo,
-
-        tipo_entrega:tipo,
-
-        direccion:
-          tipo === "delivery"
-            ? dir
-            : null,
-
-        items,
-
-        total,
-
-        estado:"pendiente",
-
-        notas:
-          $("pedidoNotas")
-            .value
-            .trim(),
-
-        notificacion_vista:false
-      };
-
-      const r =
-        await sb
-          .from("pedidos")
-          .insert(payload);
-
-      if(r.error){
-        throw r.error;
-      }
-
-      status(
-        st,
-        "¡Pedido enviado correctamente! Total: " +
-        money(total),
-        true
-      );
-
-      e.target.reset();
-
-      carrito = [];
-
-      $("direccionWrap")
-        .style.display = "none";
-
-      renderCart();
-
-    }catch(x){
-
-      console.error(x);
-
-      status(
-        st,
-        "No se pudo enviar el pedido: " +
-        (x.message ||
-        "verificá los datos e intentá nuevamente.")
-      );
-    }
-
-  });
+let notas=$("resNotas").value.trim();
+
+if(servicio==="Pool"){
+const mesa=$("mesaPool").value;
+
+notas=
+`[MESA_POOL:${mesa}]`+
+(notas?" "+notas:"")
+}
+
+const payload={
+nombre,
+telefono,
+fecha,
+hora,
+servicio,
+cantidad_personas:personas,
+estado:"pendiente",
+notas,
+notificacion_vista:false
+};
+
+const r=await sb
+.from("reservas")
+.insert(payload);
+
+if(r.error){
+
+if(
+r.code==="23505"||
+String(r.message||"")
+.toLowerCase()
+.includes("reservas_pool_mesa_horario_unique")
+){
+return status(
+st,
+"Esa mesa de pool ya está reservada para ese horario. Elegí otra mesa o consultá otro horario."
+)
+}
+
+throw r.error
+}
+
+status(
+st,
+"¡Reserva enviada correctamente! Quedó pendiente de confirmación.",
+true
+);
+
+e.target.reset();
+
+$("resPersonas").value=2;
+$("mesaPoolWrap").style.display="none";
+$("resFecha").min=hoy();
+
+}
+catch(x){
+console.error(x);
+
+status(
+st,
+"No se pudo enviar la reserva: "+
+(x.message||"verificá los datos e intentá nuevamente.")
+)
+}
+}
+);
+
+$("pedidoForm").addEventListener(
+"submit",
+async e=>{
+e.preventDefault();
+
+const st=$("pedidoStatus");
+
+if(!carrito.length){
+return status(st,"Agregá al menos un producto.")
+}
+
+const tipo=$("pedidoEntrega").value;
+const dir=$("pedidoDireccion").value.trim();
+
+if(
+tipo==="delivery"&&
+dir.length<5
+){
+return status(
+st,
+"Para delivery tenés que indicar una dirección."
+)
+}
+
+try{
+
+const items=carrito.map(i=>({
+producto_id:i.id,
+nombre_producto:i.nombre,
+cantidad:i.qty,
+precio_unitario:i.precio,
+subtotal:i.qty*i.precio
+}));
+
+const subtotal=items.reduce(
+(s,i)=>s+i.subtotal,
+0
+);
+
+const envio=
+tipo==="delivery"
+?3000
+:0;
+
+const total=subtotal+envio;
+
+const payload={
+nombre_cliente:$("pedidoNombre").value.trim(),
+telefono:$("pedidoTelefono").value.trim(),
+tipo:tipo,
+tipo_entrega:tipo,
+direccion:tipo==="delivery"?dir:null,
+items,
+total,
+estado:"pendiente",
+notas:$("pedidoNotas").value.trim(),
+notificacion_vista:false
+};
+
+const r=await sb
+.from("pedidos")
+.insert(payload);
+
+if(r.error)throw r.error;
+
+status(
+st,
+"¡Pedido enviado correctamente! Total: "+
+money(total),
+true
+);
+
+e.target.reset();
+
+carrito=[];
+
+$("direccionWrap").style.display="none";
+
+renderCart();
+
+}
+catch(x){
+console.error(x);
+
+status(
+st,
+"No se pudo enviar el pedido: "+
+(x.message||"verificá los datos e intentá nuevamente.")
+)
+}
+}
+);
 
 async function cargarPromos(){
 
-  const r =
-    await sb
-      .from("promociones")
-      .select(
-        "titulo,descripcion,precio,image_url"
-      )
-      .eq("activa",true)
-      .order(
-        "created_at",
-        {ascending:false}
-      );
+const r=await sb
+.from("promociones")
+.select("titulo,descripcion,precio")
+.eq("activa",true)
+.order("created_at",{ascending:false});
 
-  if(r.error){
+if(r.error){
+$("promosPublicas").innerHTML=
+"<div class='card'>No se pudieron cargar las promociones.</div>";
+return
+}
 
-    $("promosPublicas").innerHTML =
-      "<div class='card'>" +
-      "No se pudieron cargar las promociones." +
-      "</div>";
+const rows=r.data||[];
 
-    return;
-  }
-
-  const rows =
-    r.data || [];
-
-  $("promosPublicas").innerHTML =
-    rows.length
-      ? rows.map(p => `
-          <div class="card">
-
-            ${
-              p.image_url
-                ? `<img
-                    src="${attr(p.image_url)}"
-                    alt=""
-                    style="
-                      width:100%;
-                      max-height:220px;
-                      object-fit:cover;
-                      border-radius:12px
-                    "
-                  >`
-                : ""
-            }
-
-            <h3>
-              ${esc(p.titulo)}
-            </h3>
-
-            <p class="muted">
-              ${esc(p.descripcion || "")}
-            </p>
-
-            ${
-              p.precio != null
-                ? `<div class="price">
-                    ${money(p.precio)}
-                   </div>`
-                : ""
-            }
-
-          </div>
-        `).join("")
-      : "<div class='card'>No hay promociones publicadas.</div>";
+$("promosPublicas").innerHTML=
+rows.length
+?
+rows.map(p=>
+`<div class="card">
+<h3>${esc(p.titulo)}</h3>
+<p class="muted">${esc(p.descripcion||"")}</p>
+${p.precio!=null?`<div class="price">${money(p.precio)}</div>`:""}
+</div>`
+).join("")
+:
+"<div class='card'>No hay promociones publicadas.</div>"
 }
 
 Promise.allSettled([
-  cargarMenu(),
-  cargarPromos()
+cargarMenu(),
+cargarPromos()
 ]);
-
 </script>
 
 </body>
-</html> 
+</html>
