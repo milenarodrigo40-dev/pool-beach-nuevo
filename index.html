@@ -1,38 +1,452 @@
--- CORRECCIÓN DE RESERVAS DE POOL
--- Mantiene los datos existentes y deja exactamente las mesas 1, 2 y 3 para reservas de pool.
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pool & Beach | Puerto Pirámides</title>
+<meta name="theme-color" content="#06131e">
 
-UPDATE public.reservas
-SET mesa_pool =
-  NULLIF(
-    (regexp_match(COALESCE(notas, ''), '\[MESA_POOL:([1-3])\]'))[1],
-    ''
-  )::integer
-WHERE servicio = 'Pool'
-  AND mesa_pool IS NULL
-  AND notas ~ '\[MESA_POOL:[1-3]\]';
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-CREATE UNIQUE INDEX IF NOT EXISTS reservas_pool_slot_unico
-ON public.reservas (fecha, hora, mesa_pool)
-WHERE servicio = 'Pool'
-  AND mesa_pool IS NOT NULL
-  AND estado <> 'cancelada';
+<style>
+:root{
+  --bg:#06131e;
+  --panel:#102d3d;
+  --panel2:#12394a;
+  --line:#24536a;
+  --sky:#62dcff;
+  --gold:#ffd166;
+  --green:#67e7a2;
+  --txt:#f5fbff;
+  --muted:#9ab5c5
+}
 
-DROP POLICY IF EXISTS "public can create reservations"
-ON public.reservas;
+*{box-sizing:border-box}
 
-CREATE POLICY "public can create reservations"
-ON public.reservas
-FOR INSERT
-TO anon, authenticated
-WITH CHECK (
-  length(trim(COALESCE(nombre, ''))) BETWEEN 2 AND 100
-  AND length(trim(COALESCE(telefono, ''))) BETWEEN 6 AND 40
-  AND fecha IS NOT NULL
-  AND hora IS NOT NULL
-  AND length(trim(COALESCE(servicio, ''))) BETWEEN 2 AND 100
-  AND COALESCE(cantidad_personas, 1) BETWEEN 1 AND 50
-  AND (
-    servicio <> 'Pool'
-    OR mesa_pool IN (1, 2, 3)
-  )
+html{scroll-behavior:smooth}
+
+body{
+  margin:0;
+  background:
+    radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
+  color:var(--txt);
+  font:15px system-ui,-apple-system,Segoe UI,sans-serif
+}
+
+a{
+  color:inherit;
+  text-decoration:none
+}
+
+.container{
+  width:min(1050px,94%);
+  margin:auto
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:#06131eee;
+  border-bottom:1px solid var(--line);
+  backdrop-filter:blur(10px)
+}
+
+.nav{
+  min-height:68px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px
+}
+
+.logo{
+  font-size:22px;
+  font-weight:950;
+  white-space:nowrap
+}
+
+.logo span{color:var(--sky)}
+
+nav{
+  display:flex;
+  gap:7px;
+  overflow:auto
+}
+
+nav a{
+  padding:9px 11px;
+  border:1px solid var(--line);
+  border-radius:10px;
+  white-space:nowrap;
+  font-size:13px;
+  font-weight:800
+}
+
+.hero{
+  padding:35px 0 18px
+}
+
+.hero-box{
+  padding:34px;
+  border-radius:25px;
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  border:1px solid var(--line)
+}
+
+h1{
+  font-size:clamp(35px,8vw,60px);
+  line-height:.95;
+  margin:0 0 15px
+}
+
+.hero p{
+  max-width:720px;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:17px
+}
+
+.buttons{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-top:22px
+}
+
+.btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:13px 17px;
+  border-radius:12px;
+  font-weight:900;
+  border:0;
+  cursor:pointer
+}
+
+.primary{
+  background:var(--sky);
+  color:#052031
+}
+
+.green{
+  background:var(--green);
+  color:#052016
+}
+
+.dark{
+  background:#15364b;
+  color:var(--txt)
+}
+
+.gold{
+  background:var(--gold);
+  color:#251b00
+}
+
+section{
+  padding:18px 0
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px
+}
+
+.card{
+  background:linear-gradient(145deg,var(--panel2),var(--panel));
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px
+}
+
+.card h2,
+.card h3{
+  margin-top:0
+}
+
+.muted{
+  color:var(--muted);
+  line-height:1.5
+}
+
+.gallery{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px
+}
+
+.gallery img{
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid var(--line)
+}
+
+.empty{
+  color:var(--muted);
+  padding:15px 0
+}
+
+footer{
+  margin-top:25px;
+  padding:28px 0;
+  text-align:center;
+  color:var(--muted);
+  border-top:1px solid var(--line)
+}
+
+@media(max-width:700px){
+  .nav{
+    flex-direction:column;
+    align-items:flex-start;
+    padding:8px 0
+  }
+
+  nav{
+    width:100%
+  }
+
+  .hero-box{
+    padding:25px 20px
+  }
+
+  .grid{
+    grid-template-columns:1fr
+  }
+
+  .gallery{
+    grid-template-columns:1fr 1fr
+  }
+
+  .buttons .btn{
+    width:100%
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="container nav">
+
+<div class="logo">
+POOL <span>&</span> BEACH
+</div>
+
+<nav>
+<a href="#inicio">Inicio</a>
+<a href="reservas/index.html">Reservas y pedidos</a>
+<a href="juegos/index.html">Juegos</a>
+<a href="#fotos">Fotos</a>
+<a href="admin.html">⚙️ Admin</a>
+</nav>
+
+</div>
+</header>
+
+<main>
+
+<section id="inicio" class="hero">
+<div class="container">
+
+<div class="hero-box">
+
+<h1>
+POOL <span style="color:var(--sky)">&</span> BEACH
+</h1>
+
+<p>
+Puerto Pirámides. Pool, cartas, dados, fútbol, música,
+amigos y familia. Reservá tu lugar, pedí comida o entrá
+al sistema de juegos desde el celular.
+</p>
+
+<div class="buttons">
+
+<a class="btn primary" href="reservas/index.html">
+📅 Reservas y pedidos
+</a>
+
+<a class="btn dark" href="juegos/index.html">
+🎮 Juegos
+</a>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+
+<section>
+<div class="container">
+
+<div class="grid">
+
+<a class="card" href="reservas/index.html">
+<h3>📅 Reservas</h3>
+<p class="muted">
+Reservá tu mesa o una de las 3 mesas de pool.
+</p>
+</a>
+
+<a class="card" href="reservas/index.html#menu">
+<h3>🍔 Menú</h3>
+<p class="muted">
+Consultá la comida disponible y hacé tu pedido.
+</p>
+</a>
+
+<a class="card" href="juegos/index.html">
+<h3>🎮 Juegos</h3>
+<p class="muted">
+Trivia, duelos, torneos, ranking y canjes.
+</p>
+</a>
+
+</div>
+
+</div>
+</section>
+
+
+<section id="fotos">
+<div class="container">
+
+<div class="card">
+
+<h2>📸 Pool & Beach</h2>
+
+<p class="muted">
+Fotos del lugar y de nuestras noches.
+</p>
+
+<div id="gallery" class="gallery">
+<div class="empty">Cargando fotos...</div>
+</div>
+
+</div>
+
+</div>
+</section>
+
+</main>
+
+
+<footer>
+<div class="container">
+POOL & BEACH · Puerto Pirámides
+</div>
+</footer>
+
+
+<script>
+
+const SUPABASE_URL =
+'https://nmpakeovqkdajtswjpgm.supabase.co';
+
+const SUPABASE_KEY =
+'sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu';
+
+const db =
+window.supabase.createClient(
+SUPABASE_URL,
+SUPABASE_KEY
 );
+
+function esc(value){
+return String(value ?? '')
+.replaceAll('&','&amp;')
+.replaceAll('<','&lt;')
+.replaceAll('>','&gt;')
+.replaceAll('"','&quot;')
+.replaceAll("'","&#039;");
+}
+
+function safeUrl(value){
+
+try{
+
+const u = new URL(
+String(value || ''),
+location.href
+);
+
+if(
+u.protocol !== 'https:' &&
+u.protocol !== 'http:'
+){
+return '';
+}
+
+return u.href;
+
+}catch{
+return '';
+}
+
+}
+
+async function loadGallery(){
+
+const box =
+document.getElementById('gallery');
+
+const result =
+await db
+.from('galeria_fotos')
+.select('titulo,url,ruta,creado_en,created_at')
+.order('creado_en',{ascending:false});
+
+if(result.error){
+
+box.innerHTML =
+'<div class="empty">No se pudieron cargar las fotos.</div>';
+
+console.error(result.error);
+
+return;
+}
+
+const rows =
+result.data || [];
+
+if(!rows.length){
+
+box.innerHTML =
+'<div class="empty">Todavía no hay fotos publicadas.</div>';
+
+return;
+}
+
+box.innerHTML =
+rows.map(photo=>{
+
+const url =
+safeUrl(photo.url);
+
+if(!url)return '';
+
+return `
+<img
+src="${esc(url)}"
+alt="${esc(photo.titulo || 'Pool & Beach')}"
+loading="lazy">
+`;
+
+}).join('');
+
+}
+
+loadGallery();
+
+</script>
+
+</body>
+</html>
