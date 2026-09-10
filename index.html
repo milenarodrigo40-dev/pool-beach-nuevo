@@ -1,1425 +1,564 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Pool & Beach | Puerto Pirámides</title>
-  <meta name="description" content="Pool & Beach Puerto Pirámides. Comida, pool, juegos, música y ambiente familiar cerca de la playa.">
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root {
-      --bg: #071923;
-      --bg2: #0d2734;
-      --card: #102d3b;
-      --card2: #143847;
-      --cyan: #62d9ef;
-      --cyan2: #a7eff9;
-      --white: #f5fbfd;
-      --muted: #a9c4cc;
-      --line: rgba(167,239,249,.18);
-      --danger: #ff7070;
-      --success: #6ee7a8;
-      --shadow: 0 15px 40px rgba(0,0,0,.28);
-      --radius: 18px;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html {
-      scroll-behavior: smooth;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(98,217,239,.10), transparent 35%),
-        var(--bg);
-      color: var(--white);
-      line-height: 1.5;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    .container {
-      width: min(1100px, calc(100% - 28px));
-      margin: auto;
-    }
-
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(14px);
-      background: rgba(7,25,35,.92);
-      border-bottom: 1px solid var(--line);
-    }
-
-    .nav {
-      min-height: 70px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 15px;
-    }
-
-    .brand {
-      font-weight: 900;
-      font-size: 1.35rem;
-      letter-spacing: .4px;
-      color: var(--cyan2);
-      white-space: nowrap;
-    }
-
-    .brand span {
-      color: white;
-    }
-
-    .nav-links {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      justify-content: flex-end;
-    }
-
-    .nav-links a {
-      padding: 8px 11px;
-      border-radius: 10px;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    .nav-links a:hover {
-      color: white;
-      background: rgba(255,255,255,.06);
-    }
-
-    .hero {
-      padding: 35px 0 25px;
-    }
-
-    .hero-card {
-      background:
-        linear-gradient(135deg, rgba(98,217,239,.13), rgba(255,255,255,.025)),
-        var(--bg2);
-      border: 1px solid var(--line);
-      border-radius: 25px;
-      padding: 30px;
-      box-shadow: var(--shadow);
-      overflow: hidden;
-    }
-
-    .hero h1 {
-      font-size: clamp(2.2rem, 7vw, 4.7rem);
-      line-height: .95;
-      margin-bottom: 16px;
-    }
-
-    .hero h1 span {
-      color: var(--cyan);
-    }
-
-    .hero p {
-      max-width: 700px;
-      color: var(--muted);
-      font-size: 1.05rem;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      margin-top: 22px;
-    }
-
-    .btn {
-      border: 0;
-      border-radius: 12px;
-      padding: 12px 17px;
-      font-weight: 800;
-      transition: .2s;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: var(--cyan);
-      color: #06202a;
-    }
-
-    .btn-secondary {
-      background: rgba(255,255,255,.07);
-      color: white;
-      border: 1px solid var(--line);
-    }
-
-    .btn-danger {
-      background: rgba(255,112,112,.12);
-      color: #ffb2b2;
-      border: 1px solid rgba(255,112,112,.25);
-    }
-
-    .map-wrap {
-      margin-top: 25px;
-    }
-
-    .map-wrap h2 {
-      margin-bottom: 10px;
-    }
-
-    .map-image {
-      width: 100%;
-      max-height: 520px;
-      object-fit: contain;
-      border-radius: 18px;
-      border: 1px solid var(--line);
-      background: #102d3b;
-    }
-
-    .map-placeholder {
-      display: none;
-      padding: 35px;
-      text-align: center;
-      color: var(--muted);
-      background: var(--card);
-      border-radius: 18px;
-      border: 1px dashed var(--line);
-    }
-
-    section {
-      padding: 30px 0;
-    }
-
-    .section-title {
-      margin-bottom: 17px;
-    }
-
-    .section-title h2 {
-      font-size: 1.8rem;
-      margin-bottom: 4px;
-    }
-
-    .section-title p {
-      color: var(--muted);
-    }
-
-    .info-grid,
-    .menu-grid,
-    .games-grid,
-    .gallery-grid {
-      display: grid;
-      gap: 14px;
-    }
-
-    .info-grid {
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
-    }
-
-    .info-card,
-    .card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 18px;
-      box-shadow: 0 8px 25px rgba(0,0,0,.15);
-    }
-
-    .info-card strong {
-      display: block;
-      color: var(--cyan2);
-      margin-bottom: 5px;
-    }
-
-    .info-card span {
-      color: var(--muted);
-    }
-
-    .menu-grid {
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-    }
-
-    .product-category {
-      grid-column: 1 / -1;
-      margin-top: 8px;
-      color: var(--cyan);
-      font-size: 1.25rem;
-      border-bottom: 1px solid var(--line);
-      padding-bottom: 6px;
-    }
-
-    .product {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .product h3 {
-      font-size: 1.08rem;
-    }
-
-    .product p {
-      color: var(--muted);
-      font-size: .9rem;
-      flex: 1;
-    }
-
-    .price {
-      color: var(--cyan2);
-      font-size: 1.15rem;
-      font-weight: 900;
-    }
-
-    .product-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .product-actions .btn {
-      width: 100%;
-    }
-
-    .empty {
-      color: var(--muted);
-      padding: 20px;
-      background: var(--card);
-      border-radius: var(--radius);
-      border: 1px dashed var(--line);
-    }
-
-    .games-grid {
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .game-card {
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px;
-    }
-
-    .game-icon {
-      font-size: 2rem;
-      margin-bottom: 8px;
-    }
-
-    .game-card p {
-      color: var(--muted);
-      margin-top: 5px;
-    }
-
-    .canje-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-    }
-
-    .canje-card h3 {
-      color: var(--cyan2);
-    }
-
-    .canje-card p {
-      color: var(--muted);
-      margin: 7px 0;
-    }
-
-    .gallery-grid {
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    }
-
-    .gallery-card {
-      overflow: hidden;
-      border-radius: var(--radius);
-      background: var(--card);
-      border: 1px solid var(--line);
-    }
-
-    .gallery-card img {
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      object-fit: cover;
-    }
-
-    .gallery-card div {
-      padding: 12px;
-    }
-
-    .gallery-card p {
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    .reserve-box {
-      display: grid;
-      grid-template-columns: 1.1fr .9fr;
-      gap: 18px;
-      align-items: start;
-    }
-
-    .form {
-      display: grid;
-      gap: 12px;
-    }
-
-    .form-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-    }
-
-    label {
-      display: grid;
-      gap: 5px;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 11px;
-      border: 1px solid var(--line);
-      background: #081e29;
-      color: white;
-      outline: none;
-    }
-
-    input:focus,
-    select:focus,
-    textarea:focus {
-      border-color: var(--cyan);
-    }
-
-    textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .notice {
-      display: none;
-      padding: 12px;
-      border-radius: 11px;
-      margin-bottom: 10px;
-      font-weight: 700;
-    }
-
-    .notice.success {
-      display: block;
-      color: #baf8d3;
-      background: rgba(110,231,168,.1);
-      border: 1px solid rgba(110,231,168,.25);
-    }
-
-    .notice.error {
-      display: block;
-      color: #ffc0c0;
-      background: rgba(255,112,112,.1);
-      border: 1px solid rgba(255,112,112,.25);
-    }
-
-    .cart {
-      position: sticky;
-      top: 90px;
-    }
-
-    .cart-items {
-      display: grid;
-      gap: 9px;
-      margin: 13px 0;
-    }
-
-    .cart-item {
-      padding: 11px;
-      border-radius: 11px;
-      background: rgba(255,255,255,.045);
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .cart-item small {
-      display: block;
-      color: var(--muted);
-    }
-
-    .cart-item button {
-      background: transparent;
-      border: 0;
-      color: #ff9999;
-      font-size: 1.1rem;
-    }
-
-    .cart-total {
-      display: flex;
-      justify-content: space-between;
-      padding-top: 12px;
-      border-top: 1px solid var(--line);
-      font-weight: 900;
-      font-size: 1.2rem;
-    }
-
-    .delivery-extra {
-      display: none;
-    }
-
-    .delivery-extra.show {
-      display: grid;
-    }
-
-    footer {
-      padding: 35px 0 50px;
-      color: var(--muted);
-      border-top: 1px solid var(--line);
-      margin-top: 30px;
-    }
-
-    .footer-inner {
-      display: flex;
-      justify-content: space-between;
-      gap: 20px;
-      flex-wrap: wrap;
-    }
-
-    .admin-link {
-      color: var(--muted);
-      font-size: .82rem;
-      opacity: .7;
-    }
-
-    .loading {
-      color: var(--muted);
-      padding: 15px 0;
-    }
-
-    @media (max-width: 760px) {
-      .nav {
-        padding: 10px 0;
-        align-items: flex-start;
-      }
-
-      .nav-links {
-        display: none;
-      }
-
-      .hero-card {
-        padding: 23px;
-      }
-
-      .reserve-box {
-        grid-template-columns: 1fr;
-      }
-
-      .cart {
-        position: static;
-      }
-
-      .form-row {
-        grid-template-columns: 1fr;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pool & Beach | Puerto Pirámides</title>
+<meta name="theme-color" content="#071923">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrious@4.0.2/dist/qrious.min.js"></script>
+<style>
+:root{--bg:#071923;--bg2:#0c2633;--card:#102f3e;--text:#f5fbff;--muted:#a9c4cf;--primary:#31d7ff;--green:#42e695;--yellow:#ffd166;--red:#ff647c;--border:rgba(255,255,255,.1)}
+*{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,var(--bg),#041018);color:var(--text);min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer}a{color:inherit;text-decoration:none}
+.container{width:min(1180px,94%);margin:auto}
+header{position:sticky;top:0;z-index:100;background:rgba(4,16,24,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--border)}
+.header-inner{min-height:70px;display:flex;align-items:center;justify-content:space-between;gap:15px}
+.logo{font-size:21px;font-weight:900}.logo span{color:var(--primary)}
+.header-stats{display:flex;gap:7px;flex-wrap:wrap;justify-content:flex-end}.badge{padding:8px 11px;border-radius:999px;background:#ffffff0d;border:1px solid var(--border);font-size:12px;font-weight:800}
+.hero{padding:38px 0}.hero-box{padding:38px;border:1px solid var(--border);border-radius:28px;background:linear-gradient(135deg,#12394a,#061b26)}
+.hero h1{font-size:clamp(38px,7vw,68px);line-height:.95;margin-bottom:16px}.hero h1 span{color:var(--primary)}
+.hero p{max-width:760px;color:var(--muted);font-size:17px;line-height:1.6}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:24px}
+section{padding:28px 0}.section-title{margin-bottom:17px}.section-title h2{font-size:28px}.section-title p{color:var(--muted);margin-top:6px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}.card{background:linear-gradient(180deg,var(--card),#0a2531);border:1px solid var(--border);border-radius:21px;padding:20px}
+.card h3{font-size:20px;margin-bottom:7px}.card p{color:var(--muted);line-height:1.5}
+.btn{border:0;border-radius:13px;padding:12px 17px;font-weight:900}.btn-primary{background:var(--primary);color:#03131a}.btn-green{background:var(--green);color:#052016}.btn-secondary{background:#ffffff0d;color:var(--text);border:1px solid var(--border)}.btn-yellow{background:var(--yellow);color:#261c00}.btn-red{background:var(--red);color:white}
+.game-icon{width:56px;height:56px;border-radius:17px;display:grid;place-items:center;font-size:29px;background:#31d7ff18;margin-bottom:13px}
+.reward{display:flex;flex-wrap:wrap;gap:7px;margin:14px 0}.reward span{padding:7px 10px;border-radius:999px;background:#ffffff0d;font-size:12px}
+.profile{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:var(--card);border:1px solid var(--border);border-radius:17px;padding:18px}.stat small{display:block;color:var(--muted);margin-bottom:7px}.stat strong{font-size:26px}
+.map-wrap{border-radius:18px;overflow:hidden;background:white;border:1px solid var(--border)}.map-wrap img{width:100%;display:block}
+.qr-layout{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}.qr{background:#fff;padding:12px;border-radius:15px}.qr canvas{display:block}
+.reserva-layout,.pedido-layout,.duel-layout,.tournament-layout{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.reserva-panel,.pedido-panel{background:white;color:#063c55;border-radius:20px;padding:20px}
+label{display:block;font-size:13px;margin:9px 0 5px}.reserva-panel input,.reserva-panel select,.reserva-panel textarea,.pedido-panel input,.pedido-panel textarea{width:100%;padding:12px;border:1px solid #d5e1e5;border-radius:10px}
+textarea{min-height:80px;resize:vertical}
+.pool-options{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:9px 0}.pool-option{padding:12px;text-align:center;border:1px solid #cbdde2;border-radius:11px}
+.pedido-producto,.carrito-linea{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-bottom:1px solid #e5ecef}.pedido-producto strong,.carrito-linea strong{color:#063c55}
+.pedido-total{display:flex;justify-content:space-between;font-size:21px;font-weight:900;color:#063c55;padding:15px 0}
+.entrega-box{background:#f2f8fa;border-radius:13px;padding:13px;margin:10px 0;color:#063c55}.pedido-msg,.reserva-msg{min-height:22px;text-align:center;font-weight:900;margin-top:8px}
+.carrito-controles{display:flex;gap:6px;align-items:center;margin-top:6px}.carrito-controles button{width:28px;height:28px;border:0;border-radius:7px;background:#eaf7fa}
+.trivia-question{font-size:23px;line-height:1.35;margin:18px 0}.answers{display:grid;gap:9px}.answer{width:100%;text-align:left;padding:15px;border-radius:14px;border:1px solid var(--border);background:#ffffff08;color:white;font-weight:800}.answer.correct{background:#42e69533}.answer.wrong{background:#ff647c33}
+.rank-row{display:grid;grid-template-columns:50px 1fr auto auto;gap:10px;padding:13px;background:#ffffff08;border:1px solid var(--border);border-radius:13px;margin-bottom:8px}.rank-name{font-weight:800}.rank-points,.rank-tokens{color:var(--muted);font-size:13px}
+.media{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:15px;margin-bottom:12px}.gallery{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.gallery img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px}
+.loading,.empty{color:var(--muted);padding:15px 0}
+footer{margin-top:45px;padding:30px 0;text-align:center;border-top:1px solid var(--border);color:var(--muted)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translate(-50%,120px);opacity:0;background:#102f3e;border:1px solid var(--border);padding:14px 18px;border-radius:14px;z-index:999;transition:.3s}#toast.show{transform:translate(-50%,0);opacity:1}
+@media(max-width:850px){.grid,.reserva-layout,.pedido-layout,.duel-layout,.tournament-layout{grid-template-columns:1fr 1fr}.profile{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.grid,.reserva-layout,.pedido-layout,.duel-layout,.tournament-layout{grid-template-columns:1fr}.hero-box{padding:25px 20px}.profile{grid-template-columns:1fr 1fr}.pool-options{grid-template-columns:1fr}.gallery{grid-template-columns:1fr 1fr}.rank-row{grid-template-columns:38px 1fr auto}.rank-tokens{display:none}}
+</style>
 </head>
-
 <body>
 
 <header>
-  <div class="container nav">
-    <a href="#inicio" class="brand">POOL <span>&</span> BEACH</a>
-
-    <nav class="nav-links">
-      <a href="#menu">Menú</a>
-      <a href="#reservas">Reservas</a>
-      <a href="#juegos">Juegos</a>
-      <a href="#canjes">Canje</a>
-      <a href="#galeria">Fotos</a>
-    </nav>
-  </div>
+<div class="container header-inner">
+<div class="logo">POOL <span>&</span> BEACH</div>
+<div class="header-stats">
+<a class="badge" href="#menu">🍔 Menú</a>
+<a class="badge" href="#reservas">📅 Reservas</a>
+<a class="badge" href="#juegos">🎮 Juegos</a>
+<a class="badge" href="admin.html">⚙️ Admin</a>
+<span class="badge">⭐ <span id="headerPoints">0</span></span>
+<span class="badge">🪙 <span id="headerTokens">0</span></span>
+</div>
+</div>
 </header>
 
 <main>
 
-  <section class="hero" id="inicio">
-    <div class="container">
-      <div class="hero-card">
-        <h1>POOL <span>&</span> BEACH</h1>
-        <p>
-          Un lugar para comer, jugar al pool, compartir unas cartas,
-          tirar unos dados, mirar fútbol, escuchar música y pasarla bien
-          con amigos y familia en Puerto Pirámides.
-        </p>
+<section class="hero">
+<div class="container">
+<div class="hero-box">
+<h1>POOL & BEACH<br><span>PUERTO PIRÁMIDES</span></h1>
+<p>Menú, reservas, pedidos y experiencias de Pool & Beach. Pool, cartas, dados, fútbol, música, amigos y familia junto al mar.</p>
+<div class="hero-actions">
+<button class="btn btn-primary" onclick="scrollToId('menu')">🍔 Ver menú</button>
+<button class="btn btn-green" onclick="scrollToId('reservas')">📅 Reservar</button>
+<button class="btn btn-secondary" onclick="scrollToId('pedidos')">🛒 Pedir</button>
+<button class="btn btn-secondary" onclick="scrollToId('juegos')">🎮 Juegos</button>
+<button class="btn btn-secondary" onclick="scrollToId('duelos')">⚔️ Duelo</button>
+<button class="btn btn-secondary" onclick="scrollToId('torneos')">🏆 Torneos</button>
+<button class="btn btn-secondary" onclick="scrollToId('mapa')">🗺️ Mapa</button>
+</div>
+</div>
+</div>
+</section>
 
-        <div class="hero-actions">
-          <a href="#menu" class="btn btn-primary">Ver menú</a>
-          <a href="#reservas" class="btn btn-secondary">Reservar</a>
-        </div>
+<section id="mapa">
+<div class="container">
+<div class="section-title"><h2>🗺️ Mapa / guía</h2><p>Encontranos fácilmente en Puerto Pirámides.</p></div>
+<div class="card">
+<div class="map-wrap">
+<img src="mapa-guia.png" alt="Mapa guía de Pool & Beach en Puerto Pirámides" onerror="this.outerHTML='<div class=empty>No se encontró mapa-guia.png.</div>'">
+</div>
+<p style="color:var(--muted);margin-top:10px">📍 Pool & Beach · Puerto Pirámides · Patagonia Argentina</p>
+</div>
+</div>
+</section>
 
-        <div class="map-wrap">
-          <h2>¿Dónde estamos?</h2>
+<section id="qr-general">
+<div class="container">
+<div class="card qr-layout">
+<div>
+<div class="section-title">
+<h2>📱 QR General Pool & Beach</h2>
+<p>Un único QR para ingresar al sitio. No identifica mesas y no hay QR individuales.</p>
+</div>
+<p style="color:var(--muted);word-break:break-all" id="generalQrUrl"></p>
+<button class="btn btn-primary" onclick="downloadGeneralQR()">⬇️ Descargar QR general</button>
+</div>
+<div class="qr"><canvas id="generalQr" width="220" height="220"></canvas></div>
+</div>
+</div>
+</section>
 
-          <img
-            id="mapImage"
-            class="map-image"
-            src="Mapa-guia.png"
-            alt="Mapa guía para llegar a Pool & Beach"
-            onerror="this.style.display='none'; document.getElementById('mapPlaceholder').style.display='block';"
-          >
+<section>
+<div class="container">
+<div class="section-title"><h2>Tu progreso</h2><p>Tu actividad de juegos queda asociada a esta sesión.</p></div>
+<div class="profile">
+<div class="stat"><small>Jugador</small><strong id="playerName">Jugador</strong><button class="btn btn-secondary" style="margin-top:10px;width:100%" onclick="changeDisplayName()">✏️ Cambiar apodo</button></div>
+<div class="stat"><small>Puntos</small><strong id="profilePoints">0</strong></div>
+<div class="stat"><small>Tokens</small><strong id="profileTokens">0</strong></div>
+<div class="stat"><small>Acceso</small><strong>QR General</strong></div>
+</div>
+</div>
+</section>
 
-          <div id="mapPlaceholder" class="map-placeholder">
-            <strong>Pool & Beach</strong>
-            <br>
-            Puerto Pirámides · Dirección: la playa
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
+<section id="juegos">
+<div class="container">
+<div class="section-title"><h2>🎮 Juegos</h2><p>El sistema de juegos sigue disponible como parte de la experiencia Pool & Beach.</p></div>
+<div id="gamesGrid" class="grid"><div class="loading">Cargando juegos...</div></div>
+</div>
+</section>
 
-  <section>
-    <div class="container">
-      <div class="info-grid">
-        <div class="info-card">
-          <strong>📍 Ubicación</strong>
-          <span>Puerto Pirámides · Dirección: la playa</span>
-        </div>
+<section id="experiencias">
+<div class="container">
+<div class="section-title"><h2>🏖️ Experiencias Pool & Beach</h2><p>Además de los juegos online, disfrutá las experiencias del local.</p></div>
+<div class="grid">
+<article class="card"><div class="game-icon">🎱</div><h3>Pool</h3><p>Mesas de pool para jugar entre amigos o desafiar a otros.</p></article>
+<article class="card"><div class="game-icon">🎲</div><h3>Dados</h3><p>Dados y desafíos rápidos para compartir.</p></article>
+<article class="card"><div class="game-icon">🎮</div><h3>PlayStation</h3><p>Videojuegos para compartir en el local.</p></article>
+<article class="card"><div class="game-icon">🃏</div><h3>Cartas</h3><p>Truco y otros juegos sociales.</p></article>
+<article class="card"><div class="game-icon">🏎️</div><h3>Simuladores</h3><p>Desafíos de simulación para competir.</p></article>
+<article class="card"><div class="game-icon">⚽</div><h3>Fútbol</h3><p>Partidos, trivias y competencias futboleras.</p></article>
+</div>
+</div>
+</section>
 
-        <div class="info-card">
-          <strong>🕐 Horarios</strong>
-          <span>Local 12:00–15:00 · Noche 19:00–03:30</span>
-        </div>
+<section id="trivia">
+<div class="container">
+<div class="section-title"><h2>🧠 Trivia Express</h2><p>Respondé preguntas y ganá puntos.</p></div>
+<div class="card">
+<div id="triviaStart">
+<h3>Trivia Express</h3>
+<p>Las preguntas se cargan desde Supabase.</p>
+<div class="reward"><span>⭐ 20 puntos</span><span>🪙 10 tokens</span></div>
+<button class="btn btn-primary" onclick="startTrivia()">Comenzar trivia</button>
+</div>
+<div id="triviaGame" style="display:none">
+<div id="triviaProgress"></div>
+<div id="triviaQuestion" class="trivia-question"></div>
+<div id="triviaAnswers" class="answers"></div>
+<div id="triviaResult" style="margin-top:12px"></div>
+<button id="nextTriviaBtn" class="btn btn-primary" style="display:none;margin-top:12px" onclick="nextTriviaQuestion()">Siguiente</button>
+</div>
+</div>
+</div>
+</section>
 
-        <div class="info-card">
-          <strong>🍕 Cocina</strong>
-          <span>20:00–01:00</span>
-        </div>
+<section id="duelos">
+<div class="container">
+<div class="section-title"><h2>⚔️ Duelo 1 vs 1</h2><p>Creá un desafío o uníte a otro jugador.</p></div>
+<div class="duel-layout">
+<div class="card">
+<h3>Crear duelo</h3>
+<p>Publicá un duelo para otro jugador.</p>
+<button id="createDuelBtn" class="btn btn-primary" onclick="createDuel()">Crear desafío</button>
+<div id="myDuelStatus"></div>
+</div>
+<div class="card">
+<h3>Duelos disponibles</h3>
+<div id="duelList"><div class="loading">Cargando...</div></div>
+</div>
+</div>
+<div id="activeDuelPanel" class="card" style="display:none;margin-top:15px">
+<h3>⚔️ Tu duelo</h3>
+<div id="activeDuelInfo"></div>
+<input id="duelScore" type="number" min="0" placeholder="Tu puntuación" style="width:100%;padding:12px;margin-top:10px;border-radius:10px">
+<button class="btn btn-green" style="margin-top:10px" onclick="submitDuel()">Confirmar puntuación</button>
+</div>
+</div>
+</section>
 
-        <div class="info-card">
-          <strong>🚗 Delivery</strong>
-          <span>Disponible · costo de envío $3.000</span>
-        </div>
-      </div>
-    </div>
-  </section>
+<section id="reservas">
+<div class="container">
+<div class="section-title"><h2>📅 Reservas</h2><p>Reservá el local o una de las 3 mesas de pool.</p></div>
+<div class="reserva-layout">
+<div class="reserva-panel">
+<form id="reservaForm">
+<label>Nombre</label><input id="rNombre" required minlength="2" maxlength="100">
+<label>Teléfono</label><input id="rTelefono" required minlength="6" maxlength="40">
+<label>Fecha</label><input id="rFecha" type="date" required>
+<label>Hora</label><input id="rHora" type="time" required>
+<label>¿Qué querés reservar?</label>
+<select id="rService" required>
+<option value="">Seleccioná una opción</option>
+<option value="Mesa Pool 1">🎱 Mesa Pool 1</option>
+<option value="Mesa Pool 2">🎱 Mesa Pool 2</option>
+<option value="Mesa Pool 3">🎱 Mesa Pool 3</option>
+<option value="Local">🏖️ Reserva general del local</option>
+</select>
+<label>Personas</label><input id="rPersonas" type="number" min="1" max="50" value="2" required>
+<label>Notas</label><textarea id="rNotas" maxlength="500"></textarea>
+<button id="rEnviar" class="btn btn-green" type="submit" style="margin-top:10px;width:100%">📅 Enviar reserva</button>
+<p id="reservaMsg" class="reserva-msg"></p>
+</form>
+</div>
+<div class="reserva-panel">
+<h3>🎱 Las 3 mesas de pool</h3>
+<p>Las mesas disponibles para reserva son Mesa 1, Mesa 2 y Mesa 3.</p>
+<div class="pool-options">
+<label class="pool-option"><input type="radio" name="poolQuick" value="Mesa Pool 1"> Mesa 1</label>
+<label class="pool-option"><input type="radio" name="poolQuick" value="Mesa Pool 2"> Mesa 2</label>
+<label class="pool-option"><input type="radio" name="poolQuick" value="Mesa Pool 3"> Mesa 3</label>
+</div>
+<button class="btn btn-primary" onclick="usarMesa()">Usar mesa seleccionada</button>
+</div>
+</div>
+</div>
+</section>
 
-  <section id="menu">
-    <div class="container">
-      <div class="section-title">
-        <h2>🍔 Menú</h2>
-        <p>Elegí tus productos y agregalos al pedido.</p>
-      </div>
+<section id="promociones">
+<div class="container">
+<div class="section-title"><h2>🔥 Promociones</h2><p>Promociones vigentes.</p></div>
+<div id="promosGrid" class="grid"><div class="loading">Cargando promociones...</div></div>
+</div>
+</section>
 
-      <div id="menuMessage" class="loading">Cargando menú...</div>
-      <div id="menuGrid" class="menu-grid"></div>
-    </div>
-  </section>
+<section id="menu">
+<div class="container">
+<div class="section-title"><h2>🍔 Menú</h2><p>Productos publicados desde administración.</p></div>
+<div id="menuPublico" class="grid"><div class="loading">Cargando menú...</div></div>
+</div>
+</section>
 
-  <section id="reservas">
-    <div class="container">
-      <div class="section-title">
-        <h2>📅 Reservas</h2>
-        <p>Reservá tu mesa o una de nuestras 3 mesas de pool.</p>
-      </div>
+<section id="pedidos">
+<div class="container">
+<div class="section-title"><h2>🛒 Pedidos</h2><p>Delivery o retiro en el negocio.</p></div>
+<div class="pedido-layout">
+<div class="pedido-panel">
+<h3>🍔 Productos</h3>
+<div id="pedidoProductos"><div class="loading">Cargando productos...</div></div>
+</div>
+<div class="pedido-panel">
+<h3>🧾 Tu pedido</h3>
+<div id="carritoContenido"><div class="empty">Todavía no agregaste productos.</div></div>
+<div class="pedido-total"><span>Total</span><span id="pedidoTotal">$0</span></div>
+<div class="entrega-box">
+<strong>Forma de entrega</strong>
+<label><input type="radio" name="tipoEntrega" value="delivery" checked> Delivery — $3.000</label>
+<label><input type="radio" name="tipoEntrega" value="retiro"> Retiro en el local — $0</label>
+<div id="direccionBox"><input id="direccionDelivery" placeholder="Dirección para delivery"></div>
+</div>
+<form id="pedidoForm">
+<input id="pedidoNombre" placeholder="Nombre" required minlength="2" maxlength="100">
+<input id="pedidoTelefono" type="tel" placeholder="Teléfono" required minlength="6" maxlength="40">
+<textarea id="pedidoNotas" placeholder="Notas"></textarea>
+<button id="pedidoEnviar" class="btn btn-primary" type="submit">🛒 Enviar pedido</button>
+<p id="pedidoMensaje" class="pedido-msg"></p>
+</form>
+</div>
+</div>
+</div>
+</section>
 
-      <div class="reserve-box">
+<section id="torneos">
+<div class="container">
+<div class="section-title"><h2>🏆 Torneos</h2><p>Competí y avanzá de ronda.</p></div>
+<div id="tournamentsGrid" class="grid"><div class="loading">Cargando torneos...</div></div>
+<div class="tournament-layout" style="margin-top:15px">
+<div class="card"><h3>📋 Mis partidos</h3><div id="myMatches"></div></div>
+<div class="card"><h3>🥇 Tabla</h3><div id="tournamentStandings"></div></div>
+</div>
+</div>
+</section>
 
-        <div class="card">
-          <div id="reservationNotice" class="notice"></div>
+<section id="ranking">
+<div class="container">
+<div class="section-title"><h2>🥇 Ranking</h2><p>Los mejores jugadores.</p></div>
+<div class="card"><div id="rankingList"><div class="loading">Cargando ranking...</div></div></div>
+</div>
+</section>
 
-          <form id="reservationForm" class="form">
+<section id="premios">
+<div class="container">
+<div class="section-title"><h2>🎁 Premios y canjes</h2><p>Canjeá tus tokens.</p></div>
+<div id="prizesGrid" class="grid"><div class="loading">Cargando premios...</div></div>
+</div>
+</section>
 
-            <div class="form-row">
-              <label>
-                Nombre
-                <input id="resNombre" type="text" required maxlength="100">
-              </label>
-
-              <label>
-                Teléfono
-                <input id="resTelefono" type="tel" required maxlength="40">
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                Fecha
-                <input id="resFecha" type="date" required>
-              </label>
-
-              <label>
-                Hora
-                <input id="resHora" type="time" required>
-              </label>
-            </div>
-
-            <div class="form-row">
-              <label>
-                ¿Qué querés reservar?
-                <select id="resServicio" required>
-                  <option value="">Seleccionar</option>
-                  <option value="Mesa">Mesa</option>
-                  <option value="Pool">Mesa de pool</option>
-                </select>
-              </label>
-
-              <label>
-                Personas
-                <input id="resPersonas" type="number" min="1" max="50" value="2" required>
-              </label>
-            </div>
-
-            <label id="poolTableWrap" style="display:none;">
-              Mesa de pool
-              <select id="resMesaPool">
-                <option value="">Seleccionar mesa</option>
-                <option value="1">Pool 1</option>
-                <option value="2">Pool 2</option>
-                <option value="3">Pool 3</option>
-              </select>
-            </label>
-
-            <label>
-              Notas
-              <textarea id="resNotas" maxlength="1000" placeholder="Algún dato adicional..."></textarea>
-            </label>
-
-            <button class="btn btn-primary" type="submit">
-              Enviar reserva
-            </button>
-          </form>
-        </div>
-
-        <div class="card">
-          <h3>🎱 Mesas de pool</h3>
-          <p style="color:var(--muted); margin-top:8px;">
-            Contamos con 3 mesas de pool disponibles para reservar.
-          </p>
-
-          <div style="margin-top:18px; display:grid; gap:10px;">
-            <div class="info-card">
-              <strong>Pool 1</strong>
-              <span>Reservable</span>
-            </div>
-
-            <div class="info-card">
-              <strong>Pool 2</strong>
-              <span>Reservable</span>
-            </div>
-
-            <div class="info-card">
-              <strong>Pool 3</strong>
-              <span>Reservable</span>
-            </div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section id="pedido">
-    <div class="container">
-      <div class="section-title">
-        <h2>🛒 Hacer pedido</h2>
-        <p>Podés retirar en el negocio o pedir delivery.</p>
-      </div>
-
-      <div class="reserve-box">
-
-        <div class="card">
-          <div id="orderNotice" class="notice"></div>
-
-          <form id="orderForm" class="form">
-
-            <div class="form-row">
-              <label>
-                Nombre
-                <input id="orderNombre" type="text" required maxlength="100">
-              </label>
-
-              <label>
-                Teléfono
-                <input id="orderTelefono" type="tel" required maxlength="40">
-              </label>
-            </div>
-
-            <label>
-              Forma de entrega
-              <select id="tipoEntrega" required>
-                <option value="retiro">Retiro en el negocio</option>
-                <option value="delivery">Delivery</option>
-              </select>
-            </label>
-
-            <label id="direccionWrap" class="delivery-extra">
-              Dirección
-              <input id="direccion" type="text" maxlength="250">
-            </label>
-
-            <label>
-              Notas del pedido
-              <textarea id="orderNotas" maxlength="1000" placeholder="Sin cebolla, horario, etc."></textarea>
-            </label>
-
-            <button class="btn btn-primary" type="submit">
-              Confirmar pedido
-            </button>
-          </form>
-        </div>
-
-        <div class="card cart">
-          <h3>Tu pedido</h3>
-
-          <div id="cartItems" class="cart-items">
-            <div class="empty">Todavía no agregaste productos.</div>
-          </div>
-
-          <div class="cart-total">
-            <span>Total</span>
-            <span id="cartTotal">$0</span>
-          </div>
-
-          <p style="color:var(--muted); font-size:.85rem; margin-top:10px;">
-            Delivery: $3.000 adicionales.
-          </p>
-        </div>
-
-      </div>
-    </div>
-  </section>
-
-  <section id="juegos">
-    <div class="container">
-      <div class="section-title">
-        <h2>🎮 Juegos & diversión</h2>
-        <p>También podés disfrutar de nuestros juegos y propuestas dentro del local.</p>
-      </div>
-
-      <div id="gamesMessage" class="loading">Cargando juegos...</div>
-      <div id="gamesGrid" class="games-grid"></div>
-    </div>
-  </section>
-
-  <section id="canjes">
-    <div class="container">
-      <div class="section-title">
-        <h2>🎁 Canje</h2>
-        <p>Consultá las opciones disponibles para canjear.</p>
-      </div>
-
-      <div id="canjesMessage" class="loading">Cargando canjes...</div>
-      <div id="canjesGrid" class="canje-grid"></div>
-    </div>
-  </section>
-
-  <section id="galeria">
-    <div class="container">
-      <div class="section-title">
-        <h2>📸 Pool & Beach</h2>
-        <p>Fotos del lugar.</p>
-      </div>
-
-      <div id="galleryMessage" class="loading">Cargando fotos...</div>
-      <div id="galleryGrid" class="gallery-grid"></div>
-    </div>
-  </section>
-
-  <section>
-    <div class="container">
-      <div class="card">
-        <h2>🏖️ Te esperamos</h2>
-        <p style="color:var(--muted); margin-top:8px;">
-          Pool, cartas, dados, fútbol, música, amigos, familia,
-          comida y playa. Todo en un mismo lugar.
-        </p>
-
-        <div class="hero-actions">
-          <a href="#reservas" class="btn btn-primary">Reservar</a>
-          <a href="#pedido" class="btn btn-secondary">Hacer pedido</a>
-        </div>
-      </div>
-    </div>
-  </section>
+<section id="galeria">
+<div class="container">
+<div class="section-title"><h2>📸 Galería</h2><p>Fotos cargadas desde administración.</p></div>
+<div id="galleryGrid" class="gallery"><div class="loading">Cargando fotos...</div></div>
+</div>
+</section>
 
 </main>
 
 <footer>
-  <div class="container footer-inner">
-    <div>
-      <strong>POOL & BEACH</strong>
-      <div>Puerto Pirámides · La playa</div>
-    </div>
-
-    <a class="admin-link" href="admin.html">Administración</a>
-  </div>
+<strong>POOL & BEACH</strong><br>
+Puerto Pirámides · Patagonia Argentina<br>
+<a href="admin.html" style="text-decoration:underline;display:inline-block;margin-top:10px">⚙️ Administración</a>
 </footer>
 
+<div id="toast"></div>
+
 <script>
-  const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
-  const SUPABASE_ANON_KEY = "REEMPLAZAR_CON_TU_ANON_KEY";
-
-  const supabaseClient = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
-
-  const DELIVERY_COST = 3000;
-
-  let products = [];
-  let cart = [];
-
-  function money(value) {
-    return new Intl.NumberFormat("es-AR", {
-      maximumFractionDigits: 0
-    }).format(Number(value) || 0);
-  }
-
-  function showNotice(id, message, type) {
-    const el = document.getElementById(id);
-    el.textContent = message;
-    el.className = "notice " + type;
-  }
-
-  function clearNotice(id) {
-    const el = document.getElementById(id);
-    el.textContent = "";
-    el.className = "notice";
-  }
-
-  function escapeHtml(value) {
-    return String(value ?? "")
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;")
-      .replaceAll('"', "&quot;")
-      .replaceAll("'", "&#039;");
-  }
-
-  async function loadProducts() {
-    const message = document.getElementById("menuMessage");
-    const grid = document.getElementById("menuGrid");
-
-    const { data, error } = await supabaseClient
-      .from("productos")
-      .select("*")
-      .eq("activo", true)
-      .order("categoria")
-      .order("nombre");
-
-    if (error) {
-      message.textContent = "No se pudo cargar el menú.";
-      return;
-    }
-
-    products = data || [];
-    message.style.display = "none";
-    grid.innerHTML = "";
-
-    if (!products.length) {
-      grid.innerHTML = '<div class="empty">No hay productos disponibles actualmente.</div>';
-      return;
-    }
-
-    let currentCategory = "";
-
-    products.forEach(product => {
-      if (product.categoria !== currentCategory) {
-        currentCategory = product.categoria;
-
-        const title = document.createElement("div");
-        title.className = "product-category";
-        title.textContent = currentCategory;
-        grid.appendChild(title);
-      }
-
-      const card = document.createElement("article");
-      card.className = "product card";
-
-      card.innerHTML = `
-        <h3>${escapeHtml(product.nombre)}</h3>
-        <p>${escapeHtml(product.descripcion || "")}</p>
-        <div class="price">$${money(product.precio)}</div>
-
-        <div class="product-actions">
-          <button
-            class="btn btn-primary"
-            type="button"
-            onclick="addToCart('${product.id}')">
-            Agregar
-          </button>
-        </div>
-      `;
-
-      grid.appendChild(card);
-    });
-  }
-
-  function addToCart(productId) {
-    const product = products.find(p => p.id === productId);
-
-    if (!product) return;
-
-    const existing = cart.find(item => item.id === productId);
-
-    if (existing) {
-      existing.quantity += 1;
-    } else {
-      cart.push({
-        id: product.id,
-        nombre: product.nombre,
-        precio: Number(product.precio) || 0,
-        quantity: 1
-      });
-    }
-
-    renderCart();
-
-    document.getElementById("pedido").scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-
-  function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    renderCart();
-  }
-
-  function renderCart() {
-    const container = document.getElementById("cartItems");
-    const totalElement = document.getElementById("cartTotal");
-
-    container.innerHTML = "";
-
-    if (!cart.length) {
-      container.innerHTML = '<div class="empty">Todavía no agregaste productos.</div>';
-      totalElement.textContent = "$0";
-      return;
-    }
-
-    let total = 0;
-
-    cart.forEach(item => {
-      const subtotal = item.precio * item.quantity;
-      total += subtotal;
-
-      const row = document.createElement("div");
-      row.className = "cart-item";
-
-      row.innerHTML = `
-        <div>
-          <strong>${escapeHtml(item.nombre)}</strong>
-          <small>${item.quantity} × $${money(item.precio)}</small>
-        </div>
-
-        <div>
-          <strong>$${money(subtotal)}</strong>
-          <button type="button" onclick="removeFromCart('${item.id}')">×</button>
-        </div>
-      `;
-
-      container.appendChild(row);
-    });
-
-    totalElement.textContent = "$" + money(total);
-  }
-
-  function updateDeliveryFields() {
-    const type = document.getElementById("tipoEntrega").value;
-    const wrap = document.getElementById("direccionWrap");
-    const input = document.getElementById("direccion");
-
-    if (type === "delivery") {
-      wrap.classList.add("show");
-      input.required = true;
-    } else {
-      wrap.classList.remove("show");
-      input.required = false;
-      input.value = "";
-    }
-
-    renderOrderTotal();
-  }
-
-  function renderOrderTotal() {
-    let total = cart.reduce(
-      (sum, item) => sum + item.precio * item.quantity,
-      0
-    );
-
-    if (document.getElementById("tipoEntrega").value === "delivery") {
-      total += DELIVERY_COST;
-    }
-
-    document.getElementById("cartTotal").textContent = "$" + money(total);
-  }
-
-  async function submitOrder(event) {
-    event.preventDefault();
-    clearNotice("orderNotice");
-
-    if (!cart.length) {
-      showNotice(
-        "orderNotice",
-        "Agregá al menos un producto al pedido.",
-        "error"
-      );
-      return;
-    }
-
-    const nombre = document.getElementById("orderNombre").value.trim();
-    const telefono = document.getElementById("orderTelefono").value.trim();
-    const tipoEntrega = document.getElementById("tipoEntrega").value;
-    const direccion = document.getElementById("direccion").value.trim();
-    const notas = document.getElementById("orderNotas").value.trim();
-
-    if (!nombre || !telefono) {
-      showNotice(
-        "orderNotice",
-        "Completá nombre y teléfono.",
-        "error"
-      );
-      return;
-    }
-
-    if (tipoEntrega === "delivery" && direccion.length < 5) {
-      showNotice(
-        "orderNotice",
-        "Ingresá una dirección válida para el delivery.",
-        "error"
-      );
-      return;
-    }
-
-    const subtotal = cart.reduce(
-      (sum, item) => sum + item.precio * item.quantity,
-      0
-    );
-
-    const total = subtotal + (
-      tipoEntrega === "delivery" ? DELIVERY_COST : 0
-    );
-
-    const items = cart.map(item => ({
-      id: item.id,
-      nombre: item.nombre,
-      precio: item.precio,
-      cantidad: item.quantity,
-      subtotal: item.precio * item.quantity
-    }));
-
-    const { error } = await supabaseClient
-      .from("pedidos")
-      .insert({
-        nombre_cliente: nombre,
-        telefono,
-        tipo: "pedido",
-        estado: "pendiente",
-        total,
-        notas,
-        tipo_entrega: tipoEntrega,
-        direccion: tipoEntrega === "delivery" ? direccion : null,
-        items,
-        notificacion_vista: false
-      });
-
-    if (error) {
-      showNotice(
-        "orderNotice",
-        "No se pudo enviar el pedido. Revisá los datos e intentá nuevamente.",
-        "error"
-      );
-      return;
-    }
-
-    showNotice(
-      "orderNotice",
-      "¡Pedido enviado correctamente! Te esperamos o nos comunicamos para el delivery.",
-      "success"
-    );
-
-    cart = [];
-    document.getElementById("orderForm").reset();
-    document.getElementById("tipoEntrega").value = "retiro";
-    updateDeliveryFields();
-    renderCart();
-  }
-
-  async function submitReservation(event) {
-    event.preventDefault();
-    clearNotice("reservationNotice");
-
-    const nombre = document.getElementById("resNombre").value.trim();
-    const telefono = document.getElementById("resTelefono").value.trim();
-    const fecha = document.getElementById("resFecha").value;
-    const hora = document.getElementById("resHora").value;
-    const servicio = document.getElementById("resServicio").value;
-    const personas = Number(document.getElementById("resPersonas").value);
-    const mesaPool = document.getElementById("resMesaPool").value;
-    const notas = document.getElementById("resNotas").value.trim();
-
-    if (!nombre || !telefono || !fecha || !hora || !servicio) {
-      showNotice(
-        "reservationNotice",
-        "Completá todos los campos obligatorios.",
-        "error"
-      );
-      return;
-    }
-
-    if (servicio === "Pool" && !mesaPool) {
-      showNotice(
-        "reservationNotice",
-        "Seleccioná una mesa de pool.",
-        "error"
-      );
-      return;
-    }
-
-    const { data: existing, error: checkError } = await supabaseClient
-      .from("reservas")
-      .select("id")
-      .eq("fecha", fecha)
-      .eq("hora", hora)
-      .eq("mesa_pool", servicio === "Pool" ? Number(mesaPool) : null)
-      .eq("estado", "pendiente");
-
-    if (checkError) {
-      showNotice(
-        "reservationNotice",
-        "No se pudo comprobar la disponibilidad.",
-        "error"
-      );
-      return;
-    }
-
-    if (servicio === "Pool" && existing && existing.length > 0) {
-      showNotice(
-        "reservationNotice",
-        "Esa mesa de pool ya está reservada para ese horario.",
-        "error"
-      );
-      return;
-    }
-
-    const { error } = await supabaseClient
-      .from("reservas")
-      .insert({
-        nombre,
-        telefono,
-        fecha,
-        hora,
-        servicio,
-        cantidad_personas: personas,
-        estado: "pendiente",
-        notas,
-        notificacion_vista: false,
-        mesa_pool: servicio === "Pool" ? Number(mesaPool) : null,
-        tipo: "reserva"
-      });
-
-    if (error) {
-      showNotice(
-        "reservationNotice",
-        "No se pudo enviar la reserva. Intentá nuevamente.",
-        "error"
-      );
-      return;
-    }
-
-    showNotice(
-      "reservationNotice",
-      "¡Reserva enviada correctamente! Te esperamos.",
-      "success"
-    );
-
-    document.getElementById("reservationForm").reset();
-    document.getElementById("resPersonas").value = 2;
-    document.getElementById("poolTableWrap").style.display = "none";
-  }
-
-  async function loadGames() {
-    const message = document.getElementById("gamesMessage");
-    const grid = document.getElementById("gamesGrid");
-
-    const { data, error } = await supabaseClient
-      .from("games")
-      .select("*")
-      .eq("active", true)
-      .order("created_at");
-
-    if (error) {
-      message.textContent = "No se pudieron cargar los juegos.";
-      return;
-    }
-
-    message.style.display = "none";
-    grid.innerHTML = "";
-
-    if (!data || !data.length) {
-      grid.innerHTML = '<div class="empty">Próximamente más juegos.</div>';
-      return;
-    }
-
-    data.forEach(game => {
-      const card = document.createElement("article");
-      card.className = "game-card";
-
-      card.innerHTML = `
-        <div class="game-icon">${escapeHtml(game.icon || "🎮")}</div>
-        <h3>${escapeHtml(game.name)}</h3>
-        <p>${escapeHtml(game.description || "")}</p>
-      `;
-
-      grid.appendChild(card);
-    });
-  }
-
-  async function loadCanjes() {
-    const message = document.getElementById("canjesMessage");
-    const grid = document.getElementById("canjesGrid");
-
-    const { data, error } = await supabaseClient
-      .from("canjes")
-      .select("*")
-      .eq("activo", true)
-      .order("created_at");
-
-    if (error) {
-      message.textContent = "No se pudieron cargar los canjes.";
-      return;
-    }
-
-    message.style.display = "none";
-    grid.innerHTML = "";
-
-    if (!data || !data.length) {
-      grid.innerHTML = '<div class="empty">No hay opciones de canje disponibles.</div>';
-      return;
-    }
-
-    data.forEach(item => {
-      const card = document.createElement("article");
-      card.className = "card canje-card";
-
-      card.innerHTML = `
-        <h3>${escapeHtml(item.nombre)}</h3>
-        <p>${escapeHtml(item.descripcion || "")}</p>
-        <strong>${money(item.costo)} puntos</strong>
-      `;
-
-      grid.appendChild(card);
-    });
-  }
-
-  async function loadGallery() {
-    const message = document.getElementById("galleryMessage");
-    const grid = document.getElementById("galleryGrid");
-
-    const { data, error } = await supabaseClient
-      .from("galeria_fotos")
-      .select("*")
-      .order("creado_en", { ascending: false });
-
-    if (error) {
-      message.textContent = "No se pudieron cargar las fotos.";
-      return;
-    }
-
-    message.style.display = "none";
-    grid.innerHTML = "";
-
-    if (!data || !data.length) {
-      grid.innerHTML = '<div class="empty">Todavía no hay fotos cargadas.</div>';
-      return;
-    }
-
-    data.forEach(photo => {
-      const card = document.createElement("article");
-      card.className = "gallery-card";
-
-      card.innerHTML = `
-        <img
-          src="${escapeHtml(photo.url)}"
-          alt="${escapeHtml(photo.titulo || "Pool & Beach")}"
-          loading="lazy"
-        >
-        <div>
-          <strong>${escapeHtml(photo.titulo || "")}</strong>
-          <p>${escapeHtml(photo.categoria || "")}</p>
-        </div>
-      `;
-
-      grid.appendChild(card);
-    });
-  }
-
-  function updatePoolSelector() {
-    const service = document.getElementById("resServicio").value;
-    const wrap = document.getElementById("poolTableWrap");
-
-    if (service === "Pool") {
-      wrap.style.display = "grid";
-    } else {
-      wrap.style.display = "none";
-      document.getElementById("resMesaPool").value = "";
-    }
-  }
-
-  document.getElementById("reservationForm")
-    .addEventListener("submit", submitReservation);
-
-  document.getElementById("orderForm")
-    .addEventListener("submit", submitOrder);
-
-  document.getElementById("resServicio")
-    .addEventListener("change", updatePoolSelector);
-
-  document.getElementById("tipoEntrega")
-    .addEventListener("change", updateDeliveryFields);
-
-  document.getElementById("orderForm")
-    .addEventListener("input", renderOrderTotal);
-
-  document.addEventListener("DOMContentLoaded", async () => {
-    const today = new Date().toISOString().split("T")[0];
-    document.getElementById("resFecha").min = today;
-
-    renderCart();
-
-    await Promise.all([
-      loadProducts(),
-      loadGames(),
-      loadCanjes(),
-      loadGallery()
-    ]);
-  });
+const SUPABASE_URL="https://nmpakeovqkdajtswjpgm.supabase.co";
+const SUPABASE_KEY="sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const DELIVERY_FEE=3000;
+
+let currentUser=null,currentProfile=null,currentTriviaSession=null,currentTriviaQuestion=null,currentTriviaIndex=0,currentDuel=null,currentTournament=null;
+let pedidoCart=[];
+
+const $=id=>document.getElementById(id);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]));
+const safeUrl=v=>{try{const u=new URL(String(v||""),location.href);return["http:","https:"].includes(u.protocol)?u.href:""}catch{return""}};
+function scrollToId(id){$(id)?.scrollIntoView({behavior:"smooth"})}
+function toast(t){const e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(window.tt);window.tt=setTimeout(()=>e.classList.remove("show"),3000)}
+function money(v){return"$"+Number(v||0).toLocaleString("es-AR")}
+function formatDate(v){if(!v)return"—";try{return new Date(v).toLocaleString("es-AR",{dateStyle:"short",timeStyle:"short"})}catch{return v}}
+
+function renderGeneralQR(){
+const url=location.origin+location.pathname.replace(/\/[^/]*$/,"/")+"index.html";
+$("generalQrUrl").textContent=url;
+if(window.QRious)new QRious({element:$("generalQr"),value:url,size:220,level:"H"});
+}
+function downloadGeneralQR(){
+const c=$("generalQr");if(!c)return;
+const a=document.createElement("a");a.download="QR-General-Pool-Beach.png";a.href=c.toDataURL("image/png");a.click();
+}
+
+async function ensureAuth(){
+const s=await db.auth.getSession();
+if(s.error)throw s.error;
+if(s.data?.session){currentUser=s.data.session.user;return}
+const r=await db.auth.signInAnonymously();
+if(r.error)throw r.error;
+currentUser=r.data.user;
+}
+
+async function loadProfile(){
+try{
+const r=await db.rpc("get_or_create_profile");
+if(r.error)return;
+currentProfile=Array.isArray(r.data)?r.data[0]:r.data;
+if(!currentProfile)return;
+const points=Number(currentProfile.points??currentProfile.puntos??0);
+const tokens=Number(currentProfile.tokens??currentProfile.token_balance??currentProfile.saldo_tokens??0);
+const name=currentProfile.display_name??currentProfile.nombre??"Jugador";
+$("playerName").textContent=name;
+$("profilePoints").textContent=points;
+$("profileTokens").textContent=tokens;
+$("headerPoints").textContent=points;
+$("headerTokens").textContent=tokens;
+}catch(e){console.warn(e)}
+}
+
+async function loadMenu(){
+const box=$("menuPublico");
+const r=await db.from("productos").select("id,nombre,categoria,descripcion,precio,image_url,activo,disponible").eq("activo",true).eq("disponible",true).order("categoria").order("nombre");
+if(r.error){box.innerHTML='<div class="card">No se pudo cargar el menú.</div>';return}
+const groups={};
+(r.data||[]).forEach(p=>(groups[p.categoria||"Menú"]??=[]).push(p));
+box.innerHTML=Object.entries(groups).map(([cat,items])=>`<div class="card"><h3>${esc(cat)}</h3>${items.map(p=>`<div style="display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid #ffffff14"><div><strong>${esc(p.nombre)}</strong><br><small style="color:var(--muted)">${esc(p.descripcion||"")}</small></div><strong>${money(p.precio)}</strong></div>`).join("")}</div>`).join("")||'<div class="empty">No hay productos publicados.</div>';
+}
+
+async function loadPedidoProductos(){
+const box=$("pedidoProductos");
+const r=await db.from("productos").select("*").eq("activo",true).eq("disponible",true).order("categoria").order("nombre");
+if(r.error){box.innerHTML='<div class="empty">No se pudieron cargar los productos.</div>';return}
+window.pedidoProducts=r.data||[];
+box.innerHTML=window.pedidoProducts.map(p=>`<div class="pedido-producto"><div><strong>${esc(p.nombre)}</strong><br><small>${esc(p.descripcion||"")}</small><br><b>${money(p.precio)}</b></div><button class="btn btn-primary" type="button" onclick="agregarPedido('${esc(p.id)}')">Agregar</button></div>`).join("")||'<div class="empty">No hay productos.</div>';
+}
+
+function tipoEntrega(){return document.querySelector('input[name="tipoEntrega"]:checked')?.value||"delivery"}
+function subtotal(){return pedidoCart.reduce((s,x)=>s+x.precio*x.cantidad,0)}
+function totalPedido(){return subtotal()+(tipoEntrega()==="delivery"&&pedidoCart.length?DELIVERY_FEE:0)}
+function agregarPedido(id){const p=window.pedidoProducts.find(x=>String(x.id)===String(id));if(!p)return;const f=pedidoCart.find(x=>String(x.id)===String(id));if(f)f.cantidad++;else pedidoCart.push({id:p.id,nombre:p.nombre,precio:Number(p.precio),cantidad:1});actualizarCarrito();toast("✅ Producto agregado")}
+function cambiarCantidad(id,d){const f=pedidoCart.find(x=>String(x.id)===String(id));if(!f)return;f.cantidad+=d;if(f.cantidad<=0)pedidoCart=pedidoCart.filter(x=>String(x.id)!==String(id));actualizarCarrito()}
+function actualizarCarrito(){
+$("direccionBox").style.display=tipoEntrega()==="delivery"?"block":"none";
+$("carritoContenido").innerHTML=pedidoCart.length?pedidoCart.map(x=>`<div class="carrito-linea"><div><strong>${esc(x.nombre)}</strong><div class="carrito-controles"><button onclick="cambiarCantidad('${x.id}',-1)">−</button><b>${x.cantidad}</b><button onclick="cambiarCantidad('${x.id}',1)">+</button><button onclick="cambiarCantidad('${x.id}',-${x.cantidad})">🗑️</button></div></div><strong>${money(x.precio*x.cantidad)}</strong></div>`).join(""):'<div class="empty">Todavía no agregaste productos.</div>';
+$("pedidoTotal").textContent=money(totalPedido());
+}
+
+$("pedidoForm").addEventListener("submit",async e=>{
+e.preventDefault();
+if(!pedidoCart.length){$("pedidoMensaje").textContent="❌ Agregá productos.";return}
+const tipo=tipoEntrega(),direccion=$("direccionDelivery").value.trim();
+if(tipo==="delivery"&&!direccion){$("pedidoMensaje").textContent="❌ Ingresá la dirección.";return}
+const btn=$("pedidoEnviar");btn.disabled=true;btn.textContent="⏳ Enviando...";
+try{
+const {error}=await db.from("pedidos").insert({
+nombre_cliente:$("pedidoNombre").value.trim(),
+telefono:$("pedidoTelefono").value.trim(),
+tipo:"pedido",
+estado:"pendiente",
+total:totalPedido(),
+notas:$("pedidoNotas").value.trim(),
+tipo_entrega:tipo,
+direccion:tipo==="delivery"?direccion:null,
+items:pedidoCart.map(x=>({id:x.id,nombre:x.nombre,precio:x.precio,cantidad:x.cantidad}))
+});
+if(error)throw error;
+pedidoCart=[];e.target.reset();document.querySelector('input[name="tipoEntrega"][value="delivery"]').checked=true;actualizarCarrito();
+$("pedidoMensaje").textContent="✅ Pedido enviado correctamente.";
+toast("🛒 ¡Pedido enviado!");
+}catch(err){$("pedidoMensaje").textContent="❌ "+(err.message||"No se pudo enviar el pedido.")}
+finally{btn.disabled=false;btn.textContent="🛒 Enviar pedido"}
+});
+
+function usarMesa(){const r=document.querySelector('input[name="poolQuick"]:checked');if(!r){toast("Elegí una mesa");return}$("rService").value=r.value;scrollToId("reservas")}
+
+$("reservaForm").addEventListener("submit",async e=>{
+e.preventDefault();
+const btn=$("rEnviar"),msg=$("reservaMsg");
+btn.disabled=true;btn.textContent="⏳ Enviando...";
+try{
+const servicio=$("rService").value;
+const mesa=servicio.match(/Mesa Pool ([123])/i)?.[1]||null;
+const {error}=await db.from("reservas").insert({
+nombre:$("rNombre").value.trim(),
+telefono:$("rTelefono").value.trim(),
+fecha:$("rFecha").value,
+hora:$("rHora").value,
+servicio,
+cantidad_personas:Number($("rPersonas").value),
+estado:"pendiente",
+notas:$("rNotas").value.trim(),
+mesa_pool:mesa?Number(mesa):null,
+tipo:"reserva"
+});
+if(error)throw error;
+e.target.reset();$("rPersonas").value=2;msg.textContent="✅ Reserva enviada. Queda pendiente de confirmación.";msg.style.color="#087c5b";toast("📅 ¡Reserva enviada!");
+}catch(err){msg.textContent="❌ "+(err.message||"No se pudo enviar la reserva.");msg.style.color="#b42318"}
+finally{btn.disabled=false;btn.textContent="📅 Enviar reserva"}
+});
+
+async function loadGames(){
+const box=$("gamesGrid"),r=await db.from("games").select("*").eq("active",true).order("created_at");
+if(r.error){box.innerHTML='<div class="empty">No se pudieron cargar los juegos.</div>';return}
+box.innerHTML=(r.data||[]).map(g=>{
+const name=g.name||"Juego",icon=g.icon||"🎮",points=g.points_reward||0,tokens=g.tokens_reward||g.tokens||0;
+let action=/trivia/i.test(name)?`onclick="scrollToId('trivia');startTrivia()" :/`: /duelo/i.test(name)?`onclick="scrollToId('duelos');createDuel()" :/`:`onclick="playSimpleGame('${g.id}')"`;
+return `<article class="card"><div class="game-icon">${esc(icon)}</div><h3>${esc(name)}</h3><p>${esc(g.description||"Superá el desafío y ganá recompensas.")}</p><div class="reward"><span>⭐ ${points} puntos</span><span>🪙 ${tokens} tokens</span></div><button class="btn btn-primary" ${action}>🎮 Jugar</button></article>`;
+}).join("")||'<div class="empty">No hay juegos activos.</div>';
+}
+
+async function playSimpleGame(id){
+const r=await db.rpc("play_game",{p_game_id:id,p_table_id:null,p_metadata:{source:"public"}});if(r.error){toast(r.error.message);return}toast(r.data?.message||"🎮 Juego iniciado");loadProfile()
+}
+async function findGame(name){const r=await db.from("games").select("*").ilike("name",name).limit(1).maybeSingle();return r.data}
+async function startTrivia(){
+const game=await findGame("Trivia Express");if(!game){toast("No se encontró Trivia Express");return}
+const r=await db.rpc("start_trivia_game",{p_game_id:game.id,p_table_id:null});if(r.error){toast(r.error.message);return}
+currentTriviaSession=r.data;currentTriviaQuestion=r.data?.question??r.data;currentTriviaIndex=0;$("triviaStart").style.display="none";$("triviaGame").style.display="block";renderTrivia()
+}
+function renderTrivia(){
+const q=currentTriviaQuestion;if(!q)return;
+$("triviaProgress").textContent="Pregunta "+(currentTriviaIndex+1);
+$("triviaQuestion").textContent=q.question||"Pregunta";
+const answers=q.options||q.answers||[];
+$("triviaAnswers").innerHTML=answers.map((a,i)=>`<button class="answer" onclick="answerTrivia(${i})">${esc(typeof a==="object"?a.text||a.answer||"":a)}</button>`).join("")
+}
+async function answerTrivia(i){
+const id=currentTriviaSession?.session_id||currentTriviaSession?.id;if(!id)return;
+const r=await db.rpc("answer_trivia",{p_session_id:id,p_answer_index:i});if(r.error){toast(r.error.message);return}
+document.querySelectorAll(".answer").forEach(x=>x.disabled=true);
+$("triviaResult").textContent=r.data?.correct?"✅ ¡Correcto! Ganaste la recompensa.":"❌ Respuesta incorrecta.";
+if(r.data?.next_question||r.data?.question){$("nextTriviaBtn").style.display="inline-block";$("nextTriviaBtn").dataset.q=JSON.stringify(r.data.next_question||r.data.question)}else $("nextTriviaBtn").style.display="none";
+loadProfile()
+}
+function nextTriviaQuestion(){
+const b=$("nextTriviaBtn"),q=b.dataset.q;
+if(q){currentTriviaQuestion=JSON.parse(q);currentTriviaIndex++;b.style.display="none";renderTrivia();return}
+}
+
+async function createDuel(){
+const g=await findGame("Duelo 1 vs 1");if(!g){toast("No se encontró el juego de duelo");return}
+const r=await db.rpc("create_duel",{p_game_id:g.id,p_table_id:null});if(r.error){toast(r.error.message);return}
+currentDuel=r.data;$("myDuelStatus").textContent="⚔️ Duelo creado. Esperando rival.";loadDuels()
+}
+async function loadDuels(){
+const box=$("duelList"),r=await db.rpc("get_waiting_duels",{p_table_id:null});
+if(r.error){box.innerHTML='<div class="empty">No se pudieron cargar los duelos.</div>';return}
+box.innerHTML=(r.data||[]).map(d=>`<div style="padding:12px;border:1px solid var(--border);border-radius:12px;margin:8px 0"><strong>⚔️ ${esc(d.player1_name||d.player_name||"Jugador")}</strong><button class="btn btn-green" style="float:right;padding:8px 12px" onclick="joinDuel('${d.duel_id||d.id}')">Unirme</button></div>`).join("")||'<div class="empty">No hay duelos disponibles.</div>'
+}
+async function joinDuel(id){const r=await db.rpc("join_duel",{p_duel_id:id});if(r.error){toast(r.error.message);return}currentDuel=r.data;$("activeDuelPanel").style.display="block";$("activeDuelInfo").textContent="⚔️ Duelo activo";loadDuels()}
+async function submitDuel(){if(!currentDuel)return;const score=Number($("duelScore").value);if(score<0)return;const id=currentDuel.duel_id||currentDuel.id;const r=await db.rpc("submit_duel_score",{p_duel_id:id,p_score:score});if(r.error){toast(r.error.message);return}toast("✅ Puntuación registrada");$("duelScore").value="";loadProfile();loadDuels()}
+
+async function loadTournaments(){
+const box=$("tournamentsGrid"),r=await db.from("tournaments").select("*").order("starts_at");
+if(r.error){box.innerHTML='<div class="empty">No se pudieron cargar los torneos.</div>';return}
+box.innerHTML=(r.data||[]).map(t=>`<article class="card"><h3>🏆 ${esc(t.name)}</h3><p>${esc(t.game_type)}</p><div class="reward"><span>🪙 ${t.entry_tokens}</span><span>👥 ${t.max_players||"—"}</span></div><button class="btn btn-primary" onclick="joinTournament('${t.id}')">Inscribirme</button><button class="btn btn-secondary" onclick="selectTournament('${t.id}')">Ver competencia</button></article>`).join("")||'<div class="empty">No hay torneos.</div>'
+}
+async function joinTournament(id){const r=await db.rpc("join_tournament",{p_tournament_id:id});if(r.error){toast(r.error.message);return}toast("🏆 Inscripción realizada");loadProfile();selectTournament(id)}
+async function selectTournament(id){currentTournament=id;await Promise.all([loadTournamentMatches(id),loadTournamentStandings(id)])}
+async function loadTournamentMatches(id){const r=await db.rpc("get_tournament_matches",{p_tournament_id:id});$("myMatches").innerHTML=(r.data||[]).map(m=>`<div style="padding:10px;border-bottom:1px solid var(--border)">${esc(m.player1_name||"Jugador 1")} <b>${m.player1_score??"—"}</b> vs <b>${m.player2_score??"—"}</b> ${esc(m.player2_name||"Jugador 2")}</div>`).join("")||'<div class="empty">Sin partidos.</div>'}
+async function loadTournamentStandings(id){const r=await db.rpc("get_tournament_standings",{p_tournament_id:id});$("tournamentStandings").innerHTML=(r.data||[]).map((x,i)=>`<div class="rank-row"><b>${i+1}</b><span>${esc(x.display_name||x.player_name||"Jugador")}</span><span>🏆 ${x.score??x.points??0}</span></div>`).join("")||'<div class="empty">Sin jugadores.</div>'}
+
+async function loadRanking(){const r=await db.rpc("get_public_ranking");$("rankingList").innerHTML=(r.data||[]).map((x,i)=>`<div class="rank-row"><b>${i<3?["🥇","🥈","🥉"][i]:i+1}</b><span class="rank-name">${esc(x.display_name||x.player_name||"Jugador")}</span><span class="rank-points">⭐ ${x.points??x.puntos??0}</span><span class="rank-tokens">🪙 ${x.tokens??0}</span></div>`).join("")||'<div class="empty">Todavía no hay jugadores.</div>'}
+
+async function loadPrizes(){
+const r=await db.from("prizes").select("*").eq("active",true).order("token_cost");
+$("prizesGrid").innerHTML=(r.data||[]).map(p=>`<article class="card"><div class="game-icon">🎁</div><h3>${esc(p.name)}</h3><p>${esc(p.description||"")}</p><div class="reward"><span>🪙 ${p.token_cost||p.cost_tokens||0}</span></div><button class="btn btn-yellow" onclick="redeemPrize('${p.id}')">Canjear</button></article>`).join("")||'<div class="empty">No hay premios.</div>'
+}
+async function redeemPrize(id){if(!confirm("¿Querés canjear este premio?"))return;const r=await db.rpc("redeem_prize",{p_prize_id:id});if(r.error){toast(r.error.message);return}toast("🎁 ¡Canje realizado!");loadProfile();loadPrizes()}
+
+async function loadPromos(){
+const r=await db.from("promociones").select("*").eq("activa",true).order("created_at",{ascending:false});
+$("promosGrid").innerHTML=(r.data||[]).map(p=>`<article class="card">${p.image_url?`<img class="media" src="${esc(safeUrl(p.image_url))}">`:''}<h3>🔥 ${esc(p.titulo)}</h3><p>${esc(p.descripcion||"")}</p>${p.precio!=null?`<div class="reward"><span>${money(p.precio)}</span></div>`:""}</article>`).join("")||'<div class="empty">No hay promociones.</div>'
+}
+async function loadGallery(){
+const r=await db.from("galeria_fotos").select("id,titulo,url,ruta,creado_en").order("creado_en",{ascending:false}).limit(60);
+$("galleryGrid").innerHTML=(r.data||[]).map(p=>{const u=safeUrl(p.url)||(p.ruta?db.storage.from("Galeria").getPublicUrl(p.ruta).data.publicUrl:"");return u?`<img src="${esc(u)}" alt="${esc(p.titulo||"Pool & Beach")}">`:""}).join("")||'<div class="empty">Todavía no hay fotos.</div>'
+}
+
+async function changeDisplayName(){
+const n=prompt("Elegí tu apodo:",currentProfile?.display_name||"");if(!n)return;
+const r=await db.rpc("set_display_name",{p_display_name:n.trim()});if(r.error){toast(r.error.message);return}currentProfile=r.data;loadProfile()
+}
+
+function setupRealtime(){
+db.channel("pool-beach-live")
+.on("postgres_changes",{event:"*",schema:"public",table:"productos"},()=>{loadMenu();loadPedidoProductos()})
+.on("postgres_changes",{event:"*",schema:"public",table:"promociones"},loadPromos)
+.on("postgres_changes",{event:"*",schema:"public",table:"galeria_fotos"},loadGallery)
+.on("postgres_changes",{event:"*",schema:"public",table:"games"},loadGames)
+.on("postgres_changes",{event:"*",schema:"public",table:"duel_matches"},loadDuels)
+.subscribe()
+}
+
+async function init(){
+try{
+renderGeneralQR();
+await ensureAuth();
+await loadProfile();
+document.querySelectorAll('input[name="tipoEntrega"]').forEach(x=>x.addEventListener("change",actualizarCarrito));
+await Promise.allSettled([loadMenu(),loadPedidoProductos(),loadPromos(),loadGames(),loadDuels(),loadTournaments(),loadRanking(),loadPrizes(),loadGallery()]);
+actualizarCarrito();
+setupRealtime();
+}catch(e){console.error(e);toast("No se pudo iniciar completamente la aplicación.")}
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+const d=$("rFecha");if(d){d.min=new Date(Date.now()-new Date().getTimezoneOffset()*60000).toISOString().slice(0,10)}
+init();
+});
 </script>
-
 </body>
 </html>
