@@ -4,10 +4,31 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pool & Beach | Puerto Pirámides</title>
+  <meta name="description" content="Pool & Beach Puerto Pirámides. Comida, pool, juegos, música y ambiente familiar cerca de la playa.">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
+    :root {
+      --bg: #071923;
+      --bg2: #0d2734;
+      --card: #102d3b;
+      --card2: #143847;
+      --cyan: #62d9ef;
+      --cyan2: #a7eff9;
+      --white: #f5fbfd;
+      --muted: #a9c4cc;
+      --line: rgba(167,239,249,.18);
+      --danger: #ff7070;
+      --success: #6ee7a8;
+      --shadow: 0 15px 40px rgba(0,0,0,.28);
+      --radius: 18px;
+    }
+
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html {
@@ -15,10 +36,12 @@
     }
 
     body {
-      margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #071923;
-      color: #fff;
+      background:
+        radial-gradient(circle at top, rgba(98,217,239,.10), transparent 35%),
+        var(--bg);
+      color: var(--white);
+      line-height: 1.5;
     }
 
     button,
@@ -28,46 +51,52 @@
       font: inherit;
     }
 
+    button {
+      cursor: pointer;
+    }
+
     a {
       color: inherit;
       text-decoration: none;
     }
 
-    .container {
-      width: min(1100px, 92%);
-      margin: auto;
+    img {
+      max-width: 100%;
+      display: block;
     }
 
-    /* =========================
-       HEADER
-    ========================= */
+    .container {
+      width: min(1100px, calc(100% - 28px));
+      margin: auto;
+    }
 
     header {
       position: sticky;
       top: 0;
-      z-index: 1000;
-      background: rgba(4, 18, 27, 0.96);
-      border-bottom: 1px solid rgba(255,255,255,.1);
-      backdrop-filter: blur(10px);
+      z-index: 100;
+      backdrop-filter: blur(14px);
+      background: rgba(7,25,35,.92);
+      border-bottom: 1px solid var(--line);
     }
 
     .nav {
-      min-height: 68px;
+      min-height: 70px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 15px;
     }
 
-    .logo {
-      font-size: 1.25rem;
+    .brand {
       font-weight: 900;
-      color: #fff;
-      letter-spacing: .5px;
+      font-size: 1.35rem;
+      letter-spacing: .4px;
+      color: var(--cyan2);
+      white-space: nowrap;
     }
 
-    .logo span {
-      color: #64d8f5;
+    .brand span {
+      color: white;
     }
 
     .nav-links {
@@ -78,478 +107,441 @@
     }
 
     .nav-links a {
-      padding: 9px 11px;
+      padding: 8px 11px;
       border-radius: 10px;
+      color: var(--muted);
       font-size: .9rem;
-      color: #d9edf2;
     }
 
     .nav-links a:hover {
-      background: rgba(100,216,245,.12);
-      color: #64d8f5;
+      color: white;
+      background: rgba(255,255,255,.06);
     }
 
-    /* =========================
-       HERO
-    ========================= */
-
     .hero {
-      padding: 28px 0 25px;
-      background:
-        radial-gradient(circle at top right, rgba(100,216,245,.14), transparent 35%),
-        linear-gradient(180deg, #092331 0%, #071923 100%);
+      padding: 35px 0 25px;
     }
 
     .hero-card {
-      border: 1px solid rgba(100,216,245,.18);
-      border-radius: 24px;
-      padding: 28px;
-      background: rgba(255,255,255,.035);
-      box-shadow: 0 15px 45px rgba(0,0,0,.2);
+      background:
+        linear-gradient(135deg, rgba(98,217,239,.13), rgba(255,255,255,.025)),
+        var(--bg2);
+      border: 1px solid var(--line);
+      border-radius: 25px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
     }
 
     .hero h1 {
-      margin: 0 0 10px;
-      font-size: clamp(2.1rem, 7vw, 4.2rem);
+      font-size: clamp(2.2rem, 7vw, 4.7rem);
       line-height: .95;
+      margin-bottom: 16px;
     }
 
     .hero h1 span {
-      color: #64d8f5;
+      color: var(--cyan);
     }
 
     .hero p {
-      margin: 0;
-      max-width: 720px;
-      color: #c8dce1;
-      line-height: 1.6;
+      max-width: 700px;
+      color: var(--muted);
+      font-size: 1.05rem;
     }
 
-    .hero-buttons {
+    .hero-actions {
       display: flex;
+      gap: 10px;
       flex-wrap: wrap;
-      gap: 12px;
       margin-top: 22px;
     }
 
     .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
       border: 0;
       border-radius: 12px;
       padding: 12px 17px;
-      cursor: pointer;
       font-weight: 800;
       transition: .2s;
     }
 
-    .btn-primary {
-      background: #64d8f5;
-      color: #05202a;
+    .btn:hover {
+      transform: translateY(-1px);
     }
 
-    .btn-primary:hover {
-      transform: translateY(-1px);
-      filter: brightness(1.06);
+    .btn-primary {
+      background: var(--cyan);
+      color: #06202a;
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,.08);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.07);
+      color: white;
+      border: 1px solid var(--line);
     }
 
-    .btn-secondary:hover {
-      background: rgba(255,255,255,.13);
+    .btn-danger {
+      background: rgba(255,112,112,.12);
+      color: #ffb2b2;
+      border: 1px solid rgba(255,112,112,.25);
     }
 
-    /* =========================
-       MAPA
-    ========================= */
-
-    section {
-      padding: 42px 0;
+    .map-wrap {
+      margin-top: 25px;
     }
 
-    .section-title {
-      margin: 0 0 8px;
-      font-size: 1.8rem;
+    .map-wrap h2 {
+      margin-bottom: 10px;
     }
 
-    .section-subtitle {
-      margin: 0 0 22px;
-      color: #a9c3ca;
-      line-height: 1.5;
-    }
-
-    .map-card {
-      background: #0b2531;
-      border: 1px solid rgba(100,216,245,.15);
-      border-radius: 20px;
-      overflow: hidden;
-    }
-
-    .map-card img {
-      display: block;
+    .map-image {
       width: 100%;
-      max-height: 600px;
+      max-height: 520px;
       object-fit: contain;
-      background: #fff;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #102d3b;
     }
 
     .map-placeholder {
-      padding: 45px 20px;
+      display: none;
+      padding: 35px;
       text-align: center;
-      color: #aac4cb;
-      background: #102a35;
+      color: var(--muted);
+      background: var(--card);
+      border-radius: 18px;
+      border: 1px dashed var(--line);
     }
 
-    .map-placeholder strong {
-      display: block;
-      color: #fff;
-      margin-bottom: 8px;
-      font-size: 1.1rem;
+    section {
+      padding: 30px 0;
     }
 
-    /* =========================
-       INFO
-    ========================= */
+    .section-title {
+      margin-bottom: 17px;
+    }
+
+    .section-title h2 {
+      font-size: 1.8rem;
+      margin-bottom: 4px;
+    }
+
+    .section-title p {
+      color: var(--muted);
+    }
+
+    .info-grid,
+    .menu-grid,
+    .games-grid,
+    .gallery-grid {
+      display: grid;
+      gap: 14px;
+    }
 
     .info-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 15px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
     }
 
-    .info-card {
-      padding: 20px;
-      background: #0b2531;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
+    .info-card,
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,.15);
     }
 
-    .info-card .icon {
-      font-size: 1.7rem;
-      margin-bottom: 8px;
+    .info-card strong {
+      display: block;
+      color: var(--cyan2);
+      margin-bottom: 5px;
     }
 
-    .info-card h3 {
-      margin: 0 0 8px;
+    .info-card span {
+      color: var(--muted);
     }
-
-    .info-card p {
-      margin: 0;
-      color: #b9d0d6;
-      line-height: 1.5;
-    }
-
-    /* =========================
-       MENU
-    ========================= */
 
     .menu-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
     }
 
-    .menu-category {
-      background: #0b2531;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      padding: 20px;
-    }
-
-    .menu-category h3 {
-      margin: 0 0 14px;
-      color: #64d8f5;
+    .product-category {
+      grid-column: 1 / -1;
+      margin-top: 8px;
+      color: var(--cyan);
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 6px;
     }
 
     .product {
       display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 12px 0;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-    }
-
-    .product:last-child {
-      border-bottom: 0;
-    }
-
-    .product-name {
-      font-weight: 700;
-    }
-
-    .product-price {
-      white-space: nowrap;
-      font-weight: 900;
-      color: #fff;
-    }
-
-    .menu-note {
-      margin-top: 18px;
-      color: #a9c3ca;
-      font-size: .9rem;
-    }
-
-    /* =========================
-       RESERVAS
-    ========================= */
-
-    .reservation-box {
-      background:
-        linear-gradient(145deg, rgba(100,216,245,.08), rgba(255,255,255,.025));
-      border: 1px solid rgba(100,216,245,.17);
-      border-radius: 22px;
-      padding: 24px;
-    }
-
-    .reservation-tabs {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 20px;
-    }
-
-    .reservation-tab {
-      border: 1px solid rgba(255,255,255,.12);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      border-radius: 10px;
-      padding: 10px 14px;
-      cursor: pointer;
-      font-weight: 700;
-    }
-
-    .reservation-tab.active {
-      background: #64d8f5;
-      color: #06202a;
-    }
-
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 14px;
-    }
-
-    .field {
-      display: flex;
       flex-direction: column;
-      gap: 7px;
-    }
-
-    .field.full {
-      grid-column: 1 / -1;
-    }
-
-    .field label {
-      font-size: .9rem;
-      font-weight: 700;
-      color: #cfe1e5;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      border: 1px solid rgba(255,255,255,.13);
-      border-radius: 10px;
-      background: #071923;
-      color: #fff;
-      padding: 12px;
-      outline: none;
-    }
-
-    .field textarea {
-      min-height: 90px;
-      resize: vertical;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: #64d8f5;
-    }
-
-    .delivery-options {
-      display: flex;
-      flex-wrap: wrap;
       gap: 10px;
     }
 
-    .delivery-option {
+    .product h3 {
+      font-size: 1.08rem;
+    }
+
+    .product p {
+      color: var(--muted);
+      font-size: .9rem;
       flex: 1;
-      min-width: 170px;
-      padding: 14px;
-      border: 1px solid rgba(255,255,255,.12);
-      border-radius: 12px;
-      background: rgba(255,255,255,.04);
-      cursor: pointer;
     }
 
-    .delivery-option input {
-      margin-right: 7px;
+    .price {
+      color: var(--cyan2);
+      font-size: 1.15rem;
+      font-weight: 900;
     }
 
-    .reservation-message {
-      display: none;
-      margin-top: 15px;
-      padding: 12px;
-      border-radius: 10px;
-      background: rgba(100,216,245,.12);
-      color: #bceef8;
+    .product-actions {
+      display: flex;
+      gap: 8px;
     }
 
-    /* =========================
-       JUEGOS
-    ========================= */
+    .product-actions .btn {
+      width: 100%;
+    }
 
-    .games-intro {
-      background: #0b2531;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,.08);
-      padding: 24px;
+    .empty {
+      color: var(--muted);
+      padding: 20px;
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px dashed var(--line);
     }
 
     .games-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-top: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 
     .game-card {
-      padding: 18px;
-      border-radius: 15px;
-      background: #102e3b;
-      border: 1px solid rgba(255,255,255,.07);
-      text-align: center;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
     }
 
-    .game-card .emoji {
+    .game-icon {
       font-size: 2rem;
       margin-bottom: 8px;
     }
 
-    .game-card h3 {
-      margin: 0 0 6px;
-      font-size: 1rem;
-    }
-
     .game-card p {
-      margin: 0;
-      color: #9fbcc4;
-      font-size: .85rem;
-      line-height: 1.4;
+      color: var(--muted);
+      margin-top: 5px;
     }
 
-    .game-link {
-      display: inline-block;
-      margin-top: 18px;
+    .canje-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
     }
 
-    /* =========================
-       CONTACTO
-    ========================= */
+    .canje-card h3 {
+      color: var(--cyan2);
+    }
 
-    .contact-grid {
+    .canje-card p {
+      color: var(--muted);
+      margin: 7px 0;
+    }
+
+    .gallery-grid {
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    .gallery-card {
+      overflow: hidden;
+      border-radius: var(--radius);
+      background: var(--card);
+      border: 1px solid var(--line);
+    }
+
+    .gallery-card img {
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      object-fit: cover;
+    }
+
+    .gallery-card div {
+      padding: 12px;
+    }
+
+    .gallery-card p {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .reserve-box {
+      display: grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .form {
+      display: grid;
+      gap: 12px;
+    }
+
+    .form-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 16px;
+      gap: 12px;
     }
 
-    .contact-card {
-      background: #0b2531;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 18px;
-      padding: 22px;
+    label {
+      display: grid;
+      gap: 5px;
+      color: var(--muted);
+      font-size: .9rem;
     }
 
-    .contact-card h3 {
-      margin-top: 0;
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 11px;
+      border: 1px solid var(--line);
+      background: #081e29;
+      color: white;
+      outline: none;
     }
 
-    .contact-card p {
-      color: #bdd1d6;
-      line-height: 1.6;
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--cyan);
     }
 
-    /* =========================
-       ADMIN
-    ========================= */
-
-    .admin-link {
-      text-align: center;
-      margin-top: 25px;
+    textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
-    .admin-link a {
-      color: #789ba5;
-      font-size: .85rem;
+    .notice {
+      display: none;
+      padding: 12px;
+      border-radius: 11px;
+      margin-bottom: 10px;
+      font-weight: 700;
     }
 
-    .admin-link a:hover {
-      color: #64d8f5;
+    .notice.success {
+      display: block;
+      color: #baf8d3;
+      background: rgba(110,231,168,.1);
+      border: 1px solid rgba(110,231,168,.25);
+    }
+
+    .notice.error {
+      display: block;
+      color: #ffc0c0;
+      background: rgba(255,112,112,.1);
+      border: 1px solid rgba(255,112,112,.25);
+    }
+
+    .cart {
+      position: sticky;
+      top: 90px;
+    }
+
+    .cart-items {
+      display: grid;
+      gap: 9px;
+      margin: 13px 0;
+    }
+
+    .cart-item {
+      padding: 11px;
+      border-radius: 11px;
+      background: rgba(255,255,255,.045);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .cart-item small {
+      display: block;
+      color: var(--muted);
+    }
+
+    .cart-item button {
+      background: transparent;
+      border: 0;
+      color: #ff9999;
+      font-size: 1.1rem;
+    }
+
+    .cart-total {
+      display: flex;
+      justify-content: space-between;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+      font-weight: 900;
+      font-size: 1.2rem;
+    }
+
+    .delivery-extra {
+      display: none;
+    }
+
+    .delivery-extra.show {
+      display: grid;
     }
 
     footer {
-      padding: 30px 0;
-      border-top: 1px solid rgba(255,255,255,.08);
-      text-align: center;
-      color: #77929a;
-      font-size: .85rem;
+      padding: 35px 0 50px;
+      color: var(--muted);
+      border-top: 1px solid var(--line);
+      margin-top: 30px;
     }
 
-    /* =========================
-       RESPONSIVE
-    ========================= */
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
 
-    @media (max-width: 800px) {
+    .admin-link {
+      color: var(--muted);
+      font-size: .82rem;
+      opacity: .7;
+    }
+
+    .loading {
+      color: var(--muted);
+      padding: 15px 0;
+    }
+
+    @media (max-width: 760px) {
       .nav {
+        padding: 10px 0;
         align-items: flex-start;
-        padding: 12px 0;
-        flex-direction: column;
       }
 
       .nav-links {
-        width: 100%;
-        justify-content: flex-start;
-        overflow-x: auto;
-        flex-wrap: nowrap;
+        display: none;
       }
 
-      .info-grid,
-      .menu-grid,
-      .contact-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .games-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .form-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .field.full {
-        grid-column: auto;
-      }
-    }
-
-    @media (max-width: 480px) {
       .hero-card {
-        padding: 21px;
+        padding: 23px;
       }
 
-      .games-grid {
-        grid-template-columns: 1fr 1fr;
+      .reserve-box {
+        grid-template-columns: 1fr;
       }
 
-      .product {
-        align-items: flex-start;
+      .cart {
+        position: static;
+      }
+
+      .form-row {
+        grid-template-columns: 1fr;
       }
     }
   </style>
@@ -557,967 +549,877 @@
 
 <body>
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+<header>
+  <div class="container nav">
+    <a href="#inicio" class="brand">POOL <span>&</span> BEACH</a>
 
-  <header>
-    <div class="container nav">
+    <nav class="nav-links">
+      <a href="#menu">Menú</a>
+      <a href="#reservas">Reservas</a>
+      <a href="#juegos">Juegos</a>
+      <a href="#canjes">Canje</a>
+      <a href="#galeria">Fotos</a>
+    </nav>
+  </div>
+</header>
 
-      <a href="#" class="logo">
-        POOL <span>&</span> BEACH
-      </a>
+<main>
 
-      <nav class="nav-links">
-        <a href="#mapa">Mapa</a>
-        <a href="#menu">Menú</a>
-        <a href="#reservas">Reservas</a>
-        <a href="#juegos">Juegos</a>
-        <a href="#contacto">Contacto</a>
-      </nav>
-
-    </div>
-  </header>
-
-
-  <!-- =========================
-       HERO
-  ========================== -->
-
-  <main>
-
-    <section class="hero">
-      <div class="container">
-
-        <div class="hero-card">
-
-          <h1>
-            POOL <span>&</span> BEACH
-          </h1>
-
-          <p>
-            Un lugar para comer, tomar algo, jugar al pool,
-            compartir con amigos y disfrutar Puerto Pirámides.
-            Ambiente familiar, playa, música y diversión.
-          </p>
-
-          <div class="hero-buttons">
-            <a href="#menu" class="btn btn-primary">
-              Ver menú
-            </a>
-
-            <a href="#reservas" class="btn btn-secondary">
-              Reservar
-            </a>
-          </div>
-
-        </div>
-
-      </div>
-    </section>
-
-
-    <!-- =========================
-         MAPA
-    ========================== -->
-
-    <section id="mapa">
-
-      <div class="container">
-
-        <h2 class="section-title">
-          📍 Cómo llegar
-        </h2>
-
-        <p class="section-subtitle">
-          Encontranos fácilmente en Puerto Pirámides.
+  <section class="hero" id="inicio">
+    <div class="container">
+      <div class="hero-card">
+        <h1>POOL <span>&</span> BEACH</h1>
+        <p>
+          Un lugar para comer, jugar al pool, compartir unas cartas,
+          tirar unos dados, mirar fútbol, escuchar música y pasarla bien
+          con amigos y familia en Puerto Pirámides.
         </p>
 
-        <div class="map-card">
+        <div class="hero-actions">
+          <a href="#menu" class="btn btn-primary">Ver menú</a>
+          <a href="#reservas" class="btn btn-secondary">Reservar</a>
+        </div>
 
-          <!--
-            IMPORTANTE:
-            Subí el archivo Mapa-guia.png al mismo lugar
-            que este index.html.
-
-            Si el archivo tiene otro nombre, modificá
-            solamente "Mapa-guia.png".
-          -->
+        <div class="map-wrap">
+          <h2>¿Dónde estamos?</h2>
 
           <img
+            id="mapImage"
+            class="map-image"
             src="Mapa-guia.png"
             alt="Mapa guía para llegar a Pool & Beach"
-            onerror="this.style.display='none'; document.getElementById('mapError').style.display='block';"
+            onerror="this.style.display='none'; document.getElementById('mapPlaceholder').style.display='block';"
           >
 
-          <div id="mapError" class="map-placeholder" style="display:none;">
-            <strong>Mapa guía</strong>
-            La imagen del mapa todavía no está disponible.
+          <div id="mapPlaceholder" class="map-placeholder">
+            <strong>Pool & Beach</strong>
+            <br>
+            Puerto Pirámides · Dirección: la playa
           </div>
+        </div>
+      </div>
+    </div>
+  </section>
 
+  <section>
+    <div class="container">
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>📍 Ubicación</strong>
+          <span>Puerto Pirámides · Dirección: la playa</span>
         </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         INFORMACIÓN
-    ========================== -->
-
-    <section>
-
-      <div class="container">
-
-        <div class="info-grid">
-
-          <div class="info-card">
-            <div class="icon">🎱</div>
-            <h3>Pool</h3>
-            <p>
-              Mesas disponibles para disfrutar con amigos.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <div class="icon">🍔</div>
-            <h3>Comida</h3>
-            <p>
-              Hamburguesas, pizzas, milanesas y empanadas.
-            </p>
-          </div>
-
-          <div class="info-card">
-            <div class="icon">🏖️</div>
-            <h3>Playa & Beach</h3>
-            <p>
-              Un ambiente relajado para compartir y disfrutar.
-            </p>
-          </div>
-
+        <div class="info-card">
+          <strong>🕐 Horarios</strong>
+          <span>Local 12:00–15:00 · Noche 19:00–03:30</span>
         </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         MENÚ
-    ========================== -->
-
-    <section id="menu">
-
-      <div class="container">
-
-        <h2 class="section-title">
-          🍔 Menú
-        </h2>
-
-        <p class="section-subtitle">
-          Elegí lo que querés pedir y luego completá tu reserva.
-        </p>
-
-        <div class="menu-grid">
-
-          <div class="menu-category">
-
-            <h3>🍕 Pizzas</h3>
-
-            <div class="product">
-              <span class="product-name">
-                2 pizzas — Jamón y muzza
-              </span>
-
-              <span class="product-price">
-                $25.000
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="menu-category">
-
-            <h3>🍔 Hamburguesas</h3>
-
-            <div class="product">
-              <span class="product-name">Simple</span>
-              <span class="product-price">$13.000</span>
-            </div>
-
-            <div class="product">
-              <span class="product-name">Doble</span>
-              <span class="product-price">$17.000</span>
-            </div>
-
-            <div class="product">
-              <span class="product-name">Completa</span>
-              <span class="product-price">$19.000</span>
-            </div>
-
-            <div class="product">
-              <span class="product-name">Doble completa</span>
-              <span class="product-price">$22.000</span>
-            </div>
-
-          </div>
-
-
-          <div class="menu-category">
-
-            <h3>🥩 Milanesas</h3>
-
-            <div class="product">
-              <span class="product-name">
-                Completa 40 cm
-              </span>
-
-              <span class="product-price">
-                $28.000
-              </span>
-            </div>
-
-            <div class="product">
-              <span class="product-name">
-                Napolitana XXL
-              </span>
-
-              <span class="product-price">
-                $35.000
-              </span>
-            </div>
-
-            <div class="product">
-              <span class="product-name">
-                A caballo
-              </span>
-
-              <span class="product-price">
-                $18.000
-              </span>
-            </div>
-
-          </div>
-
-
-          <div class="menu-category">
-
-            <h3>🥟 Empanadas</h3>
-
-            <div class="product">
-              <span class="product-name">
-                Empanadas
-              </span>
-
-              <span class="product-price">
-                Desde $15.000
-              </span>
-            </div>
-
-            <p class="menu-note">
-              Los productos y precios pueden ser modificados
-              desde el panel de administración.
-            </p>
-
-          </div>
-
+        <div class="info-card">
+          <strong>🍕 Cocina</strong>
+          <span>20:00–01:00</span>
         </div>
 
+        <div class="info-card">
+          <strong>🚗 Delivery</strong>
+          <span>Disponible · costo de envío $3.000</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="menu">
+    <div class="container">
+      <div class="section-title">
+        <h2>🍔 Menú</h2>
+        <p>Elegí tus productos y agregalos al pedido.</p>
       </div>
 
-    </section>
+      <div id="menuMessage" class="loading">Cargando menú...</div>
+      <div id="menuGrid" class="menu-grid"></div>
+    </div>
+  </section>
 
+  <section id="reservas">
+    <div class="container">
+      <div class="section-title">
+        <h2>📅 Reservas</h2>
+        <p>Reservá tu mesa o una de nuestras 3 mesas de pool.</p>
+      </div>
 
-    <!-- =========================
-         RESERVAS / PEDIDOS
-    ========================== -->
+      <div class="reserve-box">
 
-    <section id="reservas">
+        <div class="card">
+          <div id="reservationNotice" class="notice"></div>
 
-      <div class="container">
+          <form id="reservationForm" class="form">
 
-        <h2 class="section-title">
-          📅 Reservas y pedidos
-        </h2>
+            <div class="form-row">
+              <label>
+                Nombre
+                <input id="resNombre" type="text" required maxlength="100">
+              </label>
 
-        <p class="section-subtitle">
-          Reservá una mesa de pool o hacé tu pedido.
-        </p>
+              <label>
+                Teléfono
+                <input id="resTelefono" type="tel" required maxlength="40">
+              </label>
+            </div>
 
-        <div class="reservation-box">
+            <div class="form-row">
+              <label>
+                Fecha
+                <input id="resFecha" type="date" required>
+              </label>
 
-          <div class="reservation-tabs">
+              <label>
+                Hora
+                <input id="resHora" type="time" required>
+              </label>
+            </div>
 
-            <button
-              type="button"
-              class="reservation-tab active"
-              data-type="pedido"
-            >
-              🍔 Pedido
-            </button>
-
-            <button
-              type="button"
-              class="reservation-tab"
-              data-type="pool"
-            >
-              🎱 Reservar pool
-            </button>
-
-            <button
-              type="button"
-              class="reservation-tab"
-              data-type="general"
-            >
-              📅 Reserva
-            </button>
-
-          </div>
-
-
-          <form id="reservationForm">
-
-            <input
-              type="hidden"
-              id="tipoReserva"
-              name="tipo"
-              value="pedido"
-            >
-
-
-            <div class="form-grid">
-
-              <div class="field">
-                <label for="nombre">
-                  Nombre
-                </label>
-
-                <input
-                  id="nombre"
-                  name="nombre"
-                  type="text"
-                  required
-                  placeholder="Tu nombre"
-                >
-              </div>
-
-
-              <div class="field">
-                <label for="telefono">
-                  WhatsApp / Teléfono
-                </label>
-
-                <input
-                  id="telefono"
-                  name="telefono"
-                  type="tel"
-                  required
-                  placeholder="Tu teléfono"
-                >
-              </div>
-
-
-              <div class="field">
-                <label for="fecha">
-                  Fecha
-                </label>
-
-                <input
-                  id="fecha"
-                  name="fecha"
-                  type="date"
-                  required
-                >
-              </div>
-
-
-              <div class="field">
-                <label for="hora">
-                  Hora
-                </label>
-
-                <input
-                  id="hora"
-                  name="hora"
-                  type="time"
-                  required
-                >
-              </div>
-
-
-              <div
-                class="field"
-                id="poolMesaField"
-                style="display:none;"
-              >
-
-                <label for="mesa">
-                  Mesa de pool
-                </label>
-
-                <select id="mesa" name="mesa">
-
-                  <option value="">
-                    Seleccionar mesa
-                  </option>
-
-                  <option value="Mesa 1">
-                    Mesa 1
-                  </option>
-
-                  <option value="Mesa 2">
-                    Mesa 2
-                  </option>
-
-                  <option value="Mesa 3">
-                    Mesa 3
-                  </option>
-
+            <div class="form-row">
+              <label>
+                ¿Qué querés reservar?
+                <select id="resServicio" required>
+                  <option value="">Seleccionar</option>
+                  <option value="Mesa">Mesa</option>
+                  <option value="Pool">Mesa de pool</option>
                 </select>
+              </label>
 
-              </div>
-
-
-              <div class="field">
-                <label for="personas">
-                  Personas
-                </label>
-
-                <input
-                  id="personas"
-                  name="personas"
-                  type="number"
-                  min="1"
-                  value="2"
-                >
-              </div>
-
-
-              <div
-                class="field full"
-                id="pedidoField"
-              >
-
-                <label for="pedido">
-                  Pedido
-                </label>
-
-                <textarea
-                  id="pedido"
-                  name="pedido"
-                  placeholder="Ej.: 1 hamburguesa doble + 1 pizza..."
-                ></textarea>
-
-              </div>
-
-
-              <div
-                class="field full"
-                id="entregaField"
-              >
-
-                <label>
-                  Modalidad
-                </label>
-
-                <div class="delivery-options">
-
-                  <label class="delivery-option">
-                    <input
-                      type="radio"
-                      name="entrega"
-                      value="Retiro en el negocio"
-                      checked
-                    >
-                    Retiro en el negocio
-                  </label>
-
-                  <label class="delivery-option">
-                    <input
-                      type="radio"
-                      name="entrega"
-                      value="Delivery"
-                    >
-                    Delivery
-                  </label>
-
-                </div>
-
-              </div>
-
-
-              <div
-                class="field full"
-                id="direccionField"
-                style="display:none;"
-              >
-
-                <label for="direccion">
-                  Dirección para delivery
-                </label>
-
-                <input
-                  id="direccion"
-                  name="direccion"
-                  type="text"
-                  placeholder="Dirección"
-                >
-
-                <small style="color:#91abb3;">
-                  Delivery: $3.000
-                </small>
-
-              </div>
-
-
-              <div class="field full">
-
-                <label for="comentario">
-                  Comentario
-                </label>
-
-                <textarea
-                  id="comentario"
-                  name="comentario"
-                  placeholder="Algún dato adicional..."
-                ></textarea>
-
-              </div>
-
-
-              <div class="field full">
-
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  style="width:100%;"
-                >
-                  Enviar reserva / pedido
-                </button>
-
-              </div>
-
+              <label>
+                Personas
+                <input id="resPersonas" type="number" min="1" max="50" value="2" required>
+              </label>
             </div>
 
+            <label id="poolTableWrap" style="display:none;">
+              Mesa de pool
+              <select id="resMesaPool">
+                <option value="">Seleccionar mesa</option>
+                <option value="1">Pool 1</option>
+                <option value="2">Pool 2</option>
+                <option value="3">Pool 3</option>
+              </select>
+            </label>
+
+            <label>
+              Notas
+              <textarea id="resNotas" maxlength="1000" placeholder="Algún dato adicional..."></textarea>
+            </label>
+
+            <button class="btn btn-primary" type="submit">
+              Enviar reserva
+            </button>
           </form>
-
-
-          <div
-            id="reservationMessage"
-            class="reservation-message"
-          ></div>
-
         </div>
 
-      </div>
-
-    </section>
-
-
-    <!-- =========================
-         JUEGOS
-    ========================== -->
-
-    <section id="juegos">
-
-      <div class="container">
-
-        <h2 class="section-title">
-          🎮 Pool & Beach Games
-        </h2>
-
-        <p class="section-subtitle">
-          El sistema de juegos sigue formando parte del proyecto,
-          pero esta sección queda como complemento de la experiencia.
-        </p>
-
-
-        <div class="games-intro">
-
-          <strong>
-            Jugá desde tu celular
-          </strong>
-
-          <p style="color:#b7cdd3; line-height:1.6;">
-            Escaneá la tarjeta correspondiente en el local
-            para acceder a los juegos disponibles.
+        <div class="card">
+          <h3>🎱 Mesas de pool</h3>
+          <p style="color:var(--muted); margin-top:8px;">
+            Contamos con 3 mesas de pool disponibles para reservar.
           </p>
 
-
-          <div class="games-grid">
-
-            <div class="game-card">
-              <div class="emoji">🎱</div>
-              <h3>Pool</h3>
-              <p>
-                Desafíos y estadísticas.
-              </p>
+          <div style="margin-top:18px; display:grid; gap:10px;">
+            <div class="info-card">
+              <strong>Pool 1</strong>
+              <span>Reservable</span>
             </div>
 
-            <div class="game-card">
-              <div class="emoji">🃏</div>
-              <h3>Cartas</h3>
-              <p>
-                Juegos para compartir.
-              </p>
+            <div class="info-card">
+              <strong>Pool 2</strong>
+              <span>Reservable</span>
             </div>
 
-            <div class="game-card">
-              <div class="emoji">🎲</div>
-              <h3>Dados</h3>
-              <p>
-                Desafíos rápidos.
-              </p>
+            <div class="info-card">
+              <strong>Pool 3</strong>
+              <span>Reservable</span>
             </div>
-
-            <div class="game-card">
-              <div class="emoji">🏆</div>
-              <h3>Torneos</h3>
-              <p>
-                Competencias y rankings.
-              </p>
-            </div>
-
           </div>
-
-
-          <!--
-            Este botón apunta al sistema de juegos.
-            Si tu sistema utiliza otra página, cambiá
-            solamente el destino de href.
-          -->
-
-          <a
-            href="games.html"
-            class="btn btn-secondary game-link"
-          >
-            Entrar a los juegos
-          </a>
-
         </div>
 
       </div>
+    </div>
+  </section>
 
-    </section>
+  <section id="pedido">
+    <div class="container">
+      <div class="section-title">
+        <h2>🛒 Hacer pedido</h2>
+        <p>Podés retirar en el negocio o pedir delivery.</p>
+      </div>
 
+      <div class="reserve-box">
 
-    <!-- =========================
-         CONTACTO
-    ========================== -->
+        <div class="card">
+          <div id="orderNotice" class="notice"></div>
 
-    <section id="contacto">
+          <form id="orderForm" class="form">
 
-      <div class="container">
+            <div class="form-row">
+              <label>
+                Nombre
+                <input id="orderNombre" type="text" required maxlength="100">
+              </label>
 
-        <h2 class="section-title">
-          📍 Pool & Beach
-        </h2>
+              <label>
+                Teléfono
+                <input id="orderTelefono" type="tel" required maxlength="40">
+              </label>
+            </div>
 
-        <p class="section-subtitle">
-          Puerto Pirámides
+            <label>
+              Forma de entrega
+              <select id="tipoEntrega" required>
+                <option value="retiro">Retiro en el negocio</option>
+                <option value="delivery">Delivery</option>
+              </select>
+            </label>
+
+            <label id="direccionWrap" class="delivery-extra">
+              Dirección
+              <input id="direccion" type="text" maxlength="250">
+            </label>
+
+            <label>
+              Notas del pedido
+              <textarea id="orderNotas" maxlength="1000" placeholder="Sin cebolla, horario, etc."></textarea>
+            </label>
+
+            <button class="btn btn-primary" type="submit">
+              Confirmar pedido
+            </button>
+          </form>
+        </div>
+
+        <div class="card cart">
+          <h3>Tu pedido</h3>
+
+          <div id="cartItems" class="cart-items">
+            <div class="empty">Todavía no agregaste productos.</div>
+          </div>
+
+          <div class="cart-total">
+            <span>Total</span>
+            <span id="cartTotal">$0</span>
+          </div>
+
+          <p style="color:var(--muted); font-size:.85rem; margin-top:10px;">
+            Delivery: $3.000 adicionales.
+          </p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="juegos">
+    <div class="container">
+      <div class="section-title">
+        <h2>🎮 Juegos & diversión</h2>
+        <p>También podés disfrutar de nuestros juegos y propuestas dentro del local.</p>
+      </div>
+
+      <div id="gamesMessage" class="loading">Cargando juegos...</div>
+      <div id="gamesGrid" class="games-grid"></div>
+    </div>
+  </section>
+
+  <section id="canjes">
+    <div class="container">
+      <div class="section-title">
+        <h2>🎁 Canje</h2>
+        <p>Consultá las opciones disponibles para canjear.</p>
+      </div>
+
+      <div id="canjesMessage" class="loading">Cargando canjes...</div>
+      <div id="canjesGrid" class="canje-grid"></div>
+    </div>
+  </section>
+
+  <section id="galeria">
+    <div class="container">
+      <div class="section-title">
+        <h2>📸 Pool & Beach</h2>
+        <p>Fotos del lugar.</p>
+      </div>
+
+      <div id="galleryMessage" class="loading">Cargando fotos...</div>
+      <div id="galleryGrid" class="gallery-grid"></div>
+    </div>
+  </section>
+
+  <section>
+    <div class="container">
+      <div class="card">
+        <h2>🏖️ Te esperamos</h2>
+        <p style="color:var(--muted); margin-top:8px;">
+          Pool, cartas, dados, fútbol, música, amigos, familia,
+          comida y playa. Todo en un mismo lugar.
         </p>
 
-
-        <div class="contact-grid">
-
-          <div class="contact-card">
-
-            <h3>🕐 Horarios</h3>
-
-            <p>
-              Local: 12:00–15:00<br>
-              Noche: 19:00–03:30<br>
-              Cocina: 20:00–01:00
-            </p>
-
-          </div>
-
-
-          <div class="contact-card">
-
-            <h3>🌊 Un lugar para compartir</h3>
-
-            <p>
-              Pool, cartas, dados, fútbol, música,
-              comida y amigos. Un ambiente para disfrutar
-              en familia o con amigos cerca de la playa.
-            </p>
-
-          </div>
-
+        <div class="hero-actions">
+          <a href="#reservas" class="btn btn-primary">Reservar</a>
+          <a href="#pedido" class="btn btn-secondary">Hacer pedido</a>
         </div>
-
-
-        <div class="admin-link">
-
-          <a href="admin.html">
-            Acceso administrador
-          </a>
-
-        </div>
-
       </div>
+    </div>
+  </section>
 
-    </section>
+</main>
 
-  </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer>
-
-    <div class="container">
-
-      Pool & Beach · Puerto Pirámides
-
+<footer>
+  <div class="container footer-inner">
+    <div>
+      <strong>POOL & BEACH</strong>
+      <div>Puerto Pirámides · La playa</div>
     </div>
 
-  </footer>
-
-
-  <!-- =========================
-       JAVASCRIPT
-  ========================== -->
-
-  <script>
-
-    /*
-      --------------------------------------------
-      CAMBIO DE TIPO DE RESERVA
-      --------------------------------------------
-    */
-
-    const tabs = document.querySelectorAll(".reservation-tab");
-
-    const tipoReserva =
-      document.getElementById("tipoReserva");
-
-    const poolMesaField =
-      document.getElementById("poolMesaField");
-
-    const pedidoField =
-      document.getElementById("pedidoField");
-
-    const entregaField =
-      document.getElementById("entregaField");
-
-    const direccionField =
-      document.getElementById("direccionField");
-
-    const pedido =
-      document.getElementById("pedido");
-
-    const mesa =
-      document.getElementById("mesa");
-
-
-    tabs.forEach(tab => {
-
-      tab.addEventListener("click", () => {
-
-        tabs.forEach(t =>
-          t.classList.remove("active")
-        );
-
-        tab.classList.add("active");
-
-        const type =
-          tab.dataset.type;
-
-        tipoReserva.value = type;
-
-
-        if (type === "pool") {
-
-          poolMesaField.style.display = "flex";
-
-          pedidoField.style.display = "none";
-
-          entregaField.style.display = "none";
-
-          direccionField.style.display = "none";
-
-          pedido.required = false;
-
-          mesa.required = true;
-
-        } else {
-
-          poolMesaField.style.display = "none";
-
-          mesa.required = false;
-
-          pedidoField.style.display = "flex";
-
-          entregaField.style.display = "flex";
-
-          pedido.required =
-            type === "pedido";
-
-        }
-
-      });
-
-    });
-
-
-    /*
-      --------------------------------------------
-      DELIVERY
-      --------------------------------------------
-    */
-
-    const entregaRadios =
-      document.querySelectorAll(
-        'input[name="entrega"]'
-      );
-
-
-    entregaRadios.forEach(radio => {
-
-      radio.addEventListener("change", () => {
-
-        if (radio.checked &&
-            radio.value === "Delivery") {
-
-          direccionField.style.display = "flex";
-
-        } else if (radio.checked) {
-
-          direccionField.style.display = "none";
-
-        }
-
-      });
-
-    });
-
-
-    /*
-      --------------------------------------------
-      FECHA MÍNIMA = HOY
-      --------------------------------------------
-    */
-
-    const fecha =
-      document.getElementById("fecha");
-
-    const hoy =
-      new Date();
-
-    const yyyy =
-      hoy.getFullYear();
-
-    const mm =
-      String(hoy.getMonth() + 1)
-        .padStart(2, "0");
-
-    const dd =
-      String(hoy.getDate())
-        .padStart(2, "0");
-
-    fecha.min =
-      `${yyyy}-${mm}-${dd}`;
-
-
-    /*
-      --------------------------------------------
-      ENVÍO DEL FORMULARIO
-      --------------------------------------------
-
-      Esta parte queda preparada para conectarse
-      con Supabase.
-
-      No inventa una conexión ni una contraseña.
-
-      Si el proyecto ya tiene configurado Supabase,
-      esta función puede ser reemplazada por la función
-      de guardado del proyecto sin modificar el diseño.
-    */
-
-    const form =
-      document.getElementById("reservationForm");
-
-    const message =
-      document.getElementById("reservationMessage");
-
-
-    form.addEventListener("submit", async (event) => {
-
-      event.preventDefault();
-
-
-      const formData =
-        new FormData(form);
-
-      const data =
-        Object.fromEntries(formData.entries());
-
-
-      /*
-        IMPORTANTE:
-
-        Si existe una función global
-        window.guardarReservaSupabase,
-        se utiliza automáticamente.
-
-        Esto permite conectar este index con
-        la configuración Supabase del proyecto.
-      */
-
-      try {
-
-        if (
-          typeof window.guardarReservaSupabase ===
-          "function"
-        ) {
-
-          await window.guardarReservaSupabase(data);
-
-        } else {
-
-          /*
-            Si todavía no se conectó Supabase,
-            mostramos aviso en vez de simular
-            que la reserva fue guardada.
-          */
-
-          throw new Error(
-            "Supabase no está conectado al formulario."
-          );
-
-        }
-
-
-        message.style.display = "block";
-
-        message.textContent =
-          "✅ ¡Solicitud enviada correctamente! Te contactaremos para confirmar.";
-
-        form.reset();
-
-        fecha.min =
-          `${yyyy}-${mm}-${dd}`;
-
-      } catch (error) {
-
-        console.error(error);
-
-        message.style.display = "block";
-
-        message.textContent =
-          "⚠️ No se pudo enviar todavía. Verificá la conexión con el sistema de reservas.";
-
+    <a class="admin-link" href="admin.html">Administración</a>
+  </div>
+</footer>
+
+<script>
+  const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
+  const SUPABASE_ANON_KEY = "REEMPLAZAR_CON_TU_ANON_KEY";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+  );
+
+  const DELIVERY_COST = 3000;
+
+  let products = [];
+  let cart = [];
+
+  function money(value) {
+    return new Intl.NumberFormat("es-AR", {
+      maximumFractionDigits: 0
+    }).format(Number(value) || 0);
+  }
+
+  function showNotice(id, message, type) {
+    const el = document.getElementById(id);
+    el.textContent = message;
+    el.className = "notice " + type;
+  }
+
+  function clearNotice(id) {
+    const el = document.getElementById(id);
+    el.textContent = "";
+    el.className = "notice";
+  }
+
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
+  }
+
+  async function loadProducts() {
+    const message = document.getElementById("menuMessage");
+    const grid = document.getElementById("menuGrid");
+
+    const { data, error } = await supabaseClient
+      .from("productos")
+      .select("*")
+      .eq("activo", true)
+      .order("categoria")
+      .order("nombre");
+
+    if (error) {
+      message.textContent = "No se pudo cargar el menú.";
+      return;
+    }
+
+    products = data || [];
+    message.style.display = "none";
+    grid.innerHTML = "";
+
+    if (!products.length) {
+      grid.innerHTML = '<div class="empty">No hay productos disponibles actualmente.</div>';
+      return;
+    }
+
+    let currentCategory = "";
+
+    products.forEach(product => {
+      if (product.categoria !== currentCategory) {
+        currentCategory = product.categoria;
+
+        const title = document.createElement("div");
+        title.className = "product-category";
+        title.textContent = currentCategory;
+        grid.appendChild(title);
       }
 
+      const card = document.createElement("article");
+      card.className = "product card";
+
+      card.innerHTML = `
+        <h3>${escapeHtml(product.nombre)}</h3>
+        <p>${escapeHtml(product.descripcion || "")}</p>
+        <div class="price">$${money(product.precio)}</div>
+
+        <div class="product-actions">
+          <button
+            class="btn btn-primary"
+            type="button"
+            onclick="addToCart('${product.id}')">
+            Agregar
+          </button>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function addToCart(productId) {
+    const product = products.find(p => p.id === productId);
+
+    if (!product) return;
+
+    const existing = cart.find(item => item.id === productId);
+
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({
+        id: product.id,
+        nombre: product.nombre,
+        precio: Number(product.precio) || 0,
+        quantity: 1
+      });
+    }
+
+    renderCart();
+
+    document.getElementById("pedido").scrollIntoView({
+      behavior: "smooth",
+      block: "start"
+    });
+  }
+
+  function removeFromCart(productId) {
+    cart = cart.filter(item => item.id !== productId);
+    renderCart();
+  }
+
+  function renderCart() {
+    const container = document.getElementById("cartItems");
+    const totalElement = document.getElementById("cartTotal");
+
+    container.innerHTML = "";
+
+    if (!cart.length) {
+      container.innerHTML = '<div class="empty">Todavía no agregaste productos.</div>';
+      totalElement.textContent = "$0";
+      return;
+    }
+
+    let total = 0;
+
+    cart.forEach(item => {
+      const subtotal = item.precio * item.quantity;
+      total += subtotal;
+
+      const row = document.createElement("div");
+      row.className = "cart-item";
+
+      row.innerHTML = `
+        <div>
+          <strong>${escapeHtml(item.nombre)}</strong>
+          <small>${item.quantity} × $${money(item.precio)}</small>
+        </div>
+
+        <div>
+          <strong>$${money(subtotal)}</strong>
+          <button type="button" onclick="removeFromCart('${item.id}')">×</button>
+        </div>
+      `;
+
+      container.appendChild(row);
     });
 
-  </script>
+    totalElement.textContent = "$" + money(total);
+  }
+
+  function updateDeliveryFields() {
+    const type = document.getElementById("tipoEntrega").value;
+    const wrap = document.getElementById("direccionWrap");
+    const input = document.getElementById("direccion");
+
+    if (type === "delivery") {
+      wrap.classList.add("show");
+      input.required = true;
+    } else {
+      wrap.classList.remove("show");
+      input.required = false;
+      input.value = "";
+    }
+
+    renderOrderTotal();
+  }
+
+  function renderOrderTotal() {
+    let total = cart.reduce(
+      (sum, item) => sum + item.precio * item.quantity,
+      0
+    );
+
+    if (document.getElementById("tipoEntrega").value === "delivery") {
+      total += DELIVERY_COST;
+    }
+
+    document.getElementById("cartTotal").textContent = "$" + money(total);
+  }
+
+  async function submitOrder(event) {
+    event.preventDefault();
+    clearNotice("orderNotice");
+
+    if (!cart.length) {
+      showNotice(
+        "orderNotice",
+        "Agregá al menos un producto al pedido.",
+        "error"
+      );
+      return;
+    }
+
+    const nombre = document.getElementById("orderNombre").value.trim();
+    const telefono = document.getElementById("orderTelefono").value.trim();
+    const tipoEntrega = document.getElementById("tipoEntrega").value;
+    const direccion = document.getElementById("direccion").value.trim();
+    const notas = document.getElementById("orderNotas").value.trim();
+
+    if (!nombre || !telefono) {
+      showNotice(
+        "orderNotice",
+        "Completá nombre y teléfono.",
+        "error"
+      );
+      return;
+    }
+
+    if (tipoEntrega === "delivery" && direccion.length < 5) {
+      showNotice(
+        "orderNotice",
+        "Ingresá una dirección válida para el delivery.",
+        "error"
+      );
+      return;
+    }
+
+    const subtotal = cart.reduce(
+      (sum, item) => sum + item.precio * item.quantity,
+      0
+    );
+
+    const total = subtotal + (
+      tipoEntrega === "delivery" ? DELIVERY_COST : 0
+    );
+
+    const items = cart.map(item => ({
+      id: item.id,
+      nombre: item.nombre,
+      precio: item.precio,
+      cantidad: item.quantity,
+      subtotal: item.precio * item.quantity
+    }));
+
+    const { error } = await supabaseClient
+      .from("pedidos")
+      .insert({
+        nombre_cliente: nombre,
+        telefono,
+        tipo: "pedido",
+        estado: "pendiente",
+        total,
+        notas,
+        tipo_entrega: tipoEntrega,
+        direccion: tipoEntrega === "delivery" ? direccion : null,
+        items,
+        notificacion_vista: false
+      });
+
+    if (error) {
+      showNotice(
+        "orderNotice",
+        "No se pudo enviar el pedido. Revisá los datos e intentá nuevamente.",
+        "error"
+      );
+      return;
+    }
+
+    showNotice(
+      "orderNotice",
+      "¡Pedido enviado correctamente! Te esperamos o nos comunicamos para el delivery.",
+      "success"
+    );
+
+    cart = [];
+    document.getElementById("orderForm").reset();
+    document.getElementById("tipoEntrega").value = "retiro";
+    updateDeliveryFields();
+    renderCart();
+  }
+
+  async function submitReservation(event) {
+    event.preventDefault();
+    clearNotice("reservationNotice");
+
+    const nombre = document.getElementById("resNombre").value.trim();
+    const telefono = document.getElementById("resTelefono").value.trim();
+    const fecha = document.getElementById("resFecha").value;
+    const hora = document.getElementById("resHora").value;
+    const servicio = document.getElementById("resServicio").value;
+    const personas = Number(document.getElementById("resPersonas").value);
+    const mesaPool = document.getElementById("resMesaPool").value;
+    const notas = document.getElementById("resNotas").value.trim();
+
+    if (!nombre || !telefono || !fecha || !hora || !servicio) {
+      showNotice(
+        "reservationNotice",
+        "Completá todos los campos obligatorios.",
+        "error"
+      );
+      return;
+    }
+
+    if (servicio === "Pool" && !mesaPool) {
+      showNotice(
+        "reservationNotice",
+        "Seleccioná una mesa de pool.",
+        "error"
+      );
+      return;
+    }
+
+    const { data: existing, error: checkError } = await supabaseClient
+      .from("reservas")
+      .select("id")
+      .eq("fecha", fecha)
+      .eq("hora", hora)
+      .eq("mesa_pool", servicio === "Pool" ? Number(mesaPool) : null)
+      .eq("estado", "pendiente");
+
+    if (checkError) {
+      showNotice(
+        "reservationNotice",
+        "No se pudo comprobar la disponibilidad.",
+        "error"
+      );
+      return;
+    }
+
+    if (servicio === "Pool" && existing && existing.length > 0) {
+      showNotice(
+        "reservationNotice",
+        "Esa mesa de pool ya está reservada para ese horario.",
+        "error"
+      );
+      return;
+    }
+
+    const { error } = await supabaseClient
+      .from("reservas")
+      .insert({
+        nombre,
+        telefono,
+        fecha,
+        hora,
+        servicio,
+        cantidad_personas: personas,
+        estado: "pendiente",
+        notas,
+        notificacion_vista: false,
+        mesa_pool: servicio === "Pool" ? Number(mesaPool) : null,
+        tipo: "reserva"
+      });
+
+    if (error) {
+      showNotice(
+        "reservationNotice",
+        "No se pudo enviar la reserva. Intentá nuevamente.",
+        "error"
+      );
+      return;
+    }
+
+    showNotice(
+      "reservationNotice",
+      "¡Reserva enviada correctamente! Te esperamos.",
+      "success"
+    );
+
+    document.getElementById("reservationForm").reset();
+    document.getElementById("resPersonas").value = 2;
+    document.getElementById("poolTableWrap").style.display = "none";
+  }
+
+  async function loadGames() {
+    const message = document.getElementById("gamesMessage");
+    const grid = document.getElementById("gamesGrid");
+
+    const { data, error } = await supabaseClient
+      .from("games")
+      .select("*")
+      .eq("active", true)
+      .order("created_at");
+
+    if (error) {
+      message.textContent = "No se pudieron cargar los juegos.";
+      return;
+    }
+
+    message.style.display = "none";
+    grid.innerHTML = "";
+
+    if (!data || !data.length) {
+      grid.innerHTML = '<div class="empty">Próximamente más juegos.</div>';
+      return;
+    }
+
+    data.forEach(game => {
+      const card = document.createElement("article");
+      card.className = "game-card";
+
+      card.innerHTML = `
+        <div class="game-icon">${escapeHtml(game.icon || "🎮")}</div>
+        <h3>${escapeHtml(game.name)}</h3>
+        <p>${escapeHtml(game.description || "")}</p>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  async function loadCanjes() {
+    const message = document.getElementById("canjesMessage");
+    const grid = document.getElementById("canjesGrid");
+
+    const { data, error } = await supabaseClient
+      .from("canjes")
+      .select("*")
+      .eq("activo", true)
+      .order("created_at");
+
+    if (error) {
+      message.textContent = "No se pudieron cargar los canjes.";
+      return;
+    }
+
+    message.style.display = "none";
+    grid.innerHTML = "";
+
+    if (!data || !data.length) {
+      grid.innerHTML = '<div class="empty">No hay opciones de canje disponibles.</div>';
+      return;
+    }
+
+    data.forEach(item => {
+      const card = document.createElement("article");
+      card.className = "card canje-card";
+
+      card.innerHTML = `
+        <h3>${escapeHtml(item.nombre)}</h3>
+        <p>${escapeHtml(item.descripcion || "")}</p>
+        <strong>${money(item.costo)} puntos</strong>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  async function loadGallery() {
+    const message = document.getElementById("galleryMessage");
+    const grid = document.getElementById("galleryGrid");
+
+    const { data, error } = await supabaseClient
+      .from("galeria_fotos")
+      .select("*")
+      .order("creado_en", { ascending: false });
+
+    if (error) {
+      message.textContent = "No se pudieron cargar las fotos.";
+      return;
+    }
+
+    message.style.display = "none";
+    grid.innerHTML = "";
+
+    if (!data || !data.length) {
+      grid.innerHTML = '<div class="empty">Todavía no hay fotos cargadas.</div>';
+      return;
+    }
+
+    data.forEach(photo => {
+      const card = document.createElement("article");
+      card.className = "gallery-card";
+
+      card.innerHTML = `
+        <img
+          src="${escapeHtml(photo.url)}"
+          alt="${escapeHtml(photo.titulo || "Pool & Beach")}"
+          loading="lazy"
+        >
+        <div>
+          <strong>${escapeHtml(photo.titulo || "")}</strong>
+          <p>${escapeHtml(photo.categoria || "")}</p>
+        </div>
+      `;
+
+      grid.appendChild(card);
+    });
+  }
+
+  function updatePoolSelector() {
+    const service = document.getElementById("resServicio").value;
+    const wrap = document.getElementById("poolTableWrap");
+
+    if (service === "Pool") {
+      wrap.style.display = "grid";
+    } else {
+      wrap.style.display = "none";
+      document.getElementById("resMesaPool").value = "";
+    }
+  }
+
+  document.getElementById("reservationForm")
+    .addEventListener("submit", submitReservation);
+
+  document.getElementById("orderForm")
+    .addEventListener("submit", submitOrder);
+
+  document.getElementById("resServicio")
+    .addEventListener("change", updatePoolSelector);
+
+  document.getElementById("tipoEntrega")
+    .addEventListener("change", updateDeliveryFields);
+
+  document.getElementById("orderForm")
+    .addEventListener("input", renderOrderTotal);
+
+  document.addEventListener("DOMContentLoaded", async () => {
+    const today = new Date().toISOString().split("T")[0];
+    document.getElementById("resFecha").min = today;
+
+    renderCart();
+
+    await Promise.all([
+      loadProducts(),
+      loadGames(),
+      loadCanjes(),
+      loadGallery()
+    ]);
+  });
+</script>
 
 </body>
 </html>
