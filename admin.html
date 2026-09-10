@@ -1,1912 +1,1103 @@
-<!doctype html>
+<!-- admin.html -->
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Pool & Beach | Administración</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pool & Beach — Administración</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
 
-<style>
-:root{
-  --bg:#06131e;--p:#0c2333;--p2:#123149;--line:#24536a;
-  --sky:#62dcff;--gold:#ffd166;--green:#67e7a2;
-  --red:#ff7182;--txt:#f5fbff;--muted:#9ab5c5
-}
-*{box-sizing:border-box}
-body{
-  margin:0;background:radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
-  color:var(--txt);font:14px system-ui,-apple-system,Segoe UI,sans-serif
-}
-button,input,select,textarea{font:inherit}
-button{cursor:pointer}
-.app{max-width:1150px;margin:auto;padding:12px 12px 50px}
-.top{
-  display:flex;justify-content:space-between;
-  align-items:center;gap:10px;flex-wrap:wrap
-}
-.brand{font-size:23px;font-weight:950}
-.brand span{color:var(--sky)}
-.top-actions,.row{
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center
-}
-.status,.badge{
-  border:1px solid var(--line);border-radius:99px;
-  padding:6px 10px;color:var(--sky);font-size:11px
-}
-.hero,.card{
-  background:linear-gradient(145deg,var(--p2),var(--p));
-  border:1px solid var(--line);border-radius:18px;
-  padding:17px;box-shadow:0 10px 25px #0004
-}
-.hero{margin-top:12px}
-.muted,small{color:var(--muted)}
-.tabs{
-  display:flex;gap:7px;overflow:auto;margin:12px 0
-}
-.tab,.btn{
-  border-radius:11px;padding:10px 13px;
-  border:1px solid var(--line);font-weight:900
-}
-.tab{
-  background:#0b2130;color:var(--txt);white-space:nowrap
-}
-.tab.active{background:var(--sky);color:#052031}
-.btn{background:var(--sky);color:#052031;border:0}
-.btn.gold{background:var(--gold)}
-.btn.green{background:var(--green)}
-.btn.red{background:var(--red);color:white}
-.btn.dark{background:#15364b;color:white}
-.view{display:none}
-.view.active{display:block}
-.cards,.grid2,.grid3{
-  display:grid;gap:11px
-}
-.cards{grid-template-columns:repeat(4,1fr)}
-.grid2{grid-template-columns:1fr 1fr}
-.grid3{grid-template-columns:repeat(3,1fr)}
-.metric b{display:block;font-size:30px;margin-top:3px}
-.metric small{display:block}
-.input,select,textarea{
-  width:100%;padding:11px;border-radius:11px;
-  background:#061722;color:var(--txt);
-  border:1px solid var(--line);margin:5px 0 8px
-}
-label{
-  display:block;color:var(--muted);
-  font-size:12px;margin-top:7px
-}
-textarea{min-height:80px}
-.table-wrap{overflow:auto}
-table{
-  width:100%;border-collapse:collapse;min-width:700px
-}
-th,td{
-  padding:9px;border-bottom:1px solid #234456;
-  text-align:left;vertical-align:top
-}
-th{color:var(--muted)}
-.notice{
-  padding:10px;border-radius:12px;
-  background:#102a3b;border:1px solid #26536b;
-  margin:7px 0
-}
-.empty{text-align:center;padding:20px;color:var(--muted)}
-.hidden{display:none!important}
-.thumb{
-  width:100%;height:125px;
-  object-fit:cover;border-radius:10px
-}
-.login{max-width:430px;margin:8vh auto}
-.gallery{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:10px
-}
-.gallery figure{margin:0}
-.gallery img{
-  width:100%;aspect-ratio:1;
-  object-fit:cover;border-radius:12px
-}
-.gallery figcaption{
-  font-size:11px;color:var(--muted);padding-top:4px
-}
-@media(max-width:850px){
-  .cards{grid-template-columns:repeat(2,1fr)}
-}
-@media(max-width:600px){
-  .cards,.grid2,.grid3,.gallery{grid-template-columns:1fr}
-  .app{padding:10px}
-  .hero h1{font-size:24px}
-}
-</style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f4f8fa;
+      color: #17323d;
+    }
+
+    header {
+      background: #123d4a;
+      color: white;
+      padding: 18px;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+
+    header .top {
+      max-width: 1100px;
+      margin: auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 22px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .primary {
+      background: #42c6df;
+      color: #07313d;
+    }
+
+    .danger {
+      background: #d9534f;
+      color: white;
+    }
+
+    .secondary {
+      background: #e4eef1;
+      color: #17323d;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 20px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px rgba(0,0,0,.07);
+    }
+
+    .login {
+      max-width: 420px;
+      margin: 50px auto;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px;
+      margin: 7px 0 12px;
+      border: 1px solid #ccd9dd;
+      border-radius: 9px;
+      font-size: 15px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    label {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 15px;
+    }
+
+    .item {
+      border: 1px solid #dce7ea;
+      border-radius: 13px;
+      padding: 15px;
+      background: #fff;
+    }
+
+    .item h3 {
+      margin: 0 0 7px;
+    }
+
+    .item p {
+      margin: 5px 0;
+    }
+
+    .status {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #e8f5f7;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .notice {
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      background: #eef7f9;
+    }
+
+    .error {
+      background: #fdeaea;
+      color: #8c2525;
+    }
+
+    .success {
+      background: #e8f7ec;
+      color: #216b32;
+    }
+
+    .preview {
+      width: 100%;
+      max-height: 250px;
+      object-fit: cover;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .empty {
+      color: #71858c;
+      padding: 15px 0;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #647980;
+    }
+
+    @media (max-width: 600px) {
+      main {
+        padding: 12px;
+      }
+
+      header .top {
+        align-items: flex-start;
+      }
+    }
+  </style>
 </head>
 
 <body>
 
-<div id="loginScreen" class="login card">
-
-  <div class="brand" style="text-align:center">
-    POOL <span>&</span> BEACH
-  </div>
-
-  <h2 style="text-align:center">
-    ⚙️ Administración
-  </h2>
-
-  <p class="notice">
-    Ingresá con una cuenta autorizada de administrador o staff.
-  </p>
-
-  <form id="loginForm">
-
-    <label>Email</label>
-    <input id="loginEmail"
-      class="input"
-      type="email"
-      required
-      autocomplete="email">
-
-    <label>Contraseña</label>
-    <input id="loginPassword"
-      class="input"
-      type="password"
-      required
-      autocomplete="current-password">
-
-    <button class="btn" style="width:100%">
-      Iniciar sesión
-    </button>
-
-    <p id="loginMessage" class="notice hidden"></p>
-
-  </form>
-</div>
-
-<div id="adminApp" class="app hidden">
-
+<header>
   <div class="top">
-
-    <div>
-      <div class="brand">POOL <span>&</span> BEACH</div>
-      <small>Panel de administración</small>
-    </div>
-
-    <div class="top-actions">
-      <span id="connection" class="status">CONECTANDO</span>
-
-      <a class="btn dark" href="index.html">
-        Ver sitio
-      </a>
-
-      <button id="logout" class="btn red">
-        Cerrar
-      </button>
-    </div>
-
+    <h1>Pool & Beach — Administración</h1>
+    <button id="logoutBtn" class="danger hidden">Cerrar sesión</button>
   </div>
+</header>
 
-  <section class="hero">
-    <h1>📊 Administración</h1>
-    <p class="muted">
-      Reservas, pedidos, menú, juegos, premios, torneos y fotos.
-    </p>
+<main>
+
+  <!-- LOGIN -->
+  <section id="loginSection" class="card login">
+    <h2>Ingresar</h2>
+
+    <div id="loginMessage"></div>
+
+    <label for="email">Email</label>
+    <input id="email" type="email" autocomplete="email">
+
+    <label for="password">Contraseña</label>
+    <input id="password" type="password" autocomplete="current-password">
+
+    <button id="loginBtn" class="primary" style="width:100%;">
+      Ingresar al panel
+    </button>
   </section>
 
-  <nav class="tabs">
+  <!-- PANEL -->
+  <section id="panel" class="hidden">
 
-    <button class="tab active" data-v="dashboard">
-      🏠 Inicio
-    </button>
+    <div id="globalMessage"></div>
 
-    <button class="tab" data-v="reservas">
-      📅 Reservas
-    </button>
+    <!-- RESERVAS -->
+    <div class="card">
+      <h2>📅 Reservas</h2>
+      <p class="small">Reservas realizadas desde la página pública.</p>
+      <div id="reservasList"></div>
+    </div>
 
-    <button class="tab" data-v="pedidos">
-      🛒 Pedidos
-    </button>
+    <!-- PEDIDOS -->
+    <div class="card">
+      <h2>🛒 Pedidos</h2>
+      <p class="small">Pedidos de comida y delivery/retiro.</p>
+      <div id="pedidosList"></div>
+    </div>
 
-    <button class="tab" data-v="menu">
-      🍔 Menú
-    </button>
+    <!-- PRODUCTOS -->
+    <div class="card">
+      <h2>🍔 Menú</h2>
 
-    <button class="tab" data-v="juegos">
-      🎮 Juegos
-    </button>
+      <form id="productForm">
+        <input type="hidden" id="productId">
 
-    <button class="tab" data-v="trivia">
-      🧠 Trivia
-    </button>
+        <label>Nombre</label>
+        <input id="productName" required>
 
-    <button class="tab" data-v="premios">
-      🎁 Premios
-    </button>
+        <label>Categoría</label>
+        <input id="productCategory" placeholder="Hamburguesas, pizzas, etc.">
 
-    <button class="tab" data-v="torneos">
-      🏆 Torneos
-    </button>
+        <label>Descripción</label>
+        <textarea id="productDescription"></textarea>
 
-    <button class="tab" data-v="duelos">
-      ⚔️ Duelos
-    </button>
+        <label>Precio</label>
+        <input id="productPrice" type="number" min="0" required>
 
-    <button class="tab" data-v="fotos">
-      📸 Fotos
-    </button>
+        <label>
+          <input id="productActive" type="checkbox" checked>
+          Producto activo
+        </label>
 
-  </nav>
+        <label>
+          <input id="productAvailable" type="checkbox" checked>
+          Disponible para pedidos
+        </label>
 
-  <main>
-
-    <section id="dashboard" class="view active">
-
-      <div class="cards">
-
-        <div class="card metric">
-          <small>Reservas pendientes</small>
-          <b id="mR">0</b>
+        <div class="actions">
+          <button class="primary" type="submit">Guardar producto</button>
+          <button class="secondary" type="button" id="cancelProductBtn">
+            Cancelar edición
+          </button>
         </div>
+      </form>
 
-        <div class="card metric">
-          <small>Pedidos pendientes</small>
-          <b id="mP">0</b>
-        </div>
+      <hr>
 
-        <div class="card metric">
-          <small>Torneos abiertos</small>
-          <b id="mT">0</b>
-        </div>
+      <div id="productsList" class="grid"></div>
+    </div>
 
-        <div class="card metric">
-          <small>Fotos publicadas</small>
-          <b id="mF">0</b>
-        </div>
+    <!-- FOTOS -->
+    <div class="card">
+      <h2>📷 Fotos</h2>
+      <p class="small">
+        Subí fotos desde el teléfono o desde la galería. No hay imágenes precargadas.
+      </p>
 
-      </div>
+      <label>Título de la foto</label>
+      <input id="photoTitle" placeholder="Ej.: Pool & Beach">
 
-      <div class="card" style="margin-top:11px">
+      <label>Seleccionar foto</label>
+      <input id="photoFile" type="file" accept="image/*">
 
-        <button class="btn" onclick="refreshAll()">
-          🔄 Actualizar todo
+      <img id="photoPreview" class="preview hidden">
+
+      <div class="actions">
+        <button id="uploadPhotoBtn" class="primary">
+          Subir foto
         </button>
-
-        <div id="activity" class="empty">
-          Cargando...
-        </div>
-
       </div>
 
-    </section>
+      <div id="photosList" class="grid" style="margin-top:15px;"></div>
+    </div>
 
-    <section id="reservas" class="view">
+    <!-- PROMOCIONES -->
+    <div class="card">
+      <h2>🎉 Promociones</h2>
 
-      <div class="card">
+      <form id="promoForm">
+        <input type="hidden" id="promoId">
 
-        <h2>📅 Reservas</h2>
+        <label>Título</label>
+        <input id="promoTitle" required>
 
-        <div class="table-wrap">
+        <label>Descripción</label>
+        <textarea id="promoDescription"></textarea>
 
-          <table>
+        <label>Precio / texto</label>
+        <input id="promoPrice">
 
-            <thead>
-              <tr>
-                <th>Fecha/hora</th>
-                <th>Cliente</th>
-                <th>Servicio</th>
-                <th>Personas</th>
-                <th>Estado</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
+        <label>
+          <input id="promoActive" type="checkbox" checked>
+          Promoción activa
+        </label>
 
-            <tbody id="reservasTable"></tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="pedidos" class="view">
-
-      <div class="card">
-
-        <h2>🛒 Pedidos</h2>
-
-        <div class="table-wrap">
-
-          <table>
-
-            <thead>
-              <tr>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Teléfono</th>
-                <th>Entrega</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-
-            <tbody id="pedidosTable"></tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="menu" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🍔 Nuevo producto</h2>
-
-          <label>Nombre</label>
-          <input id="prodName" class="input">
-
-          <label>Categoría</label>
-          <input id="prodCategory" class="input">
-
-          <label>Descripción</label>
-          <textarea id="prodDescription" class="input"></textarea>
-
-          <label>Precio</label>
-          <input id="prodPrice" class="input" type="number" min="0">
-
-          <label>URL de imagen opcional</label>
-          <input id="prodImage" class="input">
-
-          <button class="btn gold" onclick="createProduct()">
-            Guardar producto
+        <div class="actions">
+          <button class="primary" type="submit">Guardar promoción</button>
+          <button class="secondary" type="button" id="cancelPromoBtn">
+            Cancelar
           </button>
-
-          <p id="prodMsg" class="notice hidden"></p>
-
         </div>
+      </form>
 
-        <div class="card">
+      <hr>
 
-          <h2>Productos cargados</h2>
+      <div id="promosList" class="grid"></div>
+    </div>
 
-          <div id="productsList"></div>
+    <!-- ACCESO A JUEGOS -->
+    <div class="card">
+      <h2>🎮 Sistema de juegos</h2>
+      <p>
+        Los juegos siguen funcionando separados de la página comercial.
+      </p>
 
-        </div>
+      <div class="actions">
+        <a href="juegos/juegos.html">
+          <button class="primary" type="button">Abrir juegos</button>
+        </a>
 
+        <a href="juegos/admin-juegos.html">
+          <button class="secondary" type="button">Administrar juegos</button>
+        </a>
       </div>
+    </div>
 
-    </section>
+  </section>
 
-    <section id="juegos" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🎮 Nuevo juego</h2>
-
-          <label>Nombre</label>
-          <input id="gName" class="input">
-
-          <label>Descripción</label>
-          <textarea id="gDesc" class="input"></textarea>
-
-          <label>Icono</label>
-          <input id="gIcon" class="input" value="🎮">
-
-          <label>Puntos</label>
-          <input id="gPoints" class="input" type="number" value="10">
-
-          <label>Fichas</label>
-          <input id="gTokens" class="input" type="number" value="5">
-
-          <label>URL de imagen opcional</label>
-          <input id="gImage" class="input">
-
-          <button class="btn gold" onclick="createGame()">
-            Guardar juego
-          </button>
-
-          <p id="gMsg" class="notice hidden"></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Juegos actuales</h2>
-          <div id="gamesList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="trivia" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🧠 Nueva pregunta</h2>
-
-          <label>Pregunta</label>
-          <textarea id="qText" class="input"></textarea>
-
-          <label>Opciones — una por línea</label>
-          <textarea id="qOptions"
-            class="input"
-            placeholder="Opción A&#10;Opción B&#10;Opción C&#10;Opción D"></textarea>
-
-          <label>Índice correcto</label>
-          <input id="qCorrect"
-            class="input"
-            type="number"
-            min="0"
-            value="0">
-
-          <label>URL imagen opcional</label>
-          <input id="qImage" class="input">
-
-          <button class="btn gold" onclick="createQuestion()">
-            Guardar pregunta
-          </button>
-
-          <p id="qMsg" class="notice hidden"></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Preguntas cargadas</h2>
-          <div id="questionsList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="premios" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🎁 Nuevo premio</h2>
-
-          <label>Nombre</label>
-          <input id="pName" class="input">
-
-          <label>Descripción</label>
-          <textarea id="pDesc" class="input"></textarea>
-
-          <label>Costo en fichas</label>
-          <input id="pCost"
-            class="input"
-            type="number"
-            min="1">
-
-          <label>Stock</label>
-          <input id="pStock"
-            class="input"
-            type="number"
-            min="0"
-            value="1">
-
-          <label>URL imagen opcional</label>
-          <input id="pImage" class="input">
-
-          <button class="btn gold" onclick="createPrize()">
-            Guardar premio
-          </button>
-
-          <p id="pMsg" class="notice hidden"></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Premios actuales</h2>
-          <div id="prizesList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="duelos" class="view">
-
-      <div class="card">
-
-        <div class="row" style="justify-content:space-between">
-
-          <h2>⚔️ Duelos</h2>
-
-          <button class="btn"
-            onclick="loadDuels()">
-            🔄 Actualizar
-          </button>
-
-        </div>
-
-        <div class="table-wrap">
-
-          <table>
-
-            <thead>
-              <tr>
-                <th>Estado</th>
-                <th>Jugador 1</th>
-                <th>Jugador 2</th>
-                <th>Marcador</th>
-                <th>Acción</th>
-              </tr>
-            </thead>
-
-            <tbody id="duelsTable"></tbody>
-
-          </table>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="torneos" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>🏆 Crear torneo</h2>
-
-          <label>Nombre</label>
-          <input id="tName" class="input">
-
-          <label>Juego / tipo</label>
-          <input id="tGame"
-            class="input"
-            value="Pool">
-
-          <label>Fecha y hora</label>
-          <input id="tDate"
-            class="input"
-            type="datetime-local">
-
-          <label>Máximo jugadores</label>
-          <input id="tMax"
-            class="input"
-            type="number"
-            min="2"
-            value="16">
-
-          <label>Inscripción en fichas</label>
-          <input id="tEntry"
-            class="input"
-            type="number"
-            min="0"
-            value="0">
-
-          <label>URL imagen opcional</label>
-          <input id="tImage" class="input">
-
-          <button class="btn gold"
-            onclick="createTournament()">
-            Crear torneo
-          </button>
-
-          <p id="tMsg" class="notice hidden"></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Torneos</h2>
-          <div id="tournamentsList"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-    <section id="fotos" class="view">
-
-      <div class="grid2">
-
-        <div class="card">
-
-          <h2>📸 Cargar foto</h2>
-
-          <p class="muted">
-            Elegí una imagen directamente desde el teléfono o galería.
-          </p>
-
-          <label>Título</label>
-
-          <input id="photoTitle"
-            class="input"
-            placeholder="Ej. Noche de Pool & Beach">
-
-          <label>Archivo</label>
-
-          <input id="photoFile"
-            class="input"
-            type="file"
-            accept="image/jpeg,image/png,image/webp,image/gif">
-
-          <button class="btn gold"
-            onclick="uploadPhoto()">
-            ⬆️ Subir y publicar
-          </button>
-
-          <p id="photoMsg"
-            class="notice hidden"></p>
-
-        </div>
-
-        <div class="card">
-
-          <h2>Fotos publicadas</h2>
-
-          <div id="galleryList"
-            class="gallery"></div>
-
-        </div>
-
-      </div>
-
-    </section>
-
-  </main>
-
-</div>
+</main>
 
 <script>
+  const SUPABASE_URL = "https://nmpakeovqkdajtswjpgm.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_FyuDfiW_2eXNScLd9MShng_rLxxztsu";
 
-const SB_URL=
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+  const { createClient } = supabase;
+  const db = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-const SB_KEY=
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+  const $ = id => document.getElementById(id);
 
-const db=window.supabase.createClient(
-  SB_URL,
-  SB_KEY
-);
+  function message(text, type = "") {
+    $("globalMessage").innerHTML =
+      `<div class="notice ${type}">${text}</div>`;
 
-const $=id=>document.getElementById(id);
-
-const esc=v=>String(v??"")
-  .replaceAll("&","&amp;")
-  .replaceAll("<","&lt;")
-  .replaceAll(">","&gt;")
-  .replaceAll('"',"&quot;")
-  .replaceAll("'","&#039;");
-
-const money=v=>
-  "$"+Number(v||0).toLocaleString("es-AR");
-
-function msg(id,text){
-
-  const el=$(id);
-
-  if(!el)return;
-
-  el.textContent=text;
-  el.classList.remove("hidden");
-
-  clearTimeout(el.__timer);
-
-  el.__timer=setTimeout(
-    ()=>el.classList.add("hidden"),
-    5000
-  );
-}
-
-function show(view){
-
-  document.querySelectorAll(".view")
-    .forEach(x=>{
-      x.classList.toggle(
-        "active",
-        x.id===view
-      );
-    });
-
-  document.querySelectorAll(".tab")
-    .forEach(x=>{
-      x.classList.toggle(
-        "active",
-        x.dataset.v===view
-      );
-    });
-
-  const loaders={
-    dashboard:refreshAll,
-    reservas:loadReservations,
-    pedidos:loadOrders,
-    menu:loadProducts,
-    juegos:loadGames,
-    trivia:loadTrivia,
-    premios:loadPrizes,
-    torneos:loadTournaments,
-    duelos:loadDuels,
-    fotos:loadGallery
-  };
-
-  if(loaders[view])loaders[view]();
-}
-
-document.querySelectorAll(".tab")
-  .forEach(b=>{
-    b.onclick=()=>show(b.dataset.v);
-  });
-
-$("loginForm").onsubmit=async e=>{
-
-  e.preventDefault();
-
-  const r=await db.auth.signInWithPassword({
-    email:$("loginEmail").value.trim(),
-    password:$("loginPassword").value
-  });
-
-  if(r.error){
-    msg(
-      "loginMessage",
-      "❌ Email o contraseña incorrectos."
-    );
-    return;
+    setTimeout(() => {
+      $("globalMessage").innerHTML = "";
+    }, 5000);
   }
 
-  await initAdmin();
-};
-
-$("logout").onclick=async()=>{
-  await db.auth.signOut();
-  location.reload();
-};
-
-async function init(){
-
-  const s=await db.auth.getSession();
-
-  if(s.data?.session){
-    await initAdmin();
-  }
-}
-
-async function initAdmin(){
-
-  const a=await db.rpc(
-    "is_admin_or_staff"
-  );
-
-  if(a.error||a.data!==true){
-
-    $("loginScreen")
-      .classList.remove("hidden");
-
-    $("adminApp")
-      .classList.add("hidden");
-
-    msg(
-      "loginMessage",
-      "❌ La cuenta no tiene permisos de administrador/staff."
-    );
-
-    return;
+  function loginMessage(text, type = "") {
+    $("loginMessage").innerHTML =
+      `<div class="notice ${type}">${text}</div>`;
   }
 
-  $("loginScreen")
-    .classList.add("hidden");
-
-  $("adminApp")
-    .classList.remove("hidden");
-
-  $("connection").textContent=
-    "● CONECTADO";
-
-  await refreshAll();
-}
-
-async function refreshAll(){
-
-  await Promise.allSettled([
-    loadReservations(),
-    loadOrders(),
-    loadProducts(),
-    loadTournaments(),
-    loadGallery(),
-    loadGames(),
-    loadTrivia(),
-    loadPrizes()
-  ]);
-
-  $("mR").textContent=
-    reservations.filter(
-      x=>String(x.estado||"").toLowerCase()==="pendiente"
-    ).length;
-
-  $("mP").textContent=
-    orders.filter(
-      x=>String(x.estado||"").toLowerCase()==="pendiente"
-    ).length;
-
-  $("mT").textContent=
-    document.querySelectorAll(
-      "#tournamentsList .notice"
-    ).length;
-
-  $("mF").textContent=
-    document.querySelectorAll(
-      "#galleryList figure"
-    ).length;
-
-  $("activity").textContent=
-    "✅ Datos actualizados correctamente.";
-}
-
-let reservations=[];
-let orders=[];
-
-async function loadReservations(){
-
-  const r=await db
-    .from("reservas")
-    .select("*")
-    .order("fecha")
-    .order("hora")
-    .limit(100);
-
-  if(r.error){
-    console.error(r.error);
-    return;
+  function money(value) {
+    return "$" + Number(value || 0).toLocaleString("es-AR");
   }
 
-  reservations=r.data||[];
-
-  $("reservasTable").innerHTML=
-    reservations.map(x=>`
-
-      <tr>
-
-        <td>
-          ${esc(x.fecha)}<br>
-          ${esc(x.hora)}
-        </td>
-
-        <td>
-          <b>${esc(x.nombre)}</b><br>
-          <small>${esc(x.telefono)}</small>
-        </td>
-
-        <td>${esc(x.servicio)}</td>
-
-        <td>${esc(x.cantidad_personas)}</td>
-
-        <td>${esc(x.estado)}</td>
-
-        <td>
-          <button class="btn green"
-            onclick="setReserva('${x.id}','confirmada')">
-            ✓
-          </button>
-
-          <button class="btn red"
-            onclick="setReserva('${x.id}','cancelada')">
-            ×
-          </button>
-        </td>
-
-      </tr>
-
-    `).join("")||
-    `<tr>
-      <td colspan="6" class="empty">
-        No hay reservas.
-      </td>
-    </tr>`;
-}
-
-async function setReserva(id,estado){
-
-  const r=await db
-    .from("reservas")
-    .update({estado})
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replaceAll("&", "&amp;")
+      .replaceAll("<", "&lt;")
+      .replaceAll(">", "&gt;")
+      .replaceAll('"', "&quot;")
+      .replaceAll("'", "&#039;");
   }
 
-  await refreshAll();
-}
-
-async function loadOrders(){
-
-  const r=await db
-    .from("pedidos")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(100);
-
-  if(r.error){
-    console.error(r.error);
-    return;
-  }
-
-  orders=r.data||[];
-
-  $("pedidosTable").innerHTML=
-    orders.map(x=>`
-
-      <tr>
-
-        <td>
-          ${x.created_at?
-            new Date(x.created_at)
-              .toLocaleString("es-AR")
-            :"—"}
-        </td>
-
-        <td>${esc(x.nombre_cliente)}</td>
-
-        <td>${esc(x.telefono)}</td>
-
-        <td>
-          ${esc(x.tipo_entrega||x.tipo)}
-          ${x.direccion?
-            `<br><small>${esc(x.direccion)}</small>`
-            :""}
-        </td>
-
-        <td>${money(x.total)}</td>
-
-        <td>${esc(x.estado)}</td>
-
-        <td>
-
-          <button class="btn green"
-            onclick="setPedido('${x.id}','confirmado')">
-            ✓
-          </button>
-
-          <button class="btn red"
-            onclick="setPedido('${x.id}','cancelado')">
-            ×
-          </button>
-
-        </td>
-
-      </tr>
-
-    `).join("")||
-    `<tr>
-      <td colspan="7" class="empty">
-        No hay pedidos.
-      </td>
-    </tr>`;
-}
-
-async function setPedido(id,estado){
-
-  const r=await db
-    .from("pedidos")
-    .update({estado})
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
-  }
-
-  await refreshAll();
-}
-
-async function loadProducts(){
-
-  const r=await db
-    .from("productos")
-    .select("*")
-    .order("categoria")
-    .order("nombre");
-
-  if(r.error){
-    $("productsList").innerHTML=
-      '<div class="empty">No se pudieron cargar los productos.</div>';
-    return;
-  }
-
-  const data=r.data||[];
-
-  $("productsList").innerHTML=
-    data.map(x=>`
-
-      <div class="notice">
-
-        <b>${esc(x.nombre)}</b>
-        · ${money(x.precio)}
-
-        <br>
-
-        <small>
-          ${esc(x.categoria||"")}
-          ${x.descripcion?
-            " · "+esc(x.descripcion):""}
-        </small>
-
-        <br><br>
-
-        <button class="btn ${
-          x.activo&&x.disponible
-            ?"red":"green"
-        }"
-          onclick="toggleProduct(
-            '${x.id}',
-            ${!(x.activo&&x.disponible)}
-          )">
-
-          ${
-            x.activo&&x.disponible
-              ?"Ocultar"
-              :"Publicar"
-          }
-
-        </button>
-
-      </div>
-
-    `).join("")||
-    '<div class="empty">No hay productos.</div>';
-}
-
-async function createProduct(){
-
-  const nombre=$("prodName")
-    .value.trim();
-
-  const categoria=$("prodCategory")
-    .value.trim()||"Menú";
-
-  const descripcion=$("prodDescription")
-    .value.trim();
-
-  const precio=Number(
-    $("prodPrice").value
-  );
-
-  const image_url=$("prodImage")
-    .value.trim()||null;
-
-  if(!nombre||precio<0){
-    msg(
-      "prodMsg",
-      "❌ Nombre y precio son obligatorios."
-    );
-    return;
-  }
-
-  const r=await db
-    .from("productos")
-    .insert({
-      nombre,
-      categoria,
-      descripcion,
-      precio,
-      image_url,
-      activo:true,
-      disponible:true
-    });
-
-  if(r.error){
-    msg(
-      "prodMsg",
-      "❌ "+r.error.message
-    );
-    return;
-  }
-
-  msg(
-    "prodMsg",
-    "✅ Producto guardado."
-  );
-
-  $("prodName").value="";
-  $("prodDescription").value="";
-  $("prodPrice").value="";
-  $("prodImage").value="";
-
-  loadProducts();
-}
-
-async function toggleProduct(id,visible){
-
-  const r=await db
-    .from("productos")
-    .update({
-      activo:visible,
-      disponible:visible
-    })
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
-  }
-
-  loadProducts();
-}
-
-async function loadGames(){
-
-  const r=await db
-    .from("games")
-    .select("*")
-    .order("created_at");
-
-  const data=r.data||[];
-
-  $("gamesList").innerHTML=
-    data.map(x=>`
-
-      <div class="notice">
-
-        <b>
-          ${esc(x.icon||"🎮")}
-          ${esc(x.name)}
-        </b>
-
-        · ${x.points_reward||0} pts
-        · ${x.tokens_reward||0} fichas
-
-        <br>
-
-        <small>
-          ${esc(x.description||"")}
-        </small>
-
-        <br><br>
-
-        <button
-          class="btn ${x.active?"red":"green"}"
-          onclick="toggleGame(
-            '${x.id}',
-            ${!x.active}
-          )">
-
-          ${x.active?"Desactivar":"Activar"}
-
-        </button>
-
-      </div>
-
-    `).join("")||
-    '<div class="empty">No hay juegos.</div>';
-}
-
-async function toggleGame(id,active){
-
-  const r=await db
-    .from("games")
-    .update({active})
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
-  }
-
-  loadGames();
-}
-
-async function createGame(){
-
-  const name=$("gName")
-    .value.trim();
-
-  if(!name){
-    msg("gMsg","❌ Falta el nombre.");
-    return;
-  }
-
-  const r=await db
-    .from("games")
-    .insert({
-      name,
-      description:$("gDesc").value.trim(),
-      icon:$("gIcon").value.trim()||"🎮",
-      points_reward:Number(
-        $("gPoints").value
-      )||0,
-      tokens_reward:Number(
-        $("gTokens").value
-      )||0,
-      image_url:$("gImage").value.trim()||null,
-      active:true
-    });
-
-  if(r.error){
-    msg("gMsg","❌ "+r.error.message);
-    return;
-  }
-
-  msg("gMsg","✅ Juego guardado.");
-
-  $("gName").value="";
-  $("gDesc").value="";
-  $("gImage").value="";
-
-  loadGames();
-}
-
-async function loadTrivia(){
-
-  const r=await db
-    .from("trivia_questions")
-    .select("*")
-    .order("created_at",{ascending:false})
-    .limit(100);
-
-  const data=r.data||[];
-
-  $("questionsList").innerHTML=
-    data.map(x=>`
-
-      <div class="notice">
-
-        <b>${esc(x.question)}</b>
-
-        <br>
-
-        <small>
-          ${esc(JSON.stringify(x.options))}
-          · correcta: ${x.correct_index}
-        </small>
-
-        <br><br>
-
-        <button class="btn red"
-          onclick="deleteQuestion('${x.id}')">
-          Eliminar
-        </button>
-
-      </div>
-
-    `).join("")||
-    '<div class="empty">No hay preguntas.</div>';
-}
-
-async function createQuestion(){
-
-  const question=$("qText")
-    .value.trim();
-
-  const options=$("qOptions")
-    .value
-    .split("\n")
-    .map(x=>x.trim())
-    .filter(Boolean);
-
-  const correct=Number(
-    $("qCorrect").value
-  );
-
-  if(
-    !question||
-    options.length<2||
-    correct<0||
-    correct>=options.length
-  ){
-    msg(
-      "qMsg",
-      "❌ Completá pregunta, opciones e índice correcto."
-    );
-    return;
-  }
-
-  const r=await db
-    .from("trivia_questions")
-    .insert({
-      question,
-      options,
-      correct_index:correct,
-      active:true,
-      image_url:$("qImage").value.trim()||null
-    });
-
-  if(r.error){
-    msg("qMsg","❌ "+r.error.message);
-    return;
-  }
-
-  msg("qMsg","✅ Pregunta guardada.");
-
-  $("qText").value="";
-  $("qOptions").value="";
-  $("qImage").value="";
-
-  loadTrivia();
-}
-
-async function deleteQuestion(id){
-
-  if(!confirm("¿Eliminar pregunta?"))return;
-
-  const r=await db
-    .from("trivia_questions")
-    .delete()
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
-  }
-
-  loadTrivia();
-}
-
-async function loadPrizes(){
-
-  const r=await db
-    .from("prizes")
-    .select("*")
-    .order("created_at",{ascending:false});
-
-  const data=r.data||[];
-
-  $("prizesList").innerHTML=
-    data.map(x=>`
-
-      <div class="notice">
-
-        ${x.image_url?
-          `<img class="thumb"
-            src="${esc(x.image_url)}">`
-          :""}
-
-        <b>🎁 ${esc(x.name)}</b>
-
-        · ${x.token_cost} fichas
-
-        · stock ${x.stock??0}
-
-        <br><br>
-
-        <button
-          class="btn ${x.active?"red":"green"}"
-          onclick="togglePrize(
-            '${x.id}',
-            ${!x.active}
-          )">
-
-          ${x.active?"Desactivar":"Activar"}
-
-        </button>
-
-      </div>
-
-    `).join("")||
-    '<div class="empty">No hay premios.</div>';
-}
-
-async function togglePrize(id,active){
-
-  const r=await db
-    .from("prizes")
-    .update({active})
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
-  }
-
-  loadPrizes();
-}
-
-async function createPrize(){
-
-  const name=$("pName")
-    .value.trim();
-
-  const cost=Number(
-    $("pCost").value
-  );
-
-  if(!name||cost<1){
-    msg(
-      "pMsg",
-      "❌ Nombre y costo son obligatorios."
-    );
-    return;
-  }
-
-  const r=await db
-    .from("prizes")
-    .insert({
-      name,
-      description:$("pDesc").value.trim(),
-      token_cost:cost,
-      stock:Number($("pStock").value)||0,
-      image_url:$("pImage").value.trim()||null,
-      active:true
-    });
-
-  if(r.error){
-    msg("pMsg","❌ "+r.error.message);
-    return;
-  }
-
-  msg("pMsg","✅ Premio guardado.");
-
-  $("pName").value="";
-  $("pDesc").value="";
-  $("pCost").value="";
-  $("pImage").value="";
-
-  loadPrizes();
-}
-
-async function loadDuels(){
-
-  const r=await db
-    .from("duel_matches")
-    .select(
-      "id,game_id,table_id,player1_id,player2_id,status,player1_score,player2_score,created_at"
-    )
-    .in("status",["waiting","active"])
-    .order("created_at",{ascending:false})
-    .limit(100);
-
-  if(r.error){
-    $("duelsTable").innerHTML=
-      `<tr>
-        <td colspan="5" class="empty">
-          No se pudieron cargar los duelos.
-        </td>
-      </tr>`;
-    return;
-  }
-
-  const data=r.data||[];
-
-  if(!data.length){
-    $("duelsTable").innerHTML=
-      `<tr>
-        <td colspan="5" class="empty">
-          No hay duelos activos.
-        </td>
-      </tr>`;
-    return;
-  }
-
-  const ids=[
-    ...new Set(
-      data.flatMap(
-        x=>[x.player1_id,x.player2_id]
-      ).filter(Boolean)
-    )
-  ];
-
-  let names={};
-
-  if(ids.length){
-
-    const pr=await db
-      .from("profiles")
-      .select("id,display_name")
-      .in("id",ids);
-
-    (pr.data||[]).forEach(
-      x=>names[x.id]=x.display_name
-    );
-  }
-
-  $("duelsTable").innerHTML=
-    data.map(x=>`
-
-      <tr>
-
-        <td>${esc(x.status)}</td>
-
-        <td>
-          ${esc(
-            names[x.player1_id]||
-            "Jugador 1"
-          )}
-        </td>
-
-        <td>
-          ${esc(
-            names[x.player2_id]||
-            "Esperando rival"
-          )}
-        </td>
-
-        <td>
-          ${x.player1_score??0}
-          —
-          ${x.player2_score??0}
-        </td>
-
-        <td>
-
-          ${
-            x.status==="active"?
-            `<button
-              class="btn gold"
-              onclick="completeDuel(
-                '${x.id}',
-                ${x.player1_score??0},
-                ${x.player2_score??0}
-              )">
-              Completar
-            </button>`
-            :"—"
-          }
-
-        </td>
-
-      </tr>
-
-    `).join("");
-}
-
-async function completeDuel(id,s1,s2){
-
-  const a=prompt(
-    "Puntuación Jugador 1",
-    String(s1)
-  );
-
-  if(a===null)return;
-
-  const b=prompt(
-    "Puntuación Jugador 2",
-    String(s2)
-  );
-
-  if(b===null)return;
-
-  const n1=Number(a);
-  const n2=Number(b);
-
-  if(
-    !Number.isInteger(n1)||
-    !Number.isInteger(n2)||
-    n1<0||
-    n2<0||
-    n1===n2
-  ){
-    alert(
-      "Las puntuaciones deben ser enteras, no negativas y distintas."
-    );
-    return;
-  }
-
-  const r=await db.rpc(
-    "complete_duel",
-    {
-      p_duel_id:id,
-      p_player1_score:n1,
-      p_player2_score:n2
+  async function checkSession() {
+    const { data, error } = await db.auth.getSession();
+
+    if (error || !data.session) {
+      showLogin();
+      return;
     }
-  );
 
-  if(r.error){
-    alert(r.error.message);
-    return;
+    showPanel();
   }
 
-  await loadDuels();
-
-  alert(
-    "Duelo completado correctamente."
-  );
-}
-
-async function loadTournaments(){
-
-  const r=await db
-    .from("tournaments")
-    .select("*")
-    .order("starts_at");
-
-  const data=r.data||[];
-
-  $("tournamentsList").innerHTML=
-    data.map(x=>`
-
-      <div class="notice">
-
-        ${x.image_url?
-          `<img class="thumb"
-            src="${esc(x.image_url)}">`
-          :""}
-
-        <b>🏆 ${esc(x.name)}</b>
-
-        <br>
-
-        ${esc(x.game_type||"Pool")}
-        · ${x.entry_tokens||0} fichas
-        · máx. ${x.max_players||"∞"}
-        · ${esc(x.status)}
-
-        <br><br>
-
-        <button
-          class="btn dark"
-          onclick="setTournament(
-            '${x.id}',
-            '${x.status==="open"?
-              "cancelled":"open"}'
-          )">
-
-          ${
-            x.status==="open"
-              ?"Cerrar"
-              :"Abrir"
-          }
-
-        </button>
-
-      </div>
-
-    `).join("")||
-    '<div class="empty">No hay torneos.</div>';
-}
-
-async function setTournament(id,status){
-
-  const r=await db
-    .from("tournaments")
-    .update({status})
-    .eq("id",id);
-
-  if(r.error){
-    alert(r.error.message);
-    return;
+  function showLogin() {
+    $("loginSection").classList.remove("hidden");
+    $("panel").classList.add("hidden");
+    $("logoutBtn").classList.add("hidden");
   }
 
-  loadTournaments();
-}
+  async function showPanel() {
+    $("loginSection").classList.add("hidden");
+    $("panel").classList.remove("hidden");
+    $("logoutBtn").classList.remove("hidden");
 
-async function createTournament(){
-
-  const name=$("tName")
-    .value.trim();
-
-  const date=$("tDate")
-    .value;
-
-  if(!name||!date){
-    msg(
-      "tMsg",
-      "❌ Nombre y fecha son obligatorios."
-    );
-    return;
+    await Promise.all([
+      loadReservations(),
+      loadOrders(),
+      loadProducts(),
+      loadPhotos(),
+      loadPromotions()
+    ]);
   }
 
-  const r=await db
-    .from("tournaments")
-    .insert({
-      name,
-      game_type:$("tGame")
-        .value.trim()||"Pool",
-      starts_at:new Date(
-        date
-      ).toISOString(),
-      max_players:Number(
-        $("tMax").value
-      )||16,
-      entry_tokens:Number(
-        $("tEntry").value
-      )||0,
-      status:"open",
-      image_url:$("tImage")
-        .value.trim()||null
+  $("loginBtn").addEventListener("click", async () => {
+    const email = $("email").value.trim();
+    const password = $("password").value;
+
+    if (!email || !password) {
+      loginMessage("Completá email y contraseña.", "error");
+      return;
+    }
+
+    $("loginBtn").disabled = true;
+    $("loginBtn").textContent = "Ingresando...";
+
+    const { error } = await db.auth.signInWithPassword({
+      email,
+      password
     });
 
-  if(r.error){
-    msg(
-      "tMsg",
-      "❌ "+r.error.message
-    );
-    return;
-  }
+    $("loginBtn").disabled = false;
+    $("loginBtn").textContent = "Ingresar al panel";
 
-  msg(
-    "tMsg",
-    "✅ Torneo creado."
-  );
+    if (error) {
+      loginMessage(error.message, "error");
+      return;
+    }
 
-  $("tName").value="";
-  $("tImage").value="";
+    await checkSession();
+  });
 
-  loadTournaments();
-}
+  $("logoutBtn").addEventListener("click", async () => {
+    await db.auth.signOut();
+    showLogin();
+  });
 
-async function uploadPhoto(){
+  /* =========================
+     RESERVAS
+  ========================= */
 
-  const file=$("photoFile")
-    .files[0];
+  async function loadReservations() {
+    const box = $("reservasList");
+    box.innerHTML = "Cargando...";
 
-  const title=$("photoTitle")
-    .value.trim()||
-    file?.name||
-    "Pool & Beach";
+    const { data, error } = await db
+      .from("reservas")
+      .select("*")
+      .order("fecha", { ascending: false })
+      .order("hora", { ascending: false });
 
-  if(!file){
-    msg(
-      "photoMsg",
-      "❌ Elegí una imagen."
-    );
-    return;
-  }
+    if (error) {
+      box.innerHTML =
+        `<div class="notice error">${escapeHtml(error.message)}</div>`;
+      return;
+    }
 
-  if(file.size>8*1024*1024){
-    msg(
-      "photoMsg",
-      "❌ La imagen supera 8 MB."
-    );
-    return;
-  }
+    if (!data || !data.length) {
+      box.innerHTML = `<div class="empty">No hay reservas.</div>`;
+      return;
+    }
 
-  const ext=(
-    file.name.split(".").pop()||
-    "jpg"
-  ).toLowerCase();
+    box.innerHTML = data.map(r => `
+      <div class="item">
+        <h3>${escapeHtml(r.nombre || "Sin nombre")}</h3>
 
-  const path=
-    `public/${crypto.randomUUID()}.${ext}`;
+        <p><strong>Teléfono:</strong>
+          ${escapeHtml(r.telefono || "-")}
+        </p>
 
-  const up=await db.storage
-    .from("Galeria")
-    .upload(
-      path,
-      file,
-      {
-        contentType:file.type,
-        upsert:false
-      }
-    );
+        <p><strong>Fecha:</strong>
+          ${escapeHtml(r.fecha || "-")}
+        </p>
 
-  if(up.error){
-    msg(
-      "photoMsg",
-      "❌ No se pudo subir: "+
-      up.error.message
-    );
-    return;
-  }
+        <p><strong>Hora:</strong>
+          ${escapeHtml(r.hora || "-")}
+        </p>
 
-  const url=db.storage
-    .from("Galeria")
-    .getPublicUrl(path)
-    .data.publicUrl;
+        <p><strong>Servicio:</strong>
+          ${escapeHtml(r.servicio || "-")}
+        </p>
 
-  const ins=await db
-    .from("galeria_fotos")
-    .insert({
-      titulo:title,
-      categoria:"galeria",
-      ruta:path,
-      url
-    });
+        <p><strong>Personas:</strong>
+          ${escapeHtml(r.cantidad_personas || "-")}
+        </p>
 
-  if(ins.error){
+        <p><strong>Estado:</strong>
+          <span class="status">${escapeHtml(r.estado || "pendiente")}</span>
+        </p>
 
-    await db.storage
-      .from("Galeria")
-      .remove([path]);
+        <p><strong>Notas:</strong>
+          ${escapeHtml(r.notas || "-")}
+        </p>
 
-    msg(
-      "photoMsg",
-      "❌ No se pudo registrar la foto: "+
-      ins.error.message
-    );
-
-    return;
-  }
-
-  msg(
-    "photoMsg",
-    "✅ Foto publicada."
-  );
-
-  $("photoFile").value="";
-  $("photoTitle").value="";
-
-  loadGallery();
-}
-
-async function loadGallery(){
-
-  const r=await db
-    .from("galeria_fotos")
-    .select("*")
-    .order("creado_en",{ascending:false});
-
-  if(r.error){
-    $("galleryList").innerHTML=
-      '<div class="empty">No se pudieron cargar las fotos.</div>';
-    return;
-  }
-
-  const data=r.data||[];
-
-  $("galleryList").innerHTML=
-    data.map(x=>`
-
-      <figure>
-
-        <img
-          src="${esc(x.url)}"
-          alt="${esc(x.titulo||"Pool & Beach")}">
-
-        <figcaption>
-
-          ${esc(x.titulo||"Foto")}
-
-          <button
-            class="btn red"
-            style="padding:4px 7px;float:right"
-            onclick="deletePhoto(
-              '${x.id}',
-              '${esc(x.ruta||"")}'
-            )">
-            ×
+        <div class="actions">
+          <button class="primary"
+            onclick="changeReservationStatus('${r.id}','confirmada')">
+            Confirmar
           </button>
 
-        </figcaption>
+          <button class="secondary"
+            onclick="changeReservationStatus('${r.id}','atendida')">
+            Atendida
+          </button>
 
-      </figure>
-
-    `).join("")||
-    '<div class="empty">No hay fotos.</div>';
-}
-
-async function deletePhoto(id,path){
-
-  if(!confirm(
-    "¿Eliminar esta foto?"
-  ))return;
-
-  const d=await db
-    .from("galeria_fotos")
-    .delete()
-    .eq("id",id);
-
-  if(d.error){
-    alert(d.error.message);
-    return;
+          <button class="danger"
+            onclick="changeReservationStatus('${r.id}','cancelada')">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    `).join("");
   }
 
-  if(path){
+  async function changeReservationStatus(id, estado) {
+    const { error } = await db
+      .from("reservas")
+      .update({ estado })
+      .eq("id", id);
 
-    await db.storage
+    if (error) {
+      message(error.message, "error");
+      return;
+    }
+
+    message("Reserva actualizada.", "success");
+    await loadReservations();
+  }
+
+  window.changeReservationStatus = changeReservationStatus;
+
+  /* =========================
+     PEDIDOS
+  ========================= */
+
+  async function loadOrders() {
+    const box = $("pedidosList");
+    box.innerHTML = "Cargando...";
+
+    const { data, error } = await db
+      .from("pedidos")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      box.innerHTML =
+        `<div class="notice error">${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if (!data || !data.length) {
+      box.innerHTML = `<div class="empty">No hay pedidos.</div>`;
+      return;
+    }
+
+    box.innerHTML = data.map(p => `
+      <div class="item">
+        <h3>${escapeHtml(p.nombre_cliente || "Cliente")}</h3>
+
+        <p><strong>Teléfono:</strong>
+          ${escapeHtml(p.telefono || "-")}
+        </p>
+
+        <p><strong>Entrega:</strong>
+          ${escapeHtml(p.tipo_entrega || "-")}
+        </p>
+
+        <p><strong>Dirección:</strong>
+          ${escapeHtml(p.direccion || "-")}
+        </p>
+
+        <p><strong>Total:</strong>
+          ${money(p.total)}
+        </p>
+
+        <p><strong>Estado:</strong>
+          <span class="status">${escapeHtml(p.estado || "pendiente")}</span>
+        </p>
+
+        <p><strong>Detalle:</strong><br>
+          ${escapeHtml(
+            typeof p.items === "string"
+              ? p.items
+              : JSON.stringify(p.items || [])
+          )}
+        </p>
+
+        <p><strong>Notas:</strong>
+          ${escapeHtml(p.notas || "-")}
+        </p>
+
+        <div class="actions">
+          <button class="primary"
+            onclick="changeOrderStatus('${p.id}','confirmado')">
+            Confirmar
+          </button>
+
+          <button class="secondary"
+            onclick="changeOrderStatus('${p.id}','entregado')">
+            Entregado
+          </button>
+
+          <button class="danger"
+            onclick="changeOrderStatus('${p.id}','cancelado')">
+            Cancelar
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  async function changeOrderStatus(id, estado) {
+    const { error } = await db
+      .from("pedidos")
+      .update({ estado })
+      .eq("id", id);
+
+    if (error) {
+      message(error.message, "error");
+      return;
+    }
+
+    message("Pedido actualizado.", "success");
+    await loadOrders();
+  }
+
+  window.changeOrderStatus = changeOrderStatus;
+
+  /* =========================
+     PRODUCTOS
+  ========================= */
+
+  $("productForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const id = $("productId").value;
+
+    const product = {
+      nombre: $("productName").value.trim(),
+      categoria: $("productCategory").value.trim(),
+      descripcion: $("productDescription").value.trim(),
+      precio: Number($("productPrice").value),
+      activo: $("productActive").checked,
+      disponible: $("productAvailable").checked
+    };
+
+    if (!product.nombre) {
+      message("El producto necesita un nombre.", "error");
+      return;
+    }
+
+    let result;
+
+    if (id) {
+      result = await db
+        .from("productos")
+        .update(product)
+        .eq("id", id);
+    } else {
+      result = await db
+        .from("productos")
+        .insert(product);
+    }
+
+    if (result.error) {
+      message(result.error.message, "error");
+      return;
+    }
+
+    resetProductForm();
+    message("Producto guardado correctamente.", "success");
+    await loadProducts();
+  });
+
+  $("cancelProductBtn").addEventListener("click", resetProductForm);
+
+  function resetProductForm() {
+    $("productId").value = "";
+    $("productName").value = "";
+    $("productCategory").value = "";
+    $("productDescription").value = "";
+    $("productPrice").value = "";
+    $("productActive").checked = true;
+    $("productAvailable").checked = true;
+  }
+
+  async function loadProducts() {
+    const box = $("productsList");
+    box.innerHTML = "Cargando...";
+
+    const { data, error } = await db
+      .from("productos")
+      .select("*")
+      .order("categoria")
+      .order("nombre");
+
+    if (error) {
+      box.innerHTML =
+        `<div class="notice error">${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if (!data || !data.length) {
+      box.innerHTML = `<div class="empty">No hay productos.</div>`;
+      return;
+    }
+
+    box.innerHTML = data.map(p => `
+      <div class="item">
+        <h3>${escapeHtml(p.nombre)}</h3>
+
+        <p class="small">
+          ${escapeHtml(p.categoria || "")}
+        </p>
+
+        <p>${escapeHtml(p.descripcion || "")}</p>
+
+        <p><strong>${money(p.precio)}</strong></p>
+
+        <p>
+          <span class="status">
+            ${p.activo ? "Activo" : "Oculto"}
+          </span>
+
+          <span class="status">
+            ${p.disponible ? "Disponible" : "No disponible"}
+          </span>
+        </p>
+
+        <div class="actions">
+          <button class="primary"
+            onclick='editProduct(${JSON.stringify(p)})'>
+            Editar
+          </button>
+
+          <button class="danger"
+            onclick="deleteProduct('${p.id}')">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function editProduct(p) {
+    $("productId").value = p.id || "";
+    $("productName").value = p.nombre || "";
+    $("productCategory").value = p.categoria || "";
+    $("productDescription").value = p.descripcion || "";
+    $("productPrice").value = p.precio || "";
+    $("productActive").checked = p.activo !== false;
+    $("productAvailable").checked = p.disponible !== false;
+
+    window.scrollTo({
+      top: $("productForm").offsetTop - 80,
+      behavior: "smooth"
+    });
+  }
+
+  window.editProduct = editProduct;
+
+  async function deleteProduct(id) {
+    if (!confirm("¿Eliminar este producto?")) return;
+
+    const { error } = await db
+      .from("productos")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      message(error.message, "error");
+      return;
+    }
+
+    message("Producto eliminado.", "success");
+    await loadProducts();
+  }
+
+  window.deleteProduct = deleteProduct;
+
+  /* =========================
+     FOTOS / STORAGE
+  ========================= */
+
+  $("photoFile").addEventListener("change", () => {
+    const file = $("photoFile").files[0];
+
+    if (!file) {
+      $("photoPreview").classList.add("hidden");
+      return;
+    }
+
+    const url = URL.createObjectURL(file);
+    $("photoPreview").src = url;
+    $("photoPreview").classList.remove("hidden");
+  });
+
+  $("uploadPhotoBtn").addEventListener("click", async () => {
+    const file = $("photoFile").files[0];
+    const title = $("photoTitle").value.trim();
+
+    if (!file) {
+      message("Seleccioná una foto.", "error");
+      return;
+    }
+
+    $("uploadPhotoBtn").disabled = true;
+    $("uploadPhotoBtn").textContent = "Subiendo...";
+
+    const extension =
+      file.name.includes(".")
+        ? file.name.split(".").pop().toLowerCase()
+        : "jpg";
+
+    const filename =
+      `${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+    const path = `public/${filename}`;
+
+    const upload = await db.storage
       .from("Galeria")
-      .remove([path]);
+      .upload(path, file, {
+        cacheControl: "3600",
+        upsert: false
+      });
+
+    if (upload.error) {
+      $("uploadPhotoBtn").disabled = false;
+      $("uploadPhotoBtn").textContent = "Subir foto";
+      message(upload.error.message, "error");
+      return;
+    }
+
+    const publicUrl = db.storage
+      .from("Galeria")
+      .getPublicUrl(path)
+      .data.publicUrl;
+
+    const insert = await db
+      .from("galeria_fotos")
+      .insert({
+        titulo: title || file.name,
+        url: publicUrl,
+        ruta: path
+      });
+
+    if (insert.error) {
+      $("uploadPhotoBtn").disabled = false;
+      $("uploadPhotoBtn").textContent = "Subir foto";
+      message(insert.error.message, "error");
+      return;
+    }
+
+    $("photoFile").value = "";
+    $("photoTitle").value = "";
+    $("photoPreview").classList.add("hidden");
+
+    $("uploadPhotoBtn").disabled = false;
+    $("uploadPhotoBtn").textContent = "Subir foto";
+
+    message("Foto subida correctamente.", "success");
+    await loadPhotos();
+  });
+
+  async function loadPhotos() {
+    const box = $("photosList");
+    box.innerHTML = "Cargando...";
+
+    const { data, error } = await db
+      .from("galeria_fotos")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      box.innerHTML =
+        `<div class="notice error">${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if (!data || !data.length) {
+      box.innerHTML = `<div class="empty">Todavía no hay fotos.</div>`;
+      return;
+    }
+
+    box.innerHTML = data.map(p => `
+      <div class="item">
+        <img
+          class="preview"
+          src="${escapeHtml(p.url || "")}"
+          alt="${escapeHtml(p.titulo || "Foto")}"
+          onerror="this.style.display='none'"
+        >
+
+        <p><strong>${escapeHtml(p.titulo || "Sin título")}</strong></p>
+
+        <button class="danger"
+          onclick="deletePhoto('${p.id}','${escapeHtml(p.ruta || "")}')">
+          Eliminar foto
+        </button>
+      </div>
+    `).join("");
   }
 
-  loadGallery();
-}
+  async function deletePhoto(id, path) {
+    if (!confirm("¿Eliminar esta foto?")) return;
 
-init();
+    const { error: dbError } = await db
+      .from("galeria_fotos")
+      .delete()
+      .eq("id", id);
 
+    if (dbError) {
+      message(dbError.message, "error");
+      return;
+    }
+
+    if (path) {
+      await db.storage
+        .from("Galeria")
+        .remove([path]);
+    }
+
+    message("Foto eliminada.", "success");
+    await loadPhotos();
+  }
+
+  window.deletePhoto = deletePhoto;
+
+  /* =========================
+     PROMOCIONES
+  ========================= */
+
+  $("promoForm").addEventListener("submit", async e => {
+    e.preventDefault();
+
+    const id = $("promoId").value;
+
+    const promo = {
+      titulo: $("promoTitle").value.trim(),
+      descripcion: $("promoDescription").value.trim(),
+      precio: $("promoPrice").value.trim(),
+      activo: $("promoActive").checked
+    };
+
+    let result;
+
+    if (id) {
+      result = await db
+        .from("promociones")
+        .update(promo)
+        .eq("id", id);
+    } else {
+      result = await db
+        .from("promociones")
+        .insert(promo);
+    }
+
+    if (result.error) {
+      message(result.error.message, "error");
+      return;
+    }
+
+    resetPromoForm();
+    message("Promoción guardada.", "success");
+    await loadPromotions();
+  });
+
+  $("cancelPromoBtn").addEventListener("click", resetPromoForm);
+
+  function resetPromoForm() {
+    $("promoId").value = "";
+    $("promoTitle").value = "";
+    $("promoDescription").value = "";
+    $("promoPrice").value = "";
+    $("promoActive").checked = true;
+  }
+
+  async function loadPromotions() {
+    const box = $("promosList");
+    box.innerHTML = "Cargando...";
+
+    const { data, error } = await db
+      .from("promociones")
+      .select("*")
+      .order("id", { ascending: false });
+
+    if (error) {
+      box.innerHTML =
+        `<div class="notice error">${escapeHtml(error.message)}</div>`;
+      return;
+    }
+
+    if (!data || !data.length) {
+      box.innerHTML = `<div class="empty">No hay promociones.</div>`;
+      return;
+    }
+
+    box.innerHTML = data.map(p => `
+      <div class="item">
+        <h3>${escapeHtml(p.titulo || "")}</h3>
+
+        <p>${escapeHtml(p.descripcion || "")}</p>
+
+        <p><strong>${escapeHtml(p.precio || "")}</strong></p>
+
+        <p>
+          <span class="status">
+            ${p.activo ? "Activa" : "Oculta"}
+          </span>
+        </p>
+
+        <div class="actions">
+          <button class="primary"
+            onclick='editPromo(${JSON.stringify(p)})'>
+            Editar
+          </button>
+
+          <button class="danger"
+            onclick="deletePromo('${p.id}')">
+            Eliminar
+          </button>
+        </div>
+      </div>
+    `).join("");
+  }
+
+  function editPromo(p) {
+    $("promoId").value = p.id || "";
+    $("promoTitle").value = p.titulo || "";
+    $("promoDescription").value = p.descripcion || "";
+    $("promoPrice").value = p.precio || "";
+    $("promoActive").checked = p.activo !== false;
+
+    window.scrollTo({
+      top: $("promoForm").offsetTop - 80,
+      behavior: "smooth"
+    });
+  }
+
+  window.editPromo = editPromo;
+
+  async function deletePromo(id) {
+    if (!confirm("¿Eliminar esta promoción?")) return;
+
+    const { error } = await db
+      .from("promociones")
+      .delete()
+      .eq("id", id);
+
+    if (error) {
+      message(error.message, "error");
+      return;
+    }
+
+    message("Promoción eliminada.", "success");
+    await loadPromotions();
+  }
+
+  window.deletePromo = deletePromo;
+
+  /* =========================
+     ARRANQUE
+  ========================= */
+
+  db.auth.onAuthStateChange((_event, session) => {
+    if (session) {
+      showPanel();
+    } else {
+      showLogin();
+    }
+  });
+
+  checkSession();
 </script>
 
 </body>
