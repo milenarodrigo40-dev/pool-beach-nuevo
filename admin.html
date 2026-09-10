@@ -1,4709 +1,1958 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Pool & Beach | Administración</title>
-
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <style>
-    :root{
-      --bg:#06131e;
-      --panel:#0c2333;
-      --panel2:#123149;
-      --line:#24536a;
-      --sky:#62dcff;
-      --gold:#ffd166;
-      --green:#67e7a2;
-      --red:#ff7182;
-      --txt:#f5fbff;
-      --muted:#9ab5c5;
-    }
-
-    *{box-sizing:border-box}
-
-    body{
-      margin:0;
-      background:
-        radial-gradient(circle at 20% 0,#16415a,#06131e 48%,#03080d);
-      color:var(--txt);
-      font:14px system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
-    }
-
-    .hidden{display:none!important}
-
-    .app{
-      max-width:1200px;
-      margin:auto;
-      padding:14px 14px 60px;
-    }
-
-    .card{
-      background:linear-gradient(145deg,var(--panel2),var(--panel));
-      border:1px solid var(--line);
-      border-radius:18px;
-      padding:17px;
-      box-shadow:0 10px 25px #0004;
-    }
-
-    .hero{
-      margin-top:14px;
-    }
-
-    .brand{
-      font-size:23px;
-      font-weight:950;
-    }
-
-    .brand span{
-      color:var(--sky);
-    }
-
-    .top{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      gap:12px;
-    }
-
-    .top-actions,
-    .row{
-      display:flex;
-      gap:8px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
-
-    .status{
-      border:1px solid var(--line);
-      border-radius:99px;
-      padding:6px 10px;
-      color:var(--sky);
-      font-size:11px;
-    }
-
-    .tabs{
-      display:flex;
-      gap:8px;
-      overflow-x:auto;
-      margin:14px 0;
-      padding:4px 2px 9px;
-      position:sticky;
-      top:0;
-      z-index:20;
-      background:#06131ee8;
-      backdrop-filter:blur(8px);
-    }
-
-    .tab,
-    .btn{
-      border-radius:12px;
-      padding:10px 13px;
-      border:1px solid var(--line);
-      font-weight:900;
-      cursor:pointer;
-      min-height:42px;
-    }
-
-    .tab{
-      background:#0b2130;
-      color:var(--txt);
-      white-space:nowrap;
-    }
-
-    .tab.active{
-      background:var(--sky);
-      color:#052031;
-    }
-
-    .btn{
-      background:var(--sky);
-      color:#052031;
-      border:0;
-    }
-
-    .btn.gold{background:var(--gold)}
-    .btn.green{background:var(--green)}
-    .btn.red{background:var(--red)}
-    .btn.dark{
-      background:#15364b;
-      color:var(--txt);
-    }
-
-    .view{display:none}
-    .view.active{display:block}
-
-    .cards,
-    .grid2,
-    .grid3{
-      display:grid;
-      gap:11px;
-    }
-
-    .cards{
-      grid-template-columns:repeat(4,1fr);
-    }
-
-    .grid2{
-      grid-template-columns:1fr 1fr;
-    }
-
-    .grid3{
-      grid-template-columns:repeat(3,1fr);
-    }
-
-    .metric b{
-      display:block;
-      font-size:30px;
-      margin-top:3px;
-    }
-
-    .muted,
-    small{
-      color:var(--muted);
-    }
-
-    .input,
-    select,
-    textarea{
-      width:100%;
-      padding:11px;
-      border-radius:11px;
-      background:#061722;
-      color:var(--txt);
-      border:1px solid var(--line);
-      margin:5px 0 8px;
-    }
-
-    label{
-      display:block;
-      color:var(--muted);
-      font-size:12px;
-      margin-top:7px;
-    }
-
-    textarea{
-      min-height:80px;
-      resize:vertical;
-    }
-
-    .notice{
-      padding:10px;
-      border-radius:12px;
-      background:#102a3b;
-      border:1px solid #26536b;
-      margin:7px 0;
-    }
-
-    .notice.success{
-      border-color:#3a8f69;
-    }
-
-    .notice.error{
-      border-color:#9a4050;
-    }
-
-    .empty{
-      text-align:center;
-      padding:20px;
-      color:var(--muted);
-    }
-
-    .table-wrap{
-      overflow:auto;
-    }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      min-width:900px;
-    }
-
-    th,
-    td{
-      padding:10px;
-      border-bottom:1px solid #234456;
-      text-align:left;
-      vertical-align:top;
-    }
-
-    th{
-      color:var(--muted);
-    }
-
-    .gallery{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:10px;
-    }
-
-    .gallery figure{
-      margin:0;
-    }
-
-    .gallery img{
-      width:100%;
-      aspect-ratio:1;
-      object-fit:cover;
-      border-radius:12px;
-    }
-
-    .login{
-      max-width:430px;
-      margin:8vh auto;
-    }
-
-    .item{
-      padding:12px;
-      border:1px solid var(--line);
-      background:#0a1e2d;
-      border-radius:13px;
-      margin-bottom:9px;
-    }
-
-    .item-title{
-      font-weight:900;
-      font-size:16px;
-    }
-
-    .pill{
-      display:inline-block;
-      padding:4px 8px;
-      border-radius:99px;
-      background:#17394d;
-      font-size:11px;
-      margin-top:5px;
-    }
-
-    @media(max-width:850px){
-      .cards{
-        grid-template-columns:repeat(2,1fr);
-      }
-    }
-
-    @media(max-width:650px){
-      .cards,
-      .grid2,
-      .grid3,
-      .gallery{
-        grid-template-columns:1fr;
-      }
-
-      .top{
-        align-items:flex-start;
-        flex-direction:column;
-      }
-
-      .top-actions{
-        width:100%;
-      }
-
-      .top-actions .btn{
-        flex:1;
-      }
-
-      .app{
-        padding:10px;
-      }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Pool & Beach | Administración</title>
+<meta name="theme-color" content="#071923">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+ --bg:#071923;--bg2:#0b2633;--card:#102f3e;--card2:#12394a;
+ --text:#f5fbff;--muted:#a9c4cf;--primary:#31d7ff;
+ --green:#42e695;--red:#ff647c;--yellow:#ffd166;
+ --border:rgba(255,255,255,.1);--radius:18px
+}
+*{box-sizing:border-box}
+body{
+ margin:0;background:linear-gradient(180deg,#071923,#041018);
+ color:var(--text);font-family:Arial,Helvetica,sans-serif
+}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+.container{width:min(1250px,94%);margin:auto}
+header{
+ position:sticky;top:0;z-index:20;
+ background:rgba(4,16,24,.96);backdrop-filter:blur(14px);
+ border-bottom:1px solid var(--border)
+}
+.header{
+ min-height:70px;display:flex;justify-content:space-between;
+ align-items:center;gap:15px
+}
+.logo{font-weight:900;font-size:21px}
+.logo span{color:var(--primary)}
+header small{color:var(--muted)}
+main{padding:30px 0 60px}
+h1,h2,h3{margin-top:0}
+.card{
+ background:linear-gradient(180deg,var(--card),rgba(16,47,62,.72));
+ border:1px solid var(--border);border-radius:var(--radius);
+ padding:20px;margin-bottom:18px
+}
+.login-wrap{max-width:470px;margin:70px auto}
+input,select,textarea{
+ width:100%;padding:12px;border-radius:11px;
+ border:1px solid var(--border);background:#071923;color:var(--text);
+ outline:none
+}
+input:focus,select:focus,textarea:focus{border-color:var(--primary)}
+textarea{min-height:90px;resize:vertical}
+label{
+ display:block;color:var(--muted);font-size:13px;
+ font-weight:700;margin:0 0 6px
+}
+.field{margin-bottom:13px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.full{grid-column:1/-1}
+.btn{
+ border:0;border-radius:11px;padding:11px 15px;
+ font-weight:900;display:inline-flex;align-items:center;
+ justify-content:center;gap:7px
+}
+.btn-primary{background:var(--primary);color:#03151d}
+.btn-secondary{
+ background:rgba(255,255,255,.07);color:var(--text);
+ border:1px solid var(--border)
+}
+.btn-green{background:var(--green);color:#062015}
+.btn-danger{background:var(--red);color:#fff}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.tabs{
+ display:flex;gap:8px;overflow-x:auto;margin-bottom:20px;
+ padding-bottom:4px
+}
+.tab{
+ border:1px solid var(--border);background:#071923;
+ color:var(--muted);padding:11px 15px;border-radius:11px;
+ font-weight:900;white-space:nowrap
+}
+.tab.active{background:var(--primary);color:#03151d}
+.panel{display:none}
+.panel.active{display:block}
+.status{min-height:22px;margin:10px 0;font-weight:800}
+.item{
+ border:1px solid var(--border);border-radius:14px;
+ padding:15px;background:#071923;margin-bottom:10px
+}
+.item.unread{border-color:var(--primary);box-shadow:0 0 0 1px rgba(49,215,255,.12)}
+.item-head{
+ display:flex;justify-content:space-between;gap:10px;
+ align-items:flex-start
+}
+.badge{
+ display:inline-block;padding:6px 9px;border-radius:999px;
+ background:rgba(255,255,255,.07);border:1px solid var(--border);
+ color:var(--muted);font-size:12px;font-weight:800
+}
+.badge.new{color:#03151d;background:var(--primary)}
+.badge.ok{color:#062015;background:var(--green)}
+.badge.warn{color:#241900;background:var(--yellow)}
+.price{color:var(--green);font-weight:900}
+.muted{color:var(--muted)}
+.item p{line-height:1.5}
+.item-actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.preview{
+ width:100%;height:150px;object-fit:cover;border-radius:12px;
+ margin-bottom:10px;border:1px solid var(--border)
+}
+.stats{
+ display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+ margin-bottom:20px
+}
+.stat{
+ padding:18px;border-radius:15px;background:#071923;
+ border:1px solid var(--border)
+}
+.stat strong{display:block;font-size:27px;color:var(--primary);margin-top:5px}
+.file{
+ padding:15px;border:1px dashed var(--border);
+ border-radius:12px;background:#071923
+}
+hr{border:0;border-top:1px solid var(--border);margin:18px 0}
+.hidden{display:none!important}
+.toast{
+ position:fixed;right:18px;bottom:18px;z-index:999;
+ background:#0d3445;border:1px solid var(--border);
+ padding:14px 17px;border-radius:13px;
+ opacity:0;transform:translateY(10px);pointer-events:none;
+ transition:.2s
+}
+.toast.show{opacity:1;transform:translateY(0)}
+pre{
+ white-space:pre-wrap;word-break:break-word;
+ background:#041018;padding:12px;border-radius:10px;color:#cfe8ef
+}
+@media(max-width:700px){
+ .form-grid{grid-template-columns:1fr}
+ .full{grid-column:auto}
+ .stats{grid-template-columns:repeat(2,1fr)}
+ .header{align-items:flex-start;padding:12px 0}
+}
+</style>
 </head>
 
 <body>
 
-<!-- =========================
-     LOGIN
-========================= -->
-
-<div id="loginScreen" class="login card">
-
-  <div class="brand" style="text-align:center">
-    POOL <span>&</span> BEACH
+<header>
+ <div class="container header">
+  <div>
+   <div class="logo">POOL <span>&</span> BEACH</div>
+   <small>Panel de administración</small>
   </div>
 
-  <h2 style="text-align:center">
-    ⚙️ Administración
-  </h2>
+  <div class="actions">
+   <a href="index.html" class="btn btn-secondary">🌐 Ver página</a>
+   <button id="logoutBtn" class="btn btn-danger hidden">Cerrar sesión</button>
+  </div>
+ </div>
+</header>
 
-  <p class="notice">
-    Ingresá con tu cuenta de administrador.
+<main class="container">
+
+<!-- LOGIN -->
+<section id="loginSection" class="login-wrap">
+ <div class="card">
+  <h1>🔐 Administrador</h1>
+  <p class="muted">
+   Ingresá con el correo y contraseña del administrador de Supabase.
   </p>
 
   <form id="loginForm">
+   <div class="field">
+    <label>Correo</label>
+    <input id="loginEmail" type="email" autocomplete="username" required>
+   </div>
 
-    <label for="loginEmail">Email</label>
+   <div class="field">
+    <label>Contraseña</label>
+    <input id="loginPassword" type="password"
+     autocomplete="current-password" required>
+   </div>
 
-    <input
-      id="loginEmail"
-      class="input"
-      type="email"
-      autocomplete="email"
-      required
-    >
+   <button id="loginBtn" class="btn btn-primary" type="submit">
+    🔑 Ingresar
+   </button>
 
-    <label for="loginPassword">Contraseña</label>
-
-    <input
-      id="loginPassword"
-      class="input"
-      type="password"
-      autocomplete="current-password"
-      required
-    >
-
-    <button
-      id="loginButton"
-      class="btn"
-      type="submit"
-      style="width:100%"
-    >
-      Iniciar sesión
-    </button>
-
-    <div
-      id="loginMessage"
-      class="notice hidden"
-    ></div>
-
+   <div id="loginStatus" class="status"></div>
   </form>
+ </div>
+</section>
 
-</div>
+<!-- PANEL -->
+<section id="adminSection" class="hidden">
 
-
-<!-- =========================
-     APP
-========================= -->
-
-<div id="adminApp" class="app hidden">
-
-  <div class="top">
-
-    <div>
-      <div class="brand">
-        POOL <span>&</span> BEACH
-      </div>
-
-      <small>
-        Panel de administración
-      </small>
-    </div>
-
-    <div class="top-actions">
-
-      <span
-        id="connection"
-        class="status"
-      >
-        CONECTANDO
-      </span>
-
-      <a
-        href="index.html"
-        class="btn dark"
-      >
-        Ver sitio
-      </a>
-
-      <button
-        id="logout"
-        class="btn red"
-        type="button"
-      >
-        Cerrar sesión
-      </button>
-
-    </div>
-
+ <div class="stats">
+  <div class="stat">
+   Reservas
+   <strong id="statReservas">0</strong>
   </div>
 
+  <div class="stat">
+   Pedidos
+   <strong id="statPedidos">0</strong>
+  </div>
 
-  <section class="hero card">
+  <div class="stat">
+   Productos
+   <strong id="statProductos">0</strong>
+  </div>
 
-    <h1>
-      📊 Administración
-    </h1>
+  <div class="stat">
+   Avisos nuevos
+   <strong id="statAvisos">0</strong>
+  </div>
+ </div>
 
-    <p class="muted">
-      Reservas, pedidos, menú, promociones, juegos,
-      trivia, torneos, canjes y fotos.
-    </p>
+ <div class="tabs">
+  <button class="tab active" data-panel="reservasPanel">📅 Reservas</button>
+  <button class="tab" data-panel="pedidosPanel">🛒 Pedidos</button>
+  <button class="tab" data-panel="productosPanel">🍔 Menú</button>
+  <button class="tab" data-panel="promosPanel">🔥 Promos</button>
+  <button class="tab" data-panel="canjesPanel">🎁 Canjes</button>
+  <button class="tab" data-panel="galeriaPanel">📸 Fotos</button>
+  <button class="tab" data-panel="configPanel">⚙️ Configuración</button>
+  <button class="tab" data-panel="juegosPanel">🎮 Juegos</button>
+ </div>
 
-  </section>
+ <!-- RESERVAS -->
+ <div id="reservasPanel" class="panel active">
+  <div class="card">
+   <div class="item-head">
+    <div>
+     <h2>📅 Reservas</h2>
+     <p class="muted">Reservas recibidas desde la página.</p>
+    </div>
+    <button class="btn btn-secondary" onclick="loadReservas()">🔄 Actualizar</button>
+   </div>
+   <div id="reservasLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
 
+ <!-- PEDIDOS -->
+ <div id="pedidosPanel" class="panel">
+  <div class="card">
+   <div class="item-head">
+    <div>
+     <h2>🛒 Pedidos</h2>
+     <p class="muted">Pedidos de retiro y delivery.</p>
+    </div>
+    <button class="btn btn-secondary" onclick="loadPedidos()">🔄 Actualizar</button>
+   </div>
+   <div id="pedidosLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
 
-  <!-- =========================
-       TABS
-  ========================= -->
+ <!-- PRODUCTOS -->
+ <div id="productosPanel" class="panel">
 
-  <nav class="tabs">
+  <div class="card">
+   <h2 id="productoFormTitle">➕ Agregar producto</h2>
 
-    <button class="tab active" data-view="dashboard">
-      🏠 Inicio
+   <form id="productoForm">
+    <input id="productoId" type="hidden">
+
+    <div class="form-grid">
+     <div class="field">
+      <label>Nombre</label>
+      <input id="productoNombre" required maxlength="150">
+     </div>
+
+     <div class="field">
+      <label>Categoría</label>
+      <input id="productoCategoria" required maxlength="100">
+     </div>
+
+     <div class="field">
+      <label>Precio</label>
+      <input id="productoPrecio" required type="number" min="0" step="0.01">
+     </div>
+
+     <div class="field">
+      <label>Imagen URL (opcional)</label>
+      <input id="productoImagen" type="url">
+     </div>
+
+     <div class="field full">
+      <label>Descripción</label>
+      <textarea id="productoDescripcion" maxlength="500"></textarea>
+     </div>
+
+     <div class="field">
+      <label>
+       <input id="productoActivo" type="checkbox" checked style="width:auto">
+       Visible en el menú
+      </label>
+     </div>
+
+     <div class="field">
+      <label>
+       <input id="productoDisponible" type="checkbox" checked style="width:auto">
+       Disponible para pedidos
+      </label>
+     </div>
+    </div>
+
+    <div class="actions">
+     <button class="btn btn-primary" type="submit">💾 Guardar producto</button>
+     <button class="btn btn-secondary" type="button"
+      onclick="cancelarProducto()">Cancelar</button>
+    </div>
+
+    <div id="productoStatus" class="status"></div>
+   </form>
+  </div>
+
+  <div class="card">
+   <div class="item-head">
+    <h2>🍔 Productos</h2>
+    <button class="btn btn-secondary" onclick="loadProductos()">🔄 Actualizar</button>
+   </div>
+   <div id="productosLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
+
+ <!-- PROMOS -->
+ <div id="promosPanel" class="panel">
+
+  <div class="card">
+   <h2 id="promoFormTitle">➕ Nueva promoción</h2>
+
+   <form id="promoForm">
+    <input id="promoId" type="hidden">
+
+    <div class="form-grid">
+     <div class="field">
+      <label>Título</label>
+      <input id="promoTitulo" required maxlength="150">
+     </div>
+
+     <div class="field">
+      <label>Precio</label>
+      <input id="promoPrecio" type="number" min="0" step="0.01">
+     </div>
+
+     <div class="field full">
+      <label>Descripción</label>
+      <textarea id="promoDescripcion" maxlength="500"></textarea>
+     </div>
+
+     <div class="field full">
+      <label>Imagen URL (opcional)</label>
+      <input id="promoImagen" type="url">
+     </div>
+
+     <div class="field">
+      <label>
+       <input id="promoActiva" type="checkbox" checked style="width:auto">
+       Promoción activa
+      </label>
+     </div>
+    </div>
+
+    <div class="actions">
+     <button class="btn btn-primary" type="submit">💾 Guardar promoción</button>
+     <button class="btn btn-secondary" type="button" onclick="cancelarPromo()">Cancelar</button>
+    </div>
+
+    <div id="promoStatus" class="status"></div>
+   </form>
+  </div>
+
+  <div class="card">
+   <h2>🔥 Promociones</h2>
+   <div id="promosLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
+
+ <!-- CANJES -->
+ <div id="canjesPanel" class="panel">
+
+  <div class="card">
+   <h2 id="premioFormTitle">➕ Nuevo canje</h2>
+
+   <form id="premioForm">
+    <input id="premioId" type="hidden">
+
+    <div class="form-grid">
+     <div class="field">
+      <label>Nombre</label>
+      <input id="premioNombre" required maxlength="150">
+     </div>
+
+     <div class="field">
+      <label>Costo en tokens</label>
+      <input id="premioTokens" type="number" min="0" required>
+     </div>
+
+     <div class="field">
+      <label>Stock</label>
+      <input id="premioStock" type="number" min="0"
+       placeholder="Vacío = sin límite">
+     </div>
+
+     <div class="field">
+      <label>Puntos</label>
+      <input id="premioPuntos" type="number" min="0" value="0">
+     </div>
+
+     <div class="field full">
+      <label>Descripción</label>
+      <textarea id="premioDescripcion" maxlength="500"></textarea>
+     </div>
+
+     <div class="field full">
+      <label>Imagen URL (opcional)</label>
+      <input id="premioImagen" type="url">
+     </div>
+
+     <div class="field">
+      <label>
+       <input id="premioActivo" type="checkbox" checked style="width:auto">
+       Canje activo
+      </label>
+     </div>
+    </div>
+
+    <div class="actions">
+     <button class="btn btn-primary" type="submit">💾 Guardar canje</button>
+     <button class="btn btn-secondary" type="button"
+      onclick="cancelarPremio()">Cancelar</button>
+    </div>
+
+    <div id="premioStatus" class="status"></div>
+   </form>
+  </div>
+
+  <div class="card">
+   <h2>🎁 Canjes existentes</h2>
+   <div id="premiosLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
+
+ <!-- GALERÍA -->
+ <div id="galeriaPanel" class="panel">
+
+  <div class="card">
+   <h2>📸 Subir foto</h2>
+   <p class="muted">
+    Elegí una foto directamente desde el celular o la galería.
+   </p>
+
+   <form id="fotoForm">
+    <div class="field">
+     <label>Título</label>
+     <input id="fotoTitulo" required maxlength="150">
+    </div>
+
+    <div class="field">
+     <label>Categoría</label>
+     <input id="fotoCategoria" value="general" maxlength="80">
+    </div>
+
+    <div class="field file">
+     <label>Foto</label>
+     <input id="fotoArchivo" type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif" required>
+    </div>
+
+    <button id="fotoBtn" class="btn btn-primary" type="submit">
+     📤 Subir foto
     </button>
 
-    <button class="tab" data-view="reservas">
-      📅 Reservas
+    <div id="fotoStatus" class="status"></div>
+   </form>
+  </div>
+
+  <div class="card">
+   <div class="item-head">
+    <h2>📸 Fotos cargadas</h2>
+    <button class="btn btn-secondary" onclick="loadGaleria()">🔄 Actualizar</button>
+   </div>
+
+   <div id="galeriaLista" class="grid">
+    <div class="muted">Cargando...</div>
+   </div>
+  </div>
+ </div>
+
+ <!-- CONFIG -->
+ <div id="configPanel" class="panel">
+
+  <div class="card">
+   <h2>⚙️ Configuración del sitio</h2>
+
+   <form id="configForm">
+    <div class="field">
+     <label>URL del mapa</label>
+     <input id="configMapa" type="url">
+    </div>
+
+    <div class="field">
+     <label>Costo de delivery</label>
+     <input id="configDelivery" type="number" min="0" step="0.01">
+    </div>
+
+    <button class="btn btn-primary" type="submit">
+     💾 Guardar configuración
     </button>
 
-    <button class="tab" data-view="pedidos">
-      🛒 Pedidos
-    </button>
+    <div id="configStatus" class="status"></div>
+   </form>
+  </div>
 
-    <button class="tab" data-view="productos">
-      🍔 Menú
-    </button>
+  <div class="card">
+   <h2>🎱 Mesas de pool</h2>
+   <p class="muted">
+    El sistema público utiliza exactamente 3 mesas: Mesa 1, Mesa 2 y Mesa 3.
+   </p>
+  </div>
+ </div>
 
-    <button class="tab" data-view="promociones">
-      🔥 Promos
-    </button>
+ <!-- JUEGOS -->
+ <div id="juegosPanel" class="panel">
 
-    <button class="tab" data-view="juegos">
-      🎮 Juegos
-    </button>
-
-    <button class="tab" data-view="trivia">
-      🧠 Trivia
-    </button>
-
-    <button class="tab" data-view="torneos">
-      🏆 Torneos
-    </button>
-
-    <button class="tab" data-view="duelos">
-      ⚔️ Duelos
-    </button>
-
-    <button class="tab" data-view="canjes">
-      🎁 Canjes
-    </button>
-
-    <button class="tab" data-view="fotos">
-      📸 Fotos
-    </button>
-
-  </nav>
-
-
-  <!-- =========================
-       DASHBOARD
-  ========================= -->
-
-  <section
-    id="dashboard"
-    class="view active"
-  >
-
-    <div class="cards">
-
-      <div class="card metric">
-        <small>Reservas pendientes</small>
-        <b id="metricReservas">0</b>
-      </div>
-
-      <div class="card metric">
-        <small>Pedidos pendientes</small>
-        <b id="metricPedidos">0</b>
-      </div>
-
-      <div class="card metric">
-        <small>Torneos abiertos</small>
-        <b id="metricTorneos">0</b>
-      </div>
-
-      <div class="card metric">
-        <small>Fotos</small>
-        <b id="metricFotos">0</b>
-      </div>
-
+  <div class="card">
+   <div class="item-head">
+    <div>
+     <h2>🎮 Juegos</h2>
+     <p class="muted">Los juegos siguen funcionando, pero son secundarios en la página.</p>
     </div>
+    <button class="btn btn-secondary" onclick="loadJuegos()">🔄 Actualizar</button>
+   </div>
 
-    <div class="card" style="margin-top:11px">
+   <div id="juegosLista"><div class="muted">Cargando...</div></div>
+  </div>
 
-      <h2>🔔 Actividad</h2>
+  <div class="card">
+   <h2>🏆 Torneos</h2>
+   <div id="torneosLista"><div class="muted">Cargando...</div></div>
+  </div>
+ </div>
 
-      <div id="activity">
-        <div class="empty">
-          Cargando...
-        </div>
-      </div>
+</section>
+</main>
 
-      <button
-        class="btn dark"
-        type="button"
-        onclick="refreshAll()"
-      >
-        🔄 Actualizar todo
-      </button>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       RESERVAS
-  ========================= -->
-
-  <section
-    id="reservas"
-    class="view"
-  >
-
-    <div class="card">
-
-      <h2>📅 Reservas</h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Servicio</th>
-              <th>Personas</th>
-              <th>Mesa pool</th>
-              <th>Modalidad</th>
-              <th>Notas</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-
-          </thead>
-
-          <tbody id="reservasTable"></tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PEDIDOS
-  ========================= -->
-
-  <section
-    id="pedidos"
-    class="view"
-  >
-
-    <div class="card">
-
-      <h2>🛒 Pedidos</h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-
-            <tr>
-              <th>Fecha</th>
-              <th>Cliente</th>
-              <th>Teléfono</th>
-              <th>Entrega</th>
-              <th>Dirección</th>
-              <th>Productos</th>
-              <th>Total</th>
-              <th>Estado</th>
-              <th></th>
-            </tr>
-
-          </thead>
-
-          <tbody id="pedidosTable"></tbody>
-
-        </table>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PRODUCTOS
-  ========================= -->
-
-  <section
-    id="productos"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🍔 Nuevo producto</h2>
-
-        <label>Nombre</label>
-        <input
-          id="productoNombre"
-          class="input"
-        >
-
-        <label>Categoría</label>
-        <input
-          id="productoCategoria"
-          class="input"
-          placeholder="Hamburguesas, pizzas, bebidas..."
-        >
-
-        <label>Descripción</label>
-        <textarea
-          id="productoDescripcion"
-          class="input"
-        ></textarea>
-
-        <label>Precio</label>
-        <input
-          id="productoPrecio"
-          class="input"
-          type="number"
-          min="0"
-        >
-
-        <div class="row">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="createProduct()"
-          >
-            Guardar
-          </button>
-
-          <button
-            class="btn dark"
-            type="button"
-            onclick="loadProducts()"
-          >
-            🔄 Actualizar
-          </button>
-
-        </div>
-
-        <div
-          id="productoMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Productos actuales</h2>
-
-        <div id="productsList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       PROMOCIONES
-  ========================= -->
-
-  <section
-    id="promociones"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🔥 Nueva promoción</h2>
-
-        <label>Título</label>
-
-        <input
-          id="promoTitulo"
-          class="input"
-        >
-
-        <label>Descripción</label>
-
-        <textarea
-          id="promoDescripcion"
-          class="input"
-        ></textarea>
-
-        <label>Precio</label>
-
-        <input
-          id="promoPrecio"
-          class="input"
-          type="number"
-          min="0"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="createPromotion()"
-        >
-          Guardar promoción
-        </button>
-
-        <div
-          id="promoMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Promociones actuales</h2>
-
-        <div id="promotionsList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       JUEGOS
-  ========================= -->
-
-  <section
-    id="juegos"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🎮 Nuevo juego</h2>
-
-        <label>Nombre</label>
-
-        <input
-          id="gameName"
-          class="input"
-        >
-
-        <label>Descripción</label>
-
-        <textarea
-          id="gameDescription"
-          class="input"
-        ></textarea>
-
-        <label>Icono</label>
-
-        <input
-          id="gameIcon"
-          class="input"
-          value="🎮"
-        >
-
-        <label>Puntos que entrega</label>
-
-        <input
-          id="gamePoints"
-          class="input"
-          type="number"
-          min="0"
-          value="10"
-        >
-
-        <label>Fichas que entrega</label>
-
-        <input
-          id="gameTokens"
-          class="input"
-          type="number"
-          min="0"
-          value="5"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="createGame()"
-        >
-          Guardar juego
-        </button>
-
-        <div
-          id="gameMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Juegos actuales</h2>
-
-        <div id="gamesList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       TRIVIA
-  ========================= -->
-
-  <section
-    id="trivia"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🧠 Nueva pregunta</h2>
-
-        <label>Pregunta</label>
-
-        <textarea
-          id="triviaQuestion"
-          class="input"
-        ></textarea>
-
-        <label>
-          Opciones — una por línea
-        </label>
-
-        <textarea
-          id="triviaOptions"
-          class="input"
-          placeholder="Respuesta 1&#10;Respuesta 2&#10;Respuesta 3&#10;Respuesta 4"
-        ></textarea>
-
-        <label>
-          Índice correcto
-        </label>
-
-        <input
-          id="triviaCorrect"
-          class="input"
-          type="number"
-          min="0"
-          value="0"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="createTriviaQuestion()"
-        >
-          Guardar pregunta
-        </button>
-
-        <div
-          id="triviaMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Preguntas actuales</h2>
-
-        <div id="triviaList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       TORNEOS
-  ========================= -->
-
-  <section
-    id="torneos"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🏆 Nuevo torneo</h2>
-
-        <label>Nombre</label>
-
-        <input
-          id="tournamentName"
-          class="input"
-        >
-
-        <label>Tipo de juego</label>
-
-        <input
-          id="tournamentGameType"
-          class="input"
-          placeholder="Pool, truco..."
-        >
-
-        <label>Fecha y hora</label>
-
-        <input
-          id="tournamentStarts"
-          class="input"
-          type="datetime-local"
-        >
-
-        <label>Fichas de inscripción</label>
-
-        <input
-          id="tournamentEntry"
-          class="input"
-          type="number"
-          min="0"
-          value="0"
-        >
-
-        <label>Máximo de jugadores</label>
-
-        <input
-          id="tournamentMaxPlayers"
-          class="input"
-          type="number"
-          min="1"
-          value="30"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="createTournament()"
-        >
-          Guardar torneo
-        </button>
-
-        <div
-          id="tournamentMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Torneos actuales</h2>
-
-        <div id="tournamentsList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       DUELOS
-  ========================= -->
-
-  <section
-    id="duelos"
-    class="view"
-  >
-
-    <div class="card">
-
-      <h2>⚔️ Duelos</h2>
-
-      <button
-        class="btn dark"
-        type="button"
-        onclick="loadDuels()"
-      >
-        🔄 Actualizar
-      </button>
-
-      <div
-        id="duelsList"
-        style="margin-top:12px"
-      >
-        <div class="empty">
-          Cargando...
-        </div>
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       CANJES
-  ========================= -->
-
-  <section
-    id="canjes"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>🎁 Nuevo canje</h2>
-
-        <label>Nombre</label>
-
-        <input
-          id="prizeName"
-          class="input"
-        >
-
-        <label>Descripción</label>
-
-        <textarea
-          id="prizeDescription"
-          class="input"
-        ></textarea>
-
-        <label>Costo en fichas</label>
-
-        <input
-          id="prizeTokens"
-          class="input"
-          type="number"
-          min="0"
-          value="10"
-        >
-
-        <label>Stock</label>
-
-        <input
-          id="prizeStock"
-          class="input"
-          type="number"
-          min="0"
-          value="1"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="createPrize()"
-        >
-          Guardar canje
-        </button>
-
-        <div
-          id="prizeMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Canjes actuales</h2>
-
-        <div id="prizesList">
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- =========================
-       FOTOS
-  ========================= -->
-
-  <section
-    id="fotos"
-    class="view"
-  >
-
-    <div class="grid2">
-
-      <div class="card">
-
-        <h2>📸 Subir foto</h2>
-
-        <p class="muted">
-          Seleccioná una imagen directamente desde
-          el teléfono, galería o archivos.
-        </p>
-
-        <label>Título</label>
-
-        <input
-          id="photoTitle"
-          class="input"
-          placeholder="Ej.: Pool & Beach"
-        >
-
-        <label>Imagen</label>
-
-        <input
-          id="photoFile"
-          class="input"
-          type="file"
-          accept="image/jpeg,image/png,image/webp,image/gif"
-        >
-
-        <button
-          class="btn gold"
-          type="button"
-          onclick="uploadPhoto()"
-        >
-          📤 Subir foto
-        </button>
-
-        <div
-          id="photoMessage"
-          class="notice hidden"
-        ></div>
-
-      </div>
-
-
-      <div class="card">
-
-        <h2>Galería</h2>
-
-        <div
-          id="galleryList"
-          class="gallery"
-        >
-          <div class="empty">
-            Cargando...
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-</div>
-
+<div id="toast" class="toast"></div>
 
 <script>
+const SUPABASE_URL="https://nmpakeovqkdajtswjpgm.supabase.co";
+const SUPABASE_KEY="sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const BUCKET="Galeria";
 
-/* =====================================================
-   SUPABASE
-===================================================== */
+const db=window.supabase.createClient(
+ SUPABASE_URL,
+ SUPABASE_KEY
+);
 
-const SUPABASE_URL =
-  "https://nmpakeovqkdajtswjpgm.supabase.co";
+let session=null;
+let reservas=[];
+let pedidos=[];
+let productos=[];
+let promos=[];
+let premios=[];
+let fotos=[];
+let juegos=[];
+let torneos=[];
 
-const SUPABASE_KEY =
-  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const $=id=>document.getElementById(id);
 
-const db =
-  supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_KEY
-  );
-
-
-const $ = id =>
-  document.getElementById(id);
-
-
-/* =====================================================
-   UTILIDADES
-===================================================== */
-
-function esc(value){
-
-  return String(value ?? "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-
+function escapeHtml(v){
+ return String(v??"")
+  .replaceAll("&","&amp;")
+  .replaceAll("<","&lt;")
+  .replaceAll(">","&gt;")
+  .replaceAll('"',"&quot;")
+  .replaceAll("'","&#039;");
 }
 
-
-function money(value){
-
-  return Number(value || 0)
-    .toLocaleString(
-      "es-AR",
-      {
-        style:"currency",
-        currency:"ARS",
-        maximumFractionDigits:0
-      }
-    );
-
+function safeUrl(v){
+ try{
+  const u=new URL(String(v||""),location.href);
+  return ["http:","https:"].includes(u.protocol)?u.href:"";
+ }catch{
+  return "";
+ }
 }
 
-
-function showMessage(id,text,type=""){
-
-  const el=$(id);
-
-  if(!el)return;
-
-  el.textContent=text;
-
-  el.classList.remove("hidden");
-
-  el.classList.toggle(
-    "success",
-    type==="success"
-  );
-
-  el.classList.toggle(
-    "error",
-    type==="error"
-  );
-
+function money(v){
+ return "$"+Number(v||0).toLocaleString("es-AR");
 }
 
-
-function hideMessage(id){
-
-  const el=$(id);
-
-  if(!el)return;
-
-  el.textContent="";
-
-  el.classList.add("hidden");
-
+function toast(text){
+ const el=$("toast");
+ el.textContent=text;
+ el.classList.add("show");
+ clearTimeout(window.toastTimer);
+ window.toastTimer=setTimeout(
+  ()=>el.classList.remove("show"),3000
+ );
 }
 
-
-function setConnection(text,ok=false){
-
-  const el=$("connection");
-
-  if(!el)return;
-
-  el.textContent=text;
-
-  el.style.color =
-    ok
-      ? "var(--green)"
-      : "var(--sky)";
-
+function status(id,text,ok=false){
+ const el=$(id);
+ if(!el)return;
+ el.textContent=text;
+ el.style.color=ok?"#42e695":"#ff647c";
 }
 
+function showAdmin(){
+ $("loginSection").classList.add("hidden");
+ $("adminSection").classList.remove("hidden");
+ $("logoutBtn").classList.remove("hidden");
+}
 
-/* =====================================================
-   NAVEGACIÓN
-===================================================== */
+function showLogin(){
+ $("loginSection").classList.remove("hidden");
+ $("adminSection").classList.add("hidden");
+ $("logoutBtn").classList.add("hidden");
+}
 
-document
-  .querySelectorAll(".tab")
-  .forEach(button=>{
+document.addEventListener("DOMContentLoaded",async()=>{
+ setupTabs();
+ setupForms();
 
-    button.addEventListener(
-      "click",
-      ()=>{
+ const {data,error}=await db.auth.getSession();
 
-        document
-          .querySelectorAll(".tab")
-          .forEach(x =>
-            x.classList.remove("active")
-          );
+ if(error){
+  console.error(error);
+  return;
+ }
 
-        document
-          .querySelectorAll(".view")
-          .forEach(x =>
-            x.classList.remove("active")
-          );
+ session=data.session;
 
-        button.classList.add("active");
+ if(session){
+  await verifyAdmin();
+ }else{
+  showLogin();
+ }
+});
 
-        const view =
-          $(button.dataset.view);
+db.auth.onAuthStateChange(async(_event,newSession)=>{
+ session=newSession;
 
-        if(view){
-          view.classList.add("active");
-        }
+ if(newSession){
+  await verifyAdmin();
+ }else{
+  showLogin();
+ }
+});
 
-      }
-    );
-
-  });
-
-
-/* =====================================================
-   AUTH
-===================================================== */
+/* =========================
+   LOGIN / ADMIN
+========================= */
 
 async function verifyAdmin(){
+ if(!session?.user){
+  showLogin();
+  return;
+ }
 
-  const sessionResult =
-    await db.auth.getSession();
+ const {data,error}=await db.rpc("is_admin_or_staff");
 
-  if(sessionResult.error){
-    console.error(sessionResult.error);
-    return false;
-  }
+ if(error){
+  console.error("Verificación admin:",error);
+  showLogin();
 
-  const session =
-    sessionResult.data?.session;
+  status(
+   "loginStatus",
+   "No se pudo verificar el acceso administrativo."
+  );
 
-  if(!session){
-    return false;
-  }
+  await db.auth.signOut();
+  return;
+ }
 
-  const roleResult =
-    await db.rpc(
-      "is_admin_or_staff"
-    );
+ if(data!==true){
+  showLogin();
 
-  if(roleResult.error){
+  status(
+   "loginStatus",
+   "Este usuario no tiene permisos de administrador."
+  );
 
-    console.error(
-      "Error verificando permisos:",
-      roleResult.error
-    );
+  await db.auth.signOut();
+  return;
+ }
 
-    return false;
-  }
-
-  return roleResult.data === true;
-
+ showAdmin();
+ await cargarPanel();
 }
 
+$("loginForm").addEventListener("submit",async e=>{
+ e.preventDefault();
 
-async function enterAdmin(){
+ const btn=$("loginBtn");
+ btn.disabled=true;
+ btn.textContent="⏳ Ingresando...";
 
-  setConnection(
-    "VERIFICANDO..."
+ status("loginStatus","");
+
+ try{
+  const email=$("loginEmail").value.trim();
+  const password=$("loginPassword").value;
+
+  const {data,error}=await db.auth.signInWithPassword({
+   email,
+   password
+  });
+
+  if(error)throw error;
+
+  session=data.session;
+
+  const {data:isAdmin,error:adminError}=await db.rpc(
+   "is_admin_or_staff"
   );
 
-  const allowed =
-    await verifyAdmin();
+  if(adminError)throw adminError;
 
-  if(!allowed){
-
-    $("loginScreen")
-      .classList
-      .remove("hidden");
-
-    $("adminApp")
-      .classList
-      .add("hidden");
-
-    showMessage(
-      "loginMessage",
-      "❌ Esta cuenta no tiene permisos de administrador o staff.",
-      "error"
-    );
-
-    setConnection(
-      "SIN ACCESO"
-    );
-
-    return false;
-
+  if(isAdmin!==true){
+   await db.auth.signOut();
+   throw new Error("El usuario no tiene permisos administrativos.");
   }
 
-  $("loginScreen")
-    .classList
-    .add("hidden");
+  status("loginStatus","Ingreso correcto.",true);
+  showAdmin();
+  await cargarPanel();
 
-  $("adminApp")
-    .classList
-    .remove("hidden");
+ }catch(error){
+  console.error(error);
 
-  setConnection(
-    "CONECTADO",
-    true
+  status(
+   "loginStatus",
+   error?.message||"Correo o contraseña incorrectos."
   );
 
-  await refreshAll();
+ }finally{
+  btn.disabled=false;
+  btn.textContent="🔑 Ingresar";
+ }
+});
 
-  return true;
+$("logoutBtn").addEventListener("click",async()=>{
+ await db.auth.signOut();
+ showLogin();
+ $("loginPassword").value="";
+});
 
+/* =========================
+   TABS
+========================= */
+
+function setupTabs(){
+ document.querySelectorAll(".tab").forEach(tab=>{
+  tab.addEventListener("click",()=>{
+   document.querySelectorAll(".tab")
+    .forEach(x=>x.classList.remove("active"));
+
+   document.querySelectorAll(".panel")
+    .forEach(x=>x.classList.remove("active"));
+
+   tab.classList.add("active");
+
+   $(tab.dataset.panel)?.classList.add("active");
+  });
+ });
 }
 
+/* =========================
+   PANEL
+========================= */
 
-$("loginForm")
-  .addEventListener(
-    "submit",
-    async event=>{
+async function cargarPanel(){
+ await Promise.allSettled([
+  loadReservas(),
+  loadPedidos(),
+  loadProductos(),
+  loadPromos(),
+  loadPremios(),
+  loadGaleria(),
+  loadConfig(),
+  loadJuegos()
+ ]);
 
-      event.preventDefault();
+ actualizarEstadisticas();
+ setupRealtime();
+}
 
-      hideMessage("loginMessage");
+function actualizarEstadisticas(){
+ $("statReservas").textContent=reservas.length;
+ $("statPedidos").textContent=pedidos.length;
+ $("statProductos").textContent=productos.length;
 
-      const email =
-        $("loginEmail")
-          .value
-          .trim();
+ const avisos=
+  reservas.filter(x=>!x.notificacion_vista).length+
+  pedidos.filter(x=>!x.notificacion_vista).length;
 
-      const password =
-        $("loginPassword")
-          .value;
+ $("statAvisos").textContent=avisos;
+}
 
-      const button =
-        $("loginButton");
-
-      button.disabled=true;
-      button.textContent="Ingresando...";
-
-      try{
-
-        const result =
-          await db.auth.signInWithPassword({
-            email,
-            password
-          });
-
-        if(result.error){
-          throw result.error;
-        }
-
-        const ok =
-          await enterAdmin();
-
-        if(!ok){
-          await db.auth.signOut();
-        }
-
-      }catch(error){
-
-        console.error(error);
-
-        showMessage(
-          "loginMessage",
-          "❌ " +
-          (
-            error?.message ||
-            "No se pudo iniciar sesión."
-          ),
-          "error"
-        );
-
-      }finally{
-
-        button.disabled=false;
-        button.textContent=
-          "Iniciar sesión";
-
-      }
-
-    }
-  );
-
-
-$("logout")
-  .addEventListener(
-    "click",
-    async()=>{
-
-      await db.auth.signOut();
-
-      $("adminApp")
-        .classList
-        .add("hidden");
-
-      $("loginScreen")
-        .classList
-        .remove("hidden");
-
-      $("loginPassword")
-        .value="";
-
-      setConnection(
-        "SIN SESIÓN"
-      );
-
-    }
-  );
-
-
-/* =====================================================
+/* =========================
    RESERVAS
-===================================================== */
+========================= */
 
 async function loadReservas(){
+ const box=$("reservasLista");
 
-  const result =
-    await db
-      .from("reservas")
-      .select("*")
-      .order(
-        "fecha",
-        {ascending:true}
-      )
-      .order(
-        "hora",
-        {ascending:true}
-      );
+ const {data,error}=await db
+  .from("reservas")
+  .select("*")
+  .order("created_at",{ascending:false});
 
-  if(result.error){
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudieron cargar las reservas.</div>';
+  return;
+ }
 
-    console.error(result.error);
+ reservas=data||[];
+ actualizarEstadisticas();
 
-    $("reservasTable").innerHTML=`
-      <tr>
-        <td colspan="11">
-          <div class="notice error">
-            ❌ ${esc(result.error.message)}
-          </div>
-        </td>
-      </tr>
-    `;
+ if(!reservas.length){
+  box.innerHTML='<div class="item">No hay reservas.</div>';
+  return;
+ }
 
-    return;
+ box.innerHTML=reservas.map(r=>{
+  const unread=!r.notificacion_vista;
+  const mesa=r.mesa_pool
+   ?` · 🎱 Mesa ${r.mesa_pool}`
+   :"";
 
-  }
+  return `
+   <div class="item ${unread?"unread":""}">
+    <div class="item-head">
+     <div>
+      <h3>${escapeHtml(r.nombre)}</h3>
+      <span class="badge ${unread?"new":""}">
+       ${unread?"NUEVA":"Vista"}
+      </span>
+     </div>
 
-  const rows =
-    result.data || [];
+     <span class="badge">
+      ${escapeHtml(r.estado||"pendiente")}
+     </span>
+    </div>
 
-  const pending =
-    rows.filter(row=>{
+    <p>
+     📞 ${escapeHtml(r.telefono||"Sin teléfono")}<br>
+     📅 ${escapeHtml(r.fecha)} · ⏰ ${escapeHtml(r.hora)}<br>
+     📌 ${escapeHtml(r.servicio)}${mesa}<br>
+     👥 ${Number(r.cantidad_personas||1)} personas
+    </p>
 
-      const estado =
-        String(
-          row.estado || ""
-        ).toLowerCase();
+    ${
+     r.notas
+     ?`<p><strong>Notas:</strong> ${escapeHtml(r.notas)}</p>`
+     :""
+    }
 
-      return ![
-        "confirmada",
-        "cancelada",
-        "rechazada",
-        "anulada"
-      ].includes(estado);
+    <div class="item-actions">
+     <button class="btn btn-green"
+      onclick="cambiarEstadoReserva(${r.id},'confirmada')">
+      ✅ Confirmar
+     </button>
 
-    });
+     <button class="btn btn-secondary"
+      onclick="cambiarEstadoReserva(${r.id},'pendiente')">
+      ⏳ Pendiente
+     </button>
 
-  $("metricReservas")
-    .textContent =
-    pending.length;
+     <button class="btn btn-danger"
+      onclick="cambiarEstadoReserva(${r.id},'cancelada')">
+      ❌ Cancelar
+     </button>
 
-  $("reservasTable").innerHTML =
-    rows.map(row=>{
+     ${
+      unread
+      ?`<button class="btn btn-secondary"
+        onclick="marcarReservaVista(${r.id})">
+        👁️ Marcar vista
+       </button>`
+      :""
+     }
 
-      const estado =
-        String(
-          row.estado ||
-          "pendiente"
-        );
-
-      return `
-        <tr>
-
-          <td>
-            ${esc(row.fecha || "")}
-          </td>
-
-          <td>
-            ${esc(row.hora || "")}
-          </td>
-
-          <td>
-            <b>
-              ${esc(row.nombre || "")}
-            </b>
-          </td>
-
-          <td>
-            ${esc(row.telefono || "")}
-          </td>
-
-          <td>
-            ${esc(row.servicio || "")}
-          </td>
-
-          <td>
-            ${esc(row.cantidad_personas ?? "")}
-          </td>
-
-          <td>
-            ${
-              row.mesa_pool
-                ? "Mesa " +
-                  esc(row.mesa_pool)
-                : "—"
-            }
-          </td>
-
-          <td>
-            ${esc(row.modalidad || "—")}
-          </td>
-
-          <td>
-            ${esc(row.notas || "")}
-          </td>
-
-          <td>
-
-            <select
-              class="input"
-              style="margin:0"
-              onchange="
-                updateReservaEstado(
-                  '${esc(row.id)}',
-                  this.value
-                )
-              "
-            >
-
-              ${
-                [
-                  "pendiente",
-                  "confirmada",
-                  "cancelada",
-                  "rechazada",
-                  "anulada"
-                ]
-                .map(status=>`
-                  <option
-                    value="${status}"
-                    ${
-                      estado===status
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    ${status}
-                  </option>
-                `)
-                .join("")
-              }
-
-            </select>
-
-          </td>
-
-          <td>
-
-            <button
-              class="btn red"
-              type="button"
-              onclick="
-                deleteReserva('${esc(row.id)}')
-              "
-            >
-              🗑️
-            </button>
-
-          </td>
-
-        </tr>
-      `;
-
-    }).join("")
-    ||
-    `
-      <tr>
-        <td colspan="11">
-          <div class="empty">
-            No hay reservas.
-          </div>
-        </td>
-      </tr>
-    `;
-
+     <button class="btn btn-danger"
+      onclick="eliminarReserva(${r.id})">
+      🗑️ Eliminar
+     </button>
+    </div>
+   </div>
+  `;
+ }).join("");
 }
 
+async function cambiarEstadoReserva(id,estado){
+ const {error}=await db
+  .from("reservas")
+  .update({estado})
+  .eq("id",id);
 
-async function updateReservaEstado(
-  id,
-  estado
-){
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
 
-  const result =
-    await db
-      .from("reservas")
-      .update({
-        estado,
-        notificacion_vista:true,
-        notificacion_vista_en:
-          new Date().toISOString()
-      })
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(
-      "No se pudo actualizar la reserva:\n" +
-      result.error.message
-    );
-
-    await loadReservas();
-
-    return;
-
-  }
-
-  await loadReservas();
-
+ toast("✅ Reserva actualizada.");
+ await loadReservas();
 }
 
+async function marcarReservaVista(id){
+ const {error}=await db
+  .from("reservas")
+  .update({
+   notificacion_vista:true,
+   notificacion_vista_en:new Date().toISOString()
+  })
+  .eq("id",id);
 
-async function deleteReserva(id){
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
 
-  if(
-    !confirm(
-      "¿Eliminar esta reserva?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("reservas")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await loadReservas();
-
+ await loadReservas();
 }
 
+async function eliminarReserva(id){
+ if(!confirm("¿Eliminar esta reserva?"))return;
 
-/* =====================================================
+ const {error}=await db
+  .from("reservas")
+  .delete()
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ toast("🗑️ Reserva eliminada.");
+ await loadReservas();
+}
+
+/* =========================
    PEDIDOS
-===================================================== */
+========================= */
 
 async function loadPedidos(){
-
-  const result =
-    await db
-      .from("pedidos")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    console.error(result.error);
-
-    $("pedidosTable").innerHTML=`
-      <tr>
-        <td colspan="9">
-          <div class="notice error">
-            ❌ ${esc(result.error.message)}
-          </div>
-        </td>
-      </tr>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  const pending =
-    rows.filter(row=>{
-
-      const estado =
-        String(
-          row.estado || ""
-        ).toLowerCase();
-
-      return ![
-        "entregado",
-        "cancelado",
-        "rechazado",
-        "anulado"
-      ].includes(estado);
-
-    });
-
-  $("metricPedidos")
-    .textContent =
-    pending.length;
-
-  $("pedidosTable").innerHTML =
-    rows.map(row=>{
-
-      const items =
-        Array.isArray(row.items)
-          ? row.items
-          : [];
-
-      const itemText =
-        items.map(item=>{
-
-          const name =
-            item.nombre ??
-            item.name ??
-            item.producto ??
-            "Producto";
-
-          const quantity =
-            item.cantidad ??
-            item.quantity ??
-            1;
-
-          return `
-            ${esc(quantity)}
-            ×
-            ${esc(name)}
-          `;
-
-        }).join("<br>");
-
-      const estado =
-        String(
-          row.estado ||
-          "pendiente"
-        );
-
-      return `
-        <tr>
-
-          <td>
-            ${esc(
-              row.created_at ||
-              ""
-            )}
-          </td>
-
-          <td>
-            <b>
-              ${esc(
-                row.nombre_cliente ||
-                ""
-              )}
-            </b>
-          </td>
-
-          <td>
-            ${esc(row.telefono || "")}
-          </td>
-
-          <td>
-            ${esc(
-              row.tipo_entrega ||
-              row.tipo ||
-              "—"
-            )}
-          </td>
-
-          <td>
-            ${esc(
-              row.direccion ||
-              "Retiro en el negocio"
-            )}
-          </td>
-
-          <td>
-            ${itemText || "—"}
-
-            ${
-              row.notas
-                ? `
-                  <div class="muted">
-                    📝 ${esc(row.notas)}
-                  </div>
-                `
-                : ""
-            }
-
-          </td>
-
-          <td>
-            <b>
-              ${money(row.total)}
-            </b>
-          </td>
-
-          <td>
-
-            <select
-              class="input"
-              style="margin:0"
-              onchange="
-                updatePedidoEstado(
-                  '${esc(row.id)}',
-                  this.value
-                )
-              "
-            >
-
-              ${
-                [
-                  "pendiente",
-                  "confirmado",
-                  "preparando",
-                  "listo",
-                  "entregado",
-                  "cancelado",
-                  "rechazado"
-                ]
-                .map(status=>`
-                  <option
-                    value="${status}"
-                    ${
-                      estado===status
-                        ? "selected"
-                        : ""
-                    }
-                  >
-                    ${status}
-                  </option>
-                `)
-                .join("")
-              }
-
-            </select>
-
-          </td>
-
-          <td>
-
-            <button
-              class="btn red"
-              type="button"
-              onclick="
-                deletePedido('${esc(row.id)}')
-              "
-            >
-              🗑️
-            </button>
-
-          </td>
-
-        </tr>
-      `;
-
-    }).join("")
-    ||
-    `
-      <tr>
-        <td colspan="9">
-          <div class="empty">
-            No hay pedidos.
-          </div>
-        </td>
-      </tr>
-    `;
-
-}
-
-
-async function updatePedidoEstado(
-  id,
-  estado
-){
-
-  const result =
-    await db
-      .from("pedidos")
-      .update({
-        estado,
-        notificacion_vista:true,
-        notificacion_vista_en:
-          new Date().toISOString()
-      })
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(
-      "No se pudo actualizar el pedido:\n" +
-      result.error.message
-    );
-
-    await loadPedidos();
-
-    return;
-
-  }
-
-  await loadPedidos();
-
-}
-
-
-async function deletePedido(id){
-
-  if(
-    !confirm(
-      "¿Eliminar este pedido?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("pedidos")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  await loadPedidos();
-
-}
-
-
-/* =====================================================
-   PRODUCTOS
-   Campos reales:
-   nombre
-   categoria
-   descripcion
-   precio
-   disponible
-   activo
-===================================================== */
-
-async function loadProducts(){
-
-  const result =
-    await db
-      .from("productos")
-      .select("*")
-      .order(
-        "categoria",
-        {ascending:true}
-      )
-      .order(
-        "nombre",
-        {ascending:true}
-      );
-
-  if(result.error){
-
-    $("productsList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("productsList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="row"
-             style="justify-content:space-between">
-
-          <div>
-
-            <div class="item-title">
-              ${esc(row.nombre || "")}
-            </div>
-
-            <div class="muted">
-              ${esc(row.categoria || "")}
-            </div>
-
-          </div>
-
-          <b>
-            ${money(row.precio)}
-          </b>
-
-        </div>
-
-        ${
-          row.descripcion
-            ? `
-              <p class="muted">
-                ${esc(row.descripcion)}
-              </p>
-            `
-            : ""
-        }
-
-        <div>
-
-          <span class="pill">
-            ${
-              row.activo === false
-                ? "Inactivo"
-                : "Activo"
-            }
-          </span>
-
-          <span class="pill">
-            ${
-              row.disponible === false
-                ? "No disponible"
-                : "Disponible"
-            }
-          </span>
-
-        </div>
-
-        <div class="row"
-             style="margin-top:9px">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="
-              toggleProduct(
-                '${esc(row.id)}',
-                'activo'
-              )
-            "
-          >
-            ${
-              row.activo === false
-                ? "Activar"
-                : "Desactivar"
-            }
-          </button>
-
-          <button
-            class="btn dark"
-            type="button"
-            onclick="
-              toggleProduct(
-                '${esc(row.id)}',
-                'disponible'
-              )
-            "
-          >
-            ${
-              row.disponible === false
-                ? "Marcar disponible"
-                : "Marcar no disponible"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            type="button"
-            onclick="
-              deleteProduct('${esc(row.id)}')
-            "
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay productos.
-      </div>
-    `;
-
-}
-
-
-async function createProduct(){
-
-  hideMessage(
-    "productoMessage"
-  );
-
-  const nombre =
-    $("productoNombre")
-      .value
-      .trim();
-
-  const categoria =
-    $("productoCategoria")
-      .value
-      .trim();
-
-  const descripcion =
-    $("productoDescripcion")
-      .value
-      .trim();
-
-  const precio =
-    Number(
-      $("productoPrecio").value
-    );
-
-  if(!nombre){
-
-    return showMessage(
-      "productoMessage",
-      "❌ Ingresá el nombre.",
-      "error"
-    );
-
-  }
-
-  if(
-    !Number.isFinite(precio) ||
-    precio < 0
-  ){
-
-    return showMessage(
-      "productoMessage",
-      "❌ Ingresá un precio válido.",
-      "error"
-    );
-
-  }
-
-  const result =
-    await db
-      .from("productos")
-      .insert({
-        nombre,
-        categoria,
-        descripcion,
-        precio,
-        disponible:true,
-        activo:true
-      });
-
-  if(result.error){
-
-    return showMessage(
-      "productoMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("productoNombre").value="";
-  $("productoCategoria").value="";
-  $("productoDescripcion").value="";
-  $("productoPrecio").value="";
-
-  showMessage(
-    "productoMessage",
-    "✅ Producto guardado.",
-    "success"
-  );
-
-  await loadProducts();
-
-}
-
-
-async function toggleProduct(
-  id,
-  field
-){
-
-  const result =
-    await db
-      .from("productos")
-      .select(field)
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const current =
-    result.data?.[field];
-
-  const update={};
-
-  update[field] =
-    current === false;
-
-  const saved =
-    await db
-      .from("productos")
-      .update(update)
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadProducts();
-
-}
-
-
-async function deleteProduct(id){
-
-  if(
-    !confirm(
-      "¿Eliminar este producto?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("productos")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadProducts();
-
-}
-
-
-/* =====================================================
-   PROMOCIONES
-   Campo real: activa
-===================================================== */
-
-async function loadPromotions(){
-
-  const result =
-    await db
-      .from("promociones")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    $("promotionsList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("promotionsList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="item-title">
-          ${esc(row.titulo || "")}
-        </div>
-
-        <div class="muted">
-          ${esc(row.descripcion || "")}
-        </div>
-
-        ${
-          row.precio != null
-            ? `
-              <strong>
-                ${money(row.precio)}
-              </strong>
-            `
-            : ""
-        }
-
-        <div style="margin-top:7px">
-
-          <span class="pill">
-            ${
-              row.activa === false
-                ? "Inactiva"
-                : "Activa"
-            }
-          </span>
-
-        </div>
-
-        <div class="row"
-             style="margin-top:9px">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="
-              togglePromotion(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            ${
-              row.activa === false
-                ? "Activar"
-                : "Desactivar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            type="button"
-            onclick="
-              deletePromotion(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay promociones.
-      </div>
-    `;
-
-}
-
-
-async function createPromotion(){
-
-  hideMessage(
-    "promoMessage"
-  );
-
-  const titulo =
-    $("promoTitulo")
-      .value
-      .trim();
-
-  const descripcion =
-    $("promoDescripcion")
-      .value
-      .trim();
-
-  const priceText =
-    $("promoPrecio").value;
-
-  if(!titulo){
-
-    return showMessage(
-      "promoMessage",
-      "❌ Ingresá el título.",
-      "error"
-    );
-
-  }
-
-  const data={
-    titulo,
-    descripcion,
-    activa:true
-  };
-
-  if(priceText !== ""){
-    data.precio =
-      Number(priceText);
-  }
-
-  const result =
-    await db
-      .from("promociones")
-      .insert(data);
-
-  if(result.error){
-
-    return showMessage(
-      "promoMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("promoTitulo").value="";
-  $("promoDescripcion").value="";
-  $("promoPrecio").value="";
-
-  showMessage(
-    "promoMessage",
-    "✅ Promoción guardada.",
-    "success"
-  );
-
-  await loadPromotions();
-
-}
-
-
-async function togglePromotion(id){
-
-  const result =
-    await db
-      .from("promociones")
-      .select("activa")
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const saved =
-    await db
-      .from("promociones")
-      .update({
-        activa:
-          result.data.activa === false
-      })
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadPromotions();
-
-}
-
-
-async function deletePromotion(id){
-
-  if(
-    !confirm(
-      "¿Eliminar esta promoción?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("promociones")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadPromotions();
-
-}
-
-
-/* =====================================================
-   JUEGOS
-   Campos reales:
-   name
-   description
-   icon
-   points_reward
-   tokens_reward
-   active
-===================================================== */
-
-async function loadGames(){
-
-  const result =
-    await db
-      .from("games")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    $("gamesList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("gamesList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="item-title">
-          ${esc(row.icon || "🎮")}
-          ${esc(row.name || "")}
-        </div>
-
-        <div class="muted">
-          ${esc(row.description || "")}
-        </div>
-
-        <div style="margin-top:7px">
-
-          <span class="pill">
-            Puntos:
-            ${esc(row.points_reward ?? 0)}
-          </span>
-
-          <span class="pill">
-            Fichas:
-            ${esc(row.tokens_reward ?? 0)}
-          </span>
-
-          <span class="pill">
-            ${
-              row.active === false
-                ? "Inactivo"
-                : "Activo"
-            }
-          </span>
-
-        </div>
-
-        <div style="margin-top:9px">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="
-              toggleGame('${esc(row.id)}')
-            "
-          >
-            ${
-              row.active === false
-                ? "Activar"
-                : "Desactivar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            type="button"
-            onclick="
-              deleteGame('${esc(row.id)}')
-            "
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay juegos.
-      </div>
-    `;
-
-}
-
-
-async function createGame(){
-
-  hideMessage("gameMessage");
-
-  const name =
-    $("gameName")
-      .value
-      .trim();
-
-  const description =
-    $("gameDescription")
-      .value
-      .trim();
-
-  const icon =
-    $("gameIcon")
-      .value
-      .trim() ||
-    "🎮";
-
-  const points =
-    Number(
-      $("gamePoints").value || 0
-    );
-
-  const tokens =
-    Number(
-      $("gameTokens").value || 0
-    );
-
-  if(!name){
-
-    return showMessage(
-      "gameMessage",
-      "❌ Ingresá el nombre.",
-      "error"
-    );
-
-  }
-
-  const result =
-    await db
-      .from("games")
-      .insert({
-        name,
-        description,
-        icon,
-        points_reward:points,
-        tokens_reward:tokens,
-        active:true
-      });
-
-  if(result.error){
-
-    return showMessage(
-      "gameMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("gameName").value="";
-  $("gameDescription").value="";
-
-  showMessage(
-    "gameMessage",
-    "✅ Juego guardado.",
-    "success"
-  );
-
-  await loadGames();
-
-}
-
-
-async function toggleGame(id){
-
-  const result =
-    await db
-      .from("games")
-      .select("active")
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const saved =
-    await db
-      .from("games")
-      .update({
-        active:
-          result.data.active === false
-      })
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadGames();
-
-}
-
-
-async function deleteGame(id){
-
-  if(
-    !confirm(
-      "¿Eliminar este juego?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("games")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadGames();
-
-}
-
-
-/* =====================================================
-   TRIVIA
-   Campos reales:
-   question
-   options
-   correct_index
-   active
-===================================================== */
-
-async function loadTrivia(){
-
-  const result =
-    await db
-      .from("trivia_questions")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    $("triviaList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("triviaList").innerHTML =
-    rows.map(row=>{
-
-      const options =
-        Array.isArray(row.options)
-          ? row.options
-          : [];
-
-      return `
-        <div class="item">
-
-          <div class="item-title">
-            ${esc(row.question || "")}
-          </div>
-
-          <div
-            class="muted"
-            style="margin-top:6px"
-          >
-            ${
-              options.map(
-                (option,index)=>`
-                  ${
-                    Number(
-                      row.correct_index
-                    )===index
-                      ? "✅ "
-                      : ""
-                  }
-                  ${esc(option)}
-                `
-              ).join("<br>")
-            }
-          </div>
-
-          <div
-            class="row"
-            style="margin-top:9px"
-          >
-
-            <span class="pill">
-              ${
-                row.active === false
-                  ? "Inactiva"
-                  : "Activa"
-              }
-            </span>
-
-            <button
-              class="btn gold"
-              type="button"
-              onclick="
-                toggleTrivia(
-                  '${esc(row.id)}'
-                )
-              "
-            >
-              ${
-                row.active === false
-                  ? "Activar"
-                  : "Desactivar"
-              }
-            </button>
-
-            <button
-              class="btn red"
-              type="button"
-              onclick="
-                deleteTrivia(
-                  '${esc(row.id)}'
-                )
-              "
-            >
-              🗑️ Eliminar
-            </button>
-
-          </div>
-
-        </div>
-      `;
-
-    }).join("")
-    ||
-    `
-      <div class="empty">
-        No hay preguntas.
-      </div>
-    `;
-
-}
-
-
-async function createTriviaQuestion(){
-
-  hideMessage(
-    "triviaMessage"
-  );
-
-  const question =
-    $("triviaQuestion")
-      .value
-      .trim();
-
-  const options =
-    $("triviaOptions")
-      .value
-      .split("\n")
-      .map(x=>x.trim())
-      .filter(Boolean);
-
-  const correct_index =
-    Number(
-      $("triviaCorrect")
-        .value || 0
-    );
-
-  if(!question){
-
-    return showMessage(
-      "triviaMessage",
-      "❌ Escribí la pregunta.",
-      "error"
-    );
-
-  }
-
-  if(options.length < 2){
-
-    return showMessage(
-      "triviaMessage",
-      "❌ Necesitás al menos dos opciones.",
-      "error"
-    );
-
-  }
-
-  if(
-    correct_index < 0 ||
-    correct_index >= options.length
-  ){
-
-    return showMessage(
-      "triviaMessage",
-      "❌ El índice correcto no es válido.",
-      "error"
-    );
-
-  }
-
-  const result =
-    await db
-      .from("trivia_questions")
-      .insert({
-        question,
-        options,
-        correct_index,
-        active:true
-      });
-
-  if(result.error){
-
-    return showMessage(
-      "triviaMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("triviaQuestion").value="";
-  $("triviaOptions").value="";
-  $("triviaCorrect").value="0";
-
-  showMessage(
-    "triviaMessage",
-    "✅ Pregunta guardada.",
-    "success"
-  );
-
-  await loadTrivia();
-
-}
-
-
-async function toggleTrivia(id){
-
-  const result =
-    await db
-      .from("trivia_questions")
-      .select("active")
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const saved =
-    await db
-      .from("trivia_questions")
-      .update({
-        active:
-          result.data.active === false
-      })
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadTrivia();
-
-}
-
-
-async function deleteTrivia(id){
-
-  if(
-    !confirm(
-      "¿Eliminar esta pregunta?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("trivia_questions")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadTrivia();
-
-}
-
-
-/* =====================================================
-   TORNEOS
-   Campos reales:
-   name
-   game_type
-   starts_at
-   entry_tokens
-   max_players
-   status
-===================================================== */
-
-async function loadTournaments(){
-
-  const result =
-    await db
-      .from("tournaments")
-      .select("*")
-      .order(
-        "starts_at",
-        {ascending:true}
-      );
-
-  if(result.error){
-
-    $("tournamentsList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    $("metricTorneos")
-      .textContent="0";
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  const open =
-    rows.filter(row=>
-      String(
-        row.status || ""
-      ).toLowerCase()==="open"
-      ||
-      String(
-        row.status || ""
-      ).toLowerCase()==="abierto"
-    );
-
-  $("metricTorneos")
-    .textContent =
-    open.length;
-
-  $("tournamentsList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="item-title">
-          🏆 ${esc(row.name || "")}
-        </div>
-
-        <div class="muted">
-          Juego:
-          ${esc(row.game_type || "—")}
-        </div>
-
-        <div class="muted">
-          Inicio:
-          ${esc(row.starts_at || "—")}
-        </div>
-
-        <div style="margin-top:7px">
-
-          <span class="pill">
-            Inscripción:
-            ${esc(row.entry_tokens ?? 0)}
-            fichas
-          </span>
-
-          <span class="pill">
-            Máximo:
-            ${esc(row.max_players ?? "—")}
-          </span>
-
-          <span class="pill">
-            Estado:
-            ${esc(row.status || "—")}
-          </span>
-
-        </div>
-
-        <div style="margin-top:9px">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="
-              toggleTournament(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            Cambiar estado
-          </button>
-
-          <button
-            class="btn red"
-            type="button"
-            onclick="
-              deleteTournament(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay torneos.
-      </div>
-    `;
-
-}
-
-
-async function createTournament(){
-
-  hideMessage(
-    "tournamentMessage"
-  );
-
-  const name =
-    $("tournamentName")
-      .value
-      .trim();
-
-  const game_type =
-    $("tournamentGameType")
-      .value
-      .trim();
-
-  const startsValue =
-    $("tournamentStarts")
-      .value;
-
-  const entry_tokens =
-    Number(
-      $("tournamentEntry")
-        .value || 0
-    );
-
-  const max_players =
-    Number(
-      $("tournamentMaxPlayers")
-        .value || 30
-    );
-
-  if(!name){
-
-    return showMessage(
-      "tournamentMessage",
-      "❌ Ingresá el nombre.",
-      "error"
-    );
-
-  }
-
-  const starts_at =
-    startsValue
-      ? new Date(
-          startsValue
-        ).toISOString()
-      : null;
-
-  const result =
-    await db
-      .from("tournaments")
-      .insert({
-        name,
-        game_type,
-        starts_at,
-        entry_tokens,
-        max_players,
-        status:"open"
-      });
-
-  if(result.error){
-
-    return showMessage(
-      "tournamentMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("tournamentName").value="";
-  $("tournamentGameType").value="";
-  $("tournamentStarts").value="";
-  $("tournamentEntry").value="0";
-  $("tournamentMaxPlayers").value="30";
-
-  showMessage(
-    "tournamentMessage",
-    "✅ Torneo guardado.",
-    "success"
-  );
-
-  await loadTournaments();
-
-}
-
-
-async function toggleTournament(id){
-
-  const result =
-    await db
-      .from("tournaments")
-      .select("status")
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const current =
-    String(
-      result.data.status || ""
-    ).toLowerCase();
-
-  const next =
-    (
-      current === "open" ||
-      current === "abierto"
-    )
-      ? "closed"
-      : "open";
-
-  const saved =
-    await db
-      .from("tournaments")
-      .update({
-        status:next
-      })
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadTournaments();
-
-}
-
-
-async function deleteTournament(id){
-
-  if(
-    !confirm(
-      "¿Eliminar este torneo?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("tournaments")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadTournaments();
-
-}
-
-
-/* =====================================================
-   DUELOS
-   Campos reales verificados
-===================================================== */
-
-async function loadDuels(){
-
-  const result =
-    await db
-      .from("duel_matches")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      )
-      .limit(50);
-
-  if(result.error){
-
-    $("duelsList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("duelsList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="item-title">
-          ⚔️ Duelo
-        </div>
-
-        <div class="muted">
-          Estado:
-          ${esc(row.status || "—")}
-        </div>
-
-        <div class="muted">
-          Jugador 1:
-          ${esc(row.player1_id || "—")}
-        </div>
-
-        <div class="muted">
-          Jugador 2:
-          ${esc(row.player2_id || "—")}
-        </div>
-
-        <div style="margin-top:7px">
-
-          <span class="pill">
-            ${esc(row.player1_score ?? 0)}
-            —
-            ${esc(row.player2_score ?? 0)}
-          </span>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay duelos.
-      </div>
-    `;
-
-}
-
-
-/* =====================================================
-   CANJES
-   Campos reales:
-   name
-   description
-   token_cost
-   active
-   stock
-===================================================== */
-
-async function loadPrizes(){
-
-  const result =
-    await db
-      .from("prizes")
-      .select("*")
-      .order(
-        "created_at",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    $("prizesList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("prizesList").innerHTML =
-    rows.map(row=>`
-
-      <div class="item">
-
-        <div class="item-title">
-          🎁 ${esc(row.name || "")}
-        </div>
-
-        <div class="muted">
-          ${esc(row.description || "")}
-        </div>
-
-        <div style="margin-top:7px">
-
-          <span class="pill">
-            ${esc(
-              row.token_cost ??
-              row.cost_tokens ??
-              0
-            )}
-            fichas
-          </span>
-
-          <span class="pill">
-            Stock:
-            ${esc(row.stock ?? 0)}
-          </span>
-
-          <span class="pill">
-            ${
-              row.active === false
-                ? "Inactivo"
-                : "Activo"
-            }
-          </span>
-
-        </div>
-
-        <div style="margin-top:9px">
-
-          <button
-            class="btn gold"
-            type="button"
-            onclick="
-              togglePrize(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            ${
-              row.active === false
-                ? "Activar"
-                : "Desactivar"
-            }
-          </button>
-
-          <button
-            class="btn red"
-            type="button"
-            onclick="
-              deletePrize(
-                '${esc(row.id)}'
-              )
-            "
-          >
-            🗑️ Eliminar
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay canjes.
-      </div>
-    `;
-
-}
-
-
-async function createPrize(){
-
-  hideMessage(
-    "prizeMessage"
-  );
-
-  const name =
-    $("prizeName")
-      .value
-      .trim();
-
-  const description =
-    $("prizeDescription")
-      .value
-      .trim();
-
-  const token_cost =
-    Number(
-      $("prizeTokens")
-        .value || 0
-    );
-
-  const stock =
-    Number(
-      $("prizeStock")
-        .value || 0
-    );
-
-  if(!name){
-
-    return showMessage(
-      "prizeMessage",
-      "❌ Ingresá el nombre.",
-      "error"
-    );
-
-  }
-
-  const result =
-    await db
-      .from("prizes")
-      .insert({
-        name,
-        description,
-        token_cost,
-        active:true,
-        stock
-      });
-
-  if(result.error){
-
-    return showMessage(
-      "prizeMessage",
-      "❌ " +
-      result.error.message,
-      "error"
-    );
-
-  }
-
-  $("prizeName").value="";
-  $("prizeDescription").value="";
-  $("prizeTokens").value="10";
-  $("prizeStock").value="1";
-
-  showMessage(
-    "prizeMessage",
-    "✅ Canje guardado.",
-    "success"
-  );
-
-  await loadPrizes();
-
-}
-
-
-async function togglePrize(id){
-
-  const result =
-    await db
-      .from("prizes")
-      .select("active")
-      .eq("id",id)
-      .single();
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  const saved =
-    await db
-      .from("prizes")
-      .update({
-        active:
-          result.data.active === false
-      })
-      .eq("id",id);
-
-  if(saved.error){
-
-    alert(saved.error.message);
-
-    return;
-
-  }
-
-  await loadPrizes();
-
-}
-
-
-async function deletePrize(id){
-
-  if(
-    !confirm(
-      "¿Eliminar este canje?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("prizes")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(result.error.message);
-
-    return;
-
-  }
-
-  await loadPrizes();
-
-}
-
-
-/* =====================================================
-   FOTOS
-   Bucket real: Galeria
-   Tabla real: galeria_fotos
-===================================================== */
-
-async function loadGallery(){
-
-  const result =
-    await db
-      .from("galeria_fotos")
-      .select("*")
-      .order(
-        "creado_en",
-        {ascending:false}
-      );
-
-  if(result.error){
-
-    $("galleryList").innerHTML=`
-      <div class="notice error">
-        ❌ ${esc(result.error.message)}
-      </div>
-    `;
-
-    return;
-
-  }
-
-  const rows =
-    result.data || [];
-
-  $("metricFotos")
-    .textContent =
-    rows.length;
-
-  $("galleryList").innerHTML =
-    rows.map(row=>{
-
-      let url =
-        row.url || "";
-
-      if(
-        !url &&
-        row.ruta
-      ){
-
-        url =
-          db.storage
-            .from("Galeria")
-            .getPublicUrl(
-              row.ruta
-            )
-            .data
-            .publicUrl;
-
-      }
-
-      return `
-        <figure>
-
-          ${
-            url
-              ? `
-                <img
-                  src="${esc(url)}"
-                  alt="${esc(
-                    row.titulo ||
-                    "Pool & Beach"
-                  )}"
-                  loading="lazy"
-                >
-              `
-              : `
-                <div class="empty">
-                  📸 Sin imagen
-                </div>
-              `
-          }
-
-          <figcaption
-            style="margin-top:5px"
-          >
-
-            ${esc(
-              row.titulo ||
-              "Foto"
-            )}
-
-            <button
-              class="btn red"
-              type="button"
-              style="float:right;padding:5px 8px"
-              onclick="
-                deletePhoto(
-                  '${esc(row.id)}',
-                  '${esc(row.ruta || "")}'
-                )
-              "
-            >
-              🗑️
-            </button>
-
-          </figcaption>
-
-        </figure>
-      `;
-
-    }).join("")
-    ||
-    `
-      <div class="empty">
-        No hay fotos.
-      </div>
-    `;
-
-}
-
-
-async function uploadPhoto(){
-
-  hideMessage(
-    "photoMessage"
-  );
-
-  const file =
-    $("photoFile")
-      .files[0];
-
-  if(!file){
-
-    return showMessage(
-      "photoMessage",
-      "❌ Elegí una imagen.",
-      "error"
-    );
-
-  }
-
-  if(
-    !file.type.startsWith("image/")
-  ){
-
-    return showMessage(
-      "photoMessage",
-      "❌ El archivo debe ser una imagen.",
-      "error"
-    );
-
-  }
-
-  if(
-    file.size >
-    8 * 1024 * 1024
-  ){
-
-    return showMessage(
-      "photoMessage",
-      "❌ La imagen supera los 8 MB.",
-      "error"
-    );
-
-  }
-
-  const session =
-    await db.auth.getSession();
-
-  if(
-    session.error ||
-    !session.data?.session
-  ){
-
-    return showMessage(
-      "photoMessage",
-      "❌ La sesión expiró. Volvé a iniciar sesión.",
-      "error"
-    );
-
-  }
-
-  const title =
-    $("photoTitle")
-      .value
-      .trim() ||
-    file.name;
-
-  const extension =
-    (
-      file.name
-        .split(".")
-        .pop() ||
-      "jpg"
-    )
-    .toLowerCase()
-    .replace(
-      /[^a-z0-9]/g,
-      ""
-    ) ||
-    "jpg";
-
-  const unique =
-    (
-      crypto.randomUUID
-        ? crypto.randomUUID()
-        : Date.now() +
-          "-" +
-          Math.random()
-            .toString(36)
-            .slice(2)
-    );
-
-  const path =
-    `public/${unique}.${extension}`;
-
-  showMessage(
-    "photoMessage",
-    "⏳ Subiendo imagen..."
-  );
-
-  try{
-
-    const upload =
-      await db
-        .storage
-        .from("Galeria")
-        .upload(
-          path,
-          file,
-          {
-            contentType:file.type,
-            cacheControl:"3600",
-            upsert:false
-          }
-        );
-
-    if(upload.error){
-      throw upload.error;
-    }
-
-    const publicUrl =
-      db
-        .storage
-        .from("Galeria")
-        .getPublicUrl(
-          path
-        )
-        .data
-        .publicUrl;
-
-    if(!publicUrl){
-      throw new Error(
-        "No se pudo obtener la URL pública."
-      );
-    }
-
-    const insert =
-      await db
-        .from("galeria_fotos")
-        .insert({
-          titulo:title,
-          categoria:"galeria",
-          ruta:path,
-          url:publicUrl
-        });
-
-    if(insert.error){
-      throw insert.error;
-    }
-
-    $("photoFile").value="";
-    $("photoTitle").value="";
-
-    showMessage(
-      "photoMessage",
-      "✅ Foto subida correctamente.",
-      "success"
-    );
-
-    await loadGallery();
-
-  }catch(error){
-
-    console.error(error);
-
-    try{
-
-      await db
-        .storage
-        .from("Galeria")
-        .remove([path]);
-
-    }catch(_){}
-
-    showMessage(
-      "photoMessage",
-      "❌ No se pudo subir la foto: " +
-      (
-        error?.message ||
-        "Error desconocido"
-      ),
-      "error"
-    );
-
-  }
-
-}
-
-
-async function deletePhoto(
-  id,
-  path
-){
-
-  if(
-    !confirm(
-      "¿Eliminar esta foto?"
-    )
-  ){
-    return;
-  }
-
-  const result =
-    await db
-      .from("galeria_fotos")
-      .delete()
-      .eq("id",id);
-
-  if(result.error){
-
-    alert(
-      result.error.message
-    );
-
-    return;
-
-  }
-
-  if(path){
-
-    const storageResult =
-      await db
-        .storage
-        .from("Galeria")
-        .remove([path]);
-
-    if(storageResult.error){
-      console.warn(
-        "No se pudo eliminar el archivo:",
-        storageResult.error
-      );
-    }
-
-  }
-
-  await loadGallery();
-
-}
-
-
-/* =====================================================
-   ACTIVIDAD
-===================================================== */
-
-async function loadActivity(){
-
-  const [reservas,pedidos] =
-    await Promise.all([
-
-      db
-        .from("reservas")
-        .select(
-          "id,nombre,fecha,hora,estado,created_at,notificacion_vista"
-        )
-        .order(
-          "created_at",
-          {ascending:false}
-        )
-        .limit(5),
-
-      db
-        .from("pedidos")
-        .select(
-          "id,nombre_cliente,total,estado,created_at,notificacion_vista"
-        )
-        .order(
-          "created_at",
-          {ascending:false}
-        )
-        .limit(5)
-
-    ]);
-
-  const items=[];
-
-  if(!reservas.error){
-
-    reservas.data.forEach(row=>{
-
-      items.push({
-        time:
-          row.created_at ||
-          row.fecha ||
-          "",
-        html:`
-          📅 Nueva reserva:
-          <b>
-            ${esc(row.nombre || "")}
-          </b>
-          — ${esc(row.fecha || "")}
-          ${esc(row.hora || "")}
-          ${
-            row.notificacion_vista
-              ? ""
-              : " 🔔"
-          }
-        `
-      });
-
-    });
-
-  }
-
-  if(!pedidos.error){
-
-    pedidos.data.forEach(row=>{
-
-      items.push({
-        time:
-          row.created_at ||
-          "",
-        html:`
-          🛒 Pedido:
-          <b>
-            ${esc(
-              row.nombre_cliente ||
-              ""
-            )}
-          </b>
-          —
-          ${money(row.total)}
-          ${
-            row.notificacion_vista
-              ? ""
-              : " 🔔"
-          }
-        `
-      });
-
-    });
-
-  }
-
-  items.sort(
-    (a,b)=>
-      new Date(b.time) -
-      new Date(a.time)
-  );
-
-  const recent =
-    items.slice(0,10);
-
-  $("activity").innerHTML =
-    recent.map(item=>`
-      <div class="notice">
-        ${item.html}
-      </div>
-    `).join("")
-    ||
-    `
-      <div class="empty">
-        No hay actividad reciente.
-      </div>
-    `;
-
-}
-
-
-/* =====================================================
-   ACTUALIZACIÓN GENERAL
-===================================================== */
-
-async function refreshAll(){
-
-  $("activity").innerHTML=`
-    <div class="notice">
-      ⏳ Actualizando...
+ const box=$("pedidosLista");
+
+ const {data,error}=await db
+  .from("pedidos")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudieron cargar los pedidos.</div>';
+  return;
+ }
+
+ pedidos=data||[];
+ actualizarEstadisticas();
+
+ if(!pedidos.length){
+  box.innerHTML='<div class="item">No hay pedidos.</div>';
+  return;
+ }
+
+ box.innerHTML=pedidos.map(p=>{
+  const items=Array.isArray(p.items)?p.items:[];
+
+  return `
+   <div class="item ${!p.notificacion_vista?"unread":""}">
+    <div class="item-head">
+     <div>
+      <h3>${escapeHtml(p.nombre_cliente||"Cliente")}</h3>
+
+      <span class="badge ${!p.notificacion_vista?"new":""}">
+       ${!p.notificacion_vista?"NUEVO":"Vista"}
+      </span>
+     </div>
+
+     <span class="badge">
+      ${escapeHtml(p.estado||"pendiente")}
+     </span>
     </div>
+
+    <p>
+     📞 ${escapeHtml(p.telefono||"Sin teléfono")}<br>
+     🚚 ${escapeHtml(p.tipo_entrega||"retiro")}<br>
+     ${
+      p.direccion
+      ?`📍 ${escapeHtml(p.direccion)}<br>`
+      :""
+     }
+     💰 <strong class="price">${money(p.total)}</strong>
+    </p>
+
+    <hr>
+
+    <strong>Productos:</strong>
+
+    ${
+     items.length
+     ?`<ul>
+       ${items.map(i=>`
+        <li>
+         ${escapeHtml(
+          i.nombre_producto||
+          i.nombre||
+          "Producto"
+         )}
+         × ${Number(i.cantidad||1)}
+         — ${money(
+          i.subtotal||
+          (Number(i.precio_unitario||0)*Number(i.cantidad||1))
+         )}
+        </li>
+       `).join("")}
+      </ul>`
+     :"<p class='muted'>Sin detalle.</p>"
+    }
+
+    ${
+     p.notas
+     ?`<p><strong>Notas:</strong> ${escapeHtml(p.notas)}</p>`
+     :""
+    }
+
+    <div class="item-actions">
+     <button class="btn btn-green"
+      onclick="cambiarEstadoPedido('${escapeHtml(p.id)}','confirmado')">
+      ✅ Confirmar
+     </button>
+
+     <button class="btn btn-secondary"
+      onclick="cambiarEstadoPedido('${escapeHtml(p.id)}','preparando')">
+      👨‍🍳 Preparando
+     </button>
+
+     <button class="btn btn-secondary"
+      onclick="cambiarEstadoPedido('${escapeHtml(p.id)}','listo')">
+      📦 Listo
+     </button>
+
+     <button class="btn btn-danger"
+      onclick="cambiarEstadoPedido('${escapeHtml(p.id)}','cancelado')">
+      ❌ Cancelar
+     </button>
+
+     ${
+      !p.notificacion_vista
+      ?`<button class="btn btn-secondary"
+        onclick="marcarPedidoVista('${escapeHtml(p.id)}')">
+        👁️ Marcar visto
+       </button>`
+      :""
+     }
+
+     <button class="btn btn-danger"
+      onclick="eliminarPedido('${escapeHtml(p.id)}')">
+      🗑️ Eliminar
+     </button>
+    </div>
+   </div>
   `;
-
-  const results =
-    await Promise.allSettled([
-
-      loadReservas(),
-      loadPedidos(),
-      loadProducts(),
-      loadPromotions(),
-      loadGames(),
-      loadTrivia(),
-      loadTournaments(),
-      loadDuels(),
-      loadPrizes(),
-      loadGallery(),
-      loadActivity()
-
-    ]);
-
-  const failed =
-    results.filter(
-      result =>
-        result.status ===
-        "rejected"
-    );
-
-  if(failed.length){
-
-    console.error(
-      "Errores de actualización:",
-      failed
-    );
-
-    $("activity").innerHTML=`
-      <div class="notice error">
-        ⚠️ Algunas secciones no pudieron actualizarse.
-        Revisá cada sección.
-      </div>
-    `;
-
-  }else{
-
-    await loadActivity();
-
-  }
-
-  setConnection(
-    "CONECTADO",
-    true
-  );
-
+ }).join("");
 }
 
+async function cambiarEstadoPedido(id,estado){
+ const {error}=await db
+  .from("pedidos")
+  .update({estado})
+  .eq("id",id);
 
-/* =====================================================
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ toast("✅ Pedido actualizado.");
+ await loadPedidos();
+}
+
+async function marcarPedidoVista(id){
+ const {error}=await db
+  .from("pedidos")
+  .update({
+   notificacion_vista:true,
+   notificacion_vista_en:new Date().toISOString()
+  })
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadPedidos();
+}
+
+async function eliminarPedido(id){
+ if(!confirm("¿Eliminar este pedido?"))return;
+
+ const {error}=await db
+  .from("pedidos")
+  .delete()
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ toast("🗑️ Pedido eliminado.");
+ await loadPedidos();
+}
+
+/* =========================
+   PRODUCTOS
+========================= */
+
+function setupForms(){
+
+ $("productoForm").addEventListener("submit",guardarProducto);
+ $("promoForm").addEventListener("submit",guardarPromo);
+ $("premioForm").addEventListener("submit",guardarPremio);
+ $("fotoForm").addEventListener("submit",subirFoto);
+ $("configForm").addEventListener("submit",guardarConfig);
+}
+
+async function loadProductos(){
+ const box=$("productosLista");
+
+ const {data,error}=await db
+  .from("productos")
+  .select("*")
+  .order("categoria")
+  .order("nombre");
+
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudieron cargar los productos.</div>';
+  return;
+ }
+
+ productos=data||[];
+ actualizarEstadisticas();
+
+ if(!productos.length){
+  box.innerHTML='<div class="item">No hay productos.</div>';
+  return;
+ }
+
+ box.innerHTML=productos.map(p=>`
+  <div class="item">
+   <div class="item-head">
+    <div>
+     <h3>${escapeHtml(p.nombre)}</h3>
+     <span class="badge">${escapeHtml(p.categoria)}</span>
+    </div>
+
+    <strong class="price">${money(p.precio)}</strong>
+   </div>
+
+   ${
+    p.descripcion
+    ?`<p>${escapeHtml(p.descripcion)}</p>`
+    :""
+   }
+
+   <p>
+    <span class="badge ${p.activo?"ok":"warn"}">
+     ${p.activo?"Visible":"Oculto"}
+    </span>
+
+    <span class="badge ${p.disponible?"ok":"warn"}">
+     ${p.disponible?"Disponible":"No disponible"}
+    </span>
+   </p>
+
+   <div class="item-actions">
+    <button class="btn btn-primary"
+     onclick="editarProducto('${escapeHtml(p.id)}')">
+     ✏️ Editar
+    </button>
+
+    <button class="btn btn-secondary"
+     onclick="toggleProducto('${escapeHtml(p.id)}',${!p.activo})">
+     ${p.activo?"🙈 Ocultar":"👁️ Mostrar"}
+    </button>
+
+    <button class="btn btn-danger"
+     onclick="eliminarProducto('${escapeHtml(p.id)}')">
+     🗑️ Eliminar
+    </button>
+   </div>
+  </div>
+ `).join("");
+}
+
+async function guardarProducto(e){
+ e.preventDefault();
+
+ const id=$("productoId").value;
+
+ const payload={
+  nombre:$("productoNombre").value.trim(),
+  categoria:$("productoCategoria").value.trim(),
+  descripcion:$("productoDescripcion").value.trim()||null,
+  precio:Number($("productoPrecio").value||0),
+  image_url:$("productoImagen").value.trim()||null,
+  activo:$("productoActivo").checked,
+  disponible:$("productoDisponible").checked
+ };
+
+ status("productoStatus","⏳ Guardando...");
+
+ const result=id
+  ?await db.from("productos").update(payload).eq("id",id)
+  :await db.from("productos").insert(payload);
+
+ if(result.error){
+  status("productoStatus","❌ "+result.error.message);
+  return;
+ }
+
+ status("productoStatus","✅ Guardado correctamente.",true);
+ cancelarProducto();
+ await loadProductos();
+ toast("🍔 Producto guardado.");
+}
+
+function editarProducto(id){
+ const p=productos.find(x=>String(x.id)===String(id));
+ if(!p)return;
+
+ $("productoId").value=p.id;
+ $("productoNombre").value=p.nombre||"";
+ $("productoCategoria").value=p.categoria||"";
+ $("productoPrecio").value=p.precio??0;
+ $("productoDescripcion").value=p.descripcion||"";
+ $("productoImagen").value=p.image_url||"";
+ $("productoActivo").checked=!!p.activo;
+ $("productoDisponible").checked=!!p.disponible;
+
+ $("productoFormTitle").textContent="✏️ Editar producto";
+
+ window.scrollTo({
+  top:$("productosPanel").offsetTop-80,
+  behavior:"smooth"
+ });
+}
+
+function cancelarProducto(){
+ $("productoForm").reset();
+ $("productoId").value="";
+ $("productoActivo").checked=true;
+ $("productoDisponible").checked=true;
+ $("productoFormTitle").textContent="➕ Agregar producto";
+}
+
+async function toggleProducto(id,activo){
+ const {error}=await db
+  .from("productos")
+  .update({activo})
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadProductos();
+ toast("✅ Producto actualizado.");
+}
+
+async function eliminarProducto(id){
+ if(!confirm("¿Eliminar este producto?"))return;
+
+ const {error}=await db
+  .from("productos")
+  .delete()
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadProductos();
+ toast("🗑️ Producto eliminado.");
+}
+
+/* =========================
+   PROMOCIONES
+========================= */
+
+async function loadPromos(){
+ const box=$("promosLista");
+
+ const {data,error}=await db
+  .from("promociones")
+  .select("*")
+  .order("created_at",{ascending:false});
+
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudieron cargar las promociones.</div>';
+  return;
+ }
+
+ promos=data||[];
+
+ if(!promos.length){
+  box.innerHTML='<div class="item">No hay promociones.</div>';
+  return;
+ }
+
+ box.innerHTML=promos.map(p=>`
+  <div class="item">
+   <div class="item-head">
+    <h3>${escapeHtml(p.titulo)}</h3>
+    ${
+     p.precio!=null
+     ?`<strong class="price">${money(p.precio)}</strong>`
+     :""
+    }
+   </div>
+
+   <p>${escapeHtml(p.descripcion||"")}</p>
+
+   <span class="badge ${p.activa?"ok":"warn"}">
+    ${p.activa?"Activa":"Oculta"}
+   </span>
+
+   <div class="item-actions">
+    <button class="btn btn-primary"
+     onclick="editarPromo('${escapeHtml(p.id)}')">
+     ✏️ Editar
+    </button>
+
+    <button class="btn btn-secondary"
+     onclick="togglePromo('${escapeHtml(p.id)}',${!p.activa})">
+     ${p.activa?"🙈 Ocultar":"👁️ Mostrar"}
+    </button>
+
+    <button class="btn btn-danger"
+     onclick="eliminarPromo('${escapeHtml(p.id)}')">
+     🗑️ Eliminar
+    </button>
+   </div>
+  </div>
+ `).join("");
+}
+
+async function guardarPromo(e){
+ e.preventDefault();
+
+ const id=$("promoId").value;
+
+ const rawPrice=$("promoPrecio").value;
+
+ const payload={
+  titulo:$("promoTitulo").value.trim(),
+  descripcion:$("promoDescripcion").value.trim()||null,
+  precio:rawPrice===""?null:Number(rawPrice),
+  activa:$("promoActiva").checked,
+  image_url:$("promoImagen").value.trim()||null
+ };
+
+ status("promoStatus","⏳ Guardando...");
+
+ const result=id
+  ?await db.from("promociones").update(payload).eq("id",id)
+  :await db.from("promociones").insert(payload);
+
+ if(result.error){
+  status("promoStatus","❌ "+result.error.message);
+  return;
+ }
+
+ status("promoStatus","✅ Guardada correctamente.",true);
+ cancelarPromo();
+ await loadPromos();
+ toast("🔥 Promoción guardada.");
+}
+
+function editarPromo(id){
+ const p=promos.find(x=>String(x.id)===String(id));
+ if(!p)return;
+
+ $("promoId").value=p.id;
+ $("promoTitulo").value=p.titulo||"";
+ $("promoDescripcion").value=p.descripcion||"";
+ $("promoPrecio").value=p.precio??"";
+ $("promoImagen").value=p.image_url||"";
+ $("promoActiva").checked=!!p.activa;
+ $("promoFormTitle").textContent="✏️ Editar promoción";
+}
+
+function cancelarPromo(){
+ $("promoForm").reset();
+ $("promoId").value="";
+ $("promoActiva").checked=true;
+ $("promoFormTitle").textContent="➕ Nueva promoción";
+}
+
+async function togglePromo(id,activa){
+ const {error}=await db
+  .from("promociones")
+  .update({activa})
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadPromos();
+ toast("🔥 Promoción actualizada.");
+}
+
+async function eliminarPromo(id){
+ if(!confirm("¿Eliminar esta promoción?"))return;
+
+ const {error}=await db
+  .from("promociones")
+  .delete()
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadPromos();
+ toast("🗑️ Promoción eliminada.");
+}
+
+/* =========================
+   CANJES / PRIZES
+========================= */
+
+async function loadPremios(){
+ const box=$("premiosLista");
+
+ const {data,error}=await db
+  .from("prizes")
+  .select("*")
+  .order("token_cost",{ascending:true});
+
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudieron cargar los canjes.</div>';
+  return;
+ }
+
+ premios=data||[];
+
+ if(!premios.length){
+  box.innerHTML='<div class="item">No hay canjes.</div>';
+  return;
+ }
+
+ box.innerHTML=premios.map(p=>`
+  <div class="item">
+   <div class="item-head">
+    <h3>🎁 ${escapeHtml(p.name)}</h3>
+    <strong class="price">
+     🪙 ${Number(p.token_cost??0)}
+    </strong>
+   </div>
+
+   <p>${escapeHtml(p.description||"")}</p>
+
+   <span class="badge ${p.active?"ok":"warn"}">
+    ${p.active?"Activo":"Oculto"}
+   </span>
+
+   ${
+    p.stock!=null
+    ?`<span class="badge">Stock: ${Number(p.stock)}</span>`
+    :""
+   }
+
+   <div class="item-actions">
+    <button class="btn btn-primary"
+     onclick="editarPremio('${escapeHtml(p.id)}')">
+     ✏️ Editar
+    </button>
+
+    <button class="btn btn-secondary"
+     onclick="togglePremio('${escapeHtml(p.id)}',${!p.active})">
+     ${p.active?"🙈 Ocultar":"👁️ Mostrar"}
+    </button>
+
+    <button class="btn btn-danger"
+     onclick="eliminarPremio('${escapeHtml(p.id)}')">
+     🗑️ Eliminar
+    </button>
+   </div>
+  </div>
+ `).join("");
+}
+
+async function guardarPremio(e){
+ e.preventDefault();
+
+ const id=$("premioId").value;
+ const stockValue=$("premioStock").value;
+
+ const payload={
+  name:$("premioNombre").value.trim(),
+  description:$("premioDescripcion").value.trim()||null,
+  token_cost:Number($("premioTokens").value||0),
+  stock:stockValue===""?null:Number(stockValue),
+  points:Number($("premioPuntos").value||0),
+  image_url:$("premioImagen").value.trim()||null,
+  active:$("premioActivo").checked
+ };
+
+ status("premioStatus","⏳ Guardando...");
+
+ const result=id
+  ?await db.from("prizes").update(payload).eq("id",id)
+  :await db.from("prizes").insert(payload);
+
+ if(result.error){
+  status("premioStatus","❌ "+result.error.message);
+  return;
+ }
+
+ status("premioStatus","✅ Guardado correctamente.",true);
+ cancelarPremio();
+ await loadPremios();
+ toast("🎁 Canje guardado.");
+}
+
+function editarPremio(id){
+ const p=premios.find(x=>String(x.id)===String(id));
+ if(!p)return;
+
+ $("premioId").value=p.id;
+ $("premioNombre").value=p.name||"";
+ $("premioDescripcion").value=p.description||"";
+ $("premioTokens").value=p.token_cost??0;
+ $("premioStock").value=p.stock??"";
+ $("premioPuntos").value=p.points??0;
+ $("premioImagen").value=p.image_url||"";
+ $("premioActivo").checked=!!p.active;
+ $("premioFormTitle").textContent="✏️ Editar canje";
+}
+
+function cancelarPremio(){
+ $("premioForm").reset();
+ $("premioId").value="";
+ $("premioTokens").value="";
+ $("premioPuntos").value="0";
+ $("premioActivo").checked=true;
+ $("premioFormTitle").textContent="➕ Nuevo canje";
+}
+
+async function togglePremio(id,active){
+ const {error}=await db
+  .from("prizes")
+  .update({active})
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadPremios();
+ toast("🎁 Canje actualizado.");
+}
+
+async function eliminarPremio(id){
+ if(!confirm("¿Eliminar este canje?"))return;
+
+ const {error}=await db
+  .from("prizes")
+  .delete()
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadPremios();
+ toast("🗑️ Canje eliminado.");
+}
+
+/* =========================
+   GALERÍA / STORAGE
+========================= */
+
+async function subirFoto(e){
+ e.preventDefault();
+
+ const file=$("fotoArchivo").files[0];
+
+ if(!file){
+  status("fotoStatus","❌ Seleccioná una foto.");
+  return;
+ }
+
+ if(file.size>8*1024*1024){
+  status("fotoStatus","❌ La foto no puede superar 8 MB.");
+  return;
+ }
+
+ const btn=$("fotoBtn");
+ btn.disabled=true;
+ btn.textContent="⏳ Subiendo...";
+
+ status("fotoStatus","");
+
+ try{
+  const extension=(file.name.split(".").pop()||"jpg")
+   .toLowerCase()
+   .replace(/[^a-z0-9]/g,"");
+
+  const filename=
+   `fotos/${Date.now()}-${crypto.randomUUID()}.${extension}`;
+
+  const {error:uploadError}=await db.storage
+   .from(BUCKET)
+   .upload(filename,file,{
+    cacheControl:"3600",
+    upsert:false,
+    contentType:file.type
+   });
+
+  if(uploadError)throw uploadError;
+
+  const {data:urlData}=db.storage
+   .from(BUCKET)
+   .getPublicUrl(filename);
+
+  const publicUrl=urlData.publicUrl;
+
+  const {error:insertError}=await db
+   .from("galeria_fotos")
+   .insert({
+    titulo:$("fotoTitulo").value.trim(),
+    categoria:$("fotoCategoria").value.trim()||"general",
+    ruta:filename,
+    url:publicUrl
+   });
+
+  if(insertError){
+   await db.storage.from(BUCKET).remove([filename]);
+   throw insertError;
+  }
+
+  status("fotoStatus","✅ Foto subida correctamente.",true);
+
+  $("fotoForm").reset();
+
+  await loadGaleria();
+  toast("📸 Foto subida.");
+
+ }catch(error){
+  console.error(error);
+  status("fotoStatus","❌ "+(error?.message||"No se pudo subir la foto."));
+ }finally{
+  btn.disabled=false;
+  btn.textContent="📤 Subir foto";
+ }
+}
+
+async function loadGaleria(){
+ const box=$("galeriaLista");
+
+ const {data,error}=await db
+  .from("galeria_fotos")
+  .select("*")
+  .order("creado_en",{ascending:false});
+
+ if(error){
+  console.error(error);
+  box.innerHTML='<div class="item">No se pudo cargar la galería.</div>';
+  return;
+ }
+
+ fotos=data||[];
+
+ if(!fotos.length){
+  box.innerHTML='<div class="item">No hay fotos cargadas.</div>';
+  return;
+ }
+
+ box.innerHTML=fotos.map(f=>`
+  <div class="item">
+   ${
+    safeUrl(f.url)
+    ?`<img class="preview"
+      src="${escapeHtml(f.url)}"
+      alt="${escapeHtml(f.titulo)}"
+      loading="lazy">`
+    :""
+   }
+
+   <h3>${escapeHtml(f.titulo)}</h3>
+   <p class="muted">${escapeHtml(f.categoria)}</p>
+
+   <button class="btn btn-danger"
+    onclick="eliminarFoto('${escapeHtml(f.id)}','${escapeHtml(f.ruta)}')">
+    🗑️ Eliminar
+   </button>
+  </div>
+ `).join("");
+}
+
+async function eliminarFoto(id,ruta){
+ if(!confirm("¿Eliminar esta foto?"))return;
+
+ const {error:dbError}=await db
+  .from("galeria_fotos")
+  .delete()
+  .eq("id",id);
+
+ if(dbError){
+  toast("❌ "+dbError.message);
+  return;
+ }
+
+ if(ruta){
+  await db.storage.from(BUCKET).remove([ruta]);
+ }
+
+ await loadGaleria();
+ toast("🗑️ Foto eliminada.");
+}
+
+/* =========================
+   CONFIGURACIÓN
+========================= */
+
+async function loadConfig(){
+ const {data,error}=await db
+  .from("site_config")
+  .select("*")
+  .eq("id",1)
+  .maybeSingle();
+
+ if(error){
+  console.error(error);
+  status("configStatus","❌ "+error.message);
+  return;
+ }
+
+ if(!data)return;
+
+ $("configMapa").value=data.map_url||"";
+ $("configDelivery").value=data.delivery_fee??3000;
+}
+
+$("configForm").addEventListener("submit",async e=>{
+ e.preventDefault();
+
+ const payload={
+  map_url:$("configMapa").value.trim()||null,
+  delivery_fee:Number($("configDelivery").value||0),
+  updated_at:new Date().toISOString()
+ };
+
+ const {error}=await db
+  .from("site_config")
+  .update(payload)
+  .eq("id",1);
+
+ if(error){
+  status("configStatus","❌ "+error.message);
+  return;
+ }
+
+ status("configStatus","✅ Configuración guardada.",true);
+ toast("⚙️ Configuración actualizada.");
+});
+
+/* =========================
+   JUEGOS
+========================= */
+
+async function loadJuegos(){
+ const box=$("juegosLista");
+ const torneosBox=$("torneosLista");
+
+ const [gamesResult,tournamentsResult]=await Promise.all([
+  db.from("games").select("*").order("created_at",{ascending:true}),
+  db.from("tournaments").select("*").order("starts_at",{ascending:true})
+ ]);
+
+ if(gamesResult.error){
+  box.innerHTML='<div class="item">No se pudieron cargar los juegos.</div>';
+ }else{
+  juegos=gamesResult.data||[];
+
+  box.innerHTML=juegos.length
+   ?juegos.map(g=>`
+    <div class="item">
+     <div class="item-head">
+      <h3>${escapeHtml(g.icon||"🎮")} ${escapeHtml(g.name)}</h3>
+      <span class="badge ${g.active?"ok":"warn"}">
+       ${g.active?"Activo":"Oculto"}
+      </span>
+     </div>
+
+     <p>${escapeHtml(g.description||"")}</p>
+
+     <p>
+      ⭐ ${Number(g.points_reward||0)} puntos ·
+      🪙 ${Number(g.tokens_reward||0)} tokens
+     </p>
+
+     <button class="btn btn-secondary"
+      onclick="toggleJuego('${escapeHtml(g.id)}',${!g.active})">
+      ${g.active?"🙈 Ocultar":"👁️ Activar"}
+     </button>
+    </div>
+   `).join("")
+   :'<div class="item">No hay juegos.</div>';
+ }
+
+ if(tournamentsResult.error){
+  torneosBox.innerHTML='<div class="item">No se pudieron cargar los torneos.</div>';
+ }else{
+  torneos=tournamentsResult.data||[];
+
+  torneosBox.innerHTML=torneos.length
+   ?torneos.map(t=>`
+    <div class="item">
+     <h3>🏆 ${escapeHtml(t.name)}</h3>
+     <p>
+      ${escapeHtml(t.game_type||"Bola 8")} ·
+      Estado: <strong>${escapeHtml(t.status||"open")}</strong>
+     </p>
+
+     ${
+      t.starts_at
+      ?`<p>📅 ${new Date(t.starts_at).toLocaleString("es-AR")}</p>`
+      :""
+     }
+
+     <p>🪙 Entrada: ${Number(t.entry_tokens||0)} tokens</p>
+    </div>
+   `).join("")
+   :'<div class="item">No hay torneos.</div>';
+ }
+}
+
+async function toggleJuego(id,active){
+ const {error}=await db
+  .from("games")
+  .update({active})
+  .eq("id",id);
+
+ if(error){
+  toast("❌ "+error.message);
+  return;
+ }
+
+ await loadJuegos();
+ toast("🎮 Juego actualizado.");
+}
+
+/* =========================
    REALTIME
-===================================================== */
+========================= */
 
-function subscribeRealtime(){
+let realtimeStarted=false;
 
-  db
-    .channel(
-      "pool-beach-admin"
-    )
+function setupRealtime(){
+ if(realtimeStarted)return;
+ realtimeStarted=true;
 
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"reservas"
-      },
-      async()=>{
-        await loadReservas();
-        await loadActivity();
-      }
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"pedidos"
-      },
-      async()=>{
-        await loadPedidos();
-        await loadActivity();
-      }
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"productos"
-      },
-      loadProducts
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"promociones"
-      },
-      loadPromotions
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"games"
-      },
-      loadGames
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"trivia_questions"
-      },
-      loadTrivia
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"tournaments"
-      },
-      loadTournaments
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"prizes"
-      },
-      loadPrizes
-    )
-
-    .on(
-      "postgres_changes",
-      {
-        event:"*",
-        schema:"public",
-        table:"galeria_fotos"
-      },
-      loadGallery
-    )
-
-    .subscribe();
-
+ db.channel("admin-updates")
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"reservas"},
+   ()=>loadReservas()
+  )
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"pedidos"},
+   ()=>loadPedidos()
+  )
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"productos"},
+   ()=>loadProductos()
+  )
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"promociones"},
+   ()=>loadPromos()
+  )
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"prizes"},
+   ()=>loadPremios()
+  )
+  .on(
+   "postgres_changes",
+   {event:"*",schema:"public",table:"galeria_fotos"},
+   ()=>loadGaleria()
+  )
+  .subscribe();
 }
 
-
-/* =====================================================
-   INICIO
-===================================================== */
-
-async function init(){
-
-  try{
-
-    const sessionResult =
-      await db.auth.getSession();
-
-    if(
-      sessionResult.error
-    ){
-      throw sessionResult.error;
-    }
-
-    const session =
-      sessionResult.data?.session;
-
-    if(session){
-
-      await enterAdmin();
-
-    }else{
-
-      $("loginScreen")
-        .classList
-        .remove("hidden");
-
-      $("adminApp")
-        .classList
-        .add("hidden");
-
-      setConnection(
-        "SIN SESIÓN"
-      );
-
-    }
-
-  }catch(error){
-
-    console.error(error);
-
-    $("loginScreen")
-      .classList
-      .remove("hidden");
-
-    $("adminApp")
-      .classList
-      .add("hidden");
-
-    setConnection(
-      "ERROR"
-    );
-
-    showMessage(
-      "loginMessage",
-      "❌ No se pudo conectar con Supabase.",
-      "error"
-    );
-
-  }
-
-  subscribeRealtime();
-
-}
-
-
-db.auth.onAuthStateChange(
-  async(event,session)=>{
-
-    if(
-      event === "SIGNED_OUT"
-    ){
-
-      $("adminApp")
-        .classList
-        .add("hidden");
-
-      $("loginScreen")
-        .classList
-        .remove("hidden");
-
-      setConnection(
-        "SIN SESIÓN"
-      );
-
-      return;
-    }
-
-    if(
-      event === "SIGNED_IN" &&
-      session
-    ){
-
-      await enterAdmin();
-
-    }
-
-  }
-);
-
-
-/* =====================================================
+/* =========================
    FUNCIONES GLOBALES
-===================================================== */
+========================= */
 
-Object.assign(
-  window,
-  {
-    refreshAll,
+window.loadReservas=loadReservas;
+window.loadPedidos=loadPedidos;
+window.loadProductos=loadProductos;
+window.loadPromos=loadPromos;
+window.loadPremios=loadPremios;
+window.loadGaleria=loadGaleria;
+window.loadConfig=loadConfig;
+window.loadJuegos=loadJuegos;
 
-    loadReservas,
-    updateReservaEstado,
-    deleteReserva,
+window.cambiarEstadoReserva=cambiarEstadoReserva;
+window.marcarReservaVista=marcarReservaVista;
+window.eliminarReserva=eliminarReserva;
 
-    loadPedidos,
-    updatePedidoEstado,
-    deletePedido,
+window.cambiarEstadoPedido=cambiarEstadoPedido;
+window.marcarPedidoVista=marcarPedidoVista;
+window.eliminarPedido=eliminarPedido;
 
-    loadProducts,
-    createProduct,
-    toggleProduct,
-    deleteProduct,
+window.editarProducto=editarProducto;
+window.toggleProducto=toggleProducto;
+window.eliminarProducto=eliminarProducto;
+window.cancelarProducto=cancelarProducto;
 
-    loadPromotions,
-    createPromotion,
-    togglePromotion,
-    deletePromotion,
+window.editarPromo=editarPromo;
+window.togglePromo=togglePromo;
+window.eliminarPromo=eliminarPromo;
+window.cancelarPromo=cancelarPromo;
 
-    loadGames,
-    createGame,
-    toggleGame,
-    deleteGame,
+window.editarPremio=editarPremio;
+window.togglePremio=togglePremio;
+window.eliminarPremio=eliminarPremio;
+window.cancelarPremio=cancelarPremio;
 
-    loadTrivia,
-    createTriviaQuestion,
-    toggleTrivia,
-    deleteTrivia,
-
-    loadTournaments,
-    createTournament,
-    toggleTournament,
-    deleteTournament,
-
-    loadDuels,
-
-    loadPrizes,
-    createPrize,
-    togglePrize,
-    deletePrize,
-
-    loadGallery,
-    uploadPhoto,
-    deletePhoto
-  }
-);
-
-
-/* =====================================================
-   ARRANQUE
-===================================================== */
-
-init();
-
+window.eliminarFoto=eliminarFoto;
+window.toggleJuego=toggleJuego;
 </script>
 
 </body>
