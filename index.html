@@ -5,193 +5,331 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Pool & Beach | Puerto Pirámides</title>
 <meta name="theme-color" content="#071923">
+<meta name="description" content="Pool & Beach Puerto Pirámides. Menú, pedidos, reservas, fotos y juegos.">
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 :root{
-  --bg:#071923;--bg2:#0d2a38;--card:#102f3e;--line:#24536a;
-  --sky:#62dcff;--gold:#ffd166;--green:#67e7a2;--red:#ff7182;
-  --txt:#f5fbff;--muted:#a9c4cf
+  --bg:#071923;
+  --bg2:#0c2633;
+  --card:#102f3e;
+  --text:#f5fbff;
+  --muted:#a9c4cf;
+  --primary:#31d7ff;
+  --green:#42e695;
+  --yellow:#ffd166;
+  --red:#ff647c;
+  --border:rgba(255,255,255,.1);
 }
-*{box-sizing:border-box}
+*{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
 body{
-  margin:0;background:linear-gradient(180deg,var(--bg),#041018);
-  color:var(--txt);font:15px system-ui,-apple-system,Segoe UI,sans-serif
+  font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(180deg,var(--bg),#041018);
+  color:var(--text);
 }
-a{text-decoration:none;color:inherit}
+a{color:inherit;text-decoration:none}
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 .container{width:min(1100px,94%);margin:auto}
 
 header{
-  position:sticky;top:0;z-index:20;
+  position:sticky;
+  top:0;
+  z-index:100;
   background:rgba(4,16,24,.94);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--line)
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
 }
+.header{
+  min-height:64px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+.logo{font-size:21px;font-weight:900}
+.logo span{color:var(--primary)}
 .nav{
-  min-height:62px;display:flex;align-items:center;
-  justify-content:space-between;gap:12px
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
 }
-.logo{font-size:21px;font-weight:950;white-space:nowrap}
-.logo span{color:var(--sky)}
-nav{display:flex;gap:7px;overflow:auto}
-nav a,.quick{
-  padding:8px 11px;border-radius:10px;
-  background:#0d2635;border:1px solid var(--line);
-  font-weight:800;white-space:nowrap;font-size:13px
+.nav a{
+  padding:9px 12px;
+  border:1px solid var(--border);
+  border-radius:999px;
+  background:rgba(255,255,255,.05);
+  white-space:nowrap;
+  font-size:13px;
 }
 
-.hero{padding:25px 0 15px}
+.hero{padding:28px 0 18px}
 .hero-box{
-  padding:30px;border-radius:24px;
-  background:linear-gradient(135deg,#12394a,#071d29);
-  border:1px solid var(--line)
+  padding:30px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#12394a,#071923);
+  border:1px solid var(--border);
 }
-.hero h1{font-size:clamp(34px,8vw,62px);line-height:.95;margin:0 0 13px}
-.hero h1 span{color:var(--sky)}
-.hero p{max-width:720px;color:var(--muted);line-height:1.55;margin:0}
-.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:20px}
+.hero h1{
+  font-size:clamp(35px,8vw,64px);
+  line-height:.95;
+}
+.hero h1 span{color:var(--primary)}
+.hero p{
+  color:var(--muted);
+  max-width:700px;
+  line-height:1.55;
+  margin-top:15px;
+}
+.actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  margin-top:20px;
+}
 
 .btn{
-  border:0;border-radius:11px;padding:11px 15px;
-  font-weight:900
+  border:0;
+  border-radius:12px;
+  padding:12px 16px;
+  font-weight:900;
 }
-.primary{background:var(--sky);color:#052031}
+.primary{background:var(--primary);color:#03131a}
 .green{background:var(--green);color:#052016}
-.gold{background:var(--gold);color:#251b00}
-.dark{background:#15364b;color:white}
+.dark{
+  background:rgba(255,255,255,.07);
+  color:white;
+  border:1px solid var(--border);
+}
+.yellow{background:var(--yellow);color:#251b00}
 .red{background:var(--red);color:white}
 
-section{padding:17px 0}
-.title{margin-bottom:12px}
-.title h2{margin:0;font-size:24px}
-.title p{margin:4px 0 0;color:var(--muted)}
+section{padding:20px 0}
+.title{margin-bottom:13px}
+.title h2{font-size:25px}
+.title p{color:var(--muted);margin-top:5px}
 
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 .card{
-  background:linear-gradient(180deg,var(--card),#092330);
-  border:1px solid var(--line);border-radius:18px;padding:17px
+  background:linear-gradient(180deg,var(--card),#0a2531);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:18px;
 }
-.card h3{margin:0 0 7px}
-.card p{color:var(--muted);line-height:1.5}
-
-.menu{
-  display:grid;grid-template-columns:repeat(2,1fr);gap:12px
-}
-.menu-group{
-  background:#0c2735;border:1px solid var(--line);
-  border-radius:17px;padding:15px
-}
-.menu-group h3{margin:0 0 8px;color:var(--sky)}
-.menu-item{
-  display:flex;justify-content:space-between;gap:12px;
-  padding:10px 0;border-bottom:1px solid #234456
-}
-.menu-item:last-child{border-bottom:0}
-.menu-item small{display:block;color:var(--muted);margin-top:3px}
-.price{font-weight:950;color:var(--gold);white-space:nowrap}
-
-.form-layout{
-  display:grid;grid-template-columns:1fr 1fr;gap:12px
-}
-.panel{
-  background:#f8fbfc;color:#063c55;
-  border-radius:18px;padding:17px
-}
-.panel h3{margin-top:0}
-label{display:block;font-size:12px;font-weight:800;color:#365661;margin:8px 0 4px}
-input,select,textarea{
-  width:100%;padding:11px;border:1px solid #d4e1e5;
-  border-radius:10px;background:white;color:#063c55
-}
-textarea{min-height:75px;resize:vertical}
-
-.message{
-  min-height:20px;margin-top:9px;font-weight:800
+.grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
 }
 
-.pool-options{
-  display:grid;grid-template-columns:repeat(3,1fr);gap:8px
-}
-.pool-option{
-  padding:11px;text-align:center;border:1px solid #cbdde2;
-  border-radius:10px;background:#f4fafb;font-weight:900
-}
-
-.order-layout{
-  display:grid;grid-template-columns:1.1fr .9fr;gap:12px
-}
+.menu-card h3{margin-bottom:10px}
 .product{
-  display:flex;justify-content:space-between;align-items:center;
-  gap:10px;padding:11px 0;border-bottom:1px solid #dfe9ec
+  padding:11px 0;
+  border-bottom:1px solid var(--border);
 }
 .product:last-child{border-bottom:0}
-.product strong{display:block}
-.product small{color:#6c7d84}
-.add{
-  border:0;border-radius:9px;padding:9px 11px;
-  background:#087c9e;color:white;font-weight:900
+.product-top{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
 }
-.cart-line{
-  display:flex;justify-content:space-between;gap:10px;
-  padding:10px 0;border-bottom:1px solid #dfe9ec
+.product small{
+  display:block;
+  color:var(--muted);
+  margin-top:3px;
 }
-.controls{display:flex;gap:5px;align-items:center;margin-top:5px}
-.controls button{
-  width:27px;height:27px;border:0;border-radius:7px;
-  background:#e8f5f8;font-weight:900
+.price{font-weight:900;white-space:nowrap}
+
+.reserva-layout,
+.pedido-layout{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+}
+
+.form-card{
+  background:white;
+  color:#063c55;
+  border-radius:18px;
+  padding:18px;
+}
+.form-card label{
+  display:block;
+  color:#365661;
+  font-size:13px;
+  margin:9px 0 4px;
+}
+.form-card input,
+.form-card select,
+.form-card textarea{
+  width:100%;
+  padding:11px;
+  border:1px solid #d6e1e5;
+  border-radius:10px;
+  outline:none;
+}
+.form-card textarea{
+  min-height:75px;
+  resize:vertical;
+}
+.form-card button{margin-top:10px;width:100%}
+
+.pool-options{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+.pool-option{
+  padding:12px;
+  border-radius:10px;
+  border:1px solid #cbdde2;
+  background:#f6fbfc;
+  text-align:center;
+  cursor:pointer;
+}
+
+.pedido-app{
+  background:#edf8fa;
+  color:#063c55;
+  padding:20px 0;
+}
+.pedido-panel{
+  background:white;
+  border:1px solid #dce8eb;
+  border-radius:18px;
+  padding:18px;
+}
+.pedido-producto{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  padding:12px 0;
+  border-bottom:1px solid #e5ecef;
+}
+.pedido-producto:last-child{border-bottom:0}
+.pedido-producto strong{display:block}
+.pedido-producto small{
+  display:block;
+  color:#687a82;
+}
+.btn-pedir{
+  border:0;
+  border-radius:10px;
+  padding:9px 12px;
+  background:#087c9e;
+  color:white;
+  font-weight:900;
+}
+.carrito-linea{
+  padding:10px 0;
+  border-bottom:1px solid #e5ecef;
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+}
+.carrito-controles{
+  display:flex;
+  gap:6px;
+  align-items:center;
+  margin-top:5px;
+}
+.carrito-controles button{
+  width:27px;
+  height:27px;
+  border:0;
+  border-radius:7px;
 }
 .total{
-  display:flex;justify-content:space-between;
-  padding:14px 0;font-size:20px;font-weight:950
+  display:flex;
+  justify-content:space-between;
+  font-size:20px;
+  font-weight:900;
+  padding:14px 0;
 }
-.delivery{
-  padding:12px;background:#f1f8fa;border-radius:12px;
-  margin:10px 0
+.entrega{
+  background:#f2f8fa;
+  padding:12px;
+  border-radius:12px;
+  margin-bottom:10px;
 }
-.delivery label{font-weight:600}
+.entrega label{display:block;margin:7px 0}
+.empty,.loading{
+  color:var(--muted);
+  padding:14px 0;
+}
+.message{
+  text-align:center;
+  font-weight:900;
+  min-height:22px;
+  margin-top:8px;
+}
 
 .gallery{
-  display:grid;grid-template-columns:repeat(4,1fr);gap:9px
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
 }
 .gallery img{
-  width:100%;aspect-ratio:1;object-fit:cover;
-  border-radius:13px;border:1px solid var(--line)
+  width:100%;
+  aspect-ratio:1;
+  object-fit:cover;
+  border-radius:14px;
+  border:1px solid var(--border);
 }
-.empty,.loading{padding:15px;color:var(--muted)}
 
-.games-box{
-  display:flex;align-items:center;justify-content:space-between;
-  gap:15px;flex-wrap:wrap
+.experiencias{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
 }
+.exp{
+  padding:16px;
+  border-radius:16px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+}
+.exp-icon{font-size:28px;margin-bottom:8px}
+.exp p{color:var(--muted);font-size:14px;line-height:1.4}
 
 footer{
-  margin-top:25px;padding:25px 0;
-  border-top:1px solid var(--line);
-  text-align:center;color:var(--muted)
+  text-align:center;
+  color:var(--muted);
+  padding:30px 0;
+  border-top:1px solid var(--border);
+  margin-top:20px;
 }
 
 #toast{
-  position:fixed;left:50%;bottom:18px;
-  transform:translate(-50%,100px);opacity:0;
-  background:#12394a;border:1px solid var(--line);
-  padding:12px 17px;border-radius:12px;
-  z-index:100;transition:.25s
+  position:fixed;
+  left:50%;
+  bottom:20px;
+  transform:translate(-50%,100px);
+  opacity:0;
+  transition:.25s;
+  background:#102f3e;
+  border:1px solid var(--border);
+  padding:13px 17px;
+  border-radius:12px;
+  z-index:999;
 }
-#toast.show{transform:translate(-50%,0);opacity:1}
+#toast.show{
+  transform:translate(-50%,0);
+  opacity:1;
+}
 
 @media(max-width:800px){
-  .grid,.menu,.form-layout,.order-layout{grid-template-columns:1fr}
-  .gallery{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:1fr 1fr}
+  .experiencias{grid-template-columns:1fr 1fr}
+  .reserva-layout,.pedido-layout{grid-template-columns:1fr}
 }
-@media(max-width:560px){
-  .nav{align-items:flex-start;flex-direction:column;padding:9px 0}
-  nav{width:100%}
-  .hero-box{padding:22px}
+@media(max-width:520px){
+  .hero-box{padding:23px}
+  .grid,.gallery,.experiencias{grid-template-columns:1fr}
   .pool-options{grid-template-columns:1fr}
-  .gallery{grid-template-columns:repeat(2,1fr)}
+  .header{align-items:flex-start;padding:10px 0}
 }
 </style>
 </head>
@@ -199,14 +337,15 @@ footer{
 <body>
 
 <header>
-  <div class="container nav">
+  <div class="container header">
     <div class="logo">POOL <span>&</span> BEACH</div>
-    <nav>
+
+    <nav class="nav">
       <a href="#menu">🍔 Menú</a>
       <a href="#reservas">📅 Reservar</a>
       <a href="#pedidos">🛒 Pedir</a>
+      <a href="#fotos">📸 Fotos</a>
       <a href="juegos/juegos.html">🎮 Juegos</a>
-      <a href="#galeria">📸 Fotos</a>
       <a href="admin.html">⚙️ Admin</a>
     </nav>
   </div>
@@ -217,17 +356,53 @@ footer{
 <section class="hero">
   <div class="container">
     <div class="hero-box">
-      <h1>POOL <span>&</span> BEACH</h1>
+      <h1>POOL & BEACH<br><span>PUERTO PIRÁMIDES</span></h1>
+
       <p>
-        Puerto Pirámides. Pool, cartas, dados, fútbol, música,
-        amigos, familia, comida y diversión.
+        Pool, cartas, dados, fútbol, música y buena onda.
+        Vení a disfrutar, comer, pedir o reservar tu lugar.
       </p>
 
       <div class="actions">
-        <a class="btn primary" href="#menu">🍔 Ver menú</a>
-        <a class="btn green" href="#reservas">📅 Reservar</a>
-        <a class="btn gold" href="#pedidos">🛒 Hacer pedido</a>
-        <a class="btn dark" href="juegos/juegos.html">🎮 Entrar a Juegos</a>
+        <button class="btn primary" onclick="go('menu')">🍔 Ver menú</button>
+        <button class="btn green" onclick="go('reservas')">📅 Reservar</button>
+        <button class="btn dark" onclick="go('pedidos')">🛒 Hacer pedido</button>
+        <a class="btn dark" href="juegos/juegos.html">🎮 Zona de juegos</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="title">
+      <h2>🏖️ Pool & Beach</h2>
+      <p>Un lugar para compartir con amigos y familia.</p>
+    </div>
+
+    <div class="experiencias">
+      <div class="exp">
+        <div class="exp-icon">🎱</div>
+        <strong>Pool</strong>
+        <p>Mesas para jugar y compartir.</p>
+      </div>
+
+      <div class="exp">
+        <div class="exp-icon">🃏</div>
+        <strong>Cartas y dados</strong>
+        <p>Truco, dados y desafíos.</p>
+      </div>
+
+      <div class="exp">
+        <div class="exp-icon">⚽</div>
+        <strong>Fútbol</strong>
+        <p>Partidos y momentos deportivos.</p>
+      </div>
+
+      <div class="exp">
+        <div class="exp-icon">🎮</div>
+        <strong>Juegos</strong>
+        <p>Entrá a la zona de juegos online.</p>
       </div>
     </div>
   </div>
@@ -237,9 +412,10 @@ footer{
   <div class="container">
     <div class="title">
       <h2>🍔 Menú</h2>
-      <p>Productos y precios administrados desde Supabase.</p>
+      <p>Productos publicados desde administración.</p>
     </div>
-    <div id="menuPublico" class="menu">
+
+    <div id="menuPublico" class="grid">
       <div class="loading">Cargando menú...</div>
     </div>
   </div>
@@ -249,29 +425,29 @@ footer{
   <div class="container">
     <div class="title">
       <h2>📅 Reservas</h2>
-      <p>Reservá el local o una de nuestras 3 mesas de pool.</p>
+      <p>Reservá tu lugar o una de nuestras 3 mesas de pool.</p>
     </div>
 
-    <div class="form-layout">
+    <div class="reserva-layout">
 
-      <div class="panel">
+      <div class="form-card">
         <h3>Nueva reserva</h3>
 
         <form id="reservaForm">
 
-          <label for="rNombre">Nombre</label>
-          <input id="rNombre" required maxlength="100" autocomplete="name">
+          <label>Nombre</label>
+          <input id="rNombre" required minlength="2" maxlength="100">
 
-          <label for="rTelefono">Teléfono</label>
-          <input id="rTelefono" required maxlength="40" autocomplete="tel">
+          <label>Teléfono</label>
+          <input id="rTelefono" required minlength="6" maxlength="40">
 
-          <label for="rFecha">Fecha</label>
+          <label>Fecha</label>
           <input id="rFecha" type="date" required>
 
-          <label for="rHora">Hora</label>
+          <label>Hora</label>
           <input id="rHora" type="time" required>
 
-          <label for="rService">¿Qué querés reservar?</label>
+          <label>Qué querés reservar</label>
           <select id="rService" required>
             <option value="">Seleccioná una opción</option>
             <option value="Mesa Pool 1">🎱 Mesa Pool 1</option>
@@ -280,25 +456,25 @@ footer{
             <option value="Local">🏖️ Reserva general del local</option>
           </select>
 
-          <label for="rPersonas">Personas</label>
+          <label>Personas</label>
           <input id="rPersonas" type="number" min="1" max="50" value="2" required>
 
-          <label for="rNotas">Notas</label>
+          <label>Notas</label>
           <textarea id="rNotas" maxlength="500"></textarea>
 
-          <button id="rEnviar" class="btn green" type="submit" style="width:100%;margin-top:9px">
+          <button id="rEnviar" class="btn green" type="submit">
             📅 Enviar reserva
           </button>
 
-          <div id="reservaMsg" class="message"></div>
+          <p id="reservaMsg" class="message"></p>
         </form>
       </div>
 
-      <div class="panel">
-        <h3>🎱 Mesas de pool</h3>
-        <p>
-          Tenemos 3 mesas disponibles para reservar.
-          Elegí una y luego completá tus datos.
+      <div class="form-card">
+        <h3>🎱 Elegí tu mesa</h3>
+
+        <p style="margin:8px 0;color:#5c727b">
+          Seleccioná una de las tres mesas y luego completá tus datos.
         </p>
 
         <div class="pool-options">
@@ -318,39 +494,36 @@ footer{
           </label>
         </div>
 
-        <button class="btn primary" type="button" style="margin-top:12px"
+        <button
+          class="btn primary"
+          type="button"
           onclick="usarMesa()">
           Usar mesa seleccionada
         </button>
-
-        <hr style="border:0;border-top:1px solid #dbe6e9;margin:20px 0">
-
-        <strong>Horarios</strong>
-        <p>Local: 12:00–15:00 y 19:00–03:30</p>
-        <p>Cocina: 12:00–15:00 y 20:00–01:00</p>
       </div>
 
     </div>
   </div>
 </section>
 
-<section id="pedidos">
+<section id="pedidos" class="pedido-app">
   <div class="container">
+
     <div class="title">
       <h2>🛒 Pedidos</h2>
-      <p>Delivery o retiro en el negocio.</p>
+      <p>Delivery o retiro en Pool & Beach.</p>
     </div>
 
-    <div class="order-layout">
+    <div class="pedido-layout">
 
-      <div class="panel">
-        <h3>🍔 Productos</h3>
+      <div class="pedido-panel">
+        <h3>🍔 Menú para pedir</h3>
         <div id="pedidoProductos">
           <div class="loading">Cargando productos...</div>
         </div>
       </div>
 
-      <div class="panel">
+      <div class="pedido-panel">
         <h3>🧾 Tu pedido</h3>
 
         <div id="carritoContenido">
@@ -362,51 +535,71 @@ footer{
           <span id="pedidoTotal">$0</span>
         </div>
 
-        <div class="delivery">
+        <div class="entrega">
           <strong>🚚 Forma de entrega</strong>
 
           <label>
-            <input type="radio" name="tipoEntrega" value="delivery" checked>
+            <input
+              type="radio"
+              name="tipoEntrega"
+              value="delivery"
+              checked>
             Delivery — $3.000
           </label>
 
           <label>
-            <input type="radio" name="tipoEntrega" value="retiro">
+            <input
+              type="radio"
+              name="tipoEntrega"
+              value="retiro">
             Retiro en el local — $0
           </label>
 
-          <div id="direccionBox" style="margin-top:8px">
-            <input id="direccionDelivery"
+          <div id="direccionBox">
+            <input
+              id="direccionDelivery"
+              type="text"
               placeholder="Dirección para el delivery"
-              maxlength="250">
+              maxlength="250"
+              style="width:100%;padding:10px;border:1px solid #d6e1e5;border-radius:9px">
           </div>
         </div>
 
         <form id="pedidoForm">
 
-          <input id="pedidoNombre"
+          <input
+            id="pedidoNombre"
+            type="text"
             placeholder="Nombre"
-            required maxlength="100">
+            required
+            minlength="2"
+            maxlength="100"
+            style="width:100%;padding:11px;margin-bottom:8px;border:1px solid #d6e1e5;border-radius:9px">
 
-          <input id="pedidoTelefono"
+          <input
+            id="pedidoTelefono"
             type="tel"
             placeholder="Teléfono"
-            required maxlength="40"
-            style="margin-top:8px">
+            required
+            minlength="6"
+            maxlength="40"
+            style="width:100%;padding:11px;margin-bottom:8px;border:1px solid #d6e1e5;border-radius:9px">
 
-          <textarea id="pedidoNotas"
-            placeholder="Notas del pedido (opcional)"
+          <textarea
+            id="pedidoNotas"
+            placeholder="Notas del pedido"
             maxlength="500"
-            style="margin-top:8px"></textarea>
+            style="width:100%;padding:11px;border:1px solid #d6e1e5;border-radius:9px"></textarea>
 
-          <button id="pedidoEnviar"
+          <button
+            id="pedidoEnviar"
             class="btn primary"
             type="submit"
             style="width:100%;margin-top:9px">
             🛒 Enviar pedido
           </button>
 
-          <div id="pedidoMensaje" class="message"></div>
+          <p id="pedidoMensaje" class="message"></p>
         </form>
       </div>
 
@@ -414,46 +607,18 @@ footer{
   </div>
 </section>
 
-<section>
+<section id="fotos">
   <div class="container">
-    <div class="card games-box">
-      <div>
-        <h2 style="margin:0 0 5px">🎮 Pool & Beach Games</h2>
-        <p style="margin:0">
-          Juegos, trivia, duelos, torneos, ranking y premios.
-        </p>
-      </div>
 
-      <a class="btn primary" href="juegos/juegos.html">
-        Entrar a Juegos
-      </a>
-    </div>
-  </div>
-</section>
-
-<section id="promociones">
-  <div class="container">
     <div class="title">
-      <h2>🔥 Promociones</h2>
-      <p>Promociones activas.</p>
-    </div>
-
-    <div id="promosGrid" class="grid">
-      <div class="loading">Cargando promociones...</div>
-    </div>
-  </div>
-</section>
-
-<section id="galeria">
-  <div class="container">
-    <div class="title">
-      <h2>📸 Fotos</h2>
-      <p>Fotos cargadas desde administración.</p>
+      <h2>📸 Pool & Beach</h2>
+      <p>Fotos publicadas desde administración.</p>
     </div>
 
     <div id="galleryGrid" class="gallery">
       <div class="loading">Cargando fotos...</div>
     </div>
+
   </div>
 </section>
 
@@ -461,32 +626,36 @@ footer{
 
 <footer>
   <strong>POOL & BEACH</strong><br>
-  Puerto Pirámides · Patagonia Argentina<br>
-  <a href="admin.html" style="text-decoration:underline;display:inline-block;margin-top:8px">
-    ⚙️ Administración
-  </a>
+  Puerto Pirámides · Patagonia Argentina<br><br>
+  <a href="juegos/juegos.html">🎮 Juegos</a> ·
+  <a href="admin.html">⚙️ Administración</a>
 </footer>
 
 <div id="toast"></div>
 
 <script>
-const SUPABASE_URL="https://nmpakeovqkdajtswjpgm.supabase.co";
-const SUPABASE_KEY="sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+const SUPABASE_URL =
+  "https://nmpakeovqkdajtswjpgm.supabase.co";
 
-const db=window.supabase.createClient(
+const SUPABASE_KEY =
+  "sb_publishable_FyuFdiW_2eXNScLd9MShng_rLxxztsu";
+
+const db = window.supabase.createClient(
   SUPABASE_URL,
   SUPABASE_KEY
 );
 
-const DELIVERY_FEE=3000;
+const DELIVERY_FEE = 3000;
 
-let pedidoCart=[];
-let pedidoProducts=[];
+let pedidoCart = [];
+let pedidoProducts = [];
 
-const $=id=>document.getElementById(id);
+function $(id){
+  return document.getElementById(id);
+}
 
-function esc(v){
-  return String(v??"")
+function esc(value){
+  return String(value ?? "")
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
@@ -494,51 +663,73 @@ function esc(v){
     .replaceAll("'","&#039;");
 }
 
-function safeUrl(v){
-  const u=String(v??"").trim();
-  if(!u)return "";
+function safeUrl(value){
+  const valueString = String(value ?? "").trim();
+  if(!valueString) return "";
+
   try{
-    const x=new URL(u,location.href);
-    return ["http:","https:"].includes(x.protocol)?x.href:"";
+    const url = new URL(valueString, location.href);
+
+    if(url.protocol !== "http:" && url.protocol !== "https:"){
+      return "";
+    }
+
+    return url.href;
   }catch{
     return "";
   }
 }
 
 function toast(text){
-  const el=$("toast");
-  el.textContent=text;
+  const el = $("toast");
+  el.textContent = text;
   el.classList.add("show");
-  clearTimeout(window.__toast);
-  window.__toast=setTimeout(
-    ()=>el.classList.remove("show"),3000
-  );
+
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(()=>{
+    el.classList.remove("show");
+  },3000);
 }
 
-function dinero(v){
-  return "$"+Number(v||0).toLocaleString("es-AR");
+function go(id){
+  document.getElementById(id)?.scrollIntoView({
+    behavior:"smooth"
+  });
 }
 
-async function iniciar(){
+async function iniciarSesionJugador(){
+  const session = await db.auth.getSession();
 
-  await Promise.allSettled([
-    cargarMenu(),
-    cargarProductosPedido(),
-    cargarPromociones(),
-    cargarFotos()
-  ]);
+  if(session.data?.session?.user){
+    return session.data.session.user;
+  }
 
-  configurarReserva();
-  configurarPedido();
+  const result = await db.auth.signInAnonymously();
+
+  if(result.error){
+    console.warn(
+      "No se pudo iniciar sesión anónima:",
+      result.error
+    );
+
+    return null;
+  }
+
+  return result.data?.user || null;
 }
 
 async function cargarMenu(){
 
-  const box=$("menuPublico");
+  const box = $("menuPublico");
 
-  const {data,error}=await db
+  if(!box) return;
+
+  const {data,error} = await db
     .from("productos")
-    .select("id,nombre,categoria,descripcion,precio,image_url,activo,disponible")
+    .select(
+      "id,nombre,categoria,descripcion,precio,image_url,activo,disponible"
+    )
     .eq("activo",true)
     .eq("disponible",true)
     .order("categoria")
@@ -546,47 +737,85 @@ async function cargarMenu(){
 
   if(error){
     console.error(error);
-    box.innerHTML='<div class="card">No se pudo cargar el menú.</div>';
+    box.innerHTML =
+      '<div class="card">No se pudo cargar el menú.</div>';
     return;
   }
 
-  if(!data?.length){
-    box.innerHTML='<div class="card">No hay productos publicados.</div>';
+  const productos = data || [];
+
+  if(!productos.length){
+    box.innerHTML =
+      '<div class="card">No hay productos publicados.</div>';
     return;
   }
 
-  const grupos={};
+  const grupos = {};
 
-  data.forEach(p=>{
-    const cat=p.categoria||"Menú";
-    if(!grupos[cat])grupos[cat]=[];
-    grupos[cat].push(p);
+  productos.forEach(producto=>{
+    const categoria = producto.categoria || "Menú";
+
+    if(!grupos[categoria]){
+      grupos[categoria] = [];
+    }
+
+    grupos[categoria].push(producto);
   });
 
-  box.innerHTML=Object.entries(grupos).map(
-    ([cat,items])=>`
-      <div class="menu-group">
-        <h3>${esc(cat)}</h3>
-        ${items.map(p=>`
-          <div class="menu-item">
-            <div>
-              <strong>${esc(p.nombre)}</strong>
-              ${p.descripcion?
-                `<small>${esc(p.descripcion)}</small>`:""}
+  box.innerHTML = Object.entries(grupos)
+    .map(([categoria,items])=>`
+      <article class="card menu-card">
+        <h3>${esc(categoria)}</h3>
+
+        ${items.map(producto=>`
+          <div class="product">
+            <div class="product-top">
+              <strong>${esc(producto.nombre)}</strong>
+              <span class="price">
+                $${Number(producto.precio || 0)
+                  .toLocaleString("es-AR")}
+              </span>
             </div>
-            <strong class="price">${dinero(p.precio)}</strong>
+
+            ${
+              producto.descripcion
+              ? `<small>${esc(producto.descripcion)}</small>`
+              : ""
+            }
           </div>
         `).join("")}
-      </div>
-    `
-  ).join("");
+      </article>
+    `)
+    .join("");
+}
+
+function imagenProducto(url,nombre){
+
+  const safe = safeUrl(url);
+
+  if(!safe) return "";
+
+  return `
+    <img
+      src="${esc(safe)}"
+      alt="${esc(nombre)}"
+      loading="lazy"
+      style="
+        width:65px;
+        height:65px;
+        object-fit:cover;
+        border-radius:10px;
+        flex:none;
+      "
+      onerror="this.style.display='none'">
+  `;
 }
 
 async function cargarProductosPedido(){
 
-  const box=$("pedidoProductos");
+  const box = $("pedidoProductos");
 
-  const {data,error}=await db
+  const {data,error} = await db
     .from("productos")
     .select("*")
     .eq("activo",true)
@@ -596,78 +825,125 @@ async function cargarProductosPedido(){
 
   if(error){
     console.error(error);
-    box.innerHTML='<div class="empty">No se pudieron cargar los productos.</div>';
+    box.innerHTML =
+      '<div class="empty">No se pudieron cargar los productos.</div>';
     return;
   }
 
-  pedidoProducts=data||[];
+  pedidoProducts = data || [];
 
   if(!pedidoProducts.length){
-    box.innerHTML='<div class="empty">No hay productos disponibles.</div>';
+    box.innerHTML =
+      '<div class="empty">No hay productos disponibles.</div>';
     return;
   }
 
-  box.innerHTML=pedidoProducts.map(p=>`
-    <div class="product">
-      <div>
-        <strong>${esc(p.nombre)}</strong>
-        ${p.categoria?
-          `<small>${esc(p.categoria)}</small>`:""}
-        ${p.descripcion?
-          `<small>${esc(p.descripcion)}</small>`:""}
-        <div style="font-weight:900;margin-top:4px">
-          ${dinero(p.precio)}
-        </div>
-      </div>
+  box.innerHTML = pedidoProducts.map(producto=>{
 
-      <button class="add"
-        onclick="agregarPedido('${esc(p.id)}')">
-        Agregar
-      </button>
-    </div>
-  `).join("");
+    const id = String(producto.id);
+    const nombre =
+      producto.nombre ??
+      producto.name ??
+      "Producto";
+
+    const precio =
+      Number(producto.precio ??
+      producto.price ??
+      0);
+
+    const descripcion =
+      producto.descripcion ??
+      producto.description ??
+      "";
+
+    return `
+      <div class="pedido-producto">
+
+        <div style="display:flex;gap:10px;align-items:center">
+
+          ${imagenProducto(
+            producto.image_url ??
+            producto.image ??
+            "",
+            nombre
+          )}
+
+          <div>
+            <strong>${esc(nombre)}</strong>
+
+            ${
+              descripcion
+              ? `<small>${esc(descripcion)}</small>`
+              : ""
+            }
+
+            <small>
+              $${precio.toLocaleString("es-AR")}
+            </small>
+          </div>
+
+        </div>
+
+        <button
+          class="btn-pedir"
+          type="button"
+          onclick="agregarPedido('${esc(id)}')">
+          Agregar
+        </button>
+
+      </div>
+    `;
+  }).join("");
 }
 
 function agregarPedido(id){
 
-  const p=pedidoProducts.find(
-    x=>String(x.id)===String(id)
+  const producto = pedidoProducts.find(
+    x => String(x.id) === String(id)
   );
 
-  if(!p)return;
+  if(!producto) return;
 
-  const existente=pedidoCart.find(
-    x=>String(x.id)===String(id)
+  const existente = pedidoCart.find(
+    x => String(x.id) === String(id)
   );
 
   if(existente){
     existente.cantidad++;
   }else{
     pedidoCart.push({
-      id:p.id,
-      nombre:p.nombre,
-      precio:Number(p.precio||0),
+      id:producto.id,
+      nombre:
+        producto.nombre ??
+        producto.name ??
+        "Producto",
+      precio:Number(
+        producto.precio ??
+        producto.price ??
+        0
+      ),
       cantidad:1
     });
   }
 
   actualizarCarrito();
+
   toast("✅ Producto agregado");
 }
 
-function cambiarCantidad(id,cantidad){
+function cambiarCantidad(id,delta){
 
-  const item=pedidoCart.find(
-    x=>String(x.id)===String(id)
+  const item = pedidoCart.find(
+    x => String(x.id) === String(id)
   );
 
-  if(!item)return;
+  if(!item) return;
 
-  item.cantidad+=cantidad;
+  item.cantidad += delta;
 
-  if(item.cantidad<=0){
-    pedidoCart=pedidoCart.filter(
-      x=>String(x.id)!==String(id)
+  if(item.cantidad <= 0){
+    pedidoCart = pedidoCart.filter(
+      x => String(x.id) !== String(id)
     );
   }
 
@@ -675,374 +951,486 @@ function cambiarCantidad(id,cantidad){
 }
 
 function tipoEntrega(){
+
   return document.querySelector(
     'input[name="tipoEntrega"]:checked'
-  )?.value||"delivery";
+  )?.value || "delivery";
 }
 
 function subtotalPedido(){
+
   return pedidoCart.reduce(
-    (s,x)=>s+(x.precio*x.cantidad),0
+    (total,item)=>
+      total +
+      (Number(item.precio) || 0) *
+      (Number(item.cantidad) || 0),
+    0
   );
 }
 
 function totalPedido(){
-  return subtotalPedido()+
-    (tipoEntrega()==="delivery"&&pedidoCart.length?
-      DELIVERY_FEE:0);
+
+  return subtotalPedido() +
+    (
+      tipoEntrega() === "delivery" &&
+      pedidoCart.length
+        ? DELIVERY_FEE
+        : 0
+    );
 }
 
 function actualizarCarrito(){
 
-  const box=$("carritoContenido");
-  const total=$("pedidoTotal");
-  const direccion=$("direccionBox");
+  const box = $("carritoContenido");
+  const total = $("pedidoTotal");
+  const direccion = $("direccionBox");
+
+  if(!box || !total) return;
+
+  const tipo = tipoEntrega();
 
   if(direccion){
-    direccion.style.display=
-      tipoEntrega()==="delivery"?"block":"none";
+    direccion.style.display =
+      tipo === "delivery"
+      ? "block"
+      : "none";
   }
 
   if(!pedidoCart.length){
-    box.innerHTML=
+
+    box.innerHTML =
       '<div class="empty">Todavía no agregaste productos.</div>';
-    total.textContent="$0";
+
+    total.textContent = "$0";
+
     return;
   }
 
-  box.innerHTML=pedidoCart.map(x=>`
-    <div class="cart-line">
-      <div>
-        <strong>${esc(x.nombre)}</strong>
+  box.innerHTML = pedidoCart.map(item=>`
 
-        <div class="controls">
-          <button onclick="cambiarCantidad('${esc(x.id)}',-1)">−</button>
-          <b>${x.cantidad}</b>
-          <button onclick="cambiarCantidad('${esc(x.id)}',1)">+</button>
-          <button onclick="cambiarCantidad('${esc(x.id)}',-${x.cantidad})">🗑️</button>
+    <div class="carrito-linea">
+
+      <div>
+        <strong>${esc(item.nombre)}</strong>
+
+        <div class="carrito-controles">
+
+          <button
+            type="button"
+            onclick="cambiarCantidad('${esc(item.id)}',-1)">
+            −
+          </button>
+
+          <b>${item.cantidad}</b>
+
+          <button
+            type="button"
+            onclick="cambiarCantidad('${esc(item.id)}',1)">
+            +
+          </button>
+
+          <button
+            type="button"
+            onclick="cambiarCantidad('${esc(item.id)}',-${item.cantidad})">
+            🗑️
+          </button>
+
         </div>
       </div>
 
-      <strong>${dinero(x.precio*x.cantidad)}</strong>
+      <strong>
+        $${(
+          item.precio *
+          item.cantidad
+        ).toLocaleString("es-AR")}
+      </strong>
+
     </div>
+
   `).join("");
 
-  total.textContent=dinero(totalPedido());
+  total.textContent =
+    "$" + totalPedido().toLocaleString("es-AR");
 }
 
-function configurarPedido(){
+function mensajePedido(texto,ok=false){
+
+  const el = $("pedidoMensaje");
+
+  if(!el) return;
+
+  el.textContent = texto;
+
+  el.style.color =
+    ok ? "#087c5b" : "#b42318";
+}
+
+function configurarPedidos(){
 
   document.querySelectorAll(
     'input[name="tipoEntrega"]'
-  ).forEach(r=>{
-    r.addEventListener("change",actualizarCarrito);
+  ).forEach(radio=>{
+    radio.addEventListener(
+      "change",
+      actualizarCarrito
+    );
   });
 
   $("pedidoForm").addEventListener(
-    "submit",enviarPedido
+    "submit",
+    async event=>{
+
+      event.preventDefault();
+
+      mensajePedido("");
+
+      if(!pedidoCart.length){
+        mensajePedido(
+          "❌ Agregá al menos un producto."
+        );
+        return;
+      }
+
+      const nombre =
+        $("pedidoNombre").value.trim();
+
+      const telefono =
+        $("pedidoTelefono").value.trim();
+
+      const notas =
+        $("pedidoNotas").value.trim();
+
+      const tipo =
+        tipoEntrega();
+
+      const direccion =
+        $("direccionDelivery")
+        .value
+        .trim();
+
+      if(nombre.length < 2){
+        mensajePedido(
+          "❌ Ingresá tu nombre."
+        );
+        return;
+      }
+
+      if(telefono.length < 6){
+        mensajePedido(
+          "❌ Ingresá un teléfono válido."
+        );
+        return;
+      }
+
+      if(tipo === "delivery" && !direccion){
+        mensajePedido(
+          "❌ Ingresá la dirección."
+        );
+        return;
+      }
+
+      const boton = $("pedidoEnviar");
+
+      boton.disabled = true;
+      boton.textContent = "⏳ Enviando...";
+
+      const payload = {
+        nombre_cliente:nombre,
+        telefono,
+        tipo_entrega:tipo,
+        direccion:
+          tipo === "delivery"
+          ? direccion
+          : null,
+        total:totalPedido(),
+        items:pedidoCart.map(item=>({
+          id:item.id,
+          nombre:item.nombre,
+          precio:item.precio,
+          cantidad:item.cantidad
+        })),
+        notas,
+        estado:"pendiente"
+      };
+
+      try{
+
+        const {error} =
+          await db
+            .from("pedidos")
+            .insert(payload);
+
+        if(error) throw error;
+
+        pedidoCart = [];
+
+        actualizarCarrito();
+
+        $("pedidoForm").reset();
+
+        const delivery =
+          document.querySelector(
+            'input[name="tipoEntrega"][value="delivery"]'
+          );
+
+        if(delivery){
+          delivery.checked = true;
+        }
+
+        actualizarCarrito();
+
+        mensajePedido(
+          "✅ Pedido enviado correctamente.",
+          true
+        );
+
+        toast("🛒 ¡Pedido enviado!");
+
+      }catch(error){
+
+        console.error(error);
+
+        mensajePedido(
+          "❌ No se pudo enviar el pedido: " +
+          (error?.message || "error")
+        );
+
+      }finally{
+
+        boton.disabled = false;
+        boton.textContent = "🛒 Enviar pedido";
+      }
+    }
   );
 
   actualizarCarrito();
 }
 
-async function enviarPedido(e){
+async function enviarReserva(event){
 
-  e.preventDefault();
+  event.preventDefault();
 
-  const msg=$("pedidoMensaje");
-  const btn=$("pedidoEnviar");
+  const mensaje = $("reservaMsg");
+  const boton = $("rEnviar");
 
-  if(!pedidoCart.length){
-    msg.textContent="❌ Agregá al menos un producto.";
+  mensaje.textContent = "";
+
+  const nombre =
+    $("rNombre").value.trim();
+
+  const telefono =
+    $("rTelefono").value.trim();
+
+  const fecha =
+    $("rFecha").value;
+
+  const hora =
+    $("rHora").value;
+
+  const servicio =
+    $("rService").value;
+
+  const personas =
+    Number($("rPersonas").value);
+
+  const notas =
+    $("rNotas").value.trim();
+
+  if(
+    nombre.length < 2 ||
+    telefono.length < 6 ||
+    !fecha ||
+    !hora ||
+    !servicio ||
+    !Number.isInteger(personas) ||
+    personas < 1 ||
+    personas > 50
+  ){
+    mensaje.textContent =
+      "❌ Revisá los datos de la reserva.";
+    mensaje.style.color = "#b42318";
     return;
   }
 
-  const nombre=$("pedidoNombre").value.trim();
-  const telefono=$("pedidoTelefono").value.trim();
-  const notas=$("pedidoNotas").value.trim();
-  const tipo=tipoEntrega();
-  const direccion=$("direccionDelivery").value.trim();
-
-  if(nombre.length<2){
-    msg.textContent="❌ Ingresá tu nombre.";
-    return;
-  }
-
-  if(telefono.length<6){
-    msg.textContent="❌ Ingresá un teléfono válido.";
-    return;
-  }
-
-  if(tipo==="delivery"&&!direccion){
-    msg.textContent="❌ Ingresá la dirección.";
-    return;
-  }
-
-  btn.disabled=true;
-  btn.textContent="⏳ Enviando...";
+  boton.disabled = true;
+  boton.textContent = "⏳ Enviando...";
 
   try{
 
-    const payload={
-      nombre_cliente:nombre,
-      telefono,
-      tipo_entrega:tipo,
-      direccion:tipo==="delivery"?direccion:null,
-      total:totalPedido(),
-      items:pedidoCart.map(x=>({
-        id:x.id,
-        nombre:x.nombre,
-        precio:x.precio,
-        cantidad:x.cantidad
-      })),
-      notas,
-      estado:"pendiente"
-    };
+    const {error} =
+      await db
+        .from("reservas")
+        .insert({
+          nombre,
+          telefono,
+          fecha,
+          hora,
+          servicio,
+          cantidad_personas:personas,
+          estado:"pendiente",
+          notas,
+          tipo:"reserva"
+        });
 
-    const {error}=await db
-      .from("pedidos")
-      .insert(payload);
+    if(error) throw error;
 
-    if(error)throw error;
+    event.target.reset();
 
-    pedidoCart=[];
-    e.target.reset();
+    $("rPersonas").value = 2;
 
-    document.querySelector(
-      'input[name="tipoEntrega"][value="delivery"]'
-    ).checked=true;
+    mensaje.textContent =
+      "✅ Reserva enviada. Queda pendiente de confirmación.";
 
-    actualizarCarrito();
+    mensaje.style.color = "#087c5b";
 
-    msg.style.color="#087c5b";
-    msg.textContent=
-      "✅ Pedido enviado. El local ya lo recibió.";
-
-    toast("🛒 Pedido enviado");
+    toast("📅 ¡Reserva enviada!");
 
   }catch(error){
 
     console.error(error);
 
-    msg.style.color="#b42318";
-    msg.textContent=
-      "❌ No se pudo enviar el pedido: "+
-      (error?.message||"error desconocido");
+    mensaje.textContent =
+      "❌ No se pudo enviar la reserva: " +
+      (error?.message || "error");
+
+    mensaje.style.color = "#b42318";
 
   }finally{
 
-    btn.disabled=false;
-    btn.textContent="🛒 Enviar pedido";
+    boton.disabled = false;
+    boton.textContent = "📅 Enviar reserva";
   }
-}
-
-function configurarReserva(){
-
-  const form=$("reservaForm");
-
-  form.addEventListener(
-    "submit",enviarReserva
-  );
-
-  const fecha=$("rFecha");
-
-  const now=new Date();
-
-  fecha.min=new Date(
-    now.getTime()-now.getTimezoneOffset()*60000
-  ).toISOString().slice(0,10);
 }
 
 function usarMesa(){
 
-  const mesa=document.querySelector(
-    'input[name="poolQuick"]:checked'
-  )?.value;
+  const seleccionada =
+    document.querySelector(
+      'input[name="poolQuick"]:checked'
+    );
 
-  if(!mesa){
-    toast("Elegí una mesa primero");
+  if(!seleccionada){
+    toast("❌ Seleccioná una mesa.");
     return;
   }
 
-  $("rService").value=mesa;
+  $("rService").value =
+    seleccionada.value;
 
-  document.querySelector("#reservas")
-    .scrollIntoView({behavior:"smooth"});
+  go("reservas");
 
   toast("🎱 Mesa seleccionada");
 }
 
-async function enviarReserva(e){
+async function cargarFotos(){
 
-  e.preventDefault();
+  const grid = $("galleryGrid");
 
-  const msg=$("reservaMsg");
-  const btn=$("rEnviar");
+  const {data,error} =
+    await db
+      .from("galeria_fotos")
+      .select(
+        "id,titulo,url,ruta,creado_en"
+      )
+      .order(
+        "creado_en",
+        {ascending:false}
+      )
+      .limit(60);
 
-  const nombre=$("rNombre").value.trim();
-  const telefono=$("rTelefono").value.trim();
-  const fecha=$("rFecha").value;
-  const hora=$("rHora").value;
-  const servicio=$("rService").value;
-  const personas=Number($("rPersonas").value);
-  const notas=$("rNotas").value.trim();
-
-  if(
-    nombre.length<2||
-    telefono.length<6||
-    !fecha||
-    !hora||
-    !servicio||
-    !Number.isInteger(personas)||
-    personas<1||
-    personas>50
-  ){
-    msg.style.color="#b42318";
-    msg.textContent="❌ Revisá los datos.";
-    return;
-  }
-
-  btn.disabled=true;
-  btn.textContent="⏳ Enviando...";
-
-  try{
-
-    const {error}=await db
-      .from("reservas")
-      .insert({
-        nombre,
-        telefono,
-        fecha,
-        hora,
-        servicio,
-        cantidad_personas:personas,
-        estado:"pendiente",
-        notas,
-        tipo:"reserva"
-      });
-
-    if(error)throw error;
-
-    e.target.reset();
-    $("rPersonas").value=2;
-
-    msg.style.color="#087c5b";
-    msg.textContent=
-      "✅ Reserva enviada. Queda pendiente de confirmación.";
-
-    toast("📅 Reserva enviada");
-
-  }catch(error){
+  if(error){
 
     console.error(error);
 
-    msg.style.color="#b42318";
-    msg.textContent=
-      "❌ No se pudo enviar la reserva: "+
-      (error?.message||"error desconocido");
+    grid.innerHTML =
+      '<div class="empty">No se pudieron cargar las fotos.</div>';
 
-  }finally{
-
-    btn.disabled=false;
-    btn.textContent="📅 Enviar reserva";
-  }
-}
-
-async function cargarPromociones(){
-
-  const box=$("promosGrid");
-
-  const {data,error}=await db
-    .from("promociones")
-    .select("id,titulo,descripcion,precio,image_url,created_at")
-    .eq("activa",true)
-    .order("created_at",{ascending:false});
-
-  if(error){
-    box.innerHTML=
-      '<div class="card">No se pudieron cargar las promociones.</div>';
     return;
   }
 
   if(!data?.length){
-    box.innerHTML=
-      '<div class="card">No hay promociones cargadas.</div>';
+
+    grid.innerHTML =
+      '<div class="empty">Todavía no hay fotos publicadas.</div>';
+
     return;
   }
 
-  box.innerHTML=data.map(p=>{
+  const html = data.map(foto=>{
 
-    const u=safeUrl(p.image_url);
+    let url =
+      safeUrl(foto.url);
+
+    if(!url && foto.ruta){
+
+      url =
+        db.storage
+          .from("Galeria")
+          .getPublicUrl(foto.ruta)
+          .data
+          .publicUrl;
+    }
+
+    if(!url) return "";
 
     return `
-      <article class="card">
-        ${u?
-          `<img src="${esc(u)}"
-            alt="${esc(p.titulo||"Promoción")}"
-            style="width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;margin-bottom:10px">`
-          :""}
-
-        <h3>🔥 ${esc(p.titulo||"Promoción")}</h3>
-        <p>${esc(p.descripcion||"")}</p>
-
-        ${p.precio!=null?
-          `<strong class="price">${dinero(p.precio)}</strong>`
-          :""}
-      </article>
+      <img
+        src="${esc(url)}"
+        alt="${esc(foto.titulo || "Pool & Beach")}"
+        loading="lazy"
+        onerror="this.style.display='none'">
     `;
 
   }).join("");
+
+  grid.innerHTML =
+    html ||
+    '<div class="empty">Todavía no hay fotos publicadas.</div>';
 }
 
-async function cargarFotos(){
+async function init(){
 
-  const box=$("galleryGrid");
+  await iniciarSesionJugador();
 
-  const {data,error}=await db
-    .from("galeria_fotos")
-    .select("id,titulo,url,ruta,creado_en")
-    .order("creado_en",{ascending:false})
-    .limit(60);
+  await Promise.allSettled([
+    cargarMenu(),
+    cargarProductosPedido(),
+    cargarFotos()
+  ]);
 
-  if(error){
-    box.innerHTML=
-      '<div class="empty">No se pudieron cargar las fotos.</div>';
-    return;
+  configurarPedidos();
+
+  const fecha = $("rFecha");
+
+  if(fecha){
+
+    const ahora = new Date();
+
+    fecha.min =
+      new Date(
+        ahora.getTime() -
+        ahora.getTimezoneOffset() * 60000
+      )
+      .toISOString()
+      .slice(0,10);
   }
-
-  if(!data?.length){
-    box.innerHTML=
-      '<div class="empty">Todavía no hay fotos publicadas.</div>';
-    return;
-  }
-
-  const html=data.map(x=>{
-
-    const u=safeUrl(x.url)||
-      (x.ruta?
-        db.storage
-          .from("Galeria")
-          .getPublicUrl(x.ruta)
-          .data.publicUrl
-        :"");
-
-    return u?
-      `<img src="${esc(u)}"
-        alt="${esc(x.titulo||"Pool & Beach")}"
-        loading="lazy"
-        onerror="this.style.display='none'">`
-      :"";
-
-  }).join("");
-
-  box.innerHTML=html||
-    '<div class="empty">Todavía no hay fotos publicadas.</div>';
 }
 
 document.addEventListener(
   "DOMContentLoaded",
-  iniciar
+  ()=>{
+    $("reservaForm")
+      .addEventListener(
+        "submit",
+        enviarReserva
+      );
+
+    init();
+  }
 );
+
+document.documentElement.dataset.appVersion =
+  "POOL-BEACH-ORDENADO-2026-09-10";
 </script>
 
 </body>
