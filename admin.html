@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pool & Beach — Administración</title>
 
-  <title>Pool & Beach | Administración</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <style>
     * {
@@ -14,938 +15,599 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #071923;
-      color: #fff;
-    }
-
-    button,
-    input,
-    select,
-    textarea {
-      font: inherit;
-    }
-
-    button {
-      cursor: pointer;
-    }
-
-    .container {
-      width: min(1150px, 92%);
-      margin: auto;
-    }
-
-    .hidden {
-      display: none !important;
+      background: #f3f7f8;
+      color: #17343d;
     }
 
     header {
-      background: #06151e;
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      background: #083b4a;
+      color: white;
+      padding: 18px;
       position: sticky;
       top: 0;
-      z-index: 100;
+      z-index: 10;
+      box-shadow: 0 2px 10px rgba(0,0,0,.15);
     }
 
-    .header-inner {
-      min-height: 70px;
+    header .top {
+      max-width: 1100px;
+      margin: auto;
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 15px;
     }
 
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 900;
+    header h1 {
+      margin: 0;
+      font-size: 22px;
     }
 
-    .logo span {
-      color: #64d8f5;
+    header small {
+      opacity: .8;
     }
 
-    .status {
-      font-size: .85rem;
-      color: #91abb3;
-    }
-
-    /* LOGIN */
-
-    .login-screen {
-      min-height: calc(100vh - 70px);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 30px 0;
-    }
-
-    .login-card {
-      width: min(430px, 100%);
-      background: #0b2531;
-      border: 1px solid rgba(100,216,245,.16);
-      border-radius: 22px;
-      padding: 28px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.25);
-    }
-
-    .login-card h1 {
-      margin: 0 0 8px;
-    }
-
-    .login-card p {
-      color: #a9c3ca;
-      line-height: 1.5;
-    }
-
-    .field {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      margin-bottom: 15px;
-    }
-
-    .field label {
-      font-size: .9rem;
-      font-weight: 700;
-      color: #d2e4e8;
-    }
-
-    .field input,
-    .field select,
-    .field textarea {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid rgba(255,255,255,.13);
-      background: #071923;
-      color: #fff;
-      outline: none;
-    }
-
-    .field textarea {
-      min-height: 100px;
-      resize: vertical;
-    }
-
-    .field input:focus,
-    .field select:focus,
-    .field textarea:focus {
-      border-color: #64d8f5;
-    }
-
-    .btn {
+    button {
       border: 0;
       border-radius: 10px;
-      padding: 12px 16px;
-      font-weight: 800;
-      transition: .2s;
+      padding: 11px 16px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
     }
 
     .btn-primary {
-      background: #64d8f5;
-      color: #05202a;
-    }
-
-    .btn-primary:hover {
-      filter: brightness(1.06);
-      transform: translateY(-1px);
+      background: #159ab5;
+      color: white;
     }
 
     .btn-secondary {
-      background: rgba(255,255,255,.08);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,.12);
+      background: #dfecef;
+      color: #17343d;
     }
 
     .btn-danger {
-      background: #8f2933;
-      color: #fff;
+      background: #c0392b;
+      color: white;
     }
 
-    .btn-small {
-      padding: 8px 11px;
-      font-size: .82rem;
+    .btn-success {
+      background: #198754;
+      color: white;
     }
 
-    .message {
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 25px 15px 50px;
+    }
+
+    .login-box {
+      max-width: 430px;
+      margin: 70px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 5px 25px rgba(0,0,0,.10);
+    }
+
+    .login-box h2 {
+      margin-top: 0;
+      text-align: center;
+    }
+
+    .login-box p {
+      text-align: center;
+      color: #64777d;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      margin-bottom: 15px;
+      border: 1px solid #cbd9dd;
+      border-radius: 9px;
+      font-size: 15px;
+      background: white;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .login-box button {
+      width: 100%;
+      margin-top: 5px;
+    }
+
+    .error {
+      color: #b42318;
+      background: #fdecec;
+      padding: 10px;
+      border-radius: 8px;
       margin-top: 12px;
-      padding: 11px;
-      border-radius: 10px;
-      background: rgba(100,216,245,.1);
-      color: #bceef8;
       display: none;
-      line-height: 1.4;
     }
 
-    /* PANEL */
+    .success {
+      color: #176b3a;
+      background: #eaf8ef;
+      padding: 10px;
+      border-radius: 8px;
+      margin-top: 12px;
+      display: none;
+    }
 
-    .admin-panel {
-      padding: 28px 0 50px;
+    #adminPanel {
+      display: none;
     }
 
     .welcome {
-      background:
-        linear-gradient(145deg, rgba(100,216,245,.09), rgba(255,255,255,.025));
-      border: 1px solid rgba(100,216,245,.13);
-      border-radius: 20px;
-      padding: 23px;
+      background: linear-gradient(135deg, #0a4657, #159ab5);
+      color: white;
+      border-radius: 18px;
+      padding: 25px;
       margin-bottom: 20px;
     }
 
-    .welcome h1 {
+    .welcome h2 {
       margin: 0 0 7px;
     }
 
-    .welcome p {
-      margin: 0;
-      color: #a9c3ca;
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 18px;
     }
 
-    .tabs {
-      display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 3px 15px rgba(0,0,0,.07);
+      margin-bottom: 18px;
     }
 
-    .tab {
-      border: 1px solid rgba(255,255,255,.1);
-      background: rgba(255,255,255,.06);
-      color: #fff;
-      border-radius: 10px;
-      padding: 10px 13px;
-      font-weight: 700;
-    }
-
-    .tab.active {
-      background: #64d8f5;
-      color: #05202a;
+    .card h3 {
+      margin-top: 0;
+      color: #0a4657;
     }
 
     .section {
-      background: #0b2531;
-      border: 1px solid rgba(255,255,255,.08);
-      border-radius: 20px;
-      padding: 22px;
-      margin-bottom: 18px;
+      margin-bottom: 22px;
     }
 
-    .section h2 {
-      margin-top: 0;
-      margin-bottom: 7px;
+    .section-title {
+      margin: 25px 0 12px;
+      font-size: 22px;
+      color: #083b4a;
     }
 
-    .section-description {
-      color: #9fb9c0;
-      margin-top: 0;
-      line-height: 1.5;
-    }
-
-    /* DASHBOARD */
-
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 12px;
-      margin-bottom: 18px;
-    }
-
-    .stat {
-      background: #102e3b;
-      border-radius: 14px;
-      padding: 17px;
-      border: 1px solid rgba(255,255,255,.06);
-    }
-
-    .stat-number {
-      font-size: 1.7rem;
-      font-weight: 900;
-      color: #64d8f5;
-    }
-
-    .stat-label {
-      margin-top: 4px;
-      color: #9fb9c0;
-      font-size: .85rem;
-    }
-
-    /* RESERVAS */
-
-    .reservation-list {
-      display: grid;
-      gap: 12px;
-    }
-
-    .reservation {
-      border: 1px solid rgba(255,255,255,.08);
-      background: #102e3b;
-      border-radius: 14px;
-      padding: 16px;
-    }
-
-    .reservation-header {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      align-items: flex-start;
+    .item {
+      border: 1px solid #dce7ea;
+      border-radius: 12px;
+      padding: 14px;
       margin-bottom: 10px;
+      background: #fbfdfd;
     }
 
-    .reservation-title {
-      font-weight: 900;
+    .item strong {
+      display: block;
+      font-size: 17px;
+      margin-bottom: 5px;
     }
 
-    .badge {
-      padding: 5px 8px;
-      border-radius: 7px;
-      background: rgba(100,216,245,.13);
-      color: #8de4f6;
-      font-size: .75rem;
-      font-weight: 800;
-      white-space: nowrap;
-    }
-
-    .reservation-data {
-      color: #b9cfd5;
-      line-height: 1.65;
-      font-size: .9rem;
-    }
-
-    .reservation-actions {
+    .item-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 7px;
-      margin-top: 13px;
+      margin-top: 10px;
     }
 
-    /* MENU */
+    .item-actions button {
+      padding: 8px 11px;
+      font-size: 13px;
+    }
 
-    .products {
+    .reservation {
+      border-left: 5px solid #159ab5;
+    }
+
+    .reservation.pending {
+      border-left-color: #e6a700;
+    }
+
+    .reservation.confirmed {
+      border-left-color: #198754;
+    }
+
+    .reservation.cancelled {
+      border-left-color: #c0392b;
+      opacity: .75;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 5px 9px;
+      border-radius: 20px;
+      background: #e7f4f7;
+      color: #08657a;
+      font-size: 12px;
+      font-weight: bold;
+      margin-top: 5px;
+    }
+
+    .stats {
       display: grid;
-      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
-    .product-admin {
-      display: grid;
-      grid-template-columns: 1fr 150px auto;
-      gap: 10px;
-      align-items: center;
-      padding: 12px;
-      background: #102e3b;
-      border-radius: 12px;
+    .stat {
+      background: white;
+      padding: 18px;
+      border-radius: 14px;
+      box-shadow: 0 3px 12px rgba(0,0,0,.06);
     }
 
-    .product-admin input {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: #071923;
-      color: #fff;
-      width: 100%;
+    .stat-number {
+      font-size: 28px;
+      font-weight: bold;
+      color: #159ab5;
     }
 
-    .add-product {
-      display: grid;
-      grid-template-columns: 1fr 150px auto;
-      gap: 10px;
-      margin-top: 15px;
-    }
-
-    .add-product input,
-    .add-product select {
-      padding: 11px;
-      border-radius: 9px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: #071923;
-      color: #fff;
-    }
-
-    /* FOTOS */
-
-    .upload-box {
-      border: 1px dashed rgba(100,216,245,.35);
-      border-radius: 15px;
-      padding: 25px;
-      text-align: center;
-      background: rgba(100,216,245,.035);
-    }
-
-    .upload-box input[type="file"] {
+    .photo-preview {
       max-width: 100%;
-      margin: 15px 0;
-    }
-
-    .photo-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 18px;
-    }
-
-    .photo-card {
-      background: #102e3b;
+      max-height: 220px;
       border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,.07);
+      margin-top: 10px;
+      display: none;
     }
 
-    .photo-card img {
-      display: block;
-      width: 100%;
-      height: 180px;
-      object-fit: cover;
+    .hidden {
+      display: none !important;
     }
 
-    .photo-card-info {
-      padding: 9px;
-      font-size: .8rem;
-      color: #a9c1c7;
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #667b81;
     }
-
-    /* CANJES */
-
-    .redeem-list {
-      display: grid;
-      gap: 10px;
-    }
-
-    .redeem-item {
-      display: grid;
-      grid-template-columns: 1fr 130px auto;
-      gap: 10px;
-      align-items: center;
-      background: #102e3b;
-      border-radius: 12px;
-      padding: 12px;
-    }
-
-    .redeem-item input {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.1);
-      background: #071923;
-      color: #fff;
-      width: 100%;
-    }
-
-    /* JUEGOS */
-
-    .games-admin {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-    }
-
-    .game-admin-card {
-      padding: 17px;
-      border-radius: 13px;
-      background: #102e3b;
-      border: 1px solid rgba(255,255,255,.07);
-    }
-
-    .game-admin-card h3 {
-      margin-top: 0;
-    }
-
-    .game-admin-card p {
-      color: #a9c1c7;
-      line-height: 1.5;
-      font-size: .9rem;
-    }
-
-    /* EMPTY */
 
     .empty {
       text-align: center;
-      padding: 28px;
-      color: #8da8b0;
+      color: #74868b;
+      padding: 20px;
+      border: 1px dashed #ccdadd;
+      border-radius: 10px;
     }
 
-    /* MOBILE */
-
-    @media (max-width: 850px) {
-
-      .stats {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .photo-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
-
-      .product-admin {
-        grid-template-columns: 1fr;
-      }
-
-      .add-product {
-        grid-template-columns: 1fr;
-      }
-
-      .redeem-item {
-        grid-template-columns: 1fr;
-      }
-
+    .logout {
+      background: #ffffff22;
+      color: white;
+      border: 1px solid #ffffff55;
     }
 
     @media (max-width: 600px) {
-
-      .header-inner {
-        flex-direction: column;
+      header .top {
         align-items: flex-start;
-        padding: 12px 0;
       }
 
-      .stats {
-        grid-template-columns: 1fr 1fr;
+      header h1 {
+        font-size: 18px;
       }
 
-      .photo-grid {
-        grid-template-columns: 1fr;
+      .container {
+        padding: 15px 10px 40px;
       }
 
-      .games-admin {
-        grid-template-columns: 1fr;
+      .login-box {
+        margin: 30px auto;
+        padding: 22px;
       }
-
-      .section {
-        padding: 17px;
-      }
-
     }
-
   </style>
 </head>
 
 <body>
 
-  <!-- =====================================
-       HEADER
-  ====================================== -->
-
-  <header>
-
-    <div class="container header-inner">
-
-      <div class="logo">
-        POOL <span>&</span> BEACH
-      </div>
-
-      <div
-        id="connectionStatus"
-        class="status"
-      >
-        Verificando conexión...
-      </div>
-
-      <button
-        id="logoutButton"
-        class="btn btn-secondary btn-small hidden"
-        type="button"
-      >
-        Cerrar sesión
-      </button>
-
-    </div>
-
-  </header>
-
-
-  <!-- =====================================
+  <!-- =========================
        LOGIN
-  ====================================== -->
+  ========================== -->
 
-  <div
-    id="loginScreen"
-    class="login-screen"
-  >
+  <div id="loginScreen">
 
-    <div class="login-card">
+    <div class="login-box">
 
-      <h1>🔐 Administración</h1>
+      <h2>Pool & Beach</h2>
 
-      <p>
-        Ingresá con la cuenta de administrador
-        para gestionar Pool & Beach.
-      </p>
-
+      <p>Panel de administración</p>
 
       <form id="loginForm">
 
-        <div class="field">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          autocomplete="username"
+          required
+        >
 
-          <label for="email">
-            Email
-          </label>
-
-          <input
-            id="email"
-            type="email"
-            autocomplete="email"
-            required
-            placeholder="admin@email.com"
-          >
-
-        </div>
-
-
-        <div class="field">
-
-          <label for="password">
-            Contraseña
-          </label>
-
-          <input
-            id="password"
-            type="password"
-            autocomplete="current-password"
-            required
-            placeholder="Contraseña"
-          >
-
-        </div>
-
+        <label for="password">Contraseña</label>
+        <input
+          type="password"
+          id="password"
+          autocomplete="current-password"
+          required
+        >
 
         <button
-          class="btn btn-primary"
           type="submit"
-          style="width:100%;"
+          class="btn-primary"
+          id="loginButton"
         >
-          Ingresar
+          INGRESAR
         </button>
 
       </form>
 
-
-      <div
-        id="loginMessage"
-        class="message"
-      ></div>
+      <div id="loginError" class="error"></div>
 
     </div>
 
   </div>
 
 
-  <!-- =====================================
-       PANEL
-  ====================================== -->
+  <!-- =========================
+       PANEL ADMIN
+  ========================== -->
 
-  <main
-    id="adminPanel"
-    class="admin-panel hidden"
-  >
+  <div id="adminPanel">
 
-    <div class="container">
+    <header>
+
+      <div class="top">
+
+        <div>
+          <h1>Pool & Beach — Administración</h1>
+          <small id="adminEmail"></small>
+        </div>
+
+        <button
+          class="logout"
+          id="logoutButton"
+        >
+          Cerrar sesión
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <main class="container">
 
       <div class="welcome">
 
-        <h1>
-          Panel de administración
-        </h1>
+        <h2>Panel de administración</h2>
 
-        <p>
-          Desde acá podés administrar reservas,
-          pedidos, menú, fotos, canjes y el sistema
-          de juegos.
-        </p>
-
-      </div>
-
-
-      <!-- TABS -->
-
-      <div class="tabs">
-
-        <button
-          class="tab active"
-          data-section="dashboard"
-          type="button"
-        >
-          📊 Resumen
-        </button>
-
-        <button
-          class="tab"
-          data-section="reservas"
-          type="button"
-        >
-          📅 Reservas
-        </button>
-
-        <button
-          class="tab"
-          data-section="menuAdmin"
-          type="button"
-        >
-          🍔 Menú
-        </button>
-
-        <button
-          class="tab"
-          data-section="fotos"
-          type="button"
-        >
-          📷 Fotos
-        </button>
-
-        <button
-          class="tab"
-          data-section="canjes"
-          type="button"
-        >
-          🎁 Canjes
-        </button>
-
-        <button
-          class="tab"
-          data-section="juegosAdmin"
-          type="button"
-        >
-          🎮 Juegos
-        </button>
-
-      </div>
-
-
-      <!-- =================================
-           DASHBOARD
-      ================================== -->
-
-      <div
-        id="dashboard"
-        class="admin-section"
-      >
-
-        <div class="stats">
-
-          <div class="stat">
-            <div
-              id="statReservations"
-              class="stat-number"
-            >
-              0
-            </div>
-
-            <div class="stat-label">
-              Reservas
-            </div>
-          </div>
-
-
-          <div class="stat">
-            <div
-              id="statOrders"
-              class="stat-number"
-            >
-              0
-            </div>
-
-            <div class="stat-label">
-              Pedidos
-            </div>
-          </div>
-
-
-          <div class="stat">
-            <div
-              id="statProducts"
-              class="stat-number"
-            >
-              0
-            </div>
-
-            <div class="stat-label">
-              Productos
-            </div>
-          </div>
-
-
-          <div class="stat">
-            <div
-              id="statRedeems"
-              class="stat-number"
-            >
-              0
-            </div>
-
-            <div class="stat-label">
-              Canjes
-            </div>
-          </div>
-
+        <div>
+          Desde acá podés administrar menú, reservas, fotos y canjes.
         </div>
 
+      </div>
 
-        <div class="section">
 
-          <h2>
-            🔔 Últimas solicitudes
-          </h2>
+      <!-- =========================
+           ESTADÍSTICAS
+      ========================== -->
 
-          <p class="section-description">
-            Las nuevas reservas y pedidos aparecen
-            automáticamente cuando la tabla está conectada.
-          </p>
+      <div class="stats">
 
+        <div class="stat">
+          <div>Reservas</div>
           <div
-            id="recentReservations"
-            class="reservation-list"
-          ></div>
+            class="stat-number"
+            id="statReservations"
+          >
+            0
+          </div>
+        </div>
 
+        <div class="stat">
+          <div>Productos</div>
+          <div
+            class="stat-number"
+            id="statProducts"
+          >
+            0
+          </div>
+        </div>
+
+        <div class="stat">
+          <div>Canjes</div>
+          <div
+            class="stat-number"
+            id="statRewards"
+          >
+            0
+          </div>
         </div>
 
       </div>
 
 
-      <!-- =================================
+      <!-- =========================
            RESERVAS
-      ================================== -->
+      ========================== -->
 
-      <div
-        id="reservas"
-        class="admin-section hidden"
-      >
+      <div class="section">
 
-        <div class="section">
+        <h2 class="section-title">
+          📋 Reservas y pedidos
+        </h2>
 
-          <h2>
-            📅 Reservas y pedidos
-          </h2>
-
-          <p class="section-description">
-            Acá vas a poder consultar las solicitudes
-            realizadas desde la página pública.
-          </p>
-
+        <div class="card">
 
           <div
             id="reservationsList"
-            class="reservation-list"
-          ></div>
-
-        </div>
-
-      </div>
-
-
-      <!-- =================================
-           MENU
-      ================================== -->
-
-      <div
-        id="menuAdmin"
-        class="admin-section hidden"
-      >
-
-        <div class="section">
-
-          <h2>
-            🍔 Administrar menú
-          </h2>
-
-          <p class="section-description">
-            Podés modificar nombres y precios,
-            agregar productos o eliminarlos.
-          </p>
-
-
-          <div
-            id="productsList"
-            class="products"
-          ></div>
-
-
-          <div class="add-product">
-
-            <input
-              id="newProductName"
-              type="text"
-              placeholder="Nuevo producto"
-            >
-
-            <input
-              id="newProductPrice"
-              type="text"
-              placeholder="Precio"
-            >
-
-            <button
-              id="addProductButton"
-              class="btn btn-primary"
-              type="button"
-            >
-              Agregar
-            </button>
-
+            class="loading"
+          >
+            Cargando reservas...
           </div>
 
-
-          <div
-            id="menuMessage"
-            class="message"
-          ></div>
-
         </div>
 
       </div>
 
 
-      <!-- =================================
-           FOTOS
-      ================================== -->
+      <!-- =========================
+           MENÚ
+      ========================== -->
 
-      <div
-        id="fotos"
-        class="admin-section hidden"
-      >
+      <div class="section">
 
-        <div class="section">
+        <h2 class="section-title">
+          🍔 Menú
+        </h2>
 
-          <h2>
-            📷 Fotos
-          </h2>
+        <div class="grid">
 
-          <p class="section-description">
-            Subí fotos directamente desde el celular,
-            la galería o la cámara.
-          </p>
+          <div class="card">
 
+            <h3>Agregar producto</h3>
 
-          <div class="upload-box">
+            <form id="productForm">
 
-            <strong>
-              Subir imagen
-            </strong>
+              <label>
+                Nombre
+              </label>
 
-            <br>
+              <input
+                type="text"
+                id="productName"
+                placeholder="Ej: Hamburguesa completa"
+                required
+              >
 
-            <input
-              id="photoInput"
-              type="file"
-              accept="image/*"
-              multiple
-            >
+              <label>
+                Descripción
+              </label>
 
-            <br>
+              <textarea
+                id="productDescription"
+                placeholder="Descripción del producto"
+              ></textarea>
 
-            <button
-              id="uploadPhotosButton"
-              class="btn btn-primary"
-              type="button"
-            >
-              Subir fotos
-            </button>
+              <label>
+                Precio
+              </label>
+
+              <input
+                type="number"
+                id="productPrice"
+                min="0"
+                step="1"
+                placeholder="19000"
+                required
+              >
+
+              <label>
+                Categoría
+              </label>
+
+              <input
+                type="text"
+                id="productCategory"
+                placeholder="Hamburguesas"
+              >
+
+              <button
+                type="submit"
+                class="btn-primary"
+              >
+                AGREGAR PRODUCTO
+              </button>
+
+            </form>
 
             <div
-              id="uploadMessage"
-              class="message"
+              id="productMessage"
+              class="success"
             ></div>
 
           </div>
 
 
+          <div class="card">
+
+            <h3>Productos actuales</h3>
+
+            <div
+              id="productsList"
+              class="loading"
+            >
+              Cargando productos...
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           FOTOS
+      ========================== -->
+
+      <div class="section">
+
+        <h2 class="section-title">
+          📷 Fotos
+        </h2>
+
+        <div class="card">
+
+          <p>
+            Subí fotos directamente desde el teléfono o la galería.
+          </p>
+
+          <input
+            type="file"
+            id="photoInput"
+            accept="image/*"
+          >
+
+          <img
+            id="photoPreview"
+            class="photo-preview"
+            alt="Vista previa"
+          >
+
+          <br><br>
+
+          <button
+            id="uploadPhotoButton"
+            class="btn-primary"
+          >
+            SUBIR FOTO
+          </button>
+
           <div
-            id="photoGrid"
-            class="photo-grid"
+            id="photoMessage"
+            class="success"
           ></div>
 
         </div>
@@ -953,178 +615,73 @@
       </div>
 
 
-      <!-- =================================
+      <!-- =========================
            CANJES
-      ================================== -->
+      ========================== -->
 
-      <div
-        id="canjes"
-        class="admin-section hidden"
-      >
+      <div class="section">
 
-        <div class="section">
+        <h2 class="section-title">
+          🎁 Canjes
+        </h2>
 
-          <h2>
-            🎁 Canjes
-          </h2>
+        <div class="grid">
 
-          <p class="section-description">
-            Administrá las opciones que los clientes
-            pueden canjear dentro del sistema.
-          </p>
+          <div class="card">
 
+            <h3>Agregar canje</h3>
 
-          <div
-            id="redeemList"
-            class="redeem-list"
-          ></div>
+            <form id="rewardForm">
 
+              <label>
+                Nombre
+              </label>
 
-          <div class="add-product">
+              <input
+                type="text"
+                id="rewardName"
+                placeholder="Ej: Bebida gratis"
+                required
+              >
 
-            <input
-              id="newRedeemName"
-              type="text"
-              placeholder="Nuevo canje"
-            >
+              <label>
+                Puntos necesarios
+              </label>
 
-            <input
-              id="newRedeemPoints"
-              type="number"
-              min="0"
-              placeholder="Puntos"
-            >
+              <input
+                type="number"
+                id="rewardPoints"
+                min="0"
+                step="1"
+                required
+              >
 
-            <button
-              id="addRedeemButton"
-              class="btn btn-primary"
-              type="button"
-            >
-              Agregar
-            </button>
+              <button
+                type="submit"
+                class="btn-primary"
+              >
+                AGREGAR CANJE
+              </button>
+
+            </form>
+
+            <div
+              id="rewardMessage"
+              class="success"
+            ></div>
 
           </div>
 
 
-          <div
-            id="redeemMessage"
-            class="message"
-          ></div>
+          <div class="card">
 
-        </div>
+            <h3>Canjes actuales</h3>
 
-      </div>
-
-
-      <!-- =================================
-           JUEGOS
-      ================================== -->
-
-      <div
-        id="juegosAdmin"
-        class="admin-section hidden"
-      >
-
-        <div class="section">
-
-          <h2>
-            🎮 Sistema de juegos
-          </h2>
-
-          <p class="section-description">
-            El sistema de juegos sigue formando parte
-            del proyecto, pero se administra como una
-            sección independiente de reservas y menú.
-          </p>
-
-
-          <div class="games-admin">
-
-            <div class="game-admin-card">
-
-              <h3>
-                🎱 Pool
-              </h3>
-
-              <p>
-                Gestión del juego y estadísticas
-                vinculadas a las tarjetas.
-              </p>
-
-              <button
-                class="btn btn-secondary btn-small"
-                type="button"
-                onclick="openGames()"
-              >
-                Abrir sistema
-              </button>
-
-            </div>
-
-
-            <div class="game-admin-card">
-
-              <h3>
-                🃏 Cartas
-              </h3>
-
-              <p>
-                Acceso al sistema de juegos mediante
-                las tarjetas vinculadas.
-              </p>
-
-              <button
-                class="btn btn-secondary btn-small"
-                type="button"
-                onclick="openGames()"
-              >
-                Abrir sistema
-              </button>
-
-            </div>
-
-
-            <div class="game-admin-card">
-
-              <h3>
-                🎲 Dados
-              </h3>
-
-              <p>
-                Juegos y desafíos complementarios
-                para los clientes.
-              </p>
-
-              <button
-                class="btn btn-secondary btn-small"
-                type="button"
-                onclick="openGames()"
-              >
-                Abrir sistema
-              </button>
-
-            </div>
-
-
-            <div class="game-admin-card">
-
-              <h3>
-                🏆 Torneos
-              </h3>
-
-              <p>
-                Torneos, rankings y estadísticas
-                del sistema de juegos.
-              </p>
-
-              <button
-                class="btn btn-secondary btn-small"
-                type="button"
-                onclick="openGames()"
-              >
-                Abrir sistema
-              </button>
-
+            <div
+              id="rewardsList"
+              class="loading"
+            >
+              Cargando canjes...
             </div>
 
           </div>
@@ -1133,80 +690,73 @@
 
       </div>
 
-    </div>
 
-  </main>
+      <!-- =========================
+           RESERVAS DE POOL
+      ========================== -->
 
+      <div class="section">
 
-  <!-- =====================================
-       SUPABASE
-  ====================================== -->
+        <h2 class="section-title">
+          🎱 Mesas de pool
+        </h2>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+        <div class="card">
+
+          <p>
+            El sistema contempla <strong>3 mesas de pool</strong>.
+          </p>
+
+          <div id="poolTables">
+
+            <div class="item">
+              <strong>Mesa 1</strong>
+              <span class="badge">Disponible</span>
+            </div>
+
+            <div class="item">
+              <strong>Mesa 2</strong>
+              <span class="badge">Disponible</span>
+            </div>
+
+            <div class="item">
+              <strong>Mesa 3</strong>
+              <span class="badge">Disponible</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
+  </div>
 
 
   <script>
 
-    /*
-      ====================================================
-      CONFIGURACIÓN SUPABASE
-      ====================================================
-
-      IMPORTANTE:
-
-      Colocá acá los mismos datos públicos de Supabase
-      que utiliza tu proyecto.
-
-      NUNCA coloques acá service_role_key.
-
-      Debe utilizarse únicamente la clave pública
-      (publishable/anon según la configuración actual).
-    */
-
+    /* =====================================================
+       SUPABASE
+    ===================================================== */
 
     const SUPABASE_URL =
-      "PEGAR_AQUI_TU_SUPABASE_URL";
+      "https://TU-PROYECTO.supabase.co";
+
+    const SUPABASE_ANON_KEY =
+      "TU-ANON-KEY";
+
+    const supabaseClient =
+      window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
 
 
-    const SUPABASE_KEY =
-      "PEGAR_AQUI_TU_SUPABASE_PUBLIC_KEY";
-
-
-    let supabaseClient = null;
-
-
-    if (
-      SUPABASE_URL.startsWith("http") &&
-      !SUPABASE_URL.includes("PEGAR_AQUI") &&
-      !SUPABASE_KEY.includes("PEGAR_AQUI")
-    ) {
-
-      supabaseClient =
-        window.supabase.createClient(
-          SUPABASE_URL,
-          SUPABASE_KEY
-        );
-
-      document.getElementById(
-        "connectionStatus"
-      ).textContent =
-        "Supabase configurado";
-
-    } else {
-
-      document.getElementById(
-        "connectionStatus"
-      ).textContent =
-        "Falta configurar Supabase";
-
-    }
-
-
-    /*
-      ====================================================
-      ELEMENTOS
-      ====================================================
-    */
+    /* =====================================================
+       ELEMENTOS
+    ===================================================== */
 
     const loginScreen =
       document.getElementById("loginScreen");
@@ -1217,42 +767,64 @@
     const loginForm =
       document.getElementById("loginForm");
 
-    const loginMessage =
-      document.getElementById("loginMessage");
+    const loginButton =
+      document.getElementById("loginButton");
+
+    const loginError =
+      document.getElementById("loginError");
+
+    const adminEmail =
+      document.getElementById("adminEmail");
 
     const logoutButton =
       document.getElementById("logoutButton");
 
 
-    /*
-      ====================================================
-      MENSAJES
-      ====================================================
-    */
+    /* =====================================================
+       FUNCIONES GENERALES
+    ===================================================== */
 
-    function showMessage(element, text) {
+    function showLoginError(message) {
 
-      element.style.display = "block";
-
-      element.textContent = text;
+      loginError.textContent = message;
+      loginError.style.display = "block";
 
     }
 
 
-    function hideMessage(element) {
+    function clearLoginError() {
 
-      element.style.display = "none";
-
-      element.textContent = "";
+      loginError.textContent = "";
+      loginError.style.display = "none";
 
     }
 
 
-    /*
-      ====================================================
-      LOGIN
-      ====================================================
-    */
+    function showPanel(user) {
+
+      loginScreen.style.display = "none";
+      adminPanel.style.display = "block";
+
+      if (user && user.email) {
+        adminEmail.textContent = user.email;
+      }
+
+      loadEverything();
+
+    }
+
+
+    function showLogin() {
+
+      adminPanel.style.display = "none";
+      loginScreen.style.display = "block";
+
+    }
+
+
+    /* =====================================================
+       LOGIN
+    ===================================================== */
 
     loginForm.addEventListener(
       "submit",
@@ -1260,80 +832,53 @@
 
         event.preventDefault();
 
-        hideMessage(loginMessage);
+        clearLoginError();
 
-
-        if (!supabaseClient) {
-
-          showMessage(
-            loginMessage,
-            "⚠️ Primero hay que configurar SUPABASE_URL y SUPABASE_PUBLIC_KEY en este archivo."
-          );
-
-          return;
-
-        }
-
+        loginButton.disabled = true;
+        loginButton.textContent = "INGRESANDO...";
 
         const email =
-          document
-            .getElementById("email")
-            .value
-            .trim();
-
+          document.getElementById("email").value.trim();
 
         const password =
-          document
-            .getElementById("password")
-            .value;
-
-
-        const submitButton =
-          loginForm.querySelector(
-            "button[type='submit']"
-          );
-
-
-        submitButton.disabled = true;
-
-        submitButton.textContent =
-          "Ingresando...";
-
+          document.getElementById("password").value;
 
         try {
 
-          const result =
+          const {
+            data,
+            error
+          } =
             await supabaseClient.auth.signInWithPassword({
               email,
               password
             });
 
-
-          if (result.error) {
-
-            throw result.error;
-
+          if (error) {
+            throw error;
           }
 
+          if (!data || !data.user) {
+            throw new Error(
+              "No se pudo obtener el usuario."
+            );
+          }
 
-          await showAdminPanel();
+          showPanel(data.user);
 
         } catch (error) {
 
           console.error(error);
 
-          showMessage(
-            loginMessage,
-            "❌ No se pudo iniciar sesión: " +
-            (error.message || "Error desconocido")
+          showLoginError(
+            error.message ||
+            "No se pudo iniciar sesión."
           );
 
         } finally {
 
-          submitButton.disabled = false;
-
-          submitButton.textContent =
-            "Ingresar";
+          loginButton.disabled = false;
+          loginButton.textContent = "INGRESAR";
 
         }
 
@@ -1341,20 +886,27 @@
     );
 
 
-    /*
-      ====================================================
-      SESIÓN ACTUAL
-      ====================================================
-    */
+    /* =====================================================
+       LOGOUT
+    ===================================================== */
 
-    async function checkSession() {
+    logoutButton.addEventListener(
+      "click",
+      async function() {
 
-      if (!supabaseClient) {
+        await supabaseClient.auth.signOut();
 
-        return;
+        showLogin();
 
       }
+    );
 
+
+    /* =====================================================
+       SESIÓN EXISTENTE
+    ===================================================== */
+
+    async function checkSession() {
 
       try {
 
@@ -1364,15 +916,10 @@
         } =
           await supabaseClient.auth.getSession();
 
-
         if (error) {
-
           console.error(error);
-
           return;
-
         }
-
 
         if (
           data &&
@@ -1380,7 +927,9 @@
           data.session.user
         ) {
 
-          await showAdminPanel();
+          showPanel(
+            data.session.user
+          );
 
         } else {
 
@@ -1392,184 +941,38 @@
 
         console.error(error);
 
+        showLogin();
+
       }
 
     }
 
 
-    /*
-      ====================================================
-      MOSTRAR LOGIN
-      ====================================================
-    */
+    supabaseClient.auth.onAuthStateChange(
+      function(event, session) {
 
-    function showLogin() {
+        if (
+          session &&
+          session.user
+        ) {
 
-      loginScreen.classList.remove(
-        "hidden"
-      );
+          showPanel(
+            session.user
+          );
 
-      adminPanel.classList.add(
-        "hidden"
-      );
-
-      logoutButton.classList.add(
-        "hidden"
-      );
-
-    }
-
-
-    /*
-      ====================================================
-      MOSTRAR PANEL
-      ====================================================
-    */
-
-    async function showAdminPanel() {
-
-      loginScreen.classList.add(
-        "hidden"
-      );
-
-      adminPanel.classList.remove(
-        "hidden"
-      );
-
-      logoutButton.classList.remove(
-        "hidden"
-      );
-
-
-      await loadDashboard();
-
-      await loadReservations();
-
-      await loadProducts();
-
-      await loadRedeems();
-
-      await loadPhotos();
-
-    }
-
-
-    /*
-      ====================================================
-      LOGOUT
-      ====================================================
-    */
-
-    logoutButton.addEventListener(
-      "click",
-      async function() {
-
-        if (!supabaseClient) {
+        } else {
 
           showLogin();
 
-          return;
-
         }
-
-
-        await supabaseClient.auth.signOut();
-
-        showLogin();
 
       }
     );
 
 
-    /*
-      ====================================================
-      CAMBIO DE TABS
-      ====================================================
-    */
-
-    const tabs =
-      document.querySelectorAll(".tab");
-
-
-    const sections =
-      document.querySelectorAll(
-        ".admin-section"
-      );
-
-
-    tabs.forEach(tab => {
-
-      tab.addEventListener(
-        "click",
-        () => {
-
-          tabs.forEach(t =>
-            t.classList.remove("active")
-          );
-
-
-          sections.forEach(section =>
-            section.classList.add("hidden")
-          );
-
-
-          tab.classList.add("active");
-
-
-          const target =
-            document.getElementById(
-              tab.dataset.section
-            );
-
-
-          if (target) {
-
-            target.classList.remove(
-              "hidden"
-            );
-
-          }
-
-        }
-      );
-
-    });
-
-
-    /*
-      ====================================================
-      TABLAS
-      ====================================================
-
-      El código detecta automáticamente algunas tablas
-      habituales del proyecto.
-
-      Si una tabla no existe, no rompe todo el panel.
-    */
-
-
-    const TABLES = {
-
-      reservations:
-        "reservas",
-
-      products:
-        "productos",
-
-      redeems:
-        "canjes"
-
-    };
-
-
-    /*
-      ====================================================
-      RESERVAS
-      ====================================================
-    */
-
-    let reservationsCache = [];
-
+    /* =====================================================
+       RESERVAS
+    ===================================================== */
 
     async function loadReservations() {
 
@@ -1578,323 +981,238 @@
           "reservationsList"
         );
 
-
-      const recent =
-        document.getElementById(
-          "recentReservations"
-        );
-
-
-      if (!supabaseClient) {
-
-        renderEmpty(
-          container,
-          "Supabase todavía no está configurado."
-        );
-
-        renderEmpty(
-          recent,
-          "Supabase todavía no está configurado."
-        );
-
-        return;
-
-      }
-
+      container.innerHTML =
+        '<div class="loading">Cargando reservas...</div>';
 
       try {
 
-        const result =
+        const {
+          data,
+          error
+        } =
           await supabaseClient
-            .from(TABLES.reservations)
+            .from("reservas")
             .select("*")
             .order(
               "created_at",
               {
                 ascending: false
               }
-            )
-            .limit(100);
+            );
 
+        if (error) {
+          throw error;
+        }
 
-        if (result.error) {
+        document.getElementById(
+          "statReservations"
+        ).textContent =
+          data ? data.length : 0;
 
-          throw result.error;
+        if (!data || data.length === 0) {
+
+          container.innerHTML =
+            '<div class="empty">No hay reservas todavía.</div>';
+
+          return;
 
         }
 
+        container.innerHTML = "";
 
-        reservationsCache =
-          result.data || [];
+        data.forEach(function(reserva) {
 
+          const div =
+            document.createElement("div");
 
-        renderReservations(
-          container,
-          reservationsCache
-        );
+          div.className =
+            "item reservation";
 
+          const nombre =
+            reserva.nombre ||
+            reserva.name ||
+            "Cliente";
 
-        renderReservations(
-          recent,
-          reservationsCache.slice(0, 5)
-        );
+          const telefono =
+            reserva.telefono ||
+            reserva.phone ||
+            "";
 
+          const fecha =
+            reserva.fecha ||
+            reserva.date ||
+            "";
 
-        updateReservationStats();
+          const hora =
+            reserva.hora ||
+            reserva.time ||
+            "";
+
+          const tipo =
+            reserva.tipo ||
+            reserva.type ||
+            "";
+
+          const estado =
+            reserva.estado ||
+            reserva.status ||
+            "Pendiente";
+
+          div.innerHTML = `
+
+            <strong>${escapeHtml(nombre)}</strong>
+
+            ${
+              telefono
+                ? `<div>📱 ${escapeHtml(telefono)}</div>`
+                : ""
+            }
+
+            ${
+              fecha
+                ? `<div>📅 ${escapeHtml(fecha)}</div>`
+                : ""
+            }
+
+            ${
+              hora
+                ? `<div>🕐 ${escapeHtml(hora)}</div>`
+                : ""
+            }
+
+            ${
+              tipo
+                ? `<div>📦 ${escapeHtml(tipo)}</div>`
+                : ""
+            }
+
+            <span class="badge">
+              ${escapeHtml(String(estado))}
+            </span>
+
+            <div class="item-actions">
+
+              <button
+                class="btn-success"
+                onclick="updateReservationStatus('${reserva.id}','confirmada')"
+              >
+                Confirmar
+              </button>
+
+              <button
+                class="btn-secondary"
+                onclick="updateReservationStatus('${reserva.id}','pendiente')"
+              >
+                Pendiente
+              </button>
+
+              <button
+                class="btn-danger"
+                onclick="deleteReservation('${reserva.id}')"
+              >
+                Eliminar
+              </button>
+
+            </div>
+          `;
+
+          container.appendChild(div);
+
+        });
 
       } catch (error) {
 
-        console.error(
-          "Error reservas:",
-          error
-        );
+        console.error(error);
 
-
-        renderEmpty(
-          container,
-          "No se pudieron cargar las reservas. Verificá el nombre de la tabla y las políticas RLS."
-        );
-
-
-        renderEmpty(
-          recent,
-          "No se pudieron cargar las solicitudes."
-        );
+        container.innerHTML = `
+          <div class="empty">
+            No se pudieron cargar las reservas.
+            <br><br>
+            ${escapeHtml(error.message || "")}
+          </div>
+        `;
 
       }
 
     }
 
 
-    function renderReservations(
-      container,
-      reservations
+    async function updateReservationStatus(
+      id,
+      status
     ) {
 
-      if (!reservations.length) {
+      try {
 
-        renderEmpty(
-          container,
-          "Todavía no hay reservas ni pedidos."
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("reservas")
+            .update({
+              estado: status
+            })
+            .eq("id", id);
+
+        if (error) {
+          throw error;
+        }
+
+        await loadReservations();
+
+      } catch (error) {
+
+        alert(
+          "No se pudo actualizar la reserva: " +
+          error.message
         );
-
-        return;
 
       }
 
-
-      container.innerHTML =
-        reservations
-          .map(
-            reservation => {
-
-              const type =
-                reservation.tipo ||
-                reservation.type ||
-                "Reserva";
+    }
 
 
-              const name =
-                reservation.nombre ||
-                reservation.name ||
-                "Sin nombre";
+    async function deleteReservation(id) {
 
+      if (
+        !confirm(
+          "¿Querés eliminar esta reserva?"
+        )
+      ) {
+        return;
+      }
 
-              const phone =
-                reservation.telefono ||
-                reservation.phone ||
-                "";
+      try {
 
+        const {
+          error
+        } =
+          await supabaseClient
+            .from("reservas")
+            .delete()
+            .eq("id", id);
 
-              const date =
-                reservation.fecha ||
-                reservation.date ||
-                "";
+        if (error) {
+          throw error;
+        }
 
+        await loadReservations();
 
-              const time =
-                reservation.hora ||
-                reservation.time ||
-                "";
+      } catch (error) {
 
+        alert(
+          "No se pudo eliminar: " +
+          error.message
+        );
 
-              const people =
-                reservation.personas ||
-                "";
-
-
-              const mesa =
-                reservation.mesa ||
-                "";
-
-
-              const pedido =
-                reservation.pedido ||
-                "";
-
-
-              const entrega =
-                reservation.entrega ||
-                "";
-
-
-              const direccion =
-                reservation.direccion ||
-                "";
-
-
-              const comment =
-                reservation.comentario ||
-                "";
-
-
-              return `
-
-                <div class="reservation">
-
-                  <div class="reservation-header">
-
-                    <div class="reservation-title">
-                      ${escapeHtml(name)}
-                    </div>
-
-                    <div class="badge">
-                      ${escapeHtml(type)}
-                    </div>
-
-                  </div>
-
-
-                  <div class="reservation-data">
-
-                    ${phone
-                      ? "📱 " + escapeHtml(phone) + "<br>"
-                      : ""}
-
-                    ${date || time
-                      ? "📅 " +
-                        escapeHtml(date) +
-                        " " +
-                        escapeHtml(time) +
-                        "<br>"
-                      : ""}
-
-                    ${people
-                      ? "👥 " +
-                        escapeHtml(String(people)) +
-                        " personas<br>"
-                      : ""}
-
-                    ${mesa
-                      ? "🎱 " +
-                        escapeHtml(mesa) +
-                        "<br>"
-                      : ""}
-
-                    ${pedido
-                      ? "🍔 Pedido: " +
-                        escapeHtml(pedido) +
-                        "<br>"
-                      : ""}
-
-                    ${entrega
-                      ? "🚚 " +
-                        escapeHtml(entrega) +
-                        "<br>"
-                      : ""}
-
-                    ${direccion
-                      ? "📍 " +
-                        escapeHtml(direccion) +
-                        "<br>"
-                      : ""}
-
-                    ${comment
-                      ? "💬 " +
-                        escapeHtml(comment)
-                      : ""}
-
-                  </div>
-
-
-                  <div class="reservation-actions">
-
-                    ${
-                      phone
-                      ? `
-                        <a
-                          class="btn btn-secondary btn-small"
-                          href="https://wa.me/${normalizePhone(phone)}"
-                          target="_blank"
-                          rel="noopener"
-                        >
-                          WhatsApp
-                        </a>
-                      `
-                      : ""
-                    }
-
-                  </div>
-
-                </div>
-
-              `;
-
-            }
-          )
-          .join("");
+      }
 
     }
 
 
-    function updateReservationStats() {
-
-      const reservations =
-        reservationsCache.filter(
-          item =>
-            (item.tipo || "")
-              .toLowerCase()
-              .includes("reserva") ||
-            (item.type || "")
-              .toLowerCase()
-              .includes("reserva")
-        );
-
-
-      const orders =
-        reservationsCache.filter(
-          item =>
-            (item.tipo || "")
-              .toLowerCase()
-              .includes("pedido") ||
-            (item.type || "")
-              .toLowerCase()
-              .includes("pedido")
-        );
-
-
-      document.getElementById(
-        "statReservations"
-      ).textContent =
-        reservations.length;
-
-
-      document.getElementById(
-        "statOrders"
-      ).textContent =
-        orders.length;
-
-    }
-
-
-    /*
-      ====================================================
-      PRODUCTOS
-      ====================================================
-    */
-
-    let productsCache = [];
-
+    /* =====================================================
+       PRODUCTOS
+    ===================================================== */
 
     async function loadProducts() {
 
@@ -1903,263 +1221,236 @@
           "productsList"
         );
 
-
-      if (!supabaseClient) {
-
-        renderEmpty(
-          container,
-          "Supabase todavía no está configurado."
-        );
-
-        return;
-
-      }
-
+      container.innerHTML =
+        '<div class="loading">Cargando productos...</div>';
 
       try {
 
-        const result =
+        const {
+          data,
+          error
+        } =
           await supabaseClient
-            .from(TABLES.products)
+            .from("productos")
             .select("*")
             .order(
-              "id",
+              "created_at",
               {
-                ascending: true
+                ascending: false
               }
             );
 
-
-        if (result.error) {
-
-          throw result.error;
-
+        if (error) {
+          throw error;
         }
-
-
-        productsCache =
-          result.data || [];
-
-
-        renderProducts(
-          container
-        );
-
 
         document.getElementById(
           "statProducts"
         ).textContent =
-          productsCache.length;
+          data ? data.length : 0;
 
-      } catch (error) {
+        if (!data || data.length === 0) {
 
-        console.error(
-          "Error productos:",
-          error
-        );
+          container.innerHTML =
+            '<div class="empty">No hay productos.</div>';
 
-
-        renderEmpty(
-          container,
-          "No se pudieron cargar los productos. Verificá que exista la tabla productos."
-        );
-
-      }
-
-    }
-
-
-    function renderProducts(
-      container
-    ) {
-
-      if (!productsCache.length) {
-
-        renderEmpty(
-          container,
-          "No hay productos cargados."
-        );
-
-        return;
-
-      }
-
-
-      container.innerHTML =
-        productsCache
-          .map(
-            product => {
-
-              const id =
-                product.id;
-
-
-              const name =
-                product.nombre ||
-                product.name ||
-                "";
-
-
-              const price =
-                product.precio ||
-                product.price ||
-                "";
-
-
-              return `
-
-                <div class="product-admin">
-
-                  <input
-                    id="product-name-${escapeHtml(String(id))}"
-                    value="${escapeAttr(name)}"
-                    placeholder="Producto"
-                  >
-
-
-                  <input
-                    id="product-price-${escapeHtml(String(id))}"
-                    value="${escapeAttr(price)}"
-                    placeholder="Precio"
-                  >
-
-
-                  <div>
-
-                    <button
-                      class="btn btn-primary btn-small"
-                      type="button"
-                      onclick="saveProduct('${escapeJs(String(id))}')"
-                    >
-                      Guardar
-                    </button>
-
-                    <button
-                      class="btn btn-danger btn-small"
-                      type="button"
-                      onclick="deleteProduct('${escapeJs(String(id))}')"
-                    >
-                      Eliminar
-                    </button>
-
-                  </div>
-
-                </div>
-
-              `;
-
-            }
-          )
-          .join("");
-
-    }
-
-
-    async function saveProduct(id) {
-
-      if (!supabaseClient) return;
-
-
-      const name =
-        document.getElementById(
-          "product-name-" + id
-        ).value.trim();
-
-
-      const price =
-        document.getElementById(
-          "product-price-" + id
-        ).value.trim();
-
-
-      try {
-
-        const result =
-          await supabaseClient
-            .from(TABLES.products)
-            .update({
-              nombre: name,
-              precio: price
-            })
-            .eq(
-              "id",
-              id
-            );
-
-
-        if (result.error) {
-
-          throw result.error;
+          return;
 
         }
 
+        container.innerHTML = "";
 
-        showMessage(
-          document.getElementById("menuMessage"),
-          "✅ Producto actualizado."
-        );
+        data.forEach(function(producto) {
 
+          const div =
+            document.createElement("div");
 
-        await loadProducts();
+          div.className = "item";
+
+          const precio =
+            Number(
+              producto.precio ||
+              producto.price ||
+              0
+            );
+
+          div.innerHTML = `
+
+            <strong>
+              ${escapeHtml(
+                producto.nombre ||
+                producto.name ||
+                "Producto"
+              )}
+            </strong>
+
+            ${
+              producto.descripcion ||
+              producto.description
+                ? `<div>
+                    ${escapeHtml(
+                      producto.descripcion ||
+                      producto.description
+                    )}
+                  </div>`
+                : ""
+            }
+
+            <div>
+              ${
+                producto.categoria ||
+                producto.category
+                  ? escapeHtml(
+                      producto.categoria ||
+                      producto.category
+                    )
+                  : ""
+              }
+            </div>
+
+            <div>
+              <strong>
+                $${precio.toLocaleString("es-AR")}
+              </strong>
+            </div>
+
+            <div class="item-actions">
+
+              <button
+                class="btn-danger"
+                onclick="deleteProduct('${producto.id}')"
+              >
+                Eliminar
+              </button>
+
+            </div>
+
+          `;
+
+          container.appendChild(div);
+
+        });
 
       } catch (error) {
 
         console.error(error);
 
-        showMessage(
-          document.getElementById("menuMessage"),
-          "❌ No se pudo actualizar el producto."
-        );
+        container.innerHTML = `
+          <div class="empty">
+            No se pudieron cargar los productos.
+            <br><br>
+            ${escapeHtml(error.message || "")}
+          </div>
+        `;
 
       }
 
     }
 
 
+    document.getElementById(
+      "productForm"
+    ).addEventListener(
+      "submit",
+      async function(event) {
+
+        event.preventDefault();
+
+        const nombre =
+          document.getElementById(
+            "productName"
+          ).value.trim();
+
+        const descripcion =
+          document.getElementById(
+            "productDescription"
+          ).value.trim();
+
+        const precio =
+          Number(
+            document.getElementById(
+              "productPrice"
+            ).value
+          );
+
+        const categoria =
+          document.getElementById(
+            "productCategory"
+          ).value.trim();
+
+        try {
+
+          const {
+            error
+          } =
+            await supabaseClient
+              .from("productos")
+              .insert({
+                nombre,
+                descripcion,
+                precio,
+                categoria
+              });
+
+          if (error) {
+            throw error;
+          }
+
+          document.getElementById(
+            "productForm"
+          ).reset();
+
+          showMessage(
+            "productMessage",
+            "Producto agregado correctamente."
+          );
+
+          await loadProducts();
+
+        } catch (error) {
+
+          alert(
+            "No se pudo agregar el producto: " +
+            error.message
+          );
+
+        }
+
+      }
+    );
+
+
     async function deleteProduct(id) {
-
-      if (!supabaseClient) return;
-
 
       if (
         !confirm(
           "¿Querés eliminar este producto?"
         )
       ) {
-
         return;
-
       }
-
 
       try {
 
-        const result =
+        const {
+          error
+        } =
           await supabaseClient
-            .from(TABLES.products)
+            .from("productos")
             .delete()
-            .eq(
-              "id",
-              id
-            );
+            .eq("id", id);
 
-
-        if (result.error) {
-
-          throw result.error;
-
+        if (error) {
+          throw error;
         }
-
 
         await loadProducts();
 
       } catch (error) {
 
-        console.error(error);
-
-        showMessage(
-          document.getElementById("menuMessage"),
-          "❌ No se pudo eliminar el producto."
+        alert(
+          "No se pudo eliminar: " +
+          error.message
         );
 
       }
@@ -2167,689 +1458,206 @@
     }
 
 
-    document
-      .getElementById("addProductButton")
-      .addEventListener(
-        "click",
-        async function() {
+    /* =====================================================
+       CANJES
+    ===================================================== */
 
-          if (!supabaseClient) return;
+    async function loadRewards() {
 
-
-          const name =
-            document
-              .getElementById("newProductName")
-              .value
-              .trim();
-
-
-          const price =
-            document
-              .getElementById("newProductPrice")
-              .value
-              .trim();
-
-
-          if (!name) {
-
-            showMessage(
-              document.getElementById("menuMessage"),
-              "Escribí el nombre del producto."
-            );
-
-            return;
-
-          }
-
-
-          try {
-
-            const result =
-              await supabaseClient
-                .from(TABLES.products)
-                .insert({
-                  nombre: name,
-                  precio: price
-                });
-
-
-            if (result.error) {
-
-              throw result.error;
-
-            }
-
-
-            document.getElementById(
-              "newProductName"
-            ).value = "";
-
-
-            document.getElementById(
-              "newProductPrice"
-            ).value = "";
-
-
-            await loadProducts();
-
-          } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-              document.getElementById("menuMessage"),
-              "❌ No se pudo agregar el producto."
-            );
-
-          }
-
-        }
-      );
-
-
-    /*
-      ====================================================
-      FOTOS / STORAGE
-      ====================================================
-    */
-
-    const STORAGE_BUCKET =
-      "Galeria";
-
-
-    async function loadPhotos() {
-
-      const grid =
+      const container =
         document.getElementById(
-          "photoGrid"
+          "rewardsList"
         );
 
-
-      if (!supabaseClient) {
-
-        return;
-
-      }
-
+      container.innerHTML =
+        '<div class="loading">Cargando canjes...</div>';
 
       try {
 
-        const result =
-          await supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .list(
-              "",
+        const {
+          data,
+          error
+        } =
+          await supabaseClient
+            .from("canjes")
+            .select("*")
+            .order(
+              "created_at",
               {
-                limit: 100,
-                sortBy: {
-                  column: "created_at",
-                  order: "desc"
-                }
+                ascending: false
               }
             );
 
-
-        if (result.error) {
-
-          throw result.error;
-
+        if (error) {
+          throw error;
         }
 
+        document.getElementById(
+          "statRewards"
+        ).textContent =
+          data ? data.length : 0;
 
-        const files =
-          result.data || [];
+        if (!data || data.length === 0) {
 
-
-        if (!files.length) {
-
-          renderEmpty(
-            grid,
-            "Todavía no hay fotos en la galería."
-          );
+          container.innerHTML =
+            '<div class="empty">No hay canjes.</div>';
 
           return;
 
         }
 
+        container.innerHTML = "";
 
-        grid.innerHTML =
-          files
-            .filter(file =>
-              file.name &&
-              !file.name.endsWith("/")
-            )
-            .map(
-              file => {
+        data.forEach(function(canjes) {
 
-                const publicResult =
-                  supabaseClient.storage
-                    .from(STORAGE_BUCKET)
-                    .getPublicUrl(
-                      file.name
-                    );
+          const div =
+            document.createElement("div");
 
+          div.className = "item";
 
-                const url =
-                  publicResult.data
-                    .publicUrl;
+          div.innerHTML = `
 
+            <strong>
+              ${escapeHtml(
+                canjes.nombre ||
+                canjes.name ||
+                "Canje"
+              )}
+            </strong>
 
-                return `
-
-                  <div class="photo-card">
-
-                    <img
-                      src="${escapeAttr(url)}"
-                      alt="Foto Pool & Beach"
-                      loading="lazy"
-                    >
-
-                    <div class="photo-card-info">
-
-                      ${escapeHtml(file.name)}
-
-                      <br><br>
-
-                      <button
-                        class="btn btn-danger btn-small"
-                        type="button"
-                        onclick="deletePhoto('${escapeJs(file.name)}')"
-                      >
-                        Eliminar
-                      </button>
-
-                    </div>
-
-                  </div>
-
-                `;
-
+            <div>
+              Puntos:
+              ${
+                canjes.puntos ||
+                canjes.points ||
+                0
               }
-            )
-            .join("");
+            </div>
 
-      } catch (error) {
+            <div class="item-actions">
 
-        console.error(
-          "Error galería:",
-          error
-        );
+              <button
+                class="btn-danger"
+                onclick="deleteReward('${canjes.id}')"
+              >
+                Eliminar
+              </button>
 
+            </div>
+          `;
 
-        renderEmpty(
-          grid,
-          "No se pudo cargar la galería. Verificá el bucket Galeria y sus políticas."
-        );
+          container.appendChild(div);
 
-      }
-
-    }
-
-
-    document
-      .getElementById("uploadPhotosButton")
-      .addEventListener(
-        "click",
-        async function() {
-
-          const input =
-            document.getElementById(
-              "photoInput"
-            );
-
-
-          const files =
-            Array.from(
-              input.files || []
-            );
-
-
-          const message =
-            document.getElementById(
-              "uploadMessage"
-            );
-
-
-          hideMessage(message);
-
-
-          if (!supabaseClient) {
-
-            showMessage(
-              message,
-              "⚠️ Supabase no está configurado."
-            );
-
-            return;
-
-          }
-
-
-          if (!files.length) {
-
-            showMessage(
-              message,
-              "Seleccioná al menos una imagen."
-            );
-
-            return;
-
-          }
-
-
-          const button =
-            document.getElementById(
-              "uploadPhotosButton"
-            );
-
-
-          button.disabled = true;
-
-          button.textContent =
-            "Subiendo...";
-
-
-          try {
-
-            for (const file of files) {
-
-              const safeName =
-                file.name
-                  .replace(
-                    /[^a-zA-Z0-9._-]/g,
-                    "_"
-                  );
-
-
-              const path =
-                Date.now() +
-                "_" +
-                Math.random()
-                  .toString(36)
-                  .slice(2) +
-                "_" +
-                safeName;
-
-
-              const result =
-                await supabaseClient.storage
-                  .from(STORAGE_BUCKET)
-                  .upload(
-                    path,
-                    file,
-                    {
-                      cacheControl: "3600",
-                      upsert: false
-                    }
-                  );
-
-
-              if (result.error) {
-
-                throw result.error;
-
-              }
-
-            }
-
-
-            showMessage(
-              message,
-              "✅ Fotos subidas correctamente."
-            );
-
-
-            input.value = "";
-
-
-            await loadPhotos();
-
-          } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-              message,
-              "❌ Error al subir las fotos: " +
-              (error.message || "")
-            );
-
-          } finally {
-
-            button.disabled = false;
-
-            button.textContent =
-              "Subir fotos";
-
-          }
-
-        }
-      );
-
-
-    async function deletePhoto(
-      fileName
-    ) {
-
-      if (!supabaseClient) return;
-
-
-      if (
-        !confirm(
-          "¿Querés eliminar esta foto?"
-        )
-      ) {
-
-        return;
-
-      }
-
-
-      try {
-
-        const result =
-          await supabaseClient.storage
-            .from(STORAGE_BUCKET)
-            .remove([
-              fileName
-            ]);
-
-
-        if (result.error) {
-
-          throw result.error;
-
-        }
-
-
-        await loadPhotos();
+        });
 
       } catch (error) {
 
         console.error(error);
 
-        alert(
-          "No se pudo eliminar la foto."
-        );
+        container.innerHTML = `
+          <div class="empty">
+            No se pudieron cargar los canjes.
+            <br><br>
+            ${escapeHtml(error.message || "")}
+          </div>
+        `;
 
       }
 
     }
 
 
-    /*
-      ====================================================
-      CANJES
-      ====================================================
-    */
+    document.getElementById(
+      "rewardForm"
+    ).addEventListener(
+      "submit",
+      async function(event) {
 
-    let redeemsCache = [];
+        event.preventDefault();
 
-
-    async function loadRedeems() {
-
-      const container =
-        document.getElementById(
-          "redeemList"
-        );
-
-
-      if (!supabaseClient) {
-
-        renderEmpty(
-          container,
-          "Supabase todavía no está configurado."
-        );
-
-        return;
-
-      }
-
-
-      try {
-
-        const result =
-          await supabaseClient
-            .from(TABLES.redeems)
-            .select("*")
-            .order(
-              "id",
-              {
-                ascending: true
-              }
-            );
-
-
-        if (result.error) {
-
-          throw result.error;
-
-        }
-
-
-        redeemsCache =
-          result.data || [];
-
-
-        renderRedeems(
-          container
-        );
-
-
-        document.getElementById(
-          "statRedeems"
-        ).textContent =
-          redeemsCache.length;
-
-      } catch (error) {
-
-        console.error(
-          "Error canjes:",
-          error
-        );
-
-
-        renderEmpty(
-          container,
-          "No se pudieron cargar los canjes. Verificá que exista la tabla canjes."
-        );
-
-      }
-
-    }
-
-
-    function renderRedeems(
-      container
-    ) {
-
-      if (!redeemsCache.length) {
-
-        renderEmpty(
-          container,
-          "No hay canjes configurados."
-        );
-
-        return;
-
-      }
-
-
-      container.innerHTML =
-        redeemsCache
-          .map(
-            item => {
-
-              const id =
-                item.id;
-
-
-              const name =
-                item.nombre ||
-                item.name ||
-                "";
-
-
-              const points =
-                item.puntos ||
-                item.points ||
-                0;
-
-
-              return `
-
-                <div class="redeem-item">
-
-                  <input
-                    id="redeem-name-${escapeHtml(String(id))}"
-                    value="${escapeAttr(name)}"
-                  >
-
-                  <input
-                    id="redeem-points-${escapeHtml(String(id))}"
-                    type="number"
-                    min="0"
-                    value="${escapeAttr(String(points))}"
-                  >
-
-                  <div>
-
-                    <button
-                      class="btn btn-primary btn-small"
-                      type="button"
-                      onclick="saveRedeem('${escapeJs(String(id))}')"
-                    >
-                      Guardar
-                    </button>
-
-                    <button
-                      class="btn btn-danger btn-small"
-                      type="button"
-                      onclick="deleteRedeem('${escapeJs(String(id))}')"
-                    >
-                      Eliminar
-                    </button>
-
-                  </div>
-
-                </div>
-
-              `;
-
-            }
-          )
-          .join("");
-
-    }
-
-
-    async function saveRedeem(id) {
-
-      if (!supabaseClient) return;
-
-
-      const name =
-        document.getElementById(
-          "redeem-name-" + id
-        ).value.trim();
-
-
-      const points =
-        Number(
+        const nombre =
           document.getElementById(
-            "redeem-points-" + id
-          ).value
-        );
+            "rewardName"
+          ).value.trim();
 
+        const puntos =
+          Number(
+            document.getElementById(
+              "rewardPoints"
+            ).value
+          );
 
-      try {
+        try {
 
-        const result =
-          await supabaseClient
-            .from(TABLES.redeems)
-            .update({
-              nombre: name,
-              puntos: points
-            })
-            .eq(
-              "id",
-              id
-            );
+          const {
+            error
+          } =
+            await supabaseClient
+              .from("canjes")
+              .insert({
+                nombre,
+                puntos
+              });
 
+          if (error) {
+            throw error;
+          }
 
-        if (result.error) {
+          document.getElementById(
+            "rewardForm"
+          ).reset();
 
-          throw result.error;
+          showMessage(
+            "rewardMessage",
+            "Canje agregado correctamente."
+          );
+
+          await loadRewards();
+
+        } catch (error) {
+
+          alert(
+            "No se pudo agregar el canje: " +
+            error.message
+          );
 
         }
 
-
-        showMessage(
-          document.getElementById("redeemMessage"),
-          "✅ Canje actualizado."
-        );
-
-
-        await loadRedeems();
-
-      } catch (error) {
-
-        console.error(error);
-
-        showMessage(
-          document.getElementById("redeemMessage"),
-          "❌ No se pudo actualizar el canje."
-        );
-
       }
+    );
 
-    }
 
-
-    async function deleteRedeem(id) {
-
-      if (!supabaseClient) return;
-
+    async function deleteReward(id) {
 
       if (
         !confirm(
           "¿Querés eliminar este canje?"
         )
       ) {
-
         return;
-
       }
-
 
       try {
 
-        const result =
+        const {
+          error
+        } =
           await supabaseClient
-            .from(TABLES.redeems)
+            .from("canjes")
             .delete()
-            .eq(
-              "id",
-              id
-            );
+            .eq("id", id);
 
-
-        if (result.error) {
-
-          throw result.error;
-
+        if (error) {
+          throw error;
         }
 
-
-        await loadRedeems();
+        await loadRewards();
 
       } catch (error) {
 
-        console.error(error);
-
-        showMessage(
-          document.getElementById("redeemMessage"),
-          "❌ No se pudo eliminar el canje."
+        alert(
+          "No se pudo eliminar: " +
+          error.message
         );
 
       }
@@ -2857,124 +1665,166 @@
     }
 
 
-    document
-      .getElementById("addRedeemButton")
-      .addEventListener(
-        "click",
-        async function() {
+    /* =====================================================
+       FOTOS / STORAGE
+    ===================================================== */
 
-          if (!supabaseClient) return;
-
-
-          const name =
-            document
-              .getElementById("newRedeemName")
-              .value
-              .trim();
-
-
-          const points =
-            Number(
-              document
-                .getElementById("newRedeemPoints")
-                .value
-            );
-
-
-          if (!name) {
-
-            showMessage(
-              document.getElementById("redeemMessage"),
-              "Escribí el nombre del canje."
-            );
-
-            return;
-
-          }
-
-
-          try {
-
-            const result =
-              await supabaseClient
-                .from(TABLES.redeems)
-                .insert({
-                  nombre: name,
-                  puntos: points || 0
-                });
-
-
-            if (result.error) {
-
-              throw result.error;
-
-            }
-
-
-            document.getElementById(
-              "newRedeemName"
-            ).value = "";
-
-
-            document.getElementById(
-              "newRedeemPoints"
-            ).value = "";
-
-
-            await loadRedeems();
-
-          } catch (error) {
-
-            console.error(error);
-
-            showMessage(
-              document.getElementById("redeemMessage"),
-              "❌ No se pudo agregar el canje."
-            );
-
-          }
-
-        }
+    const photoInput =
+      document.getElementById(
+        "photoInput"
       );
 
+    const photoPreview =
+      document.getElementById(
+        "photoPreview"
+      );
 
-    /*
-      ====================================================
-      DASHBOARD
-      ====================================================
-    */
+    photoInput.addEventListener(
+      "change",
+      function() {
 
-    async function loadDashboard() {
+        const file =
+          photoInput.files[0];
 
-      await loadReservations();
+        if (!file) {
+          photoPreview.style.display =
+            "none";
+          return;
+        }
 
-      await loadProducts();
+        const url =
+          URL.createObjectURL(file);
 
-      await loadRedeems();
+        photoPreview.src = url;
 
-    }
+        photoPreview.style.display =
+          "block";
+
+      }
+    );
 
 
-    /*
-      ====================================================
-      UTILIDADES
-      ====================================================
-    */
+    document.getElementById(
+      "uploadPhotoButton"
+    ).addEventListener(
+      "click",
+      async function() {
 
-    function renderEmpty(
-      container,
-      text
+        const file =
+          photoInput.files[0];
+
+        if (!file) {
+
+          alert(
+            "Seleccioná una foto primero."
+          );
+
+          return;
+
+        }
+
+        const button =
+          document.getElementById(
+            "uploadPhotoButton"
+          );
+
+        button.disabled = true;
+        button.textContent =
+          "SUBIENDO...";
+
+        try {
+
+          const extension =
+            file.name
+              .split(".")
+              .pop()
+              .toLowerCase();
+
+          const fileName =
+            Date.now() +
+            "-" +
+            Math.random()
+              .toString(36)
+              .substring(2) +
+            "." +
+            extension;
+
+          const {
+            error
+          } =
+            await supabaseClient
+              .storage
+              .from("Galeria")
+              .upload(
+                fileName,
+                file,
+                {
+                  cacheControl: "3600",
+                  upsert: false
+                }
+              );
+
+          if (error) {
+            throw error;
+          }
+
+          showMessage(
+            "photoMessage",
+            "Foto subida correctamente."
+          );
+
+          photoInput.value = "";
+
+        } catch (error) {
+
+          console.error(error);
+
+          alert(
+            "No se pudo subir la foto: " +
+            error.message
+          );
+
+        } finally {
+
+          button.disabled = false;
+          button.textContent =
+            "SUBIR FOTO";
+
+        }
+
+      }
+    );
+
+
+    /* =====================================================
+       UTILIDADES
+    ===================================================== */
+
+    function showMessage(
+      elementId,
+      message
     ) {
 
-      if (!container) return;
+      const element =
+        document.getElementById(
+          elementId
+        );
 
+      element.textContent =
+        message;
 
-      container.innerHTML =
-        `
-          <div class="empty">
-            ${escapeHtml(text)}
-          </div>
-        `;
+      element.style.display =
+        "block";
+
+      setTimeout(
+        function() {
+
+          element.style.display =
+            "none";
+
+        },
+        3500
+      );
 
     }
 
@@ -2982,136 +1832,33 @@
     function escapeHtml(value) {
 
       return String(value ?? "")
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
 
     }
 
 
-    function escapeAttr(value) {
+    /* =====================================================
+       CARGAR TODO
+    ===================================================== */
 
-      return escapeHtml(value);
+    async function loadEverything() {
 
-    }
-
-
-    function escapeJs(value) {
-
-      return String(value ?? "")
-        .replace(
-          /\\/g,
-          "\\\\"
-        )
-        .replace(
-          /'/g,
-          "\\'"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        );
+      await Promise.allSettled([
+        loadReservations(),
+        loadProducts(),
+        loadRewards()
+      ]);
 
     }
 
 
-    function normalizePhone(
-      phone
-    ) {
-
-      let value =
-        String(phone || "")
-          .replace(
-            /\D/g,
-            ""
-          );
-
-
-      /*
-        Argentina:
-        si el número empieza con 0,
-        se elimina para generar el enlace.
-      */
-
-      if (
-        value.startsWith("0")
-      ) {
-
-        value =
-          value.slice(1);
-
-      }
-
-
-      if (
-        !value.startsWith("54")
-      ) {
-
-        value =
-          "54" + value;
-
-      }
-
-
-      return value;
-
-    }
-
-
-    function openGames() {
-
-      window.location.href =
-        "games.html";
-
-    }
-
-
-    /*
-      ====================================================
-      INICIO
-      ====================================================
-    */
-
-    if (supabaseClient) {
-
-      supabaseClient.auth.onAuthStateChange(
-        async function(event, session) {
-
-          if (
-            session &&
-            session.user
-          ) {
-
-            await showAdminPanel();
-
-          } else {
-
-            showLogin();
-
-          }
-
-        }
-      );
-
-    }
-
+    /* =====================================================
+       INICIO
+    ===================================================== */
 
     checkSession();
 
